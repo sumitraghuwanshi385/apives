@@ -6,10 +6,10 @@ const nodemailer = require('nodemailer');
 const Otp = require('../models/Otp');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // or 'SendGrid', 'Outlook', etc.
+  service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER, // e.g., "yourcompany@gmail.com"
-    pass: process.env.EMAIL_PASS  // e.g., your "App Password" (not regular password)
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
@@ -26,7 +26,6 @@ router.post('/register', async (req, res) => {
     const user = new User({ name, email, password: hashedPassword });
     const savedUser = await user.save();
     
-    // Auto-login after register
     const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET);
     res.json({ token, user: { id: savedUser._id, name: savedUser.name, email: savedUser.email } });
   } catch (err) {
@@ -51,24 +50,19 @@ router.post('/login', async (req, res) => {
   }
 });
 
-module.exports = router;
-
+// 1. FORGOT PASSWORD
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
     
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Generate 6-digit Code
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Save Code to DB (deletes previous codes for this email)
     await Otp.deleteMany({ email });
     await new Otp({ email, code }).save();
 
-    // Send Email
     await transporter.sendMail({
       from: `"Mora Security" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -111,18 +105,13 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { email, otp, password } = req.body;
     
-    // Double check OTP just in case
     const validOtp = await Otp.findOne({ email, code: otp });
     if (!validOtp) return res.status(400).json({ message: "Session expired, please request new token" });
 
-    // Hash New Password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Update User
     await User.findOneAndUpdate({ email }, { password: hashedPassword });
-
-    // Clean up used OTP
     await Otp.deleteMany({ email });
 
     res.json({ message: "Credentials successfully updated" });
@@ -130,3 +119,6 @@ router.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// ✅ SABSE END MEIN HONA CHAHIYE
+module.exports = router;
