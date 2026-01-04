@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Backend ka URL (Make sure backend server port 5000 par chal raha ho)
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://apives.onrender.com';
 
 // 1. Axios Instance Create karo
 const axiosInstance = axios.create({
