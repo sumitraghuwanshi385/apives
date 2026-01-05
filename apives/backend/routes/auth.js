@@ -2,28 +2,106 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
 const Otp = require('../models/Otp');
 
-/**
- * Gmail SMTP (may timeout on some hosts like Render)
- * We still keep it, but we DO NOT await sendMail in forgot-password.
- */
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+// Optional nodemailer (fallback only). If not installed, app won't crash.
+let nodemailer = null;
+try {
+  nodemailer = require('nodemailer');
+} catch (e) {
+  nodemailer = null;
+}
 
-  // ✅ keep timeouts low so it doesn't hang too long (even in background)
-  connectionTimeout: 7000,
-  greetingTimeout: 7000,
-  socketTimeout: 7000,
-});
+/**
+ * Optional Gmail transporter (Render par aksar timeout hota hai).
+ * We never await sendMail in forgot-password, so UI hang nahi hoga.
+ */
+let gmailTransporter = null;
+if (nodemailer && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+  gmailTransporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    connectionTimeout: 7000,
+    greetingTimeout: 7000,
+    socketTimeout: 7000,
+  });
+}
+
+/**
+ * Resend HTTP API sender (BEST for Render because it uses HTTPS/443).
+ * Needs:
+ *   RESEND_API_KEY
+ *   EMAIL_FROM  (e.g. onboarding@resend.dev for testing)
+ */
+async function sendOtpViaResend(toEmail, code) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM;
+
+  if (!apiKey || !from) {
+    throw new Error('RESEND_API_KEY or EMAIL_FROM missing');
+  }
+
+  // Node v22+ has global fetch (Render logs show v22.x)
+  const resp = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from,
+      to: [toEmail],
+      subject: 'Your Identity Verification Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <h2>Identity Recovery Protocol</h2>
+          <p>Your OTP is:</p>
+          <h1 style="background:#eee;padding:10px;border-radius:6px;display:inline-block;letter-spacing:5px;">
+            ${code}
+          </h1>
+          <p>This token is valid for <strong>5 minutes</strong>.</p>
+        </div>
+      `,
+    }),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`Resend API error ${resp.status}: ${text}`);
+  }
+}
+
+/**
+ * Unified email sending:
+ * 1) Try Resend (recommended)
+ * 2) Fallback to Gmail SMTP if configured
+ */
+async function sendOtpEmail(toEmail, code) {
+  // Prefer Resend if API key exists
+  if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
+    await sendOtpViaResend(toEmail, code);
+    return;
+  }
+
+  // Fallback to Gmail SMTP
+  if (gmailTransporter) {
+    await gmailTransporter.sendMail({
+      from: `"Apives Security" <${process.env.EMAIL_USER}>`,
+      to: toEmail,
+      subject: 'Your Identity Verification Code',
+      html: `<h1 style="letter-spacing:5px">${code}</h1><p>Valid for 5 minutes.</p>`,
+    });
+    return;
+  }
+
+  // No email provider configured
+  throw new Error('No email provider configured (set RESEND_API_KEY+EMAIL_FROM OR EMAIL_USER+EMAIL_PASS)');
+}
 
 // REGISTER
 router.post('/register', async (req, res) => {
@@ -83,40 +161,21 @@ router.post('/forgot-password', async (req, res) => {
     await Otp.deleteMany({ email });
     await new Otp({ email, code }).save();
 
-    // ✅ client ko turant response (spinner band)
-    res.json({ message: "Secure token dispatched" });
+    // ✅ Respond immediately so frontend spinner stops
+    const showOtp = process.env.SHOW_OTP_IN_RESPONSE === 'true'; // demo/debug only
+    res.json({
+      message: 'Secure token dispatched',
+      ...(showOtp ? { otp: code } : {}),
+    });
 
-    // ✅ Email send in background (NO await)
+    // ✅ Send email in background (DO NOT await)
     setImmediate(() => {
-      transporter.sendMail(
-        {
-          from: `"Mora Security" <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: 'Your Identity Verification Code',
-          html: `
-            <div style="font-family: Arial, sans-serif; color: #333;">
-              <h2>Identity Recovery Protocol</h2>
-              <p>You requested a secure access token for your Mora account.</p>
-              <h1 style="background: #eee; padding: 10px; border-radius: 5px; display: inline-block; letter-spacing: 5px;">
-                ${code}
-              </h1>
-              <p>This token is valid for <strong>5 minutes</strong>.</p>
-              <p style="color: #888; font-size: 12px;">If you did not request this, please ignore this signal.</p>
-            </div>
-          `,
-        },
-        (err) => {
-          if (err) {
-            console.error('Email send failed (background):', err.message);
-          } else {
-            console.log('OTP email attempted for', email);
-          }
-        }
-      );
+      sendOtpEmail(email, code).catch((e) => {
+        console.error('OTP email failed (background):', e.message);
+      });
     });
   } catch (err) {
     console.error(err);
-    // If something failed before we sent response:
     if (!res.headersSent) {
       return res.status(500).json({ message: 'Failed to process request' });
     }
