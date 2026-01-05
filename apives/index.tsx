@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
@@ -11,5 +12,6 @@ const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <App />
+    <Analytics />
   </React.StrictMode>
 );
