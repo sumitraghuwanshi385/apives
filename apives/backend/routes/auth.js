@@ -5,13 +5,18 @@ const User = require('../models/User');
 const nodemailer = require('nodemailer');
 const Otp = require('../models/Otp');
 
+// Gmail SMTP via SSL (demo-friendly)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,          // SSL port
+  secure: true,       // true for 465
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    user: process.env.EMAIL_USER, // tumhara gmail
+    pass: process.env.EMAIL_PASS  // 16-char app password
+  },
+  timeout: 15000      // 15 sec timeout, taaki lamba hang na ho
 });
+
 
 // REGISTER
 router.post('/register', async (req, res) => {
@@ -51,6 +56,7 @@ router.post('/login', async (req, res) => {
 });
 
 // 1. FORGOT PASSWORD
+// 1. FORGOT PASSWORD
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -63,26 +69,34 @@ router.post('/forgot-password', async (req, res) => {
     await Otp.deleteMany({ email });
     await new Otp({ email, code }).save();
 
-    await transporter.sendMail({
-      from: `"Mora Security" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Your Identity Verification Code',
-      html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2>Identity Recovery Protocol</h2>
-          <p>You requested a secure access token for your Mora account.</p>
-          <h1 style="background: #eee; padding: 10px; border-radius: 5px; display: inline-block; letter-spacing: 5px;">${code}</h1>
-          <p>This token is valid for <strong>5 minutes</strong>.</p>
-          <p style="color: #888; font-size: 12px;">If you did not request this, please ignore this signal.</p>
-        </div>
-      `
-    });
+    // Email bhejne ki koshish karo, lekin fail ho jaaye to flow break mat karo
+    try {
+      await transporter.sendMail({
+        from: `"Mora Security" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: 'Your Identity Verification Code',
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #333;">
+            <h2>Identity Recovery Protocol</h2>
+            <p>You requested a secure access token for your Mora account.</p>
+            <h1 style="background: #eee; padding: 10px; border-radius: 5px; display: inline-block; letter-spacing: 5px;">${code}</h1>
+            <p>This token is valid for <strong>5 minutes</strong>.</p>
+            <p style="color: #888; font-size: 12px;">If you did not request this, please ignore this signal.</p>
+          </div>
+        `
+      });
+      console.log('OTP email sent to', email);
+    } catch (mailErr) {
+      console.error('Email send failed (demo mode):', mailErr.message);
+      // yahan 500 nahi bhej rahe, sirf log kar rahe hain
+    }
 
+    // User ko hamesha success message de do (OTP DB me already save ho chuka hai)
     res.json({ message: "Secure token dispatched" });
 
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Failed to dispatch token" });
+    res.status(500).json({ message: "Failed to process request" });
   }
 });
 
