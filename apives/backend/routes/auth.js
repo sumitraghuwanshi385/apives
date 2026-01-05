@@ -5,18 +5,17 @@ const User = require('../models/User');
 const nodemailer = require('nodemailer');
 const Otp = require('../models/Otp');
 
-// Gmail SMTP via SSL (demo-friendly)
+// ✅ Gmail SMTP config (service: 'gmail' mat use karo)
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,          // SSL port
   secure: true,       // true for 465
   auth: {
-    user: process.env.EMAIL_USER, // tumhara gmail
-    pass: process.env.EMAIL_PASS  // 16-char app password
+    user: process.env.EMAIL_USER,  // tumhara gmail
+    pass: process.env.EMAIL_PASS   // 16 char app password
   },
-  timeout: 15000      // 15 sec timeout, taaki lamba hang na ho
+  timeout: 15000      // 15s, taaki kahi atke nahi
 });
-
 
 // REGISTER
 router.post('/register', async (req, res) => {
@@ -56,7 +55,6 @@ router.post('/login', async (req, res) => {
 });
 
 // 1. FORGOT PASSWORD
-// 1. FORGOT PASSWORD
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -69,7 +67,7 @@ router.post('/forgot-password', async (req, res) => {
     await Otp.deleteMany({ email });
     await new Otp({ email, code }).save();
 
-    // Email bhejne ki koshish karo, lekin fail ho jaaye to flow break mat karo
+    // Email bhejne ki koshish karo, fail ho to bhi flow na tode
     try {
       await transporter.sendMail({
         from: `"Mora Security" <${process.env.EMAIL_USER}>`,
@@ -88,10 +86,11 @@ router.post('/forgot-password', async (req, res) => {
       console.log('OTP email sent to', email);
     } catch (mailErr) {
       console.error('Email send failed (demo mode):', mailErr.message);
-      // yahan 500 nahi bhej rahe, sirf log kar rahe hain
+      // Email fail ho gaya to bhi user ko error nahi dikha rahe,
+      // sirf logs me dekh sakte hain.
     }
 
-    // User ko hamesha success message de do (OTP DB me already save ho chuka hai)
+    // Hamesha success return karo (OTP DB me save ho chuka hai)
     res.json({ message: "Secure token dispatched" });
 
   } catch (err) {
@@ -134,5 +133,4 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-// ✅ SABSE END MEIN HONA CHAHIYE
 module.exports = router;
