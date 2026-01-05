@@ -2,7 +2,8 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 const Otp = require('../models/Otp');
 
 /**
@@ -82,12 +83,8 @@ router.post('/forgot-password', async (req, res) => {
     await Otp.deleteMany({ email });
     await new Otp({ email, code }).save();
 
-    // ✅ IMPORTANT: Respond immediately so frontend spinner stops
-    const showOtp = process.env.SHOW_OTP_IN_RESPONSE === 'true'; // optional for testing/demo
-    res.json({
-      message: 'Secure token dispatched',
-      ...(showOtp ? { otp: code } : {}),
-    });
+    // ✅ client ko turant response (spinner band)
+    res.json({ message: "Secure token dispatched" });
 
     // ✅ Email send in background (NO await)
     setImmediate(() => {
