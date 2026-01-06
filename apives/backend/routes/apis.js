@@ -57,14 +57,16 @@ router.post('/create', verify, async (req, res) => {
   }
 });
 
-// GET ALL APIS (Public)
-router.get('/', async (req, res) => {
+// ✅ GET MY APIS (Protected) - only logged-in provider's APIs
+router.get('/mine', verify, async (req, res) => {
   try {
-    const apis = await ApiListing.find().sort({ createdAt: -1 });
+    const apis = await ApiListing
+      .find({ providerId: req.user.id })  // 👈 yahi main change hai
+      .sort({ createdAt: -1 });
+
     res.json(apis);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 module.exports = router;
