@@ -41,6 +41,8 @@ export const ApiDetails: React.FC = () => {
         setUpvotes(found.upvotes);
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
         if (likedApis.includes(id)) setIsLiked(true);
+        const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+        if (savedApis.includes(id)) setIsSaved(true);
     }
     setTimeout(() => setIsLoading(false), 600);
   }, [id]);
@@ -60,13 +62,26 @@ export const ApiDetails: React.FC = () => {
     }
   };
 
+  const handleSaveToggle = () => {
+    const userStr = localStorage.getItem('mora_user');
+    if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
+    
+    const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+    if (isSaved) {
+        setIsSaved(false);
+        localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== id)));
+    } else {
+        setIsSaved(true);
+        localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, id]));
+    }
+  };
+
   const handleTestApi = () => {
     const endpoint = api?.endpoints?.[selectedEndpointIndex];
     if (!endpoint) return;
     setTestLoading(true);
     setResponse(null);
     setTimeout(() => {
-      // DYNAMIC DATA: Always use responseExample from the endpoint definition
       setResponse(JSON.stringify(endpoint.responseExample || { status: "success", message: "Node link verified" }, null, 2));
       setTestLoading(false);
     }, 1200);
@@ -101,7 +116,7 @@ export const ApiDetails: React.FC = () => {
                         </div>
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleLike} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isLiked ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Heart size={12} className={isLiked ? 'fill-current' : ''} /> <span className="ml-2">{upvotes}</span></button>
-                            <button onClick={() => setIsSaved(!isSaved)} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
+                            <button onClick={handleSaveToggle} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
                             <a href={api.externalUrl} target="_blank" className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95">Visit <Globe size={12} className="ml-2" /></a>
                         </div>
                     </div>
@@ -149,7 +164,7 @@ export const ApiDetails: React.FC = () => {
                     <div className="bg-dark-900/50 p-4 border-b border-white/5 text-slate-400 text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] flex items-center shadow-lg"><Terminal size={12} className="mr-2.5 text-mora-500" /> Neural Data Stream</div>
                     <div className="p-5 md:p-8 overflow-auto flex-1 custom-scrollbar bg-[#010101] shadow-inner">
                         {response ? <pre className="font-mono text-[11px] md:text-xs leading-relaxed" dangerouslySetInnerHTML={{ __html: syntaxHighlight(response) }} /> : <div className="h-full flex items-center justify-center text-slate-800 font-mono text-[9px] uppercase tracking-[0.5em] animate-pulse">Establishing Signal...</div>}
-                    </div>
+                </div>
                 </div>
             </div>
         )}
