@@ -105,7 +105,7 @@ export const Footer: React.FC = () => {
 
         <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-[12px] md:text-sm text-slate-500">
-            &copy; 2024 Apives Systems. Contact: beatslevelone@gmail.com
+            &copy; 2025 Apives Ecosystem
           </p>
           <p className="text-[12px] md:text-sm text-slate-500 flex items-center font-medium">
             <span className="text-mora-400 mr-2">///</span> Global Digital Synapse
