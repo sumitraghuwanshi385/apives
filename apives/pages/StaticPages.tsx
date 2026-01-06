@@ -248,7 +248,6 @@ export const TermsPage: React.FC = () => (
   </PageLayout>
 );
 
-export const EnterprisePage: React.FC = () => (
   <PageLayout title="Enterprise" subtitle="High-scale support for organizations." icon={Activity}>
     <div className="space-y-10">
         <div className="prose prose-invert max-w-none text-slate-400 leading-relaxed text-sm md:text-base">
@@ -256,4 +255,8 @@ export const EnterprisePage: React.FC = () => (
             <p>
                 For organizations that demand the highest levels of reliability and performance, Apives Enterprise offers a suite of advanced features tailored for large-scale operations. As your project moves from MVP to production, the complexity of managing multiple API dependencies increases. Apives Enterprise provides the governance and monitoring tools necessary to maintain system integrity.
             </p>
+);
+};
+
+export default StaticPages;
           
