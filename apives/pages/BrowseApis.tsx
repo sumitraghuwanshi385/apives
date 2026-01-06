@@ -6,7 +6,7 @@ import {
   Globe, GraduationCap, Bitcoin, ShoppingCart, Plane, Stethoscope, Radar, 
   ArrowDown, Calendar, Trophy, Lock, BarChart3, Music, Video, Smartphone, 
   Map, Home, Utensils, Trophy as SportsIcon, Newspaper, Briefcase, 
-  Languages, Users, Scale, Settings, Wrench, Gavel, BarChart4, TrendingUp, 
+  Languages, Users, Stethoscope as Steth, Scale, Settings, Wrench, Gavel, BarChart4, TrendingUp, 
   Sprout, FlaskConical, Dumbbell, Wallet, Umbrella, Building, Zap, Truck,
   Landmark, Gamepad2
 } from 'lucide-react';
@@ -50,7 +50,7 @@ const CATEGORIES = [
   { name: 'Jobs', icon: Briefcase },
   { name: 'Translation', icon: Languages },
   { name: 'Social', icon: Users },
-  { name: 'Health', icon: Stethoscope },
+  { name: 'Health', icon: Steth },
   { name: 'Legal', icon: Scale },
   { name: 'DevOps', icon: Settings },
   { name: 'Search', icon: Search },
@@ -80,10 +80,23 @@ const CATEGORIES = [
 const BrowseApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
     const navigate = useNavigate();
     const [saved, setSaved] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const [upvotes, setUpvotes] = useState(api.upvotes);
+
     const rankIndex = TOP_3_IDS.indexOf(api.id);
     const isTopTier = rankIndex !== -1;
     const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   
+    useEffect(() => {
+        const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+        if (savedApis.includes(api.id)) setSaved(true);
+
+        const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
+        const currentlyLiked = likedApis.includes(api.id);
+        setIsLiked(currentlyLiked);
+        setUpvotes(currentlyLiked ? api.upvotes + 1 : api.upvotes);
+    }, [api.id, api.upvotes]);
+
     const isNew = (dateString: string) => {
         const date = new Date(dateString);
         const thirtyDaysAgo = new Date();
@@ -92,15 +105,32 @@ const BrowseApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
     };
   
     const handleSave = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
+        e.preventDefault(); e.stopPropagation();
         const userStr = localStorage.getItem('mora_user');
-        if (!userStr) {
-            navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
-            return;
+        if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
+        const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+        if (saved) {
+            setSaved(false);
+            localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api.id)));
+        } else {
+            setSaved(true);
+            localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api.id]));
         }
-        setSaved(!saved);
+    };
+
+    const handleLike = (e: React.MouseEvent) => {
+        e.preventDefault(); e.stopPropagation();
+        const userStr = localStorage.getItem('mora_user');
+        if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
+        
+        const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
+        if (isLiked) {
+            setIsLiked(false); setUpvotes(prev => prev - 1);
+            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api.id)));
+        } else {
+            setIsLiked(true); setUpvotes(prev => prev + 1);
+            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api.id]));
+        }
     };
 
     return (
@@ -153,6 +183,10 @@ const BrowseApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
                             <Activity size={12} className="text-mora-500" />
                             <span className="text-slate-300">{api.latency}</span>
                         </div>
+                        <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like">
+                            <Heart size={12} className={`${isLiked ? 'text-red-500 fill-current shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'text-red-500/50 group-hover/like:text-red-500'} transition-all`} />
+                            <span className="text-slate-300 font-mono">{upvotes}</span>
+                        </button>
                     </div>
                     <span className={`text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full border ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : api.pricing.type === 'Paid' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'} uppercase tracking-wide`}>
                         {api.pricing.type}
