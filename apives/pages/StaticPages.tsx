@@ -256,6 +256,8 @@ export const TermsPage: React.FC = () => (
                 For organizations that demand the highest levels of reliability and performance, Apives Enterprise offers a suite of advanced features tailored for large-scale operations. As your project moves from MVP to production, the complexity of managing multiple API dependencies increases. Apives Enterprise provides the governance and monitoring tools necessary to maintain system integrity.
             </p>
             </div>
+            </div>
+            </div>
 );
 };
 
