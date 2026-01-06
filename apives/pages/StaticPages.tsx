@@ -9,15 +9,15 @@ const PageLayout: React.FC<{ title: string; subtitle: string; icon: React.Elemen
     <div className="absolute top-28 left-4 lg:left-8 z-20">
       <BackButton />
     </div>
-    <div className="max-w-4xl mx-auto px-6 relative z-10 pt-12">
+    <div className="max-w-3xl mx-auto px-6 relative z-10 pt-12">
       <div className="mb-12 text-center">
         <div className="inline-flex items-center justify-center p-3 bg-mora-500/10 rounded-2xl border border-mora-500/20 mb-6 shadow-[0_0_30px_rgba(34,197,94,0.1)]">
             <Icon size={32} className="text-mora-500" />
         </div>
-        <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-4 tracking-tight">{title}</h1>
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto font-light leading-relaxed">{subtitle}</p>
+        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-4 tracking-tight">{title}</h1>
+        <p className="text-lg text-slate-400 max-w-xl mx-auto font-light leading-relaxed">{subtitle}</p>
       </div>
-      <div className="bg-dark-900/50 backdrop-blur-sm border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl animate-slide-up">
+      <div className="bg-dark-900/50 backdrop-blur-sm border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl animate-slide-up">
         {children}
       </div>
     </div>
@@ -251,127 +251,9 @@ export const TermsPage: React.FC = () => (
 export const EnterprisePage: React.FC = () => (
   <PageLayout title="Enterprise" subtitle="High-scale support for organizations." icon={Activity}>
     <div className="space-y-10">
-        <div className="prose prose-invert max-w-none text-slate-400 leading-relaxed">
-            <h3 className="text-white text-2xl font-bold mb-4">Industrial-Scale Integration</h3>
+        <div className="prose prose-invert max-w-none text-slate-400 leading-relaxed text-sm md:text-base">
+            <h3 className="text-white text-xl md:text-2xl font-bold mb-4">Industrial-Scale Integration</h3>
             <p>
                 For organizations that demand the highest levels of reliability and performance, Apives Enterprise offers a suite of advanced features tailored for large-scale operations. As your project moves from MVP to production, the complexity of managing multiple API dependencies increases. Apives Enterprise provides the governance and monitoring tools necessary to maintain system integrity.
             </p>
-            <p>
-                Our Enterprise tier includes dedicated account management, custom SLAs (Service Level Agreements), and priority routing for support tickets. We also offer private node hosting, allowing companies to list internal APIs for private discovery within their own engineering teams. This "Internal Grid" ensures that your proprietary tools are easily discoverable and consistently used across your organization.
-            </p>
-            <p>
-                Security is paramount at the Enterprise level. We provide enhanced security audits for listed APIs, SOC2 compliance reports for our platform infrastructure, and advanced access controls (SSO/SAML) for team management. Our goal is to provide a frictionless experience that empowers your developers while satisfying your security and compliance requirements.
-            </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-                { title: 'Custom SLAs', desc: 'Guaranteed uptime and support response times for your mission-critical integrations.' },
-                { title: 'Private Grid', desc: 'Host internal APIs for your team with SSO and granular access controls.' },
-                { title: 'Advanced Monitoring', desc: 'Deep-dive analytics and real-time alerts for all your node dependencies.' }
-            ].map((feature, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-2xl">
-                    <h4 className="text-white font-bold mb-2">{feature.title}</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">{feature.desc}</p>
-                </div>
-            ))}
-        </div>
-
-        <div className="text-center py-12 bg-mora-500/5 border border-mora-500/20 rounded-3xl">
-            <h3 className="text-2xl font-bold text-white mb-4">Scaling Up?</h3>
-            <p className="text-slate-400 mb-8 max-w-md mx-auto">We provide dedicated support and higher limits for large-scale API integrations. Contact our sales team to discuss your needs.</p>
-            <a href="mailto:beatslevelone@gmail.com" className="bg-white text-black font-bold py-3 px-10 rounded-full hover:bg-mora-500 transition-all uppercase tracking-widest text-xs">Contact Sales Gateway</a>
-        </div>
-    </div>
-  </PageLayout>
-);
-
-export const DocumentationPage: React.FC = () => (
-  <PageLayout title="Documentation" subtitle="Learn how to use the grid." icon={FileText}>
-    <div className="space-y-10 prose prose-invert max-w-none text-slate-400">
-        <section>
-            <h3 className="text-white text-2xl font-bold mb-4">Introduction to Apives</h3>
-            <p>
-                Apives is designed as a discovery layer for the modern web. Whether you are looking for identity solutions, payment rails, or infrastructure tools, our directory provides a standardized interface to evaluate and integrate these tools. This documentation will guide you through searching the grid, testing endpoints in the playground, and submitting your own nodes for others to find.
-            </p>
-            <p>
-                Our philosophy is centered on developer experience. We believe that finding an API should be as simple as writing code. That's why every listing on Apives features a standardized layout, clear pricing, and a live playground that allows you to see the "signal" before you write a single line of integration code.
-            </p>
-        </section>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 not-prose">
-            <div className="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2"><Rocket size={18} className="text-mora-500" /> Getting Started</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                    1. Create your Identity Node by signing up.<br />
-                    2. Browse the Grid categories or use the search gateway.<br />
-                    3. Evaluate nodes based on latency, stability, and pricing.<br />
-                    4. Use the Playground to verify response formats.<br />
-                    5. Follow the provider's external documentation for implementation.
-                </p>
-            </div>
-            <div className="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                <h3 className="text-white font-bold mb-3 flex items-center gap-2"><Zap size={18} className="text-mora-500" /> Posting APIs</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">
-                    1. Navigate to 'Submit API'.<br />
-                    2. Provide high-quality metadata (Name, Category, Description).<br />
-                    3. Define your endpoints using JSON mock data.<br />
-                    4. Upload "Visual Proofs" to build trust with users.<br />
-                    5. Once submitted, your node will be indexed in the directory immediately.
-                </p>
-            </div>
-        </div>
-
-        <section>
-            <h3 className="text-white text-2xl font-bold mb-4">Advanced Configuration</h3>
-            <p>
-                For power users, Apives supports complex endpoint definitions including custom headers, body parameters, and varying HTTP methods. When defining your endpoints, ensure that your mock responses are accurate representations of your production environment. This helps developers build reliable integrations. 
-            </p>
-            <p>
-                The "Grid Console" (Provider Dashboard) allows you to manage your submitted nodes, monitor community upvotes, and update your configuration as your API evolves. We recommend keeping your "Neural Previews" (Gallery) up-to-date with screenshots of your dashboard or successful integration examples to improve your conversion rates.
-            </p>
-        </section>
-    </div>
-  </PageLayout>
-);
-
-export const StatusPage: React.FC = () => (
-  <PageLayout title="System Status" subtitle="Current grid health and operational logs." icon={Activity}>
-    <div className="space-y-8">
-        <div className="flex items-center gap-4 bg-mora-500/10 p-6 rounded-2xl border border-mora-500/20">
-            <div className="w-4 h-4 bg-mora-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]"></div>
-            <span className="text-white font-bold text-lg">All Systems Operational</span>
-        </div>
-
-        <div className="prose prose-invert max-w-none text-slate-400">
-            <p>
-                We maintain a 99.9% uptime for the Apives discovery grid. Our infrastructure is distributed across multiple regions to ensure low-latency access for developers worldwide. Our monitoring systems track the health of the directory, the provider console, and the playground transmission layers in real-time.
-            </p>
-            <p>
-                Note: While our platform may be operational, individual third-party API nodes listed in the directory may experience their own downtime. We recommend checking the "Operational Stats" on each API's detail page for the latest reported stability and latency metrics. Our automated crawlers periodically verify the health of listed nodes to keep the directory clean and reliable.
-            </p>
-        </div>
-
-        <div className="space-y-4">
-            <h4 className="text-white font-bold uppercase tracking-widest text-xs">Recent Incident Logs</h4>
-            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden font-mono text-[10px]">
-                <div className="px-4 py-3 border-b border-white/5 flex justify-between">
-                    <span className="text-slate-500">2024-03-20 14:30:00</span>
-                    <span className="text-mora-400">SUCCESS</span>
-                    <span className="text-slate-300">Playground Transmission Verified</span>
-                </div>
-                <div className="px-4 py-3 border-b border-white/5 flex justify-between">
-                    <span className="text-slate-500">2024-03-19 09:15:00</span>
-                    <span className="text-mora-400">SUCCESS</span>
-                    <span className="text-slate-300">Grid Indexing Cycle Complete</span>
-                </div>
-                <div className="px-4 py-3 flex justify-between">
-                    <span className="text-slate-500">2024-03-18 22:45:00</span>
-                    <span className="text-yellow-500">MAINTENANCE</span>
-                    <span className="text-slate-300">Database Optimization Performed</span>
-                </div>
-            </div>
-        </div>
-    </div>
-  </PageLayout>
-);
+          
