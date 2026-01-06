@@ -5,7 +5,8 @@ import {
     Cpu, Activity, Zap, Bookmark, LogOut, Globe, TrendingUp, Clock, LayoutGrid, Radio,
     Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info
 } from 'lucide-react';
-import { MOCK_APIS, MOCK_ANALYTICS, getAllApis } from '../services/mockData';
+import { MOCK_ANALYTICS } from '../services/mockData';
+import { apiService } from '../services/apiClient';
 import { Link, useNavigate } from 'react-router-dom';
 import { CustomSelect } from '../components/CustomSelect';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
@@ -51,26 +52,52 @@ export const ProviderDashboard: React.FC = () => {
   const accessOptions = ['Public', 'Auth required', 'Partner only'];
   const methodOptions = ['GET', 'POST', 'PUT', 'DELETE'];
 
-  useEffect(() => {
-      const storedUser = localStorage.getItem('mora_user');
-      if (storedUser) {
-          const parsed = JSON.parse(storedUser);
-          setUser({ ...parsed, joined: 'Oct 2023' });
-          loadNodes();
-      } else {
-          navigate('/access');
-      }
-      setTimeout(() => setLoading(false), 800);
-  }, [navigate]);
+ 
+const loadNodes = async () => {
+  try {
+    // ✅ MY NODES from backend
+    const my = await apiService.getMyApis();
 
-  const loadNodes = () => {
-    const nodes = getAllApis(true).filter(api => api.id.startsWith('local-'));
-    setMyNodes(nodes.map(n => ({...n, status: n.status || 'active'})));
+    const normalizedMy = (my || []).map((n: any) => ({
+      ...n,
+      id: n._id || n.id,
+      status: n.status || 'active',
+    }));
 
+    setMyNodes(normalizedMy);
+
+    // ✅ SAVED (still localStorage ids, but data from backend)
     const savedIds = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-    const allApis = getAllApis();
-    setSavedNodes(allApis.filter(api => savedIds.includes(api.id)));
-  };
+
+    const all = await apiService.getAllApis();
+    const normalizedAll = (all || []).map((a: any) => ({
+      ...a,
+      id: a._id || a.id,
+    }));
+
+    setSavedNodes(normalizedAll.filter((api: any) => savedIds.includes(api.id)));
+  } catch (e) {
+    console.error('loadNodes failed:', e);
+    showNotification('Failed to load nodes from backend');
+  }
+};
+
+useEffect(() => {
+  const storedUser = localStorage.getItem('mora_user');
+  if (!storedUser) {
+    navigate('/access');
+    return;
+  }
+
+  const parsed = JSON.parse(storedUser);
+  setUser({ ...parsed, joined: 'Oct 2023' });
+
+  (async () => {
+    setLoading(true);
+    await loadNodes();     // ✅ ab backend se fetch hoga
+    setLoading(false);
+  })();
+}, [navigate]);
 
   const showNotification = (msg: string) => {
       setNotification(msg);
