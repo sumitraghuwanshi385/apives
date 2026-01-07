@@ -113,60 +113,60 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Feedback Modal */}
+      {/* Feedback Modal - Reduced Size */}
       {isFeedbackOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-md bg-dark-900 border border-white/10 rounded-3xl p-8 shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-sm bg-dark-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mora-500 to-transparent"></div>
             <button 
               onClick={() => setIsFeedbackOpen(false)}
-              className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+              className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-mora-500/10 mb-4 border border-mora-500/20">
-                <MessageSquare className="text-mora-500" size={24} />
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
+                <MessageSquare className="text-mora-500" size={20} />
               </div>
-              <h2 className="text-2xl font-display font-bold text-white mb-2">Share Feedback</h2>
-              <p className="text-slate-400 text-sm">Help us refine the ecosystem.</p>
+              <h2 className="text-xl font-display font-bold text-white mb-1.5">Share Feedback</h2>
+              <p className="text-slate-400 text-xs">Help us refine the ecosystem.</p>
             </div>
             
-            <form action="https://formsubmit.co/beatslevelone@gmail.com" method="POST" className="space-y-4">
+            <form action="https://formsubmit.co/beatslevelone@gmail.com" method="POST" className="space-y-3">
               <input type="hidden" name="_subject" value="User Feedback - Apives" />
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Name</label>
+                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">Name</label>
                 <input 
                   type="text" 
                   name="name" 
                   required 
                   placeholder="Your Name" 
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Email</label>
+                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">Email</label>
                 <input 
                   type="email" 
                   name="email" 
                   required 
                   placeholder="Email" 
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Feedback</label>
+                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">Feedback</label>
                 <textarea 
                   name="message" 
                   required 
-                  rows={4} 
+                  rows={3} 
                   placeholder="What can we improve?" 
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700 resize-none"
+                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700 resize-none"
                 ></textarea>
               </div>
               <button 
                 type="submit" 
-                className="w-full bg-mora-600 hover:bg-mora-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all uppercase tracking-widest text-xs mt-4"
+                className="w-full bg-mora-600 hover:bg-mora-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all uppercase tracking-widest text-[10px] mt-2"
               >
                 Send Feedback
               </button>
