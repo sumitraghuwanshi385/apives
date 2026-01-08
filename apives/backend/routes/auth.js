@@ -4,49 +4,19 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Otp = require('../models/Otp');
 
-// Optional nodemailer (fallback only). If not installed, app won't crash.
-let nodemailer = null;
-try {
-  nodemailer = require('nodemailer');
-} catch (e) {
-  nodemailer = null;
-}
-
-/**
- * Optional Gmail transporter (Render par aksar timeout hota hai).
- * We never await sendMail in forgot-password, so UI hang nahi hoga.
- */
-let gmailTransporter = null;
-if (nodemailer && process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-  gmailTransporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    connectionTimeout: 7000,
-    greetingTimeout: 7000,
-    socketTimeout: 7000,
-  });
-}
-
-/**
- * Resend HTTP API sender (BEST for Render because it uses HTTPS/443).
- * Needs:
- *   RESEND_API_KEY
- *   EMAIL_FROM  (e.g. onboarding@resend.dev for testing)
- */
+// Resend helper (Node 18+ has global fetch; Render Node 22 ok)
 async function sendOtpViaResend(toEmail, code) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
 
   if (!apiKey || !from) {
-    throw new Error('RESEND_API_KEY or EMAIL_FROM missing');
+    throw new Error('Missing RESEND_API_KEY or EMAIL_FROM');
   }
 
-  // Node v22+ has global fetch (Render logs show v22.x)
+  if (typeof fetch !== 'function') {
+    throw new Error('Global fetch is not available. Use Node 18+');
+  }
+
   const resp = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
@@ -56,15 +26,15 @@ async function sendOtpViaResend(toEmail, code) {
     body: JSON.stringify({
       from,
       to: [toEmail],
-      subject: 'Your Identity Verification Code',
+      subject: 'Apives Password Reset OTP',
       html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2>Identity Recovery Protocol</h2>
+        <div style="font-family: Arial, sans-serif; color: #111;">
+          <h2>Apives Password Reset</h2>
           <p>Your OTP is:</p>
-          <h1 style="background:#eee;padding:10px;border-radius:6px;display:inline-block;letter-spacing:5px;">
+          <div style="font-size:32px;font-weight:700;letter-spacing:6px;background:#f2f2f2;padding:12px 16px;border-radius:10px;display:inline-block;">
             ${code}
-          </h1>
-          <p>This token is valid for <strong>5 minutes</strong>.</p>
+          </div>
+          <p style="margin-top:16px;">Valid for <b>5 minutes</b>.</p>
         </div>
       `,
     }),
@@ -74,33 +44,6 @@ async function sendOtpViaResend(toEmail, code) {
     const text = await resp.text();
     throw new Error(`Resend API error ${resp.status}: ${text}`);
   }
-}
-
-/**
- * Unified email sending:
- * 1) Try Resend (recommended)
- * 2) Fallback to Gmail SMTP if configured
- */
-async function sendOtpEmail(toEmail, code) {
-  // Prefer Resend if API key exists
-  if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
-    await sendOtpViaResend(toEmail, code);
-    return;
-  }
-
-  // Fallback to Gmail SMTP
-  if (gmailTransporter) {
-    await gmailTransporter.sendMail({
-      from: `"Apives Security" <${process.env.EMAIL_USER}>`,
-      to: toEmail,
-      subject: 'Your Identity Verification Code',
-      html: `<h1 style="letter-spacing:5px">${code}</h1><p>Valid for 5 minutes.</p>`,
-    });
-    return;
-  }
-
-  // No email provider configured
-  throw new Error('No email provider configured (set RESEND_API_KEY+EMAIL_FROM OR EMAIL_USER+EMAIL_PASS)');
 }
 
 // REGISTER
@@ -118,12 +61,12 @@ router.post('/register', async (req, res) => {
     const savedUser = await user.save();
 
     const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET);
-    res.json({
+    return res.json({
       token,
       user: { id: savedUser._id, name: savedUser.name, email: savedUser.email },
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 });
 
@@ -139,46 +82,42 @@ router.post('/login', async (req, res) => {
     if (!validPass) return res.status(400).json({ message: 'Invalid password' });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    res.json({
+    return res.json({
       token,
       user: { id: user._id, name: user.name, email: user.email },
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 });
 
-// FORGOT PASSWORD (NON-BLOCKING)
+// FORGOT PASSWORD (Resend)
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
 
+    // user must exist
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    // generate OTP
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
+    // save OTP (Otp model expires in 5 mins)
     await Otp.deleteMany({ email });
     await new Otp({ email, code }).save();
 
-    // ✅ Respond immediately so frontend spinner stops
+    // send email via Resend
+    await sendOtpViaResend(email, code);
+
     const showOtp = process.env.SHOW_OTP_IN_RESPONSE === 'true'; // demo/debug only
-    res.json({
-      message: 'Secure token dispatched',
+    return res.json({
+      message: 'OTP sent',
       ...(showOtp ? { otp: code } : {}),
     });
-
-    // ✅ Send email in background (DO NOT await)
-    setImmediate(() => {
-      sendOtpEmail(email, code).catch((e) => {
-        console.error('OTP email failed (background):', e.message);
-      });
-    });
   } catch (err) {
-    console.error(err);
-    if (!res.headersSent) {
-      return res.status(500).json({ message: 'Failed to process request' });
-    }
+    console.error('forgot-password error:', err.message);
+    return res.status(500).json({ message: 'Failed to send OTP' });
   }
 });
 
@@ -190,9 +129,9 @@ router.post('/verify-otp', async (req, res) => {
     const validOtp = await Otp.findOne({ email, code: otp });
     if (!validOtp) return res.status(400).json({ message: 'Invalid or expired token' });
 
-    res.json({ message: 'Token verified' });
+    return res.json({ message: 'Token verified' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 });
 
@@ -202,7 +141,7 @@ router.post('/reset-password', async (req, res) => {
     const { email, otp, password } = req.body;
 
     const validOtp = await Otp.findOne({ email, code: otp });
-    if (!validOtp) return res.status(400).json({ message: 'Session expired, please request new token' });
+    if (!validOtp) return res.status(400).json({ message: 'Session expired, request new OTP' });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -210,9 +149,9 @@ router.post('/reset-password', async (req, res) => {
     await User.findOneAndUpdate({ email }, { password: hashedPassword });
     await Otp.deleteMany({ email });
 
-    res.json({ message: 'Credentials successfully updated' });
+    return res.json({ message: 'Credentials successfully updated' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 });
 
