@@ -86,20 +86,34 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds 
 
     useEffect(() => {
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-        if (likedApis.includes(api.id)) setIsLiked(true);
-    }, [api.id]);
+        const currentlyLiked = likedApis.includes(api.id);
+        setIsLiked(currentlyLiked);
+        setUpvotes(currentlyLiked ? api.upvotes + 1 : api.upvotes);
+
+        const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+        if (savedApis.includes(api.id)) setSaved(true);
+    }, [api.id, api.upvotes]);
 
     const handleSave = (e: React.MouseEvent) => {
         e.preventDefault(); e.stopPropagation();
         const userStr = localStorage.getItem('mora_user');
         if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
-        setSaved(!saved);
+        
+        const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+        if (saved) {
+            setSaved(false);
+            localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api.id)));
+        } else {
+            setSaved(true);
+            localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api.id]));
+        }
     };
 
     const handleLike = (e: React.MouseEvent) => {
         e.preventDefault(); e.stopPropagation();
         const userStr = localStorage.getItem('mora_user');
         if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
+        
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
         if (isLiked) {
             setIsLiked(false); setUpvotes(v => v - 1);
@@ -149,9 +163,9 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds 
                 <div className="pt-3 md:pt-4 border-t border-white/5 flex items-center justify-between">
                     <div className="flex gap-3 md:gap-4">
                         <div className="flex items-center gap-1 text-[10px] md:text-xs text-slate-500"><Activity size={12} className="text-mora-500" /><span className="text-slate-300">{api.latency}</span></div>
-                        <button onClick={handleLike} className="flex items-center gap-1 text-[10px] md:text-xs text-slate-500 group/like">
-                            <Heart size={12} className={`${isLiked ? 'text-red-500 fill-current' : 'text-red-500/50 group-hover/like:text-red-500'} transition-all`} />
-                            <span className="text-slate-300">{upvotes}</span>
+                        <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs text-slate-500 group/like">
+                            <Heart size={12} className={`${isLiked ? 'text-red-500 fill-current shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'text-red-500/50 group-hover/like:text-red-500'} transition-all`} />
+                            <span className="text-slate-300 font-mono">{upvotes}</span>
                         </button>
                     </div>
                     <span className={`text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full border ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : api.pricing.type === 'Paid' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'} uppercase tracking-wide`}>

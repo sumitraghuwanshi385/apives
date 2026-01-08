@@ -5,8 +5,7 @@ import {
     Cpu, Activity, Zap, Bookmark, LogOut, Globe, TrendingUp, Clock, LayoutGrid, Radio,
     Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info
 } from 'lucide-react';
-import { MOCK_ANALYTICS } from '../services/mockData';
-import { apiService } from '../services/apiClient';
+import { MOCK_APIS, MOCK_ANALYTICS, getAllApis } from '../services/mockData';
 import { Link, useNavigate } from 'react-router-dom';
 import { CustomSelect } from '../components/CustomSelect';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
@@ -38,9 +37,11 @@ export const ProviderDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [myNodes, setMyNodes] = useState<any[]>([]);
   const [savedNodes, setSavedNodes] = useState<any[]>([]);
-  const [analyticsOpenId, setAnalyticsOpenId] = useState<string | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
   
+  // Settings State
+  const [editName, setEditName] = useState('');
+
   // Modal States
   const [editingNode, setEditingNode] = useState<any | null>(null);
   const [deletingNode, setDeletingNode] = useState<any | null>(null);
@@ -52,56 +53,43 @@ export const ProviderDashboard: React.FC = () => {
   const accessOptions = ['Public', 'Auth required', 'Partner only'];
   const methodOptions = ['GET', 'POST', 'PUT', 'DELETE'];
 
- 
-const loadNodes = async () => {
-  try {
-    // ✅ MY NODES from backend
-    const my = await apiService.getMyApis();
+  useEffect(() => {
+      const storedUser = localStorage.getItem('mora_user');
+      if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          setUser({ ...parsed, joined: 'Oct 2023' });
+          setEditName(parsed.name || '');
+          loadNodes();
+      } else {
+          navigate('/access');
+      }
+      setTimeout(() => setLoading(false), 800);
+  }, [navigate]);
 
-    const normalizedMy = (my || []).map((n: any) => ({
-      ...n,
-      id: n._id || n.id,
-      status: n.status || 'active',
-    }));
+  const loadNodes = () => {
+    const nodes = getAllApis(true).filter(api => api.id.startsWith('local-'));
+    setMyNodes(nodes.map(n => ({...n, status: n.status || 'active'})));
 
-    setMyNodes(normalizedMy);
-
-    // ✅ SAVED (still localStorage ids, but data from backend)
-    const savedIds = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-
-    const all = await apiService.getAllApis();
-    const normalizedAll = (all || []).map((a: any) => ({
-      ...a,
-      id: a._id || a.id,
-    }));
-
-    setSavedNodes(normalizedAll.filter((api: any) => savedIds.includes(api.id)));
-  } catch (e) {
-    console.error('loadNodes failed:', e);
-    showNotification('Failed to load nodes from backend');
-  }
-};
-
-useEffect(() => {
-  const storedUser = localStorage.getItem('mora_user');
-  if (!storedUser) {
-    navigate('/access');
-    return;
-  }
-
-  const parsed = JSON.parse(storedUser);
-  setUser({ ...parsed, joined: 'Oct 2023' });
-
-  (async () => {
-    setLoading(true);
-    await loadNodes();     // ✅ ab backend se fetch hoga
-    setLoading(false);
-  })();
-}, [navigate]);
+    const savedIds = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+    const allApis = getAllApis();
+    setSavedNodes(allApis.filter(api => savedIds.includes(api.id)));
+  };
 
   const showNotification = (msg: string) => {
       setNotification(msg);
       setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleUpdateProfile = () => {
+      if (!user || !editName.trim()) return;
+      
+      const updatedUser = { ...user, name: editName.trim() };
+      localStorage.setItem('mora_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      
+      // Notify other components (like Navbar)
+      window.dispatchEvent(new CustomEvent('auth-change'));
+      showNotification('Identity Synced');
   };
 
   const handleStatusToggle = (id: string, e: React.MouseEvent) => {
@@ -120,12 +108,6 @@ useEffect(() => {
       localStorage.setItem('mora_local_apis', JSON.stringify(updatedLocal));
       
       showNotification(`Node ${nodeToUpdate.name} is now ${newStatus}`);
-  };
-
-  const toggleAnalytics = (id: string, e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      setAnalyticsOpenId(analyticsOpenId === id ? null : id);
   };
 
   const handleDeleteClick = (node: any, e: React.MouseEvent) => {
@@ -230,23 +212,10 @@ useEffect(() => {
       showNotification('Grid node updated');
   };
 
-  const handleLogout = () => {
+const handleLogout = () => {
       localStorage.removeItem('mora_user');
       navigate('/');
   };
-
-  const nodeMetrics = useMemo(() => {
-    const map: any = {};
-    myNodes.forEach(node => {
-        map[node.id] = {
-            calls: Math.floor(Math.random() * 50000) + 1000,
-            errorRate: (Math.random() * 0.5).toFixed(2),
-            latency: Math.floor(Math.random() * 60) + 20,
-            peak: (Math.random() * 2 + 0.5).toFixed(1) + 'k/s'
-        }
-    });
-    return map;
-  }, [myNodes]);
 
   const updateEditEndpoint = (index: number, field: string, value: string) => {
     const nextEndpoints = [...editingNode.endpoints];
@@ -266,6 +235,16 @@ useEffect(() => {
         ...editingNode,
         endpoints: editingNode.endpoints.filter((_: any, i: number) => i !== index)
     });
+  };
+
+  const handleUnsaveNode = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const savedIds = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+    const updated = savedIds.filter((aid: string) => aid !== id);
+    localStorage.setItem('mora_saved_apis', JSON.stringify(updated));
+    loadNodes();
+    showNotification('Removed from saved grid');
   };
 
   if (loading) return (
@@ -410,7 +389,7 @@ useEffect(() => {
                         </div>
                       )}
 
-                      {/* Feature Matrix */}
+{/* Feature Matrix */}
                       <div className="space-y-3 pt-4 border-t border-white/5">
                          <div className="flex items-center justify-between ml-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ListPlus size={14} className="text-mora-500" /> Feature Matrix</label>
@@ -547,9 +526,6 @@ useEffect(() => {
                                         <h3 className="text-base md:text-xl font-bold text-white flex items-center gap-2 group-hover:text-mora-400 transition-colors truncate">{node.name} <span className="text-[7px] md:text-[9px] border border-white/10 px-1.5 md:px-2 py-0.5 rounded-full text-slate-400 font-mono uppercase bg-black/30 hidden sm:inline">{node.category}</span></h3>
                                         <div className="flex items-center gap-4 mt-1">
                                             <p className="text-[9px] md:text-sm text-slate-500 font-mono truncate">ID: {node.id}</p>
-                                            <button onClick={(e) => toggleAnalytics(node.id, e)} className={`flex items-center gap-1.5 text-[9px] font-bold uppercase transition-all px-2 py-0.5 rounded-md ${analyticsOpenId === node.id ? 'bg-mora-500/10 text-mora-400 border border-mora-500/20' : 'text-slate-600 hover:text-white'}`}>
-                                                <BarChart2 size={10} /> {analyticsOpenId === node.id ? 'Hide Stats' : 'View Stats'}
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -559,35 +535,6 @@ useEffect(() => {
                                     <Tooltip content="Delete"><button onClick={(e) => handleDeleteClick(node, e)} className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"><Trash2 size={16} md:size={18} /></button></Tooltip>
                                 </div>
                             </div>
-
-                            {analyticsOpenId === node.id && (
-                                <div className="mt-6 pt-6 border-t border-white/5 animate-slide-up space-y-6">
-                                    <div className="h-[200px] w-full bg-black/30 rounded-2xl p-4 border border-white/5">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={MOCK_ANALYTICS}>
-                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.1} />
-                                                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 10}} />
-                                                <YAxis hide />
-                                                <RechartsTooltip contentStyle={{backgroundColor: '#0a0a0a', borderColor: '#334155', borderRadius: '8px', fontSize: '10px'}} />
-                                                <Line type="monotone" dataKey="requests" stroke="#22c55e" strokeWidth={3} dot={{fill: '#22c55e', r: 4}} activeDot={{r: 6, fill: '#4ade80'}} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                        {[
-                                            { label: 'Total Calls', value: `${(nodeMetrics[node.id].calls / 1000).toFixed(1)}k`, color: 'text-white' },
-                                            { label: 'Error Rate', value: `${nodeMetrics[node.id].errorRate}%`, color: 'text-green-500' },
-                                            { label: 'Avg Latency', value: `${nodeMetrics[node.id].latency}ms`, color: 'text-yellow-500' },
-                                            { label: 'Peak Load', value: nodeMetrics[node.id].peak, color: 'text-blue-500' }
-                                        ].map((stat, i) => (
-                                            <div key={i} className="bg-black/40 p-3 rounded-xl border border-white/5">
-                                                <div className="text-[8px] text-slate-500 uppercase font-black mb-1">{stat.label}</div>
-                                                <div className={`text-base font-mono font-bold ${stat.color}`}>{stat.value}</div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     ))}
                     <Link to="/submit" className="w-full py-4 md:py-6 border-2 border-dashed border-white/10 rounded-full text-slate-500 hover:text-white hover:border-mora-500/50 hover:bg-mora-500/5 transition-all flex items-center justify-center gap-2 font-bold uppercase text-[10px] md:text-xs group"><Plus size={14} md:size={16} className="group-hover:scale-110 transition-transform" /> New Node</Link>
@@ -600,6 +547,7 @@ useEffect(() => {
                         <div className="col-span-full text-center py-16 bg-white/5 border border-white/10 border-dashed rounded-[1.5rem] md:rounded-[2.5rem]">
                             <Bookmark size={32} className="mx-auto text-slate-700 mb-3 opacity-30" />
                             <h3 className="text-base font-bold text-slate-500">No saved nodes</h3>
+                            <Link to="/browse" className="text-mora-500 text-xs font-bold mt-2 hover:underline">Explore Marketplace</Link>
                         </div>
                     ) : savedNodes.map(node => (
                         <div key={node.id} className="bg-dark-900/40 border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col h-full group relative overflow-hidden">
@@ -608,10 +556,10 @@ useEffect(() => {
                                 <div className="overflow-hidden"><h3 className="text-base md:text-lg font-bold text-white mb-0.5 truncate">{node.name}</h3><p className="text-[10px] text-slate-500 font-mono truncate">{node.provider}</p></div>
                                 <span className="text-[9px] font-black px-2 py-1 rounded-full border border-blue-500/20 bg-blue-500/10 text-blue-400 uppercase tracking-widest">{node.pricing.type}</span>
                             </div>
-                            <p className="text-[13px] md:text-sm text-slate-400 mb-4 line-clamp-2 leading-relaxed">{node.description}</p>
+       <p className="text-[13px] md:text-sm text-slate-400 mb-4 line-clamp-2 leading-relaxed">{node.description}</p>
                             <div className="mt-auto flex items-center gap-2">
                                 <Link to={`/api/${node.id}`} className="flex-1 h-9 md:h-11 flex items-center justify-center bg-white/5 hover:bg-white/10 text-white text-[10px] md:text-xs font-bold rounded-full border border-white/10 transition-all">View</Link>
-                                <button className="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center bg-red-500/10 text-red-500 rounded-full border border-red-500/20 transition-all"><Bookmark size={16} className="fill-current" /></button>
+                                <button onClick={(e) => handleUnsaveNode(node.id, e)} className="w-9 h-9 md:w-11 md:h-11 flex items-center justify-center bg-red-500/10 text-red-500 rounded-full border border-red-500/20 transition-all hover:bg-red-500 hover:text-white"><Bookmark size={16} className="fill-current" /></button>
                             </div>
                         </div>
                     ))}
@@ -625,9 +573,13 @@ useEffect(() => {
                         <div className="space-y-4 md:space-y-6">
                             <div>
                                 <label className="text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">Display Name</label>
-                                <input defaultValue={user?.name} className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm text-white focus:border-mora-500 outline-none transition-all" />
+                                <input 
+                                    value={editName} 
+                                    onChange={(e) => setEditName(e.target.value)}
+                                    className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 md:py-3 text-sm text-white focus:border-mora-500 outline-none transition-all" 
+                                />
                             </div>
-                            <button onClick={() => showNotification('Identity Synced')} className="text-black text-[10px] md:text-xs font-black flex items-center gap-2 hover:bg-mora-400 transition-all bg-mora-500 px-6 py-2.5 md:py-3.5 rounded-full w-full justify-center uppercase tracking-widest shadow-lg">
+                            <button onClick={handleUpdateProfile} className="text-black text-[10px] md:text-xs font-black flex items-center gap-2 hover:bg-mora-400 transition-all bg-mora-500 px-6 py-2.5 md:py-3.5 rounded-full w-full justify-center uppercase tracking-widest shadow-lg">
                                 Update profile
                             </button>
                         </div>
