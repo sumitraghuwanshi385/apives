@@ -5,7 +5,8 @@ import {
     Cpu, Activity, Zap, Bookmark, LogOut, Globe, TrendingUp, Clock, LayoutGrid, Radio,
     Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info
 } from 'lucide-react';
-import { MOCK_APIS, MOCK_ANALYTICS, getAllApis } from '../services/mockData';
+import { getAllApis } from '../services/mockData'; // local/mock fallback merge ke liye
+import { apiService } from '../services/apiClient'; // ✅ backend calls
 import { Link, useNavigate } from 'react-router-dom';
 import { CustomSelect } from '../components/CustomSelect';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
@@ -53,27 +54,71 @@ export const ProviderDashboard: React.FC = () => {
   const accessOptions = ['Public', 'Auth required', 'Partner only'];
   const methodOptions = ['GET', 'POST', 'PUT', 'DELETE'];
 
-  useEffect(() => {
-      const storedUser = localStorage.getItem('mora_user');
-      if (storedUser) {
-          const parsed = JSON.parse(storedUser);
-          setUser({ ...parsed, joined: 'Oct 2023' });
-          setEditName(parsed.name || '');
-          loadNodes();
-      } else {
-          navigate('/access');
-      }
-      setTimeout(() => setLoading(false), 800);
-  }, [navigate]);
+ useEffect(() => {
+  const storedUser = localStorage.getItem('mora_user');
+  if (!storedUser) {
+    navigate('/access');
+    return;
+  }
 
-  const loadNodes = () => {
-    const nodes = getAllApis(true).filter(api => api.id.startsWith('local-'));
-    setMyNodes(nodes.map(n => ({...n, status: n.status || 'active'})));
+  const parsed = JSON.parse(storedUser);
+  setUser({ ...parsed, joined: 'Oct 2023' });
+  setEditName(parsed.name || '');
 
+  (async () => {
+    setLoading(true);
+    await loadNodes();
+    setLoading(false);
+  })();
+}, [navigate]);
+
+  const loadNodes = async () => {
+  try {
+    // 1) DB se provider ki APIs
+    const myDb = await apiService.getMyApis();
+    const normalizedDb = (myDb || []).map((n: any) => ({
+      ...n,
+      id: n._id || n.id,
+      status: n.status || 'active',
+    }));
+
+    // 2) Local/mock “local-” nodes (optional: purane local submissions ke liye)
+    const localNodes = getAllApis(true).filter((api) => api.id?.startsWith('local-'));
+
+    // 3) Merge (DB + local) by id (duplicates avoid)
+    const byId = new Map<string, any>();
+    [...normalizedDb, ...localNodes].forEach((a: any) => {
+      if (!a) return;
+      const id = a._id || a.id;
+      if (id) byId.set(id, { ...a, id });
+    });
+
+    setMyNodes(Array.from(byId.values()));
+
+    // 4) Saved nodes: IDs localStorage me hain
     const savedIds = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-    const allApis = getAllApis();
-    setSavedNodes(allApis.filter(api => savedIds.includes(api.id)));
-  };
+
+    // Saved view ke liye all APIs (DB + mock/local)
+    const allDb = await apiService.getAllApis();
+    const normalizedAllDb = (allDb || []).map((a: any) => ({
+      ...a,
+      id: a._id || a.id,
+    }));
+
+    const allLocalMock = getAllApis(true); // mock + local
+    const allById = new Map<string, any>();
+    [...normalizedAllDb, ...allLocalMock].forEach((a: any) => {
+      if (!a) return;
+      const id = a._id || a.id;
+      if (id) allById.set(id, { ...a, id });
+    });
+
+    setSavedNodes(Array.from(allById.values()).filter((api: any) => savedIds.includes(api.id)));
+  } catch (e) {
+    console.error('loadNodes failed:', e);
+    showNotification('Failed to load nodes from backend');
+  }
+};
 
   const showNotification = (msg: string) => {
       setNotification(msg);
