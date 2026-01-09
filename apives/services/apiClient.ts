@@ -1,27 +1,27 @@
 import axios from 'axios';
 
-console.log("✅ apiClient LIVE VERSION");
-
 const API_URL = 'https://apives.onrender.com/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// 🔐 Token interceptor
+// 🔐 Attach token
 axiosInstance.interceptors.request.use(
   (config) => {
     const userStr = localStorage.getItem('mora_user');
     if (userStr) {
       const user = JSON.parse(userStr);
       if (user?.token) {
-        config.headers = {
-          ...(config.headers || {}),
-          Authorization: `Bearer ${user.token}`,
-        };
+        if (config.headers?.set) {
+          config.headers.set('Authorization', `Bearer ${user.token}`);
+        } else {
+          (config.headers as any) = {
+            ...(config.headers as any),
+            Authorization: `Bearer ${user.token}`,
+          };
+        }
       }
     }
     return config;
@@ -29,16 +29,21 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 🚀 ALL BACKEND CALLS
 export const apiService = {
-  // ===== AUTH =====
-  register: async (userData: any) => {
-    const res = await axiosInstance.post('/auth/register', userData);
+  // 🔹 Provider dashboard
+  getMyApis: async () => {
+    const res = await axiosInstance.get('/apis/mine');
     return res.data;
   },
 
-  login: async (credentials: any) => {
-    const res = await axiosInstance.post('/auth/login', credentials);
+  // 🔹 Auth
+  register: async (data: any) => {
+    const res = await axiosInstance.post('/auth/register', data);
+    return res.data;
+  },
+
+  login: async (data: any) => {
+    const res = await axiosInstance.post('/auth/login', data);
     return res.data;
   },
 
@@ -61,14 +66,9 @@ export const apiService = {
     return res.data;
   },
 
-  // ===== APIs =====
+  // 🔹 APIs
   createApi: async (apiData: any) => {
     const res = await axiosInstance.post('/apis/create', apiData);
-    return res.data;
-  },
-
-  getMyApis: async () => {
-    const res = await axiosInstance.get('/apis/mine');
     return res.data;
   },
 
@@ -77,16 +77,9 @@ export const apiService = {
     return res.data;
   },
 
-  // ✅🔥 DELETE API (MOST IMPORTANT)
+  // ✅ ✅ ✅ THIS WAS MISSING / BROKEN
   deleteApi: async (id: string) => {
     const res = await axiosInstance.delete(`/apis/${id}`);
     return res.data;
   },
 };
-
-// (Optional helper – safe to keep)
-export const normalizeApi = (a: any) => ({
-  ...a,
-  id: a?._id || a?.id,
-  publishedAt: a?.publishedAt || a?.createdAt || new Date().toISOString(),
-});
