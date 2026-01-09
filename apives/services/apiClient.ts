@@ -73,3 +73,8 @@ export const apiService = {
     return response.data;
   },
 };
+const normalizeApi = (a: any) => ({
+  ...a,
+  id: a?._id || a?.id,
+  publishedAt: a?.publishedAt || a?.createdAt || new Date().toISOString(),
+});
