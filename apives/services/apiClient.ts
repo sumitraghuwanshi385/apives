@@ -73,6 +73,13 @@ export const apiService = {
     return response.data;
   },
 };
+
+// ✅ DELETE API (Provider)
+  deleteApi: async (id: string) => {
+    const response = await axiosInstance.delete(`/apis/${id}`);
+    return response.data;
+  },
+
 const normalizeApi = (a: any) => ({
   ...a,
   id: a?._id || a?.id,
