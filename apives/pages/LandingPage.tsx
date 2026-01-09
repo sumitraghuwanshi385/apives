@@ -5,10 +5,10 @@ import { getAllApis } from '../services/mockData';
 import { ApiListing } from '../types';
 
 const isNew = (dateString: string) => {
-    const date = new Date(dateString);
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    return date > sevenDaysAgo;
+    const publishedDate = new Date(dateString).getTime();
+    const now = Date.now();
+    const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
+    return (now - publishedDate) < fifteenDaysInMs;
 };
 
 const RANK_BADGE_STYLES = [
