@@ -124,6 +124,13 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds 
         }
     };
 
+    const isNew = (dateString: string) => {
+        const date = new Date(dateString);
+        const fifteenDaysAgo = new Date();
+        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+        return date > fifteenDaysAgo;
+    };
+
     return (
         <Link to={`/api/${api.id}`} className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500 to-transparent opacity-70"></div>
@@ -145,7 +152,12 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds 
             </div>
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-2">
-                    <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors truncate">{api.name}</h3>
+                    <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors truncate">
+                        {api.name}
+                        {isNew(api.publishedAt) && (
+                            <span className="ml-2 text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">New</span>
+                        )}
+                    </h3>
                     <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 truncate"><Server size={10} /> {api.provider}</p>
                     </div>
@@ -192,9 +204,9 @@ export const FreshApis: React.FC = () => {
       setTopIds([...allApis].sort((a,b) => b.upvotes - a.upvotes).slice(0, 3).map(a => a.id));
       const freshApis = allApis.filter(api => {
         const date = new Date(api.publishedAt);
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        return date > thirtyDaysAgo;
+        const fifteenDaysAgo = new Date();
+        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+        return date > fifteenDaysAgo;
       });
 
       let filtered = freshApis.filter(api => 
