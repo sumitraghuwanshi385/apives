@@ -186,21 +186,6 @@ export const ProviderDashboard: React.FC = () => {
   }
 };
 
-    // local cache clean
-    const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
-    localStorage.setItem(
-      'mora_local_apis',
-      JSON.stringify(localApis.filter((a: any) => a.id !== deletingNode.id))
-    );
-
-    setDeletingNode(null);
-    showNotification('Node permanently deleted');
-  } catch (err) {
-    console.error(err);
-    showNotification('Delete failed');
-  }
-};
-
   const handleEditClick = (node: any, e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
