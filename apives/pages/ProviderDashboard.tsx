@@ -164,23 +164,27 @@ export const ProviderDashboard: React.FC = () => {
   const confirmDelete = async () => {
   if (!deletingNode) return;
 
-  const user = JSON.parse(localStorage.getItem('mora_user') || '{}');
-
   try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/${deletingNode.id}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
+    // ✅ CORRECT DELETE CALL
+    await apiService.deleteApi(deletingNode._id || deletingNode.id);
+
+    // ✅ FRONTEND STATE UPDATE
+    setMyNodes(prev => prev.filter(node => node.id !== deletingNode._id));
+
+    // ✅ LOCAL CACHE CLEAN (safe)
+    const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
+    localStorage.setItem(
+      'mora_local_apis',
+      JSON.stringify(localApis.filter((a: any) => a.id !== deletingNode._id))
     );
 
-    if (!res.ok) {
-      throw new Error('Delete failed');
-    }
+    setDeletingNode(null);
+    showNotification('Node permanently deleted');
+  } catch (err) {
+    console.error(err);
+    showNotification('Delete failed');
+  }
+};
 
     // UI se bhi hatao
     setMyNodes(prev => prev.filter(n => n.id !== deletingNode.id));
