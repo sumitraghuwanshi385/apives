@@ -6,9 +6,9 @@ import { ApiListing } from '../types';
 
 const isNew = (dateString: string) => {
     const date = new Date(dateString);
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    return date > thirtyDaysAgo;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    return date > sevenDaysAgo;
 };
 
 const RANK_BADGE_STYLES = [
