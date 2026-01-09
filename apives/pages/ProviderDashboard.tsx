@@ -186,9 +186,6 @@ export const ProviderDashboard: React.FC = () => {
   }
 };
 
-    // UI se bhi hatao
-    setMyNodes(prev => prev.filter(n => n.id !== deletingNode.id));
-
     // local cache clean
     const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
     localStorage.setItem(
