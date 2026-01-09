@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAllApis } from '../services/mockData';
+import { apiService } from '../services/apiClient';
 import { Copy, Play, Terminal, ShieldCheck, Activity, Cpu, Globe, Lock, Cloud, Box, Check, Heart, Bookmark, CheckCircle2, Image as ImageIcon, Clock, Database, AlignLeft, Code, ArrowRight, Zap, Wifi, Calendar, Trophy, DollarSign, X, FileJson, ListFilter, TextQuote, Gauge, ShieldAlert, Key, Info } from 'lucide-react';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
@@ -33,19 +33,39 @@ export const ApiDetails: React.FC = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [upvotes, setUpvotes] = useState(0);
 
-  useEffect(() => {
-    setIsLoading(true);
-    const found = getAllApis(true).find(a => a.id === id);
-    if (found) {
-        setApi(found);
-        setUpvotes(found.upvotes);
-        const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-        if (likedApis.includes(id)) setIsLiked(true);
-        const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-        if (savedApis.includes(id)) setIsSaved(true);
+  
+   useEffect(() => {
+  if (!id) return;
+
+  const loadApi = async () => {
+    try {
+      setIsLoading(true);
+
+      const data = await apiService.getApiById(id);
+
+      setApi({
+        ...data,
+        id: data._id,
+        publishedAt: data.createdAt,
+      });
+
+      setUpvotes(data.upvotes || 0);
+
+      const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
+      if (likedApis.includes(id)) setIsLiked(true);
+
+      const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+      if (savedApis.includes(id)) setIsSaved(true);
+
+    } catch (err) {
+      setApi(null);
+    } finally {
+      setIsLoading(false);
     }
-    setTimeout(() => setIsLoading(false), 600);
-  }, [id]);
+  };
+
+  loadApi();
+}, [id]);
 
   if (isLoading) {
   return (
