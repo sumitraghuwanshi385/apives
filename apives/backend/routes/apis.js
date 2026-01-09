@@ -14,9 +14,9 @@ cloudinary.config({
 
 // CREATE API (Protected)
 router.post('/create', verify, async (req, res) => {
-  try {
-    const apiData = req.body;
-    let imageUrls = [];
+  const saved = await new ApiListing({ ...req.body, providerId: req.user.id }).save();
+  res.json(saved);
+});
 
     // 1. Image Upload Logic (Base64 to Cloudinary URL)
     if (apiData.gallery && apiData.gallery.length > 0) {
