@@ -47,7 +47,21 @@ export const ApiDetails: React.FC = () => {
     setTimeout(() => setIsLoading(false), 600);
   }, [id]);
 
-  if (!api && !isLoading) return <div className="p-20 text-center text-white font-mono text-[10px] uppercase tracking-widest">ERROR: NODE_OFFLINE</div>;
+  if (isLoading) {
+  return (
+    <div className="p-20 text-center text-slate-400 font-mono text-[10px] uppercase tracking-widest">
+      Loading node...
+    </div>
+  );
+}
+
+if (!api) {
+  return (
+    <div className="p-20 text-center text-red-400 font-mono text-[10px] uppercase tracking-widest">
+      Node not found or deleted
+    </div>
+  );
+}
 
   const handleLike = () => {
     const userStr = localStorage.getItem('mora_user');
