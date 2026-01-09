@@ -122,8 +122,18 @@ if (!api) {
   };
 
   const hasEndpoints = api && api.endpoints && api.endpoints.length > 0;
-  const rankIndex = [...getAllApis()].sort((a,b) => b.upvotes - a.upvotes).slice(0, 3).findIndex(a => a.id === api?.id);
-  const RANK_STYLES = [{ name: 'Apex', color: 'from-amber-400 to-yellow-600' }, { name: 'Prime', color: 'from-slate-200 to-slate-400' }, { name: 'Zenith', color: 'from-orange-400 to-amber-700' }];
+  const RANK_STYLES = [
+  { name: 'Apex', color: 'from-amber-400 to-yellow-600' },
+  { name: 'Prime', color: 'from-slate-200 to-slate-400' },
+  { name: 'Zenith', color: 'from-orange-400 to-amber-700' },
+];
+
+// 🔥 simple local ranking based on upvotes
+const rank =
+  upvotes >= 100 ? RANK_STYLES[0] :
+  upvotes >= 25  ? RANK_STYLES[1] :
+  upvotes >= 5   ? RANK_STYLES[2] :
+  null;
 
   return (
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
@@ -134,10 +144,16 @@ if (!api) {
                 <div className="animate-slide-up relative">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                         <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest">{api.category}</span>
-                        {rankIndex !== -1 && (
-                          <div className={`bg-gradient-to-r ${RANK_STYLES[rankIndex].color} text-black text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-md shadow-amber-500/10`}><Trophy size={10} /> {RANK_STYLES[rankIndex].name}</div>
-                        )}
-                        <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
+                        
+{rank && (
+  <div
+    className={`bg-gradient-to-r ${rank.color} text-black text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest flex items-center gap-1.5 shadow-md shadow-amber-500/10`}
+  >
+    <Trophy size={10} /> {rank.name}
+  </div>
+)}
+
+             <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
                     </div>
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
