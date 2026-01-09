@@ -74,11 +74,10 @@ export const apiService = {
   },
 };
 
-// ✅ DELETE API (Provider)
-  deleteApi: async (id: string) => {
-    const response = await axiosInstance.delete(`/apis/${id}`);
-    return response.data;
-  },
+deleteApi: async (id: any) => {
+  const response = await axiosInstance.delete(`/apis/${id}`);
+  return response.data;
+},
 
 const normalizeApi = (a: any) => ({
   ...a,
