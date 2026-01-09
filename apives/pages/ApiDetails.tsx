@@ -48,16 +48,6 @@ export const ApiDetails: React.FC = () => {
         id: data._id,
         publishedAt: data.createdAt,
       });
-    } catch (err) {
-      setApi(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  loadApi();
-}, [id]);
-
 
       setUpvotes(data.upvotes || 0);
 
