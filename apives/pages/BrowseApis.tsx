@@ -99,9 +99,9 @@ const BrowseApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
 
     const isNew = (dateString: string) => {
         const date = new Date(dateString);
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        return date > thirtyDaysAgo;
+        const fifteenDaysAgo = new Date();
+        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+        return date > fifteenDaysAgo;
     };
   
     const handleSave = (e: React.MouseEvent) => {
