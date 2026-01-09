@@ -71,6 +71,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.delete('/:id', verify, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid API id' });
+    }
+
+    const api = await ApiListing.findById(id);
+    if (!api) {
+      return res.status(404).json({ message: 'API not found' });
+    }
+
+    if (api.providerId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    await ApiListing.findByIdAndDelete(id);
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 // ✅ GET ONE API BY ID (Public) - Keep this LAST
 router.get('/:id', async (req, res) => {
   try {
