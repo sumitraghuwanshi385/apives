@@ -77,6 +77,12 @@ export const apiService = {
     return res.data;
   },
 
+// 🔹 Get single API by ID (for details page)
+getApiById: async (id: string) => {
+  const res = await axiosInstance.get(`/apis/${id}`);
+  return res.data;
+},
+
   // ✅ ✅ ✅ THIS WAS MISSING / BROKEN
   deleteApi: async (id: string) => {
     const res = await axiosInstance.delete(`/apis/${id}`);
