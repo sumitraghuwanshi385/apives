@@ -161,18 +161,32 @@ export const ProviderDashboard: React.FC = () => {
       setDeletingNode(node);
   };
 
-  const confirmDelete = () => {
-      if (!deletingNode) return;
-      
-      const id = deletingNode.id;
-      setMyNodes(prev => prev.filter(node => node.id !== id));
-      
-      const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
-      localStorage.setItem('mora_local_apis', JSON.stringify(localApis.filter((a: any) => a.id !== id)));
-      
-      setDeletingNode(null);
-      showNotification('Node decommissioned and purged from grid');
-  };
+  const confirmDelete = async () => {
+  if (!deletingNode) return;
+
+  const id = deletingNode.id;
+
+  try {
+    // 🔥 BACKEND SE DELETE
+    await apiService.deleteApi(id);
+
+    // 🔥 FRONTEND STATE UPDATE
+    setMyNodes(prev => prev.filter(node => node.id !== id));
+
+    // 🔥 LOCAL CACHE CLEAN
+    const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
+    localStorage.setItem(
+      'mora_local_apis',
+      JSON.stringify(localApis.filter((a: any) => a.id !== id))
+    );
+
+    setDeletingNode(null);
+    showNotification('Node permanently deleted');
+  } catch (err) {
+    console.error(err);
+    showNotification('Delete failed');
+  }
+};
 
   const handleEditClick = (node: any, e: React.MouseEvent) => {
       e.preventDefault();
