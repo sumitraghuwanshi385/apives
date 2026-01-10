@@ -10,7 +10,6 @@ import {
   Server,
   Trophy
 } from 'lucide-react';
-import { getAllApis } from '../services/mockData';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 
@@ -197,49 +196,31 @@ export const LandingPage: React.FC = () => {
     }
 
     (async () => {
-      const local = getAllApis(); // mock + local
+  try {
+    const dbRaw = await apiService.getAllApis();
 
-      try {
-        // ✅ backend APIs
-        const dbRaw = await apiService.getAllApis();
+    const db: ApiListing[] = (dbRaw || [])
+      .map((a: any) => ({
+        ...a,
+        id: a._id,              // 🔥 MOST IMPORTANT
+        publishedAt: a.createdAt,
+        tags: Array.isArray(a.tags) ? a.tags : [],
+        features: Array.isArray(a.features) ? a.features : [],
+      }))
+      .filter((api) => api.status === 'active');
 
-        // map DB -> UI shape
-        const db: ApiListing[] = (dbRaw || []).map((a: any) => ({
-          ...a,
-          id: a._id || a.id,
-          publishedAt: a.publishedAt || a.createdAt || new Date().toISOString(),
-          tags: Array.isArray(a.tags) ? a.tags : [],
-          features: Array.isArray(a.features) ? a.features : [],
-        }));
+    setAllApis(db);
 
-        // merge + dedupe by id
-        const byId = new Map<string, ApiListing>();
-        [...db, ...local].forEach((api) => {
-          if (api?.id) byId.set(api.id, api);
-        });
-
-        const merged = Array.from(byId.values()).filter(
-  (api) => !api.status || api.status === 'active'
-);
-        setAllApis(merged);
-
-        setTop3Ids(
-          [...merged]
-            .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-            .slice(0, 3)
-            .map(a => a.id)
-        );
-      } catch (e) {
-        console.error('LandingPage: DB fetch failed, using local only', e);
-        setAllApis(local);
-        setTop3Ids(
-          [...local]
-            .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-            .slice(0, 3)
-            .map(a => a.id)
-        );
-      }
-    })();
+    setTop3Ids(
+      [...db]
+        .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+        .slice(0, 3)
+        .map(a => a.id)
+    );
+  } catch (e) {
+    console.error('LandingPage fetch failed', e);
+  }
+})();
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
