@@ -91,7 +91,7 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
 
   return (
     <Link
-     to={`/apis/${api._id || api.id}`}
+     to={`/api/${api.id}`}
       className="group relative backdrop-blur-sm rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-dark-900/40 hover:bg-dark-900/80 hover:border-mora-500/30 p-4 md:p-6 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
