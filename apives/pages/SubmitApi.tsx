@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '../components/BackButton';
+import { apiService } from '../services/apiClient';
 import { CustomSelect } from '../components/CustomSelect';
 import { Plus, X, Check, AlertCircle, RefreshCw, LayoutGrid, DollarSign, Activity, ShieldAlert, Key, Image as ImageIcon, ListPlus, Hash, Globe, Terminal } from 'lucide-react';
 
