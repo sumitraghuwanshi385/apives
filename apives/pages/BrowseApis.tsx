@@ -83,9 +83,10 @@ const BrowseApiCard: React.FC<{
     const [isLiked, setIsLiked] = useState(false);
     const [upvotes, setUpvotes] = useState(api.upvotes);
 
-    const rankIndex = topIds.indexOf(api.id);
-    const isTopTier = rankIndex !== -1;
-    const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
+    const apiId = api.id || api._id;
+const rankIndex = topIds.indexOf(apiId);
+const isTopTier = rankIndex >= 0 && rankIndex < 3;
+const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   
     useEffect(() => {
         const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
