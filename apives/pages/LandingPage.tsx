@@ -198,6 +198,11 @@ export const LandingPage: React.FC = () => {
      (async () => {
   try {
     const res = await apiService.getAllApis();
+
+console.log('RAW RESPONSE 👉', res);
+console.log('RES.DATA 👉', (res as any)?.data);
+console.log('IS ARRAY 👉', Array.isArray(res));
+
 const list = Array.isArray(res) ? res : res?.data || [];
 
 const db: ApiListing[] = list.map((a: any) => ({
