@@ -229,7 +229,7 @@ try {
     status: 'active',
   });
 }
-
+localStorage.removeItem('mora_edit_api_id')
   setIsSuccess(true);
 } catch (err) {
   console.error('Create API failed:', err);
@@ -250,7 +250,15 @@ try {
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Protocol Online</h2>
         <p className="text-slate-400 mb-8">Your API has been successfully commissioned.</p>
-        <button onClick={() => navigate('/provider')} className="w-full py-3 bg-mora-600 text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-mora-500">Go to Dashboard</button>
+        <button
+  onClick={() => {
+    navigate('/provider');
+    window.location.reload();
+  }}
+  className="w-full py-3 bg-mora-600 text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-mora-500"
+>
+  Go to Dashboard
+</button>
       </div>
     </div>
   );
