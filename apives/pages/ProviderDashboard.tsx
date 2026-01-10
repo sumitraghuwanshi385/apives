@@ -137,23 +137,32 @@ export const ProviderDashboard: React.FC = () => {
       showNotification('Identity Synced');
   };
 
-  const handleStatusToggle = (id: string, e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-      
-      const nodeToUpdate = myNodes.find(n => n.id === id);
-      if (!nodeToUpdate) return;
+  const handleStatusToggle = async (id: string, e: React.MouseEvent) => {
+  e.stopPropagation();
+  e.preventDefault();
 
-      const newStatus = nodeToUpdate.status === 'active' ? 'paused' : 'active';
-      const updatedNodes = myNodes.map(n => n.id === id ? { ...n, status: newStatus } : n);
-      setMyNodes(updatedNodes);
+  const nodeToUpdate = myNodes.find(n => n.id === id);
+  if (!nodeToUpdate) return;
 
-      const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
-      const updatedLocal = localApis.map((a: any) => a.id === id ? { ...a, status: newStatus } : a);
-      localStorage.setItem('mora_local_apis', JSON.stringify(updatedLocal));
-      
-      showNotification(`Node ${nodeToUpdate.name} is now ${newStatus}`);
-  };
+  const newStatus = nodeToUpdate.status === 'active' ? 'paused' : 'active';
+
+  try {
+    // 🔥 1️⃣ BACKEND UPDATE (MOST IMPORTANT)
+    await apiService.updateApiStatus(id, newStatus);
+
+    // 🔁 2️⃣ FRONTEND STATE UPDATE
+    setMyNodes(prev =>
+      prev.map(n =>
+        n.id === id ? { ...n, status: newStatus } : n
+      )
+    );
+
+    showNotification(`Node ${nodeToUpdate.name} is now ${newStatus}`);
+  } catch (err) {
+    console.error('Status update failed', err);
+    showNotification('Failed to update status');
+  }
+};
 
   const handleDeleteClick = (node: any, e: React.MouseEvent) => {
       e.preventDefault();
