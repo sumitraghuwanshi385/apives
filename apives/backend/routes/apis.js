@@ -91,6 +91,39 @@ router.delete('/:id', verify, async (req, res) => {
   }
 });
 
+// ✅ UPDATE API (Protected)
+router.put('/:id', verify, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // id valid hai ya nahi
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid API id' });
+    }
+
+    // sirf apni API update karne do
+    const api = await ApiListing.findOne({
+      _id: id,
+      providerId: req.user.id,
+    });
+
+    if (!api) {
+      return res.status(404).json({ message: 'API not found' });
+    }
+
+    const updatedApi = await ApiListing.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+
+    return res.json(updatedApi);
+  } catch (err) {
+    console.error('❌ UPDATE API Error:', err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 // ✅ GET ONE API BY ID (Public) — FIXED
 router.get('/:id', async (req, res) => {
   try {
