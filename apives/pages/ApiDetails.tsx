@@ -84,7 +84,7 @@ console.log('DETAILS PAGE ID 👉', id);
     if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
     const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
     if (isLiked) {
-        setIsLiked(false); setUpvotes(prev => prev - 1);
+        setIsLiked(false); setUpvotes(prev => Math.max(0, prev - 1));
         localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== id)));
     } else {
         setIsLiked(true); setUpvotes(prev => prev + 1);
