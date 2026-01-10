@@ -197,16 +197,16 @@ export const LandingPage: React.FC = () => {
 
      (async () => {
   try {
-    const dbRaw = await apiService.getAllApis();
+    const res = await apiService.getAllApis();
+const list = Array.isArray(res) ? res : res?.data || [];
 
-    const db: ApiListing[] = (dbRaw || []).map((a: any) => ({
-      ...a,
-      id: a._id,                 // ✅ VERY IMPORTANT
-      publishedAt: a.createdAt,
-      tags: Array.isArray(a.tags) ? a.tags : [],
-      features: Array.isArray(a.features) ? a.features : [],
-    }));
-
+const db: ApiListing[] = list.map((a: any) => ({
+  ...a,
+  id: a._id,
+  publishedAt: a.createdAt,
+  tags: Array.isArray(a.tags) ? a.tags : [],
+  features: Array.isArray(a.features) ? a.features : [],
+}));
     console.log('Landing APIs:', db); // 👈 debug
 
     setAllApis(db);
