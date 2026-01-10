@@ -90,13 +90,13 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   
     useEffect(() => {
         const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-        if (savedApis.includes(api.id)) setSaved(true);
+        if (savedApis.includes(api._id)) setSaved(true);
 
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-        const currentlyLiked = likedApis.includes(api.id);
+        const currentlyLiked = likedApis.includes(api._id);
         setIsLiked(currentlyLiked);
         setUpvotes(currentlyLiked ? api.upvotes + 1 : api.upvotes);
-    }, [api.id, api.upvotes]);
+    }, [api._id, api.upvotes]);
 
     const isNew = (dateString: string) => {
         const date = new Date(dateString);
@@ -112,10 +112,10 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
         if (saved) {
             setSaved(false);
-            localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api.id)));
+            localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api._id)));
         } else {
             setSaved(true);
-            localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api.id]));
+            localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api._id]));
         }
     };
 
@@ -127,16 +127,16 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
         if (isLiked) {
             setIsLiked(false); setUpvotes(prev => prev - 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api.id)));
+            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api._id)));
         } else {
             setIsLiked(true); setUpvotes(prev => prev + 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api.id]));
+            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api._id]));
         }
     };
 
     return (
         <Link 
-            to={`/api/${api.id}`} 
+            to={`/api/${api._id}`} 
             className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full"
         >
             <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500 to-transparent opacity-70"></div>
