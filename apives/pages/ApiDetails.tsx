@@ -57,9 +57,15 @@ export const ApiDetails: React.FC = () => {
       const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
       if (savedApis.includes(id)) setIsSaved(true);
 
-    } catch (err) {
-      setApi(null);
-    } finally {
+    } catch (err: any) {
+  if (err?.response?.status === 404) {
+    setApi(null); // sirf tab jab truly deleted / not found ho
+  } else {
+    console.error(err);
+    // ❌ yahan setApi(null) mat karo
+  }
+}
+      finally {
       setIsLoading(false);
     }
   };
