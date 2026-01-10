@@ -67,21 +67,6 @@ export const ApiDetails: React.FC = () => {
   loadApi();
 }, [id]);
 
-  if (isLoading) {
-  return (
-    <div className="p-20 text-center text-slate-400 font-mono text-[10px] uppercase tracking-widest">
-      Loading node...
-    </div>
-  );
-}
-
-if (!api) {
-  return (
-    <div className="p-20 text-center text-red-400 font-mono text-[10px] uppercase tracking-widest">
-      Node not found or deleted
-    </div>
-  );
-}
 
   const handleLike = () => {
     const userStr = localStorage.getItem('mora_user');
@@ -137,6 +122,25 @@ const rank =
 
   return (
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
+
+{/* 🔹 CENTER LOADING */}
+{isLoading && (
+  <div className="min-h-[70vh] flex items-center justify-center">
+    <div className="text-slate-400 font-mono text-[10px] uppercase tracking-widest">
+      Loading node...
+    </div>
+  </div>
+)}
+
+{/* 🔹 NOT FOUND */}
+{!isLoading && !api && (
+  <div className="min-h-[70vh] flex items-center justify-center">
+    <div className="text-red-400 font-mono text-[10px] uppercase tracking-widest">
+      Node not found or deleted
+    </div>
+  </div>
+)}
+
       <div className="absolute top-20 left-4 lg:left-8 z-30"><BackButton /></div>
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
