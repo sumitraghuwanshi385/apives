@@ -10,7 +10,7 @@ import {
   Sprout, FlaskConical, Dumbbell, Wallet, Umbrella, Building, Zap, Truck,
   Landmark, Gamepad2
 } from 'lucide-react';
-import { getAllApis } from '../services/mockData';
+import { apiService } from '../services/apiClient';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
@@ -205,22 +205,38 @@ export const BrowseApis: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
+   useEffect(() => {
+  const loadApis = async () => {
     setIsLoading(true);
-    const handleSearch = () => {
-      const lowerTerm = searchTerm.toLowerCase();
-      let filtered = getAllApis().filter(api => 
-        (selectedCategory === 'All' || api.category === selectedCategory) &&
-        (api.name.toLowerCase().includes(lowerTerm) || 
-         api.description.toLowerCase().includes(lowerTerm) ||
-         api.provider.toLowerCase().includes(lowerTerm))
-      );
-      setFilteredApis(filtered);
-      setIsLoading(false);
-    };
-    const timer = setTimeout(handleSearch, 300);
-    return () => clearTimeout(timer);
-  }, [searchTerm, selectedCategory]);
+
+    const allApis = await apiService.getAllApis();
+
+    // 🔥 top 3 ids
+    setTopIds(
+      [...allApis]
+        .sort((a, b) => b.upvotes - a.upvotes)
+        .slice(0, 3)
+        .map(a => a.id)
+    );
+
+    const lowerTerm = searchTerm.toLowerCase();
+
+    const filtered = allApis.filter(api =>
+      (selectedCategory === 'All' || api.category === selectedCategory) &&
+      (
+        api.name.toLowerCase().includes(lowerTerm) ||
+        api.description.toLowerCase().includes(lowerTerm) ||
+        api.provider.toLowerCase().includes(lowerTerm)
+      )
+    );
+
+    setFilteredApis(filtered);
+    setIsLoading(false);
+  };
+
+  const timer = setTimeout(loadApis, 300);
+  return () => clearTimeout(timer);
+}, [searchTerm, selectedCategory]);
 
   return (
     <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-12 md:pb-20 relative selection:bg-mora-500/30">
