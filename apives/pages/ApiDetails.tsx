@@ -58,12 +58,17 @@ export const ApiDetails: React.FC = () => {
       if (savedApis.includes(id)) setIsSaved(true);
 
     } catch (err: any) {
+  console.error('ApiDetails fetch error:', err);
+
+  // ❗ sirf tab api null karo jab backend clearly bole 404
   if (err?.response?.status === 404) {
-    setApi(null); // sirf tab jab truly deleted / not found ho
-  } else {
-    console.error(err);
-    // ❌ yahan setApi(null) mat karo
+    setApi(null);
   }
+
+  // ❌ kisi aur error pe api ko mat chhedo
+}
+finally {
+  setIsLoading(false);
 }
       finally {
       setIsLoading(false);
@@ -155,7 +160,8 @@ if (!api) {
       <div className="absolute top-20 left-4 lg:left-8 z-30"><BackButton /></div>
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            {isLoading ? <div className="space-y-4"><Skeleton className="h-6 w-32 rounded-full" /><Skeleton className="h-10 w-1/2" /></div> : api && (
+
+           
                 <div className="animate-slide-up relative">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                         <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest">{api.category}</span>
