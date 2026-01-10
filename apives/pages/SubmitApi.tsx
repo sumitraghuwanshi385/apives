@@ -18,6 +18,7 @@ export const SubmitApi: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [userName, setUserName] = useState('Developer');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+const [editingApiId, setEditingApiId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
