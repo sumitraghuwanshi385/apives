@@ -514,9 +514,19 @@ const handleLogout = () => {
                          </div>
                       </div>
 
-                      <div className="pt-6 flex gap-4">
-                         <button onClick={() => setEditingNode(null)} className="flex-1 py-4 bg-white/5 text-slate-400 font-bold rounded-full hover:bg-white/10 transition-all uppercase tracking-widest text-xs border border-white/5">Discard</button>
-                         <button onClick={saveEdit} className="flex-2 py-4 bg-mora-600 text-white font-black rounded-full hover:bg-mora-500 transition-all uppercase tracking-widest text-xs shadow-xl shadow-mora-500/20">Commit All Changes</button>
+                       <div className="pt-4 flex gap-3 justify-end">
+                         <button
+  onClick={() => setEditingNode(null)}
+  className="px-5 py-2 bg-white/5 text-slate-400 font-medium rounded-full hover:bg-white/10 transition-all text-[11px]"
+>
+  Cancel
+</button>
+                         <button
+  onClick={saveEdit}
+  className="px-6 py-2 bg-mora-600 text-white font-semibold rounded-full hover:bg-mora-500 transition-all text-[11px] shadow-md shadow-mora-500/20"
+>
+  Save Changes
+</button>
                       </div>
                   </div>
               </div>
