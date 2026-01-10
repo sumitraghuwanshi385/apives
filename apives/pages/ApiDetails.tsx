@@ -177,6 +177,7 @@ if (!api) {
 )}
 
              <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
+                   </div>
                    
 {/* 💰 Pricing Details */}
 {api.pricing?.type !== 'Free' && api.pricing?.details && (
