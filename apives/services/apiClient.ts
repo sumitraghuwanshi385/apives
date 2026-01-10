@@ -89,6 +89,12 @@ getApiById: async (id: string) => {
     return res.data;
   },
 
+// ⏸️ UPDATE API STATUS (Pause / Resume)
+updateApiStatus: async (id: string, status: 'active' | 'paused') => {
+  const res = await axiosInstance.put(`/apis/${id}`, { status });
+  return res.data;
+},
+
   // ✅ ✅ ✅ THIS WAS MISSING / BROKEN
   deleteApi: async (id: string) => {
     const res = await axiosInstance.delete(`/apis/${id}`);
