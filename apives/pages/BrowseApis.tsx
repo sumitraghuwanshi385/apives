@@ -15,6 +15,10 @@ import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
 
+const shuffleArray = <T,>(arr: T[]): T[] => {
+  return [...arr].sort(() => Math.random() - 0.5);
+};
+
 const RANK_BADGE_STYLES = [
   { label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
   { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
@@ -232,7 +236,7 @@ const [topIds, setTopIds] = useState<string[]>([]);
       )
     );
 
-    setFilteredApis(filtered);
+    setFilteredApis(shuffleArray(filtered))
     setIsLoading(false);
   };
 
