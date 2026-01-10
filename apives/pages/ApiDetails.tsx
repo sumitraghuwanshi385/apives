@@ -157,7 +157,7 @@ if (!api) {
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
 
 
-      <div className="absolute top-24 md:top-29 left-4 md:left-6 z-30 scale-110">
+      <div className="absolute top-20 left-4 lg:left-8 z-30">
   <BackButton />
 </div>
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
