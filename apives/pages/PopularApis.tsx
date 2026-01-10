@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { MOCK_APIS, getAllApis } from '../services/mockData';
 import { BackButton } from '../components/BackButton';
 import { 
   Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database, 
@@ -188,7 +187,8 @@ export const PopularApis: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     const handleFilter = () => {
-      const popularApis = [...getAllApis()].sort((a, b) => b.upvotes - a.upvotes);
+      const popularApis = [...(await apiService.getAllApis())]
+  .sort((a, b) => b.upvotes - a.upvotes);
       setTopIds(popularApis.slice(0, 3).map(a => a.id));
       let filtered = popularApis.filter(api => 
         (selectedCategory === 'All' || api.category === selectedCategory)
