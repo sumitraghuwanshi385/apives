@@ -177,7 +177,16 @@ if (!api) {
 )}
 
              <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
-                    </div>
+                   
+{/* 💰 Pricing Details */}
+{api.pricing?.type !== 'Free' && api.pricing?.details && (
+  <div className="mt-2 ml-1 text-[11px] md:text-sm text-slate-400">
+    <span className="text-white font-semibold">Pricing:</span>{' '}
+    {api.pricing.details}
+  </div>
+)}
+
+
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
                             <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{api.name}</h1>
