@@ -80,9 +80,10 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds 
     const [isLiked, setIsLiked] = useState(false);
     const [upvotes, setUpvotes] = useState(api.upvotes);
     
-    const rankIndex = topIds.indexOf(api.id);
-    const isTopTier = rankIndex !== -1;
-    const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
+    const apiId = api.id || api._id;
+const rankIndex = topIds.indexOf(apiId);
+const isTopTier = rankIndex >= 0 && rankIndex < 3;
+const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
     useEffect(() => {
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
