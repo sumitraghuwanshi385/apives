@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiService } from '../services/apiClient';
 import { BackButton } from '../components/BackButton';
 import { 
   Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database, 
@@ -185,19 +186,25 @@ export const PopularApis: React.FC = () => {
   const [topIds, setTopIds] = useState<string[]>([]);
 
   useEffect(() => {
+  const loadPopularApis = async () => {
     setIsLoading(true);
-    const handleFilter = () => {
-      const popularApis = [...(await apiService.getAllApis())]
-  .sort((a, b) => b.upvotes - a.upvotes);
-      setTopIds(popularApis.slice(0, 3).map(a => a.id));
-      let filtered = popularApis.filter(api => 
-        (selectedCategory === 'All' || api.category === selectedCategory)
-      );
-      setFilteredApis(filtered);
-      setIsLoading(false);
-    };
-    handleFilter();
-  }, [selectedCategory]);
+
+    const popularApis = [...(await apiService.getAllApis())]
+      .sort((a, b) => b.upvotes - a.upvotes);
+
+    setTopIds(popularApis.slice(0, 3).map(a => a.id));
+
+    const filtered =
+      selectedCategory === 'All'
+        ? popularApis
+        : popularApis.filter(api => api.category === selectedCategory);
+
+    setFilteredApis(filtered);
+    setIsLoading(false);
+  };
+
+  loadPopularApis();
+}, [selectedCategory]);
 
   return (
     <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-12 md:pb-20 relative selection:bg-mora-500/30">
