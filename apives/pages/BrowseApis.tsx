@@ -83,7 +83,7 @@ const BrowseApiCard: React.FC<{
     const [isLiked, setIsLiked] = useState(false);
     const [upvotes, setUpvotes] = useState(api.upvotes);
 
-    const rankIndex = TOP_3_IDS.indexOf(api.id);
+    const rankIndex = topIds.indexOf(api.id);
     const isTopTier = rankIndex !== -1;
     const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   
