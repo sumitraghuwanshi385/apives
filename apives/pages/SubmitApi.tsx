@@ -136,6 +136,34 @@ if (editId) {
 
     setIsSubmitting(true);
 try {
+      if (editingApiId) {
+  // 🟡 EDIT MODE
+  await apiService.updateApi(editingApiId, {
+    name: formData.name,
+    provider: formData.provider || userName,
+    description: formData.description,
+    category: formData.category,
+    pricing: {
+      type: formData.pricing,
+      details: formData.pricingDetails,
+      currency: 'INR',
+    },
+    latency: formData.latency,
+    stability: formData.stability,
+    accessType: formData.accessType,
+    imageUrl: galleryBase64[0] || '',
+    gallery: galleryBase64,
+    features: features.filter(f => f.trim() !== ''),
+    externalUrl: formData.website,
+    tags: formData.tags
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean),
+    endpoints: parsedEndpoints,
+    status: 'active',
+  });
+} else {
+  // 🟢 CREATE MODE
   await apiService.createApi({
     name: formData.name,
     provider: formData.provider || userName,
@@ -160,6 +188,7 @@ try {
     endpoints: parsedEndpoints,
     status: 'active',
   });
+}
 
   setIsSuccess(true);
 } catch (err) {
