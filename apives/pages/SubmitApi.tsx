@@ -106,7 +106,7 @@ export const SubmitApi: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!formData.name || !formData.description || !formData.website) {
