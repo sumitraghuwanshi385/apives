@@ -91,7 +91,7 @@ router.delete('/:id', verify, async (req, res) => {
   }
 });
 
-// ✅ GET ONE API BY ID (Public)
+// ✅ GET ONE API BY ID (Public) — FIXED
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -101,7 +101,15 @@ router.get('/:id', async (req, res) => {
     }
 
     const api = await ApiListing.findById(id);
-    if (!api) return res.status(404).json({ message: 'API not found' });
+
+    if (!api) {
+      return res.status(404).json({ message: 'API not found' });
+    }
+
+    // 🔥 MAIN FIX — paused API ko block karo
+    if (api.status !== 'active') {
+      return res.status(403).json({ message: 'API is paused' });
+    }
 
     return res.json(api);
   } catch (err) {
