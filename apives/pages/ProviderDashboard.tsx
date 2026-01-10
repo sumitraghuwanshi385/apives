@@ -231,7 +231,7 @@ export const ProviderDashboard: React.FC = () => {
     });
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
       if (!editingNode) return;
       
       let finalEndpoints = [];
@@ -256,9 +256,14 @@ export const ProviderDashboard: React.FC = () => {
           endpoints: finalEndpoints, 
           tags, 
           features,
-          imageUrl: editingNode.gallery[0] || editingNode.imageUrl 
+          imageUrl: editingNode.gallery[0] || editingNode.imageUrl
       };
       delete finalUpdate.tagsString;
+
+await apiService.updateApi(
+  editingNode._id || editingNode.id,
+  finalUpdate
+);
 
       const localApis = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
       const updatedLocal = localApis.map((a: any) => a.id === editingNode.id ? finalUpdate : a);
