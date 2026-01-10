@@ -61,21 +61,61 @@ const [editingApiId, setEditingApiId] = useState<string | null>(null);
   const methodOptions = ['GET', 'POST', 'PUT', 'DELETE'];
 
   useEffect(() => {
-    const userStr = localStorage.getItem('mora_user');
-    if (!userStr) {
-        navigate(`/access?returnUrl=${encodeURIComponent('/submit')}`);
-    } else {
-        const user = JSON.parse(userStr);
-        setUserName(user.name);
-        setFormData(prev => ({ ...prev, provider: user.name }));
-        setIsAuthenticated(true);
+  const userStr = localStorage.getItem('mora_user');
 
-const editId = localStorage.getItem('mora_edit_api_id');
-if (editId) {
-  setEditingApiId(editId);
-}
-    }
-  }, [navigate]);
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent('/submit')}`);
+    return;
+  }
+
+  const user = JSON.parse(userStr);
+  setUserName(user.name);
+  setFormData(prev => ({ ...prev, provider: user.name }));
+  setIsAuthenticated(true);
+
+  // 👇👇👇 EDIT MODE START
+  const editId = localStorage.getItem('mora_edit_api_id');
+
+  if (editId) {
+    setEditingApiId(editId);
+
+    apiService.getApiById(editId).then((api) => {
+      // 🔹 FORM DATA
+      setFormData({
+        name: api.name || '',
+        provider: api.provider || user.name,
+        description: api.description || '',
+        category: api.category || 'AI',
+        pricing: api.pricing?.type || 'Free',
+        pricingDetails: api.pricing?.details || '',
+        website: api.externalUrl || '',
+        tags: (api.tags || []).join(', '),
+        latency: api.latency || 'Low',
+        stability: api.stability || 'Stable',
+        accessType: api.accessType || 'Public',
+      });
+
+      // 🔹 FEATURES
+      setFeatures(api.features?.length ? api.features : ['']);
+
+      // 🔹 ENDPOINTS
+      setEndpoints(
+        (api.endpoints || []).map((ep: any) => ({
+          method: ep.method,
+          path: ep.path,
+          description: ep.description,
+          bodyJson: JSON.stringify(ep.body || {}, null, 2),
+          responseJson: JSON.stringify(ep.responseExample || {}, null, 2),
+        }))
+      );
+
+      // 🔹 GALLERY
+      setGalleryBase64(api.gallery || []);
+    });
+  }
+  // 👆👆👆 EDIT MODE END
+
+}, [navigate]);
 
   const addEndpoint = () => {
     setEndpoints([...endpoints, { method: 'GET', path: '', description: '', bodyJson: '{}', responseJson: '{"status": "ok"}' }]);
