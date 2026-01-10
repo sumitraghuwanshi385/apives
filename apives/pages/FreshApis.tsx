@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MOCK_APIS, getAllApis } from '../services/mockData';
+import { apiService } from '../services/apiClient';
 import { BackButton } from '../components/BackButton';
 import { 
   Zap, Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database, 
@@ -198,25 +198,39 @@ export const FreshApis: React.FC = () => {
   const [topIds, setTopIds] = useState<string[]>([]);
 
   useEffect(() => {
+  const loadFreshApis = async () => {
     setIsLoading(true);
-    const handleFilter = () => {
-      const allApis = getAllApis();
-      setTopIds([...allApis].sort((a,b) => b.upvotes - a.upvotes).slice(0, 3).map(a => a.id));
-      const freshApis = allApis.filter(api => {
-        const date = new Date(api.publishedAt);
-        const fifteenDaysAgo = new Date();
-        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-        return date > fifteenDaysAgo;
-      });
 
-      let filtered = freshApis.filter(api => 
-        (selectedCategory === 'All' || api.category === selectedCategory)
-      );
-      setFilteredApis(filtered);
-      setIsLoading(false);
-    };
-    handleFilter();
-  }, [selectedCategory]);
+    const allApis = await apiService.getAllApis();
+
+    // 🔥 top 3 ids (ranking ke liye)
+    setTopIds(
+      [...allApis]
+        .sort((a, b) => b.upvotes - a.upvotes)
+        .slice(0, 3)
+        .map(a => a.id)
+    );
+
+    // 🆕 sirf last 15 days wali APIs
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    const freshApis = allApis.filter(api => {
+      return new Date(api.createdAt || api.publishedAt) > fifteenDaysAgo;
+    });
+
+    // 🎯 category filter
+    const filtered =
+      selectedCategory === 'All'
+        ? freshApis
+        : freshApis.filter(api => api.category === selectedCategory);
+
+    setFilteredApis(filtered);
+    setIsLoading(false);
+  };
+
+  loadFreshApis();
+}, [selectedCategory]);
 
   return (
     <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-12 md:pb-20 relative selection:bg-mora-500/30">
