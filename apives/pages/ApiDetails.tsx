@@ -185,7 +185,6 @@ if (!api) {
                         </div>
                     </div>
                 </div>
-            )}
         </div>
       </div>
       <div className="bg-dark-950 border-b border-white/5"><div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1"><button onClick={() => setActiveTab('overview')} className={`relative px-4 py-3 md:px-8 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] ${activeTab === 'overview' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>Overview{activeTab === 'overview' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-mora-500"></span>}</button>{hasEndpoints && <button onClick={() => setActiveTab('playground')} className={`relative px-4 py-3 md:px-8 md:py-4 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] ${activeTab === 'playground' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>Playground{activeTab === 'playground' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-mora-500"></span>}</button>}</div></div>
