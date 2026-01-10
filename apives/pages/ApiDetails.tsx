@@ -52,10 +52,21 @@ console.log('DETAILS PAGE ID 👉', id);
         publishedAt: data.createdAt,
       });
 
-      setUpvotes(data.upvotes || 0);
+      const likedApis = JSON.parse(
+  localStorage.getItem('mora_liked_apis') || '[]'
+);
 
-      const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-      if (likedApis.includes(id)) setIsLiked(true);
+const baseUpvotes = data.upvotes || 0;
+
+const finalUpvotes = likedApis.includes(id)
+  ? baseUpvotes + 1
+  : baseUpvotes;
+
+setUpvotes(finalUpvotes);
+
+if (likedApis.includes(id)) {
+  setIsLiked(true);
+}
 
       const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
       if (savedApis.includes(id)) setIsSaved(true);
