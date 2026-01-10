@@ -106,11 +106,6 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'API not found' });
     }
 
-    // 🔥 MAIN FIX — paused API ko block karo
-    if (api.status !== 'active') {
-      return res.status(403).json({ message: 'API is paused' });
-    }
-
     return res.json(api);
   } catch (err) {
     return res.status(500).json({ message: err.message });
