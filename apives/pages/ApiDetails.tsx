@@ -22,6 +22,9 @@ const syntaxHighlight = (json: string) => {
 export const ApiDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+console.log('DETAILS PAGE ID 👉', id);
+
   const [api, setApi] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'playground'>('overview');
