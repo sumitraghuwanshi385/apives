@@ -83,6 +83,12 @@ getApiById: async (id: string) => {
   return res.data;
 },
 
+// ✏️ UPDATE API (EDIT)
+  updateApi: async (id: string, apiData: any) => {
+    const res = await axiosInstance.put(`/apis/${id}`, apiData);
+    return res.data;
+  },
+
   // ✅ ✅ ✅ THIS WAS MISSING / BROKEN
   deleteApi: async (id: string) => {
     const res = await axiosInstance.delete(`/apis/${id}`);
