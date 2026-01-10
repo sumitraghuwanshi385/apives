@@ -18,13 +18,13 @@ const isNew = (dateString: string) => {
   const publishedDate = new Date(dateString).getTime();
   if (Number.isNaN(publishedDate)) return false;
 
-const shuffleArray = <T,>(arr: T[]): T[] => {
-  return [...arr].sort(() => Math.random() - 0.5);
-};
-
   const now = Date.now();
   const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
   return (now - publishedDate) < fifteenDaysInMs;
+};
+
+const shuffleArray = <T,>(arr: T[]): T[] => {
+  return [...arr].sort(() => Math.random() - 0.5);
 };
 
 const RANK_BADGE_STYLES = [
