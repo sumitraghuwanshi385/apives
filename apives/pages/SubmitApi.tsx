@@ -129,6 +129,39 @@ export const SubmitApi: React.FC = () => {
     }
 
     setIsSubmitting(true);
+try {
+  await apiService.createApi({
+    name: formData.name,
+    provider: formData.provider || userName,
+    description: formData.description,
+    category: formData.category,
+    pricing: {
+      type: formData.pricing,
+      details: formData.pricingDetails,
+      currency: 'INR',
+    },
+    latency: formData.latency,
+    stability: formData.stability,
+    accessType: formData.accessType,
+    imageUrl: galleryBase64[0] || '',
+    gallery: galleryBase64,
+    features: features.filter(f => f.trim() !== ''),
+    externalUrl: formData.website,
+    tags: formData.tags
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean),
+    endpoints: parsedEndpoints,
+    status: 'active',
+  });
+
+  setIsSuccess(true);
+} catch (err) {
+  console.error('Create API failed:', err);
+  setError('Failed to submit API');
+} finally {
+  setIsSubmitting(false);
+}
     
   };
 
