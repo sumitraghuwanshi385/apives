@@ -69,6 +69,11 @@ const [editingApiId, setEditingApiId] = useState<string | null>(null);
         setUserName(user.name);
         setFormData(prev => ({ ...prev, provider: user.name }));
         setIsAuthenticated(true);
+
+const editId = localStorage.getItem('mora_edit_api_id');
+if (editId) {
+  setEditingApiId(editId);
+}
     }
   }, [navigate]);
 
