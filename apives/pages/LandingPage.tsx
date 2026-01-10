@@ -195,19 +195,19 @@ export const LandingPage: React.FC = () => {
       setUserName(JSON.parse(user).name || 'Builder');
     }
 
-    (async () => {
+     (async () => {
   try {
     const dbRaw = await apiService.getAllApis();
 
-    const db: ApiListing[] = (dbRaw || [])
-      .map((a: any) => ({
-        ...a,
-        id: a._id,              // 🔥 MOST IMPORTANT
-        publishedAt: a.createdAt,
-        tags: Array.isArray(a.tags) ? a.tags : [],
-        features: Array.isArray(a.features) ? a.features : [],
-      }))
-      .filter((api) => api.status === 'active');
+    const db: ApiListing[] = (dbRaw || []).map((a: any) => ({
+      ...a,
+      id: a._id,                 // ✅ VERY IMPORTANT
+      publishedAt: a.createdAt,
+      tags: Array.isArray(a.tags) ? a.tags : [],
+      features: Array.isArray(a.features) ? a.features : [],
+    }));
+
+    console.log('Landing APIs:', db); // 👈 debug
 
     setAllApis(db);
 
