@@ -18,6 +18,10 @@ const isNew = (dateString: string) => {
   const publishedDate = new Date(dateString).getTime();
   if (Number.isNaN(publishedDate)) return false;
 
+const shuffleArray = <T,>(arr: T[]): T[] => {
+  return [...arr].sort(() => Math.random() - 0.5);
+};
+
   const now = Date.now();
   const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
   return (now - publishedDate) < fifteenDaysInMs;
@@ -231,7 +235,7 @@ const db: ApiListing[] = list.map((a: any) => ({
   }, []);
 
   const itemsToShow = isMobile ? 2 : 6;
-  const featuredApis = allApis.slice(0, itemsToShow);
+const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
   const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
   const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
 
