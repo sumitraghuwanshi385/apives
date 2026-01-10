@@ -15,9 +15,6 @@ import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
 
-const TOP_3_SORTED = [...getAllApis()].sort((a, b) => b.upvotes - a.upvotes).slice(0, 3);
-const TOP_3_IDS = TOP_3_SORTED.map(api => api.id);
-
 const RANK_BADGE_STYLES = [
   { label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
   { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
@@ -77,7 +74,10 @@ const CATEGORIES = [
   { name: 'Enterprise', icon: Building }
 ];
 
-const BrowseApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
+const BrowseApiCard: React.FC<{
+  api: ApiListing;
+  topIds: string[];
+}> = ({ api, topIds }) => {
     const navigate = useNavigate();
     const [saved, setSaved] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
@@ -200,6 +200,7 @@ const BrowseApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
 export const BrowseApis: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+const [topIds, setTopIds] = useState<string[]>([]);
   const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
   const [visibleCount, setVisibleCount] = useState(12);
   const [isLoading, setIsLoading] = useState(true);
@@ -310,8 +311,12 @@ export const BrowseApis: React.FC = () => {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
               {filteredApis.slice(0, visibleCount).map((api) => (
-                <BrowseApiCard key={api.id} api={api} />
-              ))}
+                <BrowseApiCard
+    key={api.id}
+    api={api}
+    topIds={topIds}
+  />
+))}
             </div>
             {visibleCount < filteredApis.length && (
                 <div className="flex justify-center">
