@@ -129,39 +129,7 @@ export const SubmitApi: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const newApi = {
-        id: `local-${Date.now()}`,
-        name: formData.name,
-        provider: formData.provider || userName,
-        description: formData.description,
-        category: formData.category,
-        pricing: { 
-          type: formData.pricing, 
-          details: formData.pricingDetails,
-          currency: 'INR'
-        },
-        upvotes: 0,
-        saves: 0,
-        latency: formData.latency,
-        stability: formData.stability,
-        accessType: formData.accessType,
-        uptime: 100,
-        imageUrl: galleryBase64[0] || 'https://picsum.photos/400/300?random=1',
-        gallery: galleryBase64,
-        features: features.filter(f => f.trim() !== ''),
-        externalUrl: formData.website,
-        publishedAt: new Date().toISOString(),
-        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t !== ''),
-        endpoints: parsedEndpoints,
-        status: 'active'
-      };
-
-      const existing = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
-      localStorage.setItem('mora_local_apis', JSON.stringify([...existing, newApi]));
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 1500);
+    
   };
 
   if (!isAuthenticated) return null;
