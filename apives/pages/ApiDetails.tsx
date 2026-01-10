@@ -58,12 +58,16 @@ export const ApiDetails: React.FC = () => {
       if (savedApis.includes(id)) setIsSaved(true);
 
        } catch (err: any) {
-      console.error('ApiDetails fetch error:', err);
+  console.error('ApiDetails fetch error:', err);
 
-      // ✅ sirf real 404 pe hi null
-      if (err?.response?.status === 404) {
-        setApi(null);
-      }
+  // 👇 400, 403, 404 sab pe not found dikhao
+  if (
+    err?.response?.status === 400 ||
+    err?.response?.status === 403 ||
+    err?.response?.status === 404
+  ) {
+    setApi(null);
+  }
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +128,7 @@ const rank =
   upvotes >= 5   ? RANK_STYLES[2] :
   null;
 
-// ⏳ FULL PAGE LOADING
+// ⏳ LOADING
 if (isLoading) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
@@ -135,7 +139,7 @@ if (isLoading) {
   );
 }
 
-// ❌ FULL PAGE NOT FOUND
+// ❌ NOT FOUND
 if (!api) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
