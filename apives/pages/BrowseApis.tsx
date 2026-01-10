@@ -83,7 +83,7 @@ const BrowseApiCard: React.FC<{
     const [isLiked, setIsLiked] = useState(false);
     const [upvotes, setUpvotes] = useState(api.upvotes);
 
-    const apiId = api.id || api._id;
+    const apiId = api._id;
 const rankIndex = topIds.indexOf(apiId);
 const isTopTier = rankIndex >= 0 && rankIndex < 3;
 const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
@@ -218,7 +218,7 @@ const [topIds, setTopIds] = useState<string[]>([]);
       [...allApis]
         .sort((a, b) => b.upvotes - a.upvotes)
         .slice(0, 3)
-        .map(a => a.id)
+        .map(a => a._id)
     );
 
     const lowerTerm = searchTerm.toLowerCase();
