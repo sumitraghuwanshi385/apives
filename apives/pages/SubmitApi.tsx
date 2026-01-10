@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { BackButton } from '../components/BackButton';
 import { CustomSelect } from '../components/CustomSelect';
 import { Plus, X, Check, AlertCircle, RefreshCw, LayoutGrid, DollarSign, Activity, ShieldAlert, Key, Image as ImageIcon, ListPlus, Hash, Globe, Terminal } from 'lucide-react';
-// IMPORT ADDED
-import { apiService } from '../services/apiClient';
 
 interface EndpointInput {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -24,7 +22,7 @@ export const SubmitApi: React.FC = () => {
     name: '',
     provider: '',
     description: '',
-    category: 'Identity',
+    category: 'AI',
     pricing: 'Free',
     pricingDetails: '',
     website: '',
@@ -42,7 +40,18 @@ export const SubmitApi: React.FC = () => {
   const [error, setError] = useState('');
 
   const MAX_GALLERY_IMAGES = 4;
-  const categoryOptions = ['Identity', 'Payments', 'Crypto', 'AI', 'Data', 'Messaging', 'Infrastructure', 'eCommerce', 'Health', 'Social', 'Travel'];
+  
+  // Full category list from filters
+  const categoryOptions = [
+    'AI', 'Payments', 'Crypto', 'Identity', 'Data', 'Infrastructure', 'eCommerce', 
+    'Messaging', 'Finance', 'Logistics', 'Security', 'Analytics', 'Audio', 'Video', 
+    'Mobile', 'Maps', 'Weather', 'Real Estate', 'Food', 'Sports', 'News', 'Jobs', 
+    'Translation', 'Social', 'Health', 'Legal', 'DevOps', 'Search', 'Tools', 
+    'Government', 'Utilities', 'Stocks', 'Banking', 'Insurance', 'Agriculture', 
+    'Science', 'Education', 'Travel', 'Gaming', 'Fitness', 'IoT', 'ERP', 'CRM', 
+    'HR', 'Marketing', 'Storage', 'Web3', 'Automation', 'Enterprise'
+  ];
+
   const pricingOptions = ['Free', 'Freemium', 'Paid'];
   const latencyOptions = ['Low', 'Medium', 'High'];
   const stabilityOptions = ['Stable', 'Beta', 'Experimental'];
@@ -96,8 +105,7 @@ export const SubmitApi: React.FC = () => {
     });
   };
 
-  // --- UPDATED SUBMIT FUNCTION (CONNECTS TO BACKEND) ---
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!formData.name || !formData.description || !formData.website) {
@@ -120,41 +128,39 @@ export const SubmitApi: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    setTimeout(() => {
+      const newApi = {
+        id: `local-${Date.now()}`,
+        name: formData.name,
+        provider: formData.provider || userName,
+        description: formData.description,
+        category: formData.category,
+        pricing: { 
+          type: formData.pricing, 
+          details: formData.pricingDetails,
+          currency: 'INR'
+        },
+        upvotes: 0,
+        saves: 0,
+        latency: formData.latency,
+        stability: formData.stability,
+        accessType: formData.accessType,
+        uptime: 100,
+        imageUrl: galleryBase64[0] || 'https://picsum.photos/400/300?random=1',
+        gallery: galleryBase64,
+        features: features.filter(f => f.trim() !== ''),
+        externalUrl: formData.website,
+        publishedAt: new Date().toISOString(),
+        tags: formData.tags.split(',').map(t => t.trim()).filter(t => t !== ''),
+        endpoints: parsedEndpoints,
+        status: 'active'
+      };
 
-    // Prepare Data for Backend
-    const apiPayload = {
-      name: formData.name,
-      provider: formData.provider || userName,
-      description: formData.description,
-      category: formData.category,
-      pricing: { 
-        type: formData.pricing, 
-        details: formData.pricingDetails,
-        currency: 'INR'
-      },
-      latency: formData.latency,
-      stability: formData.stability,
-      accessType: formData.accessType,
-      imageUrl: galleryBase64[0] || 'https://picsum.photos/400/300?random=1', // Use first image or default
-      gallery: galleryBase64,
-      features: features.filter(f => f.trim() !== ''),
-      externalUrl: formData.website,
-      tags: formData.tags.split(',').map(t => t.trim()).filter(t => t !== ''),
-      endpoints: parsedEndpoints,
-      // Backend will handle 'providerId', 'createdAt', etc.
-    };
-
-    try {
-      // CALL BACKEND API
-      await apiService.createApi(apiPayload);
-      
-      setIsSuccess(true);
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.message || "Server Error: Failed to publish API.");
-    } finally {
+      const existing = JSON.parse(localStorage.getItem('mora_local_apis') || '[]');
+      localStorage.setItem('mora_local_apis', JSON.stringify([...existing, newApi]));
       setIsSubmitting(false);
-    }
+      setIsSuccess(true);
+    }, 1500);
   };
 
   if (!isAuthenticated) return null;
@@ -166,7 +172,7 @@ export const SubmitApi: React.FC = () => {
             <Check size={32} className="text-mora-500" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-2">Protocol Online</h2>
-        <p className="text-slate-400 mb-8">Your API has been successfully commissioned to the grid.</p>
+        <p className="text-slate-400 mb-8">Your API has been successfully commissioned.</p>
         <button onClick={() => navigate('/provider')} className="w-full py-3 bg-mora-600 text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-mora-500">Go to Dashboard</button>
       </div>
     </div>
@@ -174,109 +180,109 @@ export const SubmitApi: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black pt-24 pb-20 px-4 md:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-8 space-y-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-6 space-y-4">
             <BackButton />
             <div className="text-left">
-                <h1 className="text-3xl font-display font-bold text-white">Publish Node</h1>
-                <p className="text-sm text-slate-500">Register new endpoint protocols to the grid</p>
+                <h1 className="text-2xl md:text-3xl font-display font-bold text-white tracking-tight">Publish Node</h1>
+                <p className="text-xs md:text-sm text-slate-500">Register new endpoint protocols to the grid</p>
             </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8 bg-dark-900/40 border border-white/5 p-6 md:p-10 rounded-[2rem] backdrop-blur-sm">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-dark-900/40 border border-white/5 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] backdrop-blur-sm">
           
           {/* Base Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">API Name *</label>
-                <input required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-mora-500 outline-none" placeholder="e.g. Identity Guard" />
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">API Name *</label>
+                <input required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. Identity Guard" />
             </div>
             <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Provider Name</label>
-                <input value={formData.provider} onChange={(e) => setFormData({...formData, provider: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-mora-500 outline-none" placeholder={userName} />
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Provider Name</label>
+                <input value={formData.provider} onChange={(e) => setFormData({...formData, provider: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder={userName} />
             </div>
           </div>
 
           <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Description *</label>
-              <textarea required rows={3} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-mora-500 outline-none resize-none" placeholder="Explain the value proposition of this node..." />
+              <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Description *</label>
+              <textarea required rows={2} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none resize-none" placeholder="Explain the value proposition..." />
           </div>
 
           {/* Visual Proofs (Gallery) */}
-          <div className="space-y-3 pt-4 border-t border-white/5">
+          <div className="space-y-3 pt-2 border-t border-white/5">
               <div className="flex items-center justify-between ml-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ImageIcon size={14} className="text-mora-500" /> Visual Proofs (Overview Gallery)</label>
-                  <span className="text-[9px] text-slate-600">{galleryBase64.length}/{MAX_GALLERY_IMAGES}</span>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ImageIcon size={12} className="text-mora-500" /> Visual Proofs</label>
+                  <span className="text-[8px] text-slate-600">{galleryBase64.length}/{MAX_GALLERY_IMAGES}</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {galleryBase64.map((img, i) => (
-                      <div key={i} className="aspect-video bg-black rounded-xl border border-white/10 relative overflow-hidden group">
-                          <img src={img} className="w-full h-full object-cover" alt="preview" />
-                          <button type="button" onClick={() => setGalleryBase64(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 p-1 bg-black/80 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"><X size={12}/></button>
+                      <div key={i} className="aspect-video bg-black rounded-lg border border-white/10 relative overflow-hidden group">
+                          <img src={img} className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => setGalleryBase64(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 p-0.5 bg-black/80 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"><X size={10}/></button>
                       </div>
                   ))}
                   {galleryBase64.length < MAX_GALLERY_IMAGES && (
-                      <button type="button" onClick={() => fileInputRef.current?.click()} className="aspect-video bg-white/5 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-slate-600 hover:text-white hover:border-mora-500/50 transition-all">
-                          <Plus size={20}/>
-                          <span className="text-[8px] font-black uppercase tracking-widest mt-1">Upload</span>
+                      <button type="button" onClick={() => fileInputRef.current?.click()} className="aspect-video bg-white/5 border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center text-slate-600 hover:text-white hover:border-mora-500/50 transition-all">
+                          <Plus size={16}/>
+                          <span className="text-[7px] font-black uppercase tracking-widest mt-1">Upload</span>
                       </button>
                   )}
               </div>
               <input type="file" multiple ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Category</label>
-                <CustomSelect value={formData.category} options={categoryOptions} onChange={(v) => setFormData({...formData, category: v})} icon={LayoutGrid} />
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Category</label>
+                <CustomSelect value={formData.category} options={categoryOptions} onChange={(v) => setFormData({...formData, category: v})} icon={LayoutGrid} triggerClassName="!py-2 !text-xs" />
              </div>
              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Website URL *</label>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Website URL *</label>
                 <div className="relative">
-                    <input required value={formData.website} onChange={(e) => setFormData({...formData, website: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:border-mora-500 outline-none" placeholder="https://docs.yoursite.com" />
-                    <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600" size={16} />
+                    <input required value={formData.website} onChange={(e) => setFormData({...formData, website: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none font-mono" placeholder="https://..." />
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" size={14} />
                 </div>
              </div>
           </div>
 
           {/* Configuration Matrix */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/5">
-             <div className="space-y-1.5">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1">Pricing</label>
-                <CustomSelect value={formData.pricing} options={pricingOptions} onChange={(v) => setFormData({...formData, pricing: v})} icon={DollarSign} triggerClassName="!py-2.5 !text-xs" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 border-t border-white/5">
+             <div className="space-y-1">
+                <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Pricing</label>
+                <CustomSelect value={formData.pricing} options={pricingOptions} onChange={(v) => setFormData({...formData, pricing: v})} icon={DollarSign} triggerClassName="!py-2 !text-[10px]" />
              </div>
-             <div className="space-y-1.5">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1">Latency</label>
-                <CustomSelect value={formData.latency} options={latencyOptions} onChange={(v) => setFormData({...formData, latency: v})} icon={Activity} triggerClassName="!py-2.5 !text-xs" />
+             <div className="space-y-1">
+                <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Latency</label>
+                <CustomSelect value={formData.latency} options={latencyOptions} onChange={(v) => setFormData({...formData, latency: v})} icon={Activity} triggerClassName="!py-2 !text-[10px]" />
              </div>
-             <div className="space-y-1.5">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1">Stability</label>
-                <CustomSelect value={formData.stability} options={stabilityOptions} onChange={(v) => setFormData({...formData, stability: v})} icon={ShieldAlert} triggerClassName="!py-2.5 !text-xs" />
+             <div className="space-y-1">
+                <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Stability</label>
+                <CustomSelect value={formData.stability} options={stabilityOptions} onChange={(v) => setFormData({...formData, stability: v})} icon={ShieldAlert} triggerClassName="!py-2 !text-[10px]" />
              </div>
-             <div className="space-y-1.5">
-                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-1">Access</label>
-                <CustomSelect value={formData.accessType} options={accessOptions} onChange={(v) => setFormData({...formData, accessType: v})} icon={Key} triggerClassName="!py-2.5 !text-xs" />
+             <div className="space-y-1">
+                <label className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">Access</label>
+                <CustomSelect value={formData.accessType} options={accessOptions} onChange={(v) => setFormData({...formData, accessType: v})} icon={Key} triggerClassName="!py-2 !text-[10px]" />
              </div>
           </div>
 
           {formData.pricing !== 'Free' && (
-            <div className="space-y-1.5 animate-fade-in">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pricing Details</label>
-                <input value={formData.pricingDetails} onChange={(e) => setFormData({...formData, pricingDetails: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-mora-500 outline-none" placeholder="e.g. ₹0.10 per call after 1k free requests" />
+            <div className="space-y-1 animate-fade-in">
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Pricing Details</label>
+                <input value={formData.pricingDetails} onChange={(e) => setFormData({...formData, pricingDetails: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. ₹0.10 per call" />
             </div>
           )}
 
           {/* Features Matrix */}
-          <div className="space-y-3">
+          <div className="space-y-2">
              <div className="flex items-center justify-between ml-1">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ListPlus size={14} className="text-mora-500" /> Feature Matrix</label>
-                <button type="button" onClick={addFeature} className="text-[10px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={12}/> Add Feature</button>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ListPlus size={12} className="text-mora-500" /> Features</label>
+                <button type="button" onClick={addFeature} className="text-[8px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={10}/> Add</button>
              </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {features.map((f, i) => (
                     <div key={i} className="flex gap-2">
-                        <input value={f} onChange={(e) => updateFeature(i, e.target.value)} className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-mora-500 outline-none" placeholder="e.g. 256-bit encryption" />
-                        <button type="button" onClick={() => removeFeature(i)} className="p-2 text-slate-600 hover:text-red-500 transition-colors"><X size={16}/></button>
+                        <input value={f} onChange={(e) => updateFeature(i, e.target.value)} className="flex-1 bg-black border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. 256-bit encryption" />
+                        <button type="button" onClick={() => removeFeature(i)} className="p-1.5 text-slate-600 hover:text-red-500 transition-colors"><X size={14}/></button>
                     </div>
                 ))}
              </div>
@@ -284,51 +290,45 @@ export const SubmitApi: React.FC = () => {
 
           {/* Tags */}
           <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2"><Hash size={14} className="text-mora-500" /> Search Tags</label>
-              <input value={formData.tags} onChange={(e) => setFormData({...formData, tags: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-mora-500 outline-none" placeholder="KYC, Identity, Verification (comma separated)" />
+              <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2"><Hash size={12} className="text-mora-500" /> Search Tags</label>
+              <input value={formData.tags} onChange={(e) => setFormData({...formData, tags: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. KYC, Identity (comma separated)" />
           </div>
 
           {/* Endpoints */}
-          <div className="space-y-4 pt-4 border-t border-white/5">
+          <div className="space-y-3 pt-2 border-t border-white/5">
              <div className="flex items-center justify-between ml-1">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><Terminal size={14} className="text-mora-500" /> Interface Nodes (Playground Ready)</label>
-                <button type="button" onClick={addEndpoint} className="text-[10px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={12}/> Add Node</button>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><Terminal size={12} className="text-mora-500" /> Interface Nodes</label>
+                <button type="button" onClick={addEndpoint} className="text-[8px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={10}/> Add Node</button>
              </div>
              
-             <div className="space-y-4">
-                {endpoints.length === 0 && <div className="p-8 border-2 border-dashed border-white/5 rounded-3xl text-center text-slate-600 text-xs uppercase tracking-widest font-mono">No endpoints registered. Add one to enable Playground.</div>}
+             <div className="space-y-3">
+                {endpoints.length === 0 && <div className="p-6 border border-white/5 border-dashed rounded-xl text-center text-slate-600 text-[10px] uppercase tracking-widest font-mono">No nodes registered.</div>}
                 {endpoints.map((ep, i) => (
-                    <div key={i} className="bg-black/50 border border-white/5 rounded-[1.5rem] p-5 space-y-4 animate-fade-in relative group">
-                        <button type="button" onClick={() => removeEndpoint(i)} className="absolute top-4 right-4 text-slate-600 hover:text-red-500 transition-colors"><X size={18} /></button>
+                    <div key={i} className="bg-black/50 border border-white/5 rounded-xl p-4 space-y-3 animate-fade-in relative group">
+                        <button type="button" onClick={() => removeEndpoint(i)} className="absolute top-3 right-3 text-slate-600 hover:text-red-500 transition-colors"><X size={14} /></button>
                         
-                        <div className="flex flex-col sm:flex-row gap-3">
-                            <div className="w-full sm:w-32">
-                                <CustomSelect value={ep.method} options={methodOptions} onChange={(v) => updateEndpoint(i, 'method', v)} triggerClassName="!py-2 !text-[10px] !font-black !uppercase" />
+                        <div className="flex gap-2">
+                            <div className="w-24">
+                                <CustomSelect value={ep.method} options={methodOptions} onChange={(v) => updateEndpoint(i, 'method', v)} triggerClassName="!py-1.5 !text-[9px] !font-black" />
                             </div>
-                            <input value={ep.path} onChange={(e) => updateEndpoint(i, 'path', e.target.value)} className="flex-1 bg-black border border-white/10 rounded-xl px-4 py-2 text-sm text-white font-mono focus:border-mora-500 outline-none" placeholder="/v1/endpoint" />
+                            <input value={ep.path} onChange={(e) => updateEndpoint(i, 'path', e.target.value)} className="flex-1 bg-black border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-mora-500 outline-none" placeholder="/v1/endpoint" />
                         </div>
 
-                        <input value={ep.description} onChange={(e) => updateEndpoint(i, 'description', e.target.value)} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2 text-xs text-slate-300 outline-none" placeholder="Endpoint description (e.g. Verify PAN details)" />
+                        <input value={ep.description} onChange={(e) => updateEndpoint(i, 'description', e.target.value)} className="w-full bg-black border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-slate-400 outline-none" placeholder="Endpoint objective..." />
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest ml-1">Mock Body (JSON)</span>
-                                <textarea value={ep.bodyJson} onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)} className="w-full bg-dark-950 border border-white/5 rounded-xl p-3 text-[10px] font-mono text-blue-300 h-24 outline-none focus:border-mora-500/30" spellCheck={false} placeholder='{"key": "value"}' />
-                            </div>
-                            <div className="space-y-1">
-                                <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest ml-1">Mock Response (JSON)</span>
-                                <textarea value={ep.responseJson} onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)} className="w-full bg-dark-950 border border-white/5 rounded-xl p-3 text-[10px] font-mono text-green-300 h-24 outline-none focus:border-mora-500/30" spellCheck={false} placeholder='{"status": "success"}' />
-                            </div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <textarea value={ep.bodyJson} onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)} className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-blue-300 h-16 outline-none" spellCheck={false} placeholder='Body JSON' />
+                            <textarea value={ep.responseJson} onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)} className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-green-300 h-16 outline-none" spellCheck={false} placeholder='Response JSON' />
                         </div>
                     </div>
                 ))}
              </div>
           </div>
 
-          {error && <div className="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs flex items-center gap-3 animate-pulse"><AlertCircle size={16}/> {error}</div>}
+          {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] flex items-center gap-2 animate-pulse"><AlertCircle size={14}/> {error}</div>}
 
-          <button type="submit" disabled={isSubmitting} className="w-full py-5 bg-mora-600 text-white font-black rounded-full uppercase text-sm tracking-widest hover:bg-mora-500 shadow-2xl shadow-mora-500/10 flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
-            {isSubmitting ? <RefreshCw size={20} className="animate-spin" /> : <>Register Protocol Node</>}
+          <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-mora-600 text-white font-black rounded-full uppercase text-xs tracking-widest hover:bg-mora-500 shadow-xl shadow-mora-500/10 flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+            {isSubmitting ? <RefreshCw size={16} className="animate-spin" /> : <>Commission Protocol Node</>}
           </button>
         </form>
       </div>
