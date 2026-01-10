@@ -218,7 +218,9 @@ export const LandingPage: React.FC = () => {
           if (api?.id) byId.set(api.id, api);
         });
 
-        const merged = Array.from(byId.values());
+        const merged = Array.from(byId.values()).filter(
+  (api) => !api.status || api.status === 'active'
+);
         setAllApis(merged);
 
         setTop3Ids(
