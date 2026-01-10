@@ -80,20 +80,20 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds 
     const [isLiked, setIsLiked] = useState(false);
     const [upvotes, setUpvotes] = useState(api.upvotes);
     
-    const apiId = api.id || api._id;
+    const apiId = api._id;
 const rankIndex = topIds.indexOf(apiId);
 const isTopTier = rankIndex >= 0 && rankIndex < 3;
 const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
     useEffect(() => {
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-        const currentlyLiked = likedApis.includes(api.id);
+        const currentlyLiked = likedApis.includes(api._id);
         setIsLiked(currentlyLiked);
         setUpvotes(currentlyLiked ? api.upvotes + 1 : api.upvotes);
 
         const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-        if (savedApis.includes(api.id)) setSaved(true);
-    }, [api.id, api.upvotes]);
+        if (savedApis.includes(api._id)) setSaved(true);
+    }, [api._id, api.upvotes]);
 
     const handleSave = (e: React.MouseEvent) => {
         e.preventDefault(); e.stopPropagation();
@@ -103,10 +103,10 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
         if (saved) {
             setSaved(false);
-            localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api.id)));
+            localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api._id)));
         } else {
             setSaved(true);
-            localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api.id]));
+            localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api._id]));
         }
     };
 
@@ -118,15 +118,15 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
         if (isLiked) {
             setIsLiked(false); setUpvotes(v => v - 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api.id)));
+            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api._id)));
         } else {
             setIsLiked(true); setUpvotes(v => v + 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api.id]));
+            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api._id]));
         }
     };
 
     return (
-        <Link to={`/api/${api.id}`} className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
+        <Link to={`/api/${api._id}`} className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500 to-transparent opacity-70"></div>
             <div className="flex justify-between items-center mb-2 md:mb-2.5 relative z-20">
                 <div className="flex items-center gap-1.5 md:gap-2">
@@ -193,7 +193,7 @@ export const PopularApis: React.FC = () => {
     const popularApis = [...(await apiService.getAllApis())]
       .sort((a, b) => b.upvotes - a.upvotes);
 
-    setTopIds(popularApis.slice(0, 3).map(a => a.id));
+    setTopIds(popularApis.slice(0, 3).map(a => a._id));
 
     const filtered =
       selectedCategory === 'All'
