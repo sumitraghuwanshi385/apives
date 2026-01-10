@@ -57,27 +57,20 @@ export const ApiDetails: React.FC = () => {
       const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
       if (savedApis.includes(id)) setIsSaved(true);
 
-    } catch (err: any) {
-  console.error('ApiDetails fetch error:', err);
+       } catch (err: any) {
+      console.error('ApiDetails fetch error:', err);
 
-  // ❗ sirf tab api null karo jab backend clearly bole 404
-  if (err?.response?.status === 404) {
-    setApi(null);
-  }
-
-  // ❌ kisi aur error pe api ko mat chhedo
-}
-finally {
-  setIsLoading(false);
-}
-      finally {
+      // ✅ sirf real 404 pe hi null
+      if (err?.response?.status === 404) {
+        setApi(null);
+      }
+    } finally {
       setIsLoading(false);
     }
   };
 
   loadApi();
 }, [id]);
-
 
   const handleLike = () => {
     const userStr = localStorage.getItem('mora_user');
