@@ -166,7 +166,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                 <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-2 leading-relaxed font-light">{api.description}</p>
                 
                 <div className="flex flex-wrap gap-1.5 mb-6 mt-auto">
-                    {api.tags.slice(0, 2).map(tag => (
+                    {api.tags.slice(0, 5).map(tag => (
                         <span key={tag} className="text-[9px] md:text-[10px] text-slate-500 bg-white/5 border border-white/10 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full flex items-center">
                             <Hash size={8} className="mr-0.5 text-mora-500/50" /> {tag}
                         </span>
