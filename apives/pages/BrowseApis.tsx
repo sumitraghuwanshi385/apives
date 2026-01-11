@@ -99,7 +99,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
         const currentlyLiked = likedApis.includes(api._id);
         setIsLiked(currentlyLiked);
-        setUpvotes(currentlyLiked ? api.upvotes + 1 : api.upvotes);
+        setUpvotes(api.upvotes || 0);
     }, [api._id, api.upvotes]);
 
     const isNew = (dateString: string) => {
@@ -134,20 +134,19 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   }
 
   try {
-    if (isLiked) {
-      await apiService.unlikeApi(api._id);
-      setIsLiked(false);
-      setUpvotes(prev => Math.max(prev - 1, 0));
-    } else {
-      await apiService.likeApi(api._id);
-      setIsLiked(true);
-      setUpvotes(prev => prev + 1);
-    }
-  } catch (err) {
-    console.error('Like failed', err);
-  }
-};
+  let res;
 
+  if (isLiked) {
+    res = await apiService.unlikeApi(api._id);
+  } else {
+    res = await apiService.likeApi(api._id);
+  }
+
+  setIsLiked(!isLiked);
+  setUpvotes(res.upvotes); // ✅ DB se aaya hua count
+} catch (err) {
+  console.error('Like failed', err);
+}
     return (
         <Link 
             to={`/api/${api._id}`} 
