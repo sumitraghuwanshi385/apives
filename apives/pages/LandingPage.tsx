@@ -37,7 +37,8 @@ const ApiCard: React.FC<{
   api: ApiListing;
   topIds: string[];
   onLikeChange?: (id: string, delta: number) => void;
-}> = ({ api, topIds, onLikeChange }) => {
+refetchLandingApis?: () => Promise<void>;
+}> = ({ api, topIds, onLikeChange, refetchLandingApis }) => {
   const navigate = useNavigate();
   const [saved, setSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -58,15 +59,9 @@ const ApiCard: React.FC<{
     localStorage.getItem('mora_saved_apis') || '[]'
   );
   setSaved(savedApis.includes(api.id));
-}, [api.id, api.upvotes]);
+}, [api.id]);
 
-const likedApis = JSON.parse(
-  localStorage.getItem('mora_liked_apis') || '[]'
-);
-
-const displayUpvotes = likedApis.includes(api.id)
-  ? (api.upvotes || 0) + 1
-  : (api.upvotes || 0);
+const displayUpvotes = api.upvotes || 0;
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -103,9 +98,9 @@ const displayUpvotes = likedApis.includes(api.id)
   await apiService.unlikeApi(api.id);
 
   setIsLiked(false);
-  onLikeChange?.(api.id, -1);
 
-  localStorage.setItem(
+await refetchLandingApis();
+ localStorage.setItem(
     'mora_liked_apis',
     JSON.stringify(likedApis.filter((id: string) => id !== api.id))
   );
@@ -113,8 +108,8 @@ const displayUpvotes = likedApis.includes(api.id)
   await apiService.likeApi(api.id);
 
   setIsLiked(true);
-  onLikeChange?.(api.id, +1);
 
+await refetchLandingApis();
   localStorage.setItem(
     'mora_liked_apis',
     JSON.stringify([...likedApis, api.id])
@@ -281,6 +276,32 @@ const updateLandingUpvotes = (apiId: string, delta: number) => {
     )
   );
 };
+const refetchLandingApis = async () => {
+  try {
+    const res = await apiService.getAllApis();
+
+    const list = Array.isArray(res) ? res : res?.data || [];
+
+    const db: ApiListing[] = list.map((a: any) => ({
+      ...a,
+      id: a._id,
+      publishedAt: a.createdAt,
+      tags: Array.isArray(a.tags) ? a.tags : [],
+      features: Array.isArray(a.features) ? a.features : [],
+    }));
+
+    setAllApis(db);
+
+    setTop3Ids(
+      [...db]
+        .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+        .slice(0, 3)
+        .map(a => a.id)
+    );
+  } catch (e) {
+    console.error('Refetch failed', e);
+  }
+};
 
   const itemsToShow = isMobile ? 2 : 6;
 const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
@@ -326,6 +347,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {featuredApis.map((api, idx) => (
               <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes} 
+refetchLandingApis={refetchLandingApis}
 />
             ))}
           </div>
@@ -348,6 +370,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {freshApis.map((api, idx) => (
                 <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
+refetchLandingApis={refetchLandingApis}
  />
               ))}
             </div>
@@ -370,6 +393,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {communityLoved.map((api, idx) => (
               <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
+refetchLandingApis={refetchLandingApis}
 />
             ))}
           </div>
