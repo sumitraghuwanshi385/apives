@@ -44,10 +44,10 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
   const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
   useEffect(() => {
+    setUpvotes(api.upvotes || 0);
+
     const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-    const currentlyLiked = likedApis.includes(api.id);
-    setIsLiked(currentlyLiked);
-    setUpvotes(currentlyLiked ? (api.upvotes || 0) + 1 : (api.upvotes || 0));
+    setIsLiked(likedApis.includes(api.id));
 
     const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
     if (savedApis.includes(api.id)) setSaved(true);
@@ -71,25 +71,24 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
     }
   };
 
-  const handleLike = (e: React.MouseEvent) => {
-    e.preventDefault(); e.stopPropagation();
-    const userStr = localStorage.getItem('mora_user');
-    if (!userStr) {
-      navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
-      return;
-    }
+  const handleLike = async (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
 
-    const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-    if (isLiked) {
-      setIsLiked(false);
-      setUpvotes(prev => prev - 1);
-      localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api.id)));
-    } else {
-      setIsLiked(true);
-      setUpvotes(prev => prev + 1);
-      localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api.id]));
-    }
-  };
+  const userStr = localStorage.getItem('mora_user');
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+    return;
+  }
+
+  try {
+    const updatedApi = await apiService.likeApi(api.id);
+    setUpvotes(updatedApi.upvotes);
+    setIsLiked(true);
+  } catch (err) {
+    console.error('Like failed', err);
+  }
+};
 
   const tags = Array.isArray(api.tags) ? api.tags : [];
 
