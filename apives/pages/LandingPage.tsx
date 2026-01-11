@@ -144,7 +144,7 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
         </p>
 
         <div className="flex flex-wrap gap-2 mb-6 md:mb-8 mt-auto">
-          {tags.slice(0, 2).map((tag: string) => (
+          {tags.slice(0, 5).map((tag: string) => (
             <span
               key={tag}
               className="text-[9px] md:text-[10px] text-slate-500 bg-white/5 border border-white/10 px-4 md:px-5 py-1 rounded-full flex items-center uppercase tracking-widest"
