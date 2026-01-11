@@ -320,7 +320,8 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {featuredApis.map((api, idx) => (
-              <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes} />
+              <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes} 
+/>
             ))}
           </div>
 
@@ -341,7 +342,8 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {freshApis.map((api, idx) => (
-                <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes />
+                <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
+ />
               ))}
             </div>
 
@@ -362,7 +364,8 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {communityLoved.map((api, idx) => (
-              <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes/>
+              <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
+/>
             ))}
           </div>
 
