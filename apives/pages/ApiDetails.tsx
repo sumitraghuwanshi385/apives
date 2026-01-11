@@ -91,20 +91,23 @@ setIsLiked(likedApis.includes(id));
   try {
     let res;
 
+    // ✅ STEP 1: future state nikaalo
+    const nextLiked = !isLiked;
+
+    // ✅ STEP 2: backend call (sirf DB update)
     if (isLiked) {
-      // 🔻 UNLIKE → backend call
       res = await apiService.unlikeApi(id!);
-      setIsLiked(false);
     } else {
-      // 🔺 LIKE → backend call
       res = await apiService.likeApi(id!);
-      setIsLiked(true);
     }
 
-    // 🔥 SINGLE SOURCE OF TRUTH = DB
+    // ✅ STEP 3: UI state ek jagah se set
+    setIsLiked(nextLiked);
+
+    // ✅ STEP 4: SINGLE SOURCE OF TRUTH = DB
     setUpvotes(res.upvotes);
 
-    // UX ke liye localStorage
+    // ✅ STEP 5: localStorage sync with SAME truth
     const likedApis = JSON.parse(
       localStorage.getItem('mora_liked_apis') || '[]'
     );
@@ -112,9 +115,9 @@ setIsLiked(likedApis.includes(id));
     localStorage.setItem(
       'mora_liked_apis',
       JSON.stringify(
-        isLiked
-          ? likedApis.filter((x: string) => x !== id)
-          : [...likedApis, id]
+        nextLiked
+          ? [...likedApis, id]
+          : likedApis.filter((x: string) => x !== id)
       )
     );
   } catch (err) {
