@@ -376,7 +376,27 @@ localStorage.removeItem('mora_edit_api_id')
           {/* Tags */}
           <div className="space-y-1.5">
               <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2"><Hash size={12} className="text-mora-500" /> Search Tags</label>
-              <input value={formData.tags} onChange={(e) => setFormData({...formData, tags: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. KYC, Identity (comma separated)" />
+              <input value={formData.tags} onChange={(e) => {
+  const value = e.target.value;
+
+  // comma se tags tod do
+  const tagsArr = value
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
+
+  // agar 5 se zyada hua
+  if (tagsArr.length > 5) {
+    return; // ❌ 6th likhne hi nahi dega
+  }
+
+  setFormData({ ...formData, tags: value });
+}}
+ className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. KYC, Identity (comma separated)" />
+
+<p className="text-[8px] text-slate-600 ml-1">
+  Max 5 tags allowed
+</p>
           </div>
 
           {/* Endpoints */}
