@@ -44,14 +44,11 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
   const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
   useEffect(() => {
-    setUpvotes(api.upvotes || 0);
+  setUpvotes(api.upvotes || 0);
 
-    const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-    setIsLiked(likedApis.includes(api.id));
-
-    const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-    if (savedApis.includes(api.id)) setSaved(true);
-  }, [api.id, api.upvotes]);
+  const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
+  if (savedApis.includes(api.id)) setSaved(true);
+}, [api.id, api.upvotes]);
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -82,9 +79,15 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
   }
 
   try {
-    const updatedApi = await apiService.likeApi(api.id);
-    setUpvotes(updatedApi.upvotes);
-    setIsLiked(true);
+    if (isLiked) {
+      const res = await apiService.unlikeApi(api.id);
+      setIsLiked(false);
+      setUpvotes(res.upvotes);
+    } else {
+      const res = await apiService.likeApi(api.id);
+      setIsLiked(true);
+      setUpvotes(res.upvotes);
+    }
   } catch (err) {
     console.error('Like failed', err);
   }
@@ -95,7 +98,10 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
   return (
     <Link
      to={`/api/${api.id}`}
-      className="group relative backdrop-blur-sm rounded-[1.5rem] md:rounded-[2.5rem] border border-white/5 bg-dark-900/40 hover:bg-dark-900/80 hover:border-mora-500/30 p-4 md:p-6 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full"
+      className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm 
+rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 
+p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden 
+flex flex-col h-full"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70"></div>
@@ -124,7 +130,7 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
 
       <div className="relative z-10 flex flex-col h-full">
         <div className="mb-2">
-          <h3 className="font-display font-bold text-white text-base md:text-xl leading-tight group-hover:text-mora-400 transition-colors flex items-center gap-2">
+          <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight truncate group-hover:text-mora-400 transition-colors flex items-center gap-2">
             {api.name}
             {isNew(api.publishedAt) && (
               <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">New</span>
