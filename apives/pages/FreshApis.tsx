@@ -110,21 +110,30 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         }
     };
 
-    const handleLike = (e: React.MouseEvent) => {
-        e.preventDefault(); e.stopPropagation();
-        const userStr = localStorage.getItem('mora_user');
-        if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
-        
-        const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-        if (isLiked) {
-            setIsLiked(false); setUpvotes(v => v - 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api._id)));
-        } else {
-            setIsLiked(true); setUpvotes(v => v + 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api._id]));
-        }
-    };
+    const handleLike = async (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
 
+  const userStr = localStorage.getItem('mora_user');
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+    return;
+  }
+
+  try {
+    if (isLiked) {
+      await apiService.unlikeApi(api._id);
+      setIsLiked(false);
+      setUpvotes(prev => Math.max(prev - 1, 0));
+    } else {
+      await apiService.likeApi(api._id);
+      setIsLiked(true);
+      setUpvotes(prev => prev + 1);
+    }
+  } catch (err) {
+    console.error('Like failed', err);
+  }
+};
     const isNew = (dateString: string) => {
         const date = new Date(dateString);
         const fifteenDaysAgo = new Date();
