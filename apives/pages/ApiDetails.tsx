@@ -56,17 +56,8 @@ console.log('DETAILS PAGE ID 👉', id);
   localStorage.getItem('mora_liked_apis') || '[]'
 );
 
-const baseUpvotes = data.upvotes || 0;
-
-const finalUpvotes = likedApis.includes(id)
-  ? baseUpvotes + 1
-  : baseUpvotes;
-
-setUpvotes(finalUpvotes);
-
-if (likedApis.includes(id)) {
-  setIsLiked(true);
-}
+setUpvotes(data.upvotes || 0);
+setIsLiked(likedApis.includes(id));
 
       const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
       if (savedApis.includes(id)) setIsSaved(true);
@@ -90,18 +81,46 @@ if (likedApis.includes(id)) {
   loadApi();
 }, [id]);
 
-  const handleLike = () => {
-    const userStr = localStorage.getItem('mora_user');
-    if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
-    const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
+  const handleLike = async () => {
+  const userStr = localStorage.getItem('mora_user');
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+    return;
+  }
+
+  try {
+    let res;
+
     if (isLiked) {
-        setIsLiked(false); setUpvotes(prev => Math.max(0, prev - 1));
-        localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== id)));
+      // 🔻 UNLIKE → backend call
+      res = await apiService.unlikeApi(id!);
+      setIsLiked(false);
     } else {
-        setIsLiked(true); setUpvotes(prev => prev + 1);
-        localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, id]));
+      // 🔺 LIKE → backend call
+      res = await apiService.likeApi(id!);
+      setIsLiked(true);
     }
-  };
+
+    // 🔥 SINGLE SOURCE OF TRUTH = DB
+    setUpvotes(res.upvotes);
+
+    // UX ke liye localStorage
+    const likedApis = JSON.parse(
+      localStorage.getItem('mora_liked_apis') || '[]'
+    );
+
+    localStorage.setItem(
+      'mora_liked_apis',
+      JSON.stringify(
+        isLiked
+          ? likedApis.filter((x: string) => x !== id)
+          : [...likedApis, id]
+      )
+    );
+  } catch (err) {
+    console.error('Like failed', err);
+  }
+};
 
   const handleSaveToggle = () => {
     const userStr = localStorage.getItem('mora_user');
