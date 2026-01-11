@@ -46,8 +46,15 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
   useEffect(() => {
   setUpvotes(api.upvotes || 0);
 
-  const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-  if (savedApis.includes(api.id)) setSaved(true);
+  const likedApis = JSON.parse(
+    localStorage.getItem('mora_liked_apis') || '[]'
+  );
+  setIsLiked(likedApis.includes(api.id));
+
+  const savedApis = JSON.parse(
+    localStorage.getItem('mora_saved_apis') || '[]'
+  );
+  setSaved(savedApis.includes(api.id));
 }, [api.id, api.upvotes]);
 
   const handleSave = (e: React.MouseEvent) => {
@@ -82,22 +89,27 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
 
   try {
     if (isLiked) {
-      const res = await apiService.unlikeApi(api.id);
-      setIsLiked(false);
-      setUpvotes(res.upvotes);
-      localStorage.setItem(
-        'mora_liked_apis',
-        JSON.stringify(likedApis.filter((id: string) => id !== api.id))
-      );
-    } else {
-      const res = await apiService.likeApi(api.id);
-      setIsLiked(true);
-      setUpvotes(res.upvotes);
-      localStorage.setItem(
-        'mora_liked_apis',
-        JSON.stringify([...likedApis, api.id])
-      );
-    }
+  await apiService.unlikeApi(api.id);
+
+  setIsLiked(false);
+  setUpvotes(prev => Math.max(prev - 1, 0));
+
+  localStorage.setItem(
+    'mora_liked_apis',
+    JSON.stringify(likedApis.filter((id: string) => id !== api.id))
+  );
+} else {
+  await apiService.likeApi(api.id);
+
+  setIsLiked(true);
+  setUpvotes(prev => prev + 1);
+
+  localStorage.setItem(
+    'mora_liked_apis',
+    JSON.stringify([...likedApis, api.id])
+  );
+}
+    
   } catch (err) {
     console.error('Like failed', err);
   }
