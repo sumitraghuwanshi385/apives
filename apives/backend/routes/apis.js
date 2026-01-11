@@ -145,4 +145,62 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// ✅ LIKE API (Protected)
+router.post('/:id/like', verify, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid API id' });
+    }
+
+    const api = await ApiListing.findByIdAndUpdate(
+      id,
+      { $inc: { upvotes: 1 } },
+      { new: true }
+    );
+
+    if (!api) {
+      return res.status(404).json({ message: 'API not found' });
+    }
+
+    return res.json(api);
+  } catch (err) {
+    console.error('❌ LIKE API Error:', err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+// ✅ UNLIKE API (Protected)
+router.post('/:id/unlike', verify, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid API id' });
+    }
+
+    const api = await ApiListing.findByIdAndUpdate(
+      id,
+      { $inc: { upvotes: -1 } },
+      { new: true }
+    );
+
+    if (!api) {
+      return res.status(404).json({ message: 'API not found' });
+    }
+
+    // safety: negative na ho
+    if (api.upvotes < 0) {
+      api.upvotes = 0;
+      await api.save();
+    }
+
+    return res.json(api);
+  } catch (err) {
+    console.error('❌ UNLIKE API Error:', err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
