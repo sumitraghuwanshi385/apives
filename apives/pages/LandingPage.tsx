@@ -78,15 +78,25 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
     return;
   }
 
+  const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
+
   try {
     if (isLiked) {
       const res = await apiService.unlikeApi(api.id);
       setIsLiked(false);
       setUpvotes(res.upvotes);
+      localStorage.setItem(
+        'mora_liked_apis',
+        JSON.stringify(likedApis.filter((id: string) => id !== api.id))
+      );
     } else {
       const res = await apiService.likeApi(api.id);
       setIsLiked(true);
       setUpvotes(res.upvotes);
+      localStorage.setItem(
+        'mora_liked_apis',
+        JSON.stringify([...likedApis, api.id])
+      );
     }
   } catch (err) {
     console.error('Like failed', err);
@@ -152,7 +162,7 @@ flex flex-col h-full"
           {tags.slice(0, 5).map((tag: string) => (
             <span
               key={tag}
-              className="text-[9px] md:text-[10px] text-slate-500 bg-white/5 border border-white/10 px-4 md:px-5 py-1 rounded-full flex items-center uppercase tracking-widest"
+              className="text-[9px] md:text-[10px] text-slate-500 bg-white/5 border border-white/10 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full flex items-center"
             >
               <Hash size={8} className="mr-1 text-mora-500/50" /> {tag}
             </span>
