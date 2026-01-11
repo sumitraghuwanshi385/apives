@@ -33,7 +33,11 @@ const RANK_BADGE_STYLES = [
   { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
 
-const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: boolean }> = ({ api, topIds }) => {
+const ApiCard: React.FC<{
+  api: ApiListing;
+  topIds: string[];
+  onLikeChange?: (id: string, delta: number) => void;
+}> = ({ api, topIds, onLikeChange }) => {
   const navigate = useNavigate();
   const [saved, setSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -93,6 +97,7 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
 
   setIsLiked(false);
   setUpvotes(prev => Math.max(prev - 1, 0));
+  onLikeChange?.(api.id, -1);
 
   localStorage.setItem(
     'mora_liked_apis',
@@ -103,6 +108,7 @@ const ApiCard: React.FC<{ api: ApiListing; topIds: string[]; isCommunityLoved?: 
 
   setIsLiked(true);
   setUpvotes(prev => prev + 1);
+  onLikeChange?.(api.id, +1);
 
   localStorage.setItem(
     'mora_liked_apis',
@@ -261,6 +267,16 @@ const db: ApiListing[] = list.map((a: any) => ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+const updateLandingUpvotes = (apiId: string, delta: number) => {
+  setAllApis(prev =>
+    prev.map(api =>
+      api.id === apiId
+        ? { ...api, upvotes: Math.max((api.upvotes || 0) + delta, 0) }
+        : api
+    )
+  );
+};
+
   const itemsToShow = isMobile ? 2 : 6;
 const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
   const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
@@ -304,7 +320,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {featuredApis.map((api, idx) => (
-              <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} />
+              <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes} />
             ))}
           </div>
 
@@ -325,7 +341,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {freshApis.map((api, idx) => (
-                <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} />
+                <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes />
               ))}
             </div>
 
@@ -346,7 +362,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {communityLoved.map((api, idx) => (
-              <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} />
+              <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes/>
             ))}
           </div>
 
