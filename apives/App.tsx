@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
@@ -24,7 +24,7 @@ const ScrollToTop = () => {
 
 function App() {
   return (
-    <HashRouter>
+    <>
       <ScrollToTop />
       <div className="flex flex-col min-h-screen bg-black font-sans text-slate-50 selection:bg-mora-500 selection:text-black">
         <Navbar />
@@ -39,7 +39,7 @@ function App() {
             <Route path="/fresh" element={<FreshApis />} />
             <Route path="/popular" element={<PopularApis />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
-            
+
             {/* Footer Routes */}
             <Route path="/enterprise" element={<EnterprisePage />} />
             <Route path="/docs" element={<DocumentationPage />} />
@@ -49,13 +49,12 @@ function App() {
             <Route path="/support" element={<SupportPage />} />
             <Route path="/sponsorship" element={<SponsorshipPage />} />
 
-            {/* Catch-all redirect to ensure landing page is default */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
         <Footer />
       </div>
-    </HashRouter>
+    </>
   );
 }
 
