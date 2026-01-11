@@ -41,14 +41,13 @@ const ApiCard: React.FC<{
   const navigate = useNavigate();
   const [saved, setSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [upvotes, setUpvotes] = useState(api.upvotes || 0);
+  
 
   const rankIndex = topIds.indexOf(api.id);
   const isTopTier = rankIndex !== -1;
   const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
   useEffect(() => {
-  setUpvotes(api.upvotes || 0);
 
   const likedApis = JSON.parse(
     localStorage.getItem('mora_liked_apis') || '[]'
@@ -60,6 +59,14 @@ const ApiCard: React.FC<{
   );
   setSaved(savedApis.includes(api.id));
 }, [api.id, api.upvotes]);
+
+const likedApis = JSON.parse(
+  localStorage.getItem('mora_liked_apis') || '[]'
+);
+
+const displayUpvotes = likedApis.includes(api.id)
+  ? (api.upvotes || 0) + 1
+  : (api.upvotes || 0);
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault(); e.stopPropagation();
@@ -96,7 +103,6 @@ const ApiCard: React.FC<{
   await apiService.unlikeApi(api.id);
 
   setIsLiked(false);
-  setUpvotes(prev => Math.max(prev - 1, 0));
   onLikeChange?.(api.id, -1);
 
   localStorage.setItem(
@@ -107,7 +113,6 @@ const ApiCard: React.FC<{
   await apiService.likeApi(api.id);
 
   setIsLiked(true);
-  setUpvotes(prev => prev + 1);
   onLikeChange?.(api.id, +1);
 
   localStorage.setItem(
@@ -196,7 +201,7 @@ flex flex-col h-full"
 
             <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like">
               <Heart size={12} className={`${isLiked ? 'text-red-500 fill-current shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'text-red-500/50 group-hover/like:text-red-500'} transition-all`} />
-              <span className="text-slate-300 font-mono">{upvotes}</span>
+              <span className="text-slate-300 font-mono">{displayUpvotes}</span>
             </button>
           </div>
 
