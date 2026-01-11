@@ -147,6 +147,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 } catch (err) {
   console.error('Like failed', err);
 }
+};
     return (
         <Link 
             to={`/api/${api._id}`} 
@@ -326,7 +327,7 @@ const [topIds, setTopIds] = useState<string[]>([]);
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
               {filteredApis.slice(0, visibleCount).map((api) => (
                 <BrowseApiCard
-    key={api.id}
+    key={api._id}
     api={api}
     topIds={topIds}
   />
