@@ -95,6 +95,18 @@ updateApiStatus: async (id: string, status: 'active' | 'paused') => {
   return res.data;
 },
 
+// ❤️ LIKE API
+  likeApi: async (id: string) => {
+    const res = await axiosInstance.post(`/apis/${id}/like`);
+    return res.data;
+  },
+
+  // 💔 UNLIKE API
+  unlikeApi: async (id: string) => {
+    const res = await axiosInstance.post(`/apis/${id}/unlike`);
+    return res.data;
+  },
+
   // ✅ ✅ ✅ THIS WAS MISSING / BROKEN
   deleteApi: async (id: string) => {
     const res = await axiosInstance.delete(`/apis/${id}`);
