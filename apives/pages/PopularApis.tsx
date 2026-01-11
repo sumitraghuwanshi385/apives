@@ -110,21 +110,30 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         }
     };
 
-    const handleLike = (e: React.MouseEvent) => {
-        e.preventDefault(); e.stopPropagation();
-        const userStr = localStorage.getItem('mora_user');
-        if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
-        
-        const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-        if (isLiked) {
-            setIsLiked(false); setUpvotes(v => v - 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify(likedApis.filter((aid: string) => aid !== api._id)));
-        } else {
-            setIsLiked(true); setUpvotes(v => v + 1);
-            localStorage.setItem('mora_liked_apis', JSON.stringify([...likedApis, api._id]));
-        }
-    };
+    const handleLike = async (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
 
+  const userStr = localStorage.getItem('mora_user');
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+    return;
+  }
+
+  try {
+    if (isLiked) {
+      await apiService.unlikeApi(api._id);
+      setIsLiked(false);
+      setUpvotes(prev => Math.max(prev - 1, 0));
+    } else {
+      await apiService.likeApi(api._id);
+      setIsLiked(true);
+      setUpvotes(prev => prev + 1);
+    }
+  } catch (err) {
+    console.error('Like failed', err);
+  }
+};
     return (
         <Link to={`/api/${api._id}`} className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500 to-transparent opacity-70"></div>
