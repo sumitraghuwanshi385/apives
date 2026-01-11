@@ -89,7 +89,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
         const currentlyLiked = likedApis.includes(api._id);
         setIsLiked(currentlyLiked);
-        setUpvotes(currentlyLiked ? api.upvotes + 1 : api.upvotes);
+        setUpvotes(api.upvotes || 0);
 
         const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
         if (savedApis.includes(api._id)) setSaved(true);
@@ -121,15 +121,17 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   }
 
   try {
+    let res;
+    const nextLiked = !isLiked;
+
     if (isLiked) {
-      await apiService.unlikeApi(api._id);
-      setIsLiked(false);
-      setUpvotes(prev => Math.max(prev - 1, 0));
+      res = await apiService.unlikeApi(api._id);
     } else {
-      await apiService.likeApi(api._id);
-      setIsLiked(true);
-      setUpvotes(prev => prev + 1);
+      res = await apiService.likeApi(api._id);
     }
+
+    setIsLiked(nextLiked);
+    setUpvotes(res.upvotes); // ✅ DB value only
   } catch (err) {
     console.error('Like failed', err);
   }
@@ -298,7 +300,7 @@ export const FreshApis: React.FC = () => {
                 {isLoading ? (
                   [1,2,3].map(i => <Skeleton key={i} className="h-48 md:h-64 rounded-[1.5rem] md:rounded-[2rem]" />)
                 ) : filteredApis.length > 0 ? (
-                  filteredApis.slice(0, visibleCount).map(api => <ApiCard key={api.id} api={api} topIds={topIds} />)
+                  filteredApis.slice(0, visibleCount).map(api => <ApiCard key={api._id} api={api} topIds={topIds} />)
                 ) : (
                   <div className="col-span-full text-center py-20 px-6 animate-fade-in">
                       <Radar size={40} className="text-mora-500 mx-auto mb-4 opacity-50" />
