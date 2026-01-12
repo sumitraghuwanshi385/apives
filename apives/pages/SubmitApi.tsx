@@ -85,7 +85,9 @@ const [editingApiId, setEditingApiId] = useState<string | null>(null);
         name: api.name || '',
         provider: api.provider || user.name,
         description: api.description || '',
-        category: api.category || 'AI',
+        category: categoryOptions.includes(api.category)
+  ? api.category
+  : 'AI',
         pricing: api.pricing?.type || 'Free',
         pricingDetails: api.pricing?.details || '',
         website: api.externalUrl || '',
