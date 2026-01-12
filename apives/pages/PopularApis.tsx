@@ -75,6 +75,17 @@ const RANK_BADGE_STYLES = [
 ];
 
 const ApiCard: React.FC<{ api: ApiListing; topIds: string[] }> = ({ api, topIds }) => {
+const isNew = (createdAt?: string) => {
+  if (!createdAt) return false;
+
+  const created = new Date(createdAt);
+  const now = new Date();
+
+  const diffDays =
+    (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+
+  return diffDays <= 15;
+};
     const navigate = useNavigate();
     const [saved, setSaved] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
@@ -155,7 +166,13 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
             </div>
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-2">
-                    <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors truncate">{api.name}</h3>
+                    <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors truncate">{api.name}
+{isNew(api.createdAt) && (
+    <span className="ml-2 text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
+      New
+    </span>
+  )}
+</h3>
                     <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 truncate"><Server size={10} /> {api.provider}</p>
                     </div>
