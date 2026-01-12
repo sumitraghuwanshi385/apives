@@ -1,4 +1,4 @@
-{ useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Mail, ArrowRight, Zap, MessageSquarePlus, Check, X, MessageSquare } from 'lucide-react';
 
