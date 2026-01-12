@@ -42,17 +42,59 @@ const [editingApiId, setEditingApiId] = useState<string | null>(null);
   const [error, setError] = useState('');
 
   const MAX_GALLERY_IMAGES = 4;
-  
-  // Full category list from filters
-  const categoryOptions = [
-    'AI', 'Payments', 'Crypto', 'Identity', 'Data', 'Infrastructure', 'eCommerce', 
-    'Messaging', 'Finance', 'Logistics', 'Security', 'Analytics', 'Audio', 'Video', 
-    'Mobile', 'Maps', 'Weather', 'Real Estate', 'Food', 'Sports', 'News', 'Jobs', 
-    'Translation', 'Social', 'Health', 'Legal', 'DevOps', 'Search', 'Tools', 
-    'Government', 'Utilities', 'Stocks', 'Banking', 'Insurance', 'Agriculture', 
-    'Science', 'Education', 'Travel', 'Gaming', 'Fitness', 'IoT', 'ERP', 'CRM', 
-    'HR', 'Marketing', 'Storage', 'Web3', 'Automation', 'Enterprise'
-  ];
+
+// Full category list (CustomSelect compatible)
+const categoryOptions = [
+  { label: 'AI', value: 'AI' },
+  { label: 'Payments', value: 'Payments' },
+  { label: 'Crypto', value: 'Crypto' },
+  { label: 'Identity', value: 'Identity' },
+  { label: 'Data', value: 'Data' },
+  { label: 'Infrastructure', value: 'Infrastructure' },
+  { label: 'eCommerce', value: 'eCommerce' },
+  { label: 'Messaging', value: 'Messaging' },
+  { label: 'Finance', value: 'Finance' },
+  { label: 'Logistics', value: 'Logistics' },
+  { label: 'Security', value: 'Security' },
+  { label: 'Analytics', value: 'Analytics' },
+  { label: 'Audio', value: 'Audio' },
+  { label: 'Video', value: 'Video' },
+  { label: 'Mobile', value: 'Mobile' },
+  { label: 'Maps', value: 'Maps' },
+  { label: 'Weather', value: 'Weather' },
+  { label: 'Real Estate', value: 'Real Estate' },
+  { label: 'Food', value: 'Food' },
+  { label: 'Sports', value: 'Sports' },
+  { label: 'News', value: 'News' },
+  { label: 'Jobs', value: 'Jobs' },
+  { label: 'Translation', value: 'Translation' },
+  { label: 'Social', value: 'Social' },
+  { label: 'Health', value: 'Health' },
+  { label: 'Legal', value: 'Legal' },
+  { label: 'DevOps', value: 'DevOps' },
+  { label: 'Search', value: 'Search' },
+  { label: 'Tools', value: 'Tools' },
+  { label: 'Government', value: 'Government' },
+  { label: 'Utilities', value: 'Utilities' },
+  { label: 'Stocks', value: 'Stocks' },
+  { label: 'Banking', value: 'Banking' },
+  { label: 'Insurance', value: 'Insurance' },
+  { label: 'Agriculture', value: 'Agriculture' },
+  { label: 'Science', value: 'Science' },
+  { label: 'Education', value: 'Education' },
+  { label: 'Travel', value: 'Travel' },
+  { label: 'Gaming', value: 'Gaming' },
+  { label: 'Fitness', value: 'Fitness' },
+  { label: 'IoT', value: 'IoT' },
+  { label: 'ERP', value: 'ERP' },
+  { label: 'CRM', value: 'CRM' },
+  { label: 'HR', value: 'HR' },
+  { label: 'Marketing', value: 'Marketing' },
+  { label: 'Storage', value: 'Storage' },
+  { label: 'Web3', value: 'Web3' },
+  { label: 'Automation', value: 'Automation' },
+  { label: 'Enterprise', value: 'Enterprise' }
+];
 
   const pricingOptions = ['Free', 'Freemium', 'Paid'];
   const latencyOptions = ['Low', 'Medium', 'High'];
@@ -85,9 +127,7 @@ const [editingApiId, setEditingApiId] = useState<string | null>(null);
         name: api.name || '',
         provider: api.provider || user.name,
         description: api.description || '',
-        category: categoryOptions.includes(api.category)
-  ? api.category
-  : 'AI',
+        category: api.category || 'AI',
         pricing: api.pricing?.type || 'Free',
         pricingDetails: api.pricing?.details || '',
         website: api.externalUrl || '',
