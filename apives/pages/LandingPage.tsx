@@ -303,7 +303,7 @@ const refetchLandingApis = async () => {
   }
 };
 
-  const itemsToShow = isMobile ? 2 : 6;
+  const itemsToShow = 6;
 const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
   const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
   const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
