@@ -11,6 +11,38 @@ const XIcon = ({ className }: { className?: string }) => (
 export const Footer: React.FC = () => {
 const location = useLocation();
 const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+const [feedbackSuccess, setFeedbackSuccess] = useState(false);
+const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+
+const handleFeedbackSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const data = new FormData(form);
+
+  await fetch('https://formsubmit.co/ajax/beatslevelone@gmail.com', {
+    method: 'POST',
+    body: data,
+  });
+
+  setFeedbackSuccess(true);
+  form.reset();
+};
+
+const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const data = new FormData(form);
+
+  await fetch('https://formsubmit.co/ajax/beatslevelone@gmail.com', {
+    method: 'POST',
+    body: data,
+  });
+
+  setNewsletterSuccess(true);
+  form.reset();
+};
 
 if (location.pathname === '/access') return null;
 
@@ -83,8 +115,13 @@ return (
                 New APIs in the ecosystem.  
             </p>  
               
-            <form action="https://formsubmit.co/beatslevelone@gmail.com" method="POST" className="relative">  
-                <input type="hidden" name="_subject" value="New Newsletter Subscription - Apives" />  
+            <form onSubmit={handleNewsletterSubmit} className="relative">
+  <input type="hidden" name="_subject" value="New Newsletter Subscription - Apives" />
+{newsletterSuccess && (
+  <p className="text-[10px] text-green-400 mt-2 flex items-center gap-1">
+    <Check size={12} /> You’re subscribed. Welcome to Apives 🚀
+  </p>
+)} 
                 <div className="relative group/input">  
                     <input   
                         type="email"   
@@ -132,7 +169,7 @@ return (
           <p className="text-slate-400 text-xs">Help us refine the ecosystem.</p>  
         </div>  
           
-        <form action="https://formsubmit.co/beatslevelone@gmail.com" method="POST" className="space-y-3">  
+        <form onSubmit={handleFeedbackSubmit} className="space-y-3">
           <input type="hidden" name="_subject" value="User Feedback - Apives" />  
           <div className="space-y-1">  
             <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">Name</label>  
@@ -145,7 +182,10 @@ return (
             />  
           </div>  
           <div className="space-y-1">  
-            <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">Email</label>  
+            <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
+  Email <span className="text-slate-600 normal-case">(optional)</span>
+</label>
+<input type="email" name="email" placeholder="Email (optional)" /> 
             <input   
               type="email"   
               name="email"   
@@ -164,6 +204,12 @@ return (
               className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700 resize-none"  
             ></textarea>  
           </div>  
+
+{feedbackSuccess && (
+  <div className="bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
+    <Check size={14} /> Thanks! Your feedback really helps 💚
+  </div>
+)}
           <button   
             type="submit"   
             className="w-full bg-mora-600 hover:bg-mora-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all uppercase tracking-widest text-[10px] mt-2"  
