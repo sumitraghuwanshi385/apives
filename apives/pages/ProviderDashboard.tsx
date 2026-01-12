@@ -5,7 +5,6 @@ import {
     Cpu, Activity, Zap, Bookmark, LogOut, Globe, TrendingUp, Clock, LayoutGrid, Radio,
     Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info
 } from 'lucide-react';
-import { getAllApis } from '../services/mockData'; // local/mock fallback merge ke liye
 import { apiService } from '../services/apiClient'; // ✅ backend calls
 import { Link, useNavigate } from 'react-router-dom';
 import { CustomSelect } from '../components/CustomSelect';
@@ -124,7 +123,7 @@ export const ProviderDashboard: React.FC = () => {
 
   const loadNodes = async () => {
   try {
-    // 1) DB se provider ki APIs
+    // 1) DB se provider ki APIs (ONLY SOURCE OF TRUTH)
     const myDb = await apiService.getMyApis();
     const normalizedDb = (myDb || []).map((n: any) => ({
       ...n,
@@ -132,12 +131,9 @@ export const ProviderDashboard: React.FC = () => {
       status: n.status || 'active',
     }));
 
-    // 2) Local/mock “local-” nodes (optional: purane local submissions ke liye)
-    const localNodes = getAllApis(true).filter((api) => api.id?.startsWith('local-'));
-
-    // 3) Merge (DB + local) by id (duplicates avoid)
+    // ✅ ONLY DB NODES (no mock / no local)
     const byId = new Map<string, any>();
-    [...normalizedDb, ...localNodes].forEach((a: any) => {
+    [...normalizedDb].forEach((a: any) => {
       if (!a) return;
       const id = a._id || a.id;
       if (id) byId.set(id, { ...a, id });
@@ -148,22 +144,16 @@ export const ProviderDashboard: React.FC = () => {
     // 4) Saved nodes: IDs localStorage me hain
     const savedIds = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
 
-    // Saved view ke liye all APIs (DB + mock/local)
-    const allDb = await apiService.getAllApis();
-    const normalizedAllDb = (allDb || []).map((a: any) => ({
-      ...a,
-      id: a._id || a.id,
-    }));
+// ✅ ONLY DB APIs for saved nodes
+const allDb = await apiService.getAllApis();
+const normalizedAllDb = (allDb || []).map((a: any) => ({
+  ...a,
+  id: a._id || a.id,
+}));
 
-    const allLocalMock = getAllApis(true); // mock + local
-    const allById = new Map<string, any>();
-    [...normalizedAllDb, ...allLocalMock].forEach((a: any) => {
-      if (!a) return;
-      const id = a._id || a.id;
-      if (id) allById.set(id, { ...a, id });
-    });
-
-    setSavedNodes(Array.from(allById.values()).filter((api: any) => savedIds.includes(api.id)));
+setSavedNodes(
+  normalizedAllDb.filter((api: any) => savedIds.includes(api.id))
+);
   } catch (e) {
     console.error('loadNodes failed:', e);
     showNotification('Failed to load nodes from backend');
