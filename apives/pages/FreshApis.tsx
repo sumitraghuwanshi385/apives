@@ -136,12 +136,17 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     console.error('Like failed', err);
   }
 };
-    const isNew = (dateString: string) => {
-        const date = new Date(dateString);
-        const fifteenDaysAgo = new Date();
-        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-        return date > fifteenDaysAgo;
-    };
+    const isNew = (createdAt?: string) => {
+  if (!createdAt) return false;
+
+  const created = new Date(createdAt);
+  const now = new Date();
+
+  const diffDays =
+    (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+
+  return diffDays <= 15;
+};
 
     return (
         <Link to={`/api/${api._id}`} className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
@@ -166,9 +171,11 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                 <div className="mb-2">
                     <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors truncate">
                         {api.name}
-                        {isNew(api.publishedAt) && (
-                            <span className="ml-2 text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">New</span>
-                        )}
+                        {isNew(api.createdAt) && (
+  <span className="ml-2 text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
+    New
+  </span>
+)}
                     </h3>
                     <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 truncate"><Server size={10} /> {api.provider}</p>
