@@ -47,7 +47,57 @@ export const ProviderDashboard: React.FC = () => {
   const [editingNode, setEditingNode] = useState<any | null>(null);
   const [deletingNode, setDeletingNode] = useState<any | null>(null);
 
-  const categoryOptions = ['Identity', 'Payments', 'Crypto', 'AI', 'Data', 'Messaging', 'Infrastructure', 'eCommerce', 'Health', 'Social', 'Travel'];
+  const categoryOptions = [
+  'AI',
+  'Payments',
+  'Crypto',
+  'Identity',
+  'Data',
+  'Infrastructure',
+  'eCommerce',
+  'Messaging',
+  'Finance',
+  'Logistics',
+  'Security',
+  'Analytics',
+  'Audio',
+  'Video',
+  'Mobile',
+  'Maps',
+  'Weather',
+  'Real Estate',
+  'Food',
+  'Sports',
+  'News',
+  'Jobs',
+  'Translation',
+  'Social',
+  'Health',
+  'Legal',
+  'DevOps',
+  'Search',
+  'Tools',
+  'Government',
+  'Utilities',
+  'Stocks',
+  'Banking',
+  'Insurance',
+  'Agriculture',
+  'Science',
+  'Education',
+  'Travel',
+  'Gaming',
+  'Fitness',
+  'IoT',
+  'ERP',
+  'CRM',
+  'HR',
+  'Marketing',
+  'Storage',
+  'Web3',
+  'Automation',
+  'Enterprise'
+];
   const pricingOptions = ['Free', 'Freemium', 'Paid'];
   const latencyOptions = ['Low', 'Medium', 'High'];
   const stabilityOptions = ['Stable', 'Beta', 'Experimental'];
