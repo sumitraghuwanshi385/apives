@@ -102,12 +102,17 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         setUpvotes(api.upvotes || 0);
     }, [api._id, api.upvotes]);
 
-    const isNew = (dateString: string) => {
-        const date = new Date(dateString);
-        const fifteenDaysAgo = new Date();
-        fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-        return date > fifteenDaysAgo;
-    };
+    const isNew = (createdAt?: string) => {
+  if (!createdAt) return false;
+
+  const created = new Date(createdAt);
+  const now = new Date();
+
+  const diffDays =
+    (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+
+  return diffDays <= 15;
+};
   
     const handleSave = (e: React.MouseEvent) => {
         e.preventDefault(); e.stopPropagation();
@@ -176,9 +181,11 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                 <div className="mb-2">
                     <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors flex items-center gap-2">
                         {api.name}
-                        {isNew(api.publishedAt) && (
-                            <span className="text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">New</span>
-                        )}
+                        {isNew(api.createdAt) && (
+  <span className="text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
+    New
+  </span>
+)}
                     </h3>
                      <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1"><Server size={10} /> {api.provider}</p>
