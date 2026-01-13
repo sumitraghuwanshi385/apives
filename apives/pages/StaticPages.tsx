@@ -127,12 +127,11 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                               placeholder="Name" 
                             />
                             <input 
-                              type="email" 
-                              name="email" 
-                              required 
-                              className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500/50 outline-none transition-all placeholder-slate-700" 
-                              placeholder="Email" 
-                            />
+  type="email" 
+  name="email" 
+  placeholder="Email (optional)" 
+  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500/50 outline-none transition-all placeholder-slate-700"
+/>
                         </div>
                         
                         <div className="space-y-1">
