@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
+let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const isNew = (dateString: string) => {
   if (!dateString) return false;
@@ -223,49 +224,58 @@ export const LandingPage: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
+  const handleResize = () => setIsMobile(window.innerWidth < 768);
+  window.addEventListener('resize', handleResize);
 
-    const user = localStorage.getItem('mora_user');
-    if (user) {
-      setIsAuthenticated(true);
-      setUserName(JSON.parse(user).name || 'Builder');
-    }
-
-     (async () => {
-  try {
-    const res = await apiService.getAllApis();
-
-console.log('RAW RESPONSE 👉', res);
-console.log('RES.DATA 👉', (res as any)?.data);
-console.log('IS ARRAY 👉', Array.isArray(res));
-
-const list = Array.isArray(res) ? res : res?.data || [];
-
-const db: ApiListing[] = list.map((a: any) => ({
-  ...a,
-  id: a._id,
-  publishedAt: a.createdAt,
-  tags: Array.isArray(a.tags) ? a.tags : [],
-  features: Array.isArray(a.features) ? a.features : [],
-}));
-    console.log('Landing APIs:', db); // 👈 debug
-
-    setAllApis(db);
-
-    setTop3Ids(
-      [...db]
-        .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-        .slice(0, 3)
-        .map(a => a.id)
-    );
-  } catch (e) {
-    console.error('LandingPage fetch failed', e);
+  const user = localStorage.getItem('mora_user');
+  if (user) {
+    setIsAuthenticated(true);
+    setUserName(JSON.parse(user).name || 'Builder');
   }
-})();
 
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  (async () => {
+    try {
+      // 🚀 STEP 1: cache se turant dikhao
+      if (LANDING_API_CACHE) {
+        setAllApis(LANDING_API_CACHE);
+        setTop3Ids(
+          [...LANDING_API_CACHE]
+            .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+            .slice(0, 3)
+            .map(a => a.id)
+        );
+        return;
+      }
+
+      // 🌐 STEP 2: API call (sirf first time)
+      const res = await apiService.getAllApis();
+      const list = Array.isArray(res) ? res : res?.data || [];
+
+      const db: ApiListing[] = list.map((a: any) => ({
+        ...a,
+        id: a._id,
+        publishedAt: a.createdAt,
+        tags: Array.isArray(a.tags) ? a.tags : [],
+        features: Array.isArray(a.features) ? a.features : [],
+      }));
+
+      // ✅ STEP 3: cache me store
+      LANDING_API_CACHE = db;
+
+      setAllApis(db);
+      setTop3Ids(
+        [...db]
+          .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+          .slice(0, 3)
+          .map(a => a.id)
+      );
+    } catch (e) {
+      console.error('LandingPage fetch failed', e);
+    }
+  })();
+
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
 const updateLandingUpvotes = (apiId: string, delta: number) => {
   setAllApis(prev =>
@@ -279,7 +289,6 @@ const updateLandingUpvotes = (apiId: string, delta: number) => {
 const refetchLandingApis = async () => {
   try {
     const res = await apiService.getAllApis();
-
     const list = Array.isArray(res) ? res : res?.data || [];
 
     const db: ApiListing[] = list.map((a: any) => ({
@@ -290,6 +299,7 @@ const refetchLandingApis = async () => {
       features: Array.isArray(a.features) ? a.features : [],
     }));
 
+    LANDING_API_CACHE = db; // ✅ sync cache
     setAllApis(db);
 
     setTop3Ids(
