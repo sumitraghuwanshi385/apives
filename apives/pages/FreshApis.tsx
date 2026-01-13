@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiClient';
 import { BackButton } from '../components/BackButton';
+let API_CACHE: ApiListing[] | null = null;
+
 import { 
   Zap, Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database, 
   MessageSquare, SlidersHorizontal, ShoppingCart, Cloud, Globe, X, 
@@ -220,25 +222,33 @@ export const FreshApis: React.FC = () => {
   const loadFreshApis = async () => {
     setIsLoading(true);
 
-    const allApis = await apiService.getAllApis();
+    // ✅ 1. cache use karo
+    let allApis: ApiListing[];
 
-    // 🔥 top 3 ids (ranking ke liye)
+    if (API_CACHE) {
+      allApis = API_CACHE;
+    } else {
+      allApis = await apiService.getAllApis();
+      API_CACHE = allApis;
+    }
+
+    // ✅ 2. top 3 ids (sirf ek baar calculate)
     setTopIds(
       [...allApis]
-        .sort((a, b) => b.upvotes - a.upvotes)
+        .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
         .slice(0, 3)
         .map(a => a._id)
     );
 
-    // 🆕 sirf last 15 days wali APIs
+    // ✅ 3. fresh (last 15 days)
     const fifteenDaysAgo = new Date();
     fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
-    const freshApis = allApis.filter(api => {
-      return new Date(api.createdAt || api.publishedAt) > fifteenDaysAgo;
-    });
+    const freshApis = allApis.filter(api =>
+      new Date(api.createdAt || api.publishedAt) > fifteenDaysAgo
+    );
 
-    // 🎯 category filter
+    // ✅ 4. category filter — LOCAL DATA
     const filtered =
       selectedCategory === 'All'
         ? freshApis
