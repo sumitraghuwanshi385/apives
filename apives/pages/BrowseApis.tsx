@@ -14,6 +14,7 @@ import { apiService } from '../services/apiClient';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
+let API_CACHE: ApiListing[] | null = null;
 
 const shuffleArray = <T,>(arr: T[]): T[] => {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -232,7 +233,15 @@ const [topIds, setTopIds] = useState<string[]>([]);
   const loadApis = async () => {
     setIsLoading(true);
 
-    const allApis = await apiService.getAllApis();
+    let allApis: ApiListing[];
+
+    // ✅ CACHE HIT → instant render
+    if (API_CACHE) {
+      allApis = API_CACHE;
+    } else {
+      allApis = await apiService.getAllApis();
+      API_CACHE = allApis; // save once
+    }
 
     // 🔥 top 3 ids
     setTopIds(
@@ -253,12 +262,11 @@ const [topIds, setTopIds] = useState<string[]>([]);
       )
     );
 
-    setFilteredApis(shuffleArray(filtered))
+    setFilteredApis(shuffleArray(filtered));
     setIsLoading(false);
   };
 
-  const timer = setTimeout(loadApis, 300);
-  return () => clearTimeout(timer);
+  loadApis();
 }, [searchTerm, selectedCategory]);
 
   return (
@@ -327,7 +335,12 @@ const [topIds, setTopIds] = useState<string[]>([]);
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-              {[1, 2, 3].map(i => <Skeleton key={i} className="h-48 md:h-64 rounded-[1.5rem] md:rounded-[2rem]" />)}
+              {Array.from({ length: 12 }).map((_, i) => (
+  <Skeleton
+    key={i}
+    className="h-56 md:h-72 rounded-[1.5rem] md:rounded-[2rem]"
+  />
+))}
           </div>
         ) : filteredApis.length > 0 ? (
           <>
