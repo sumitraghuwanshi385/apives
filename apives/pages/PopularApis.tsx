@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiClient';
 import { BackButton } from '../components/BackButton';
+import { Skeleton } from '../components/Skeleton';
+
+let API_CACHE: ApiListing[] | null = null;
+
 import { 
   Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database, 
   MessageSquare, SlidersHorizontal, ShoppingCart, Cloud, Globe, X, 
@@ -216,15 +220,20 @@ export const PopularApis: React.FC = () => {
   const loadPopularApis = async () => {
     setIsLoading(true);
 
-    const popularApis = [...(await apiService.getAllApis())]
-      .sort((a, b) => b.upvotes - a.upvotes);
+    if (!API_CACHE) {
+      API_CACHE = await apiService.getAllApis();
+    }
 
-    setTopIds(popularApis.slice(0, 3).map(a => a._id));
+    const sorted = [...API_CACHE].sort(
+      (a, b) => (b.upvotes || 0) - (a.upvotes || 0)
+    );
+
+    setTopIds(sorted.slice(0, 3).map(a => a._id));
 
     const filtered =
       selectedCategory === 'All'
-        ? popularApis
-        : popularApis.filter(api => api.category === selectedCategory);
+        ? sorted
+        : sorted.filter(api => api.category === selectedCategory);
 
     setFilteredApis(filtered);
     setIsLoading(false);
