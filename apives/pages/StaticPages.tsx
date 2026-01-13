@@ -79,7 +79,24 @@ export const SponsorshipPage: React.FC = () => (
 
 export const SupportPage: React.FC = () => {
     const [subject, setSubject] = useState('Technical Issue');
+    const [supportSuccess, setSupportSuccess] = useState(false);
+
     const supportOptions = ["Technical Issue", "Billing Inquiry", "Sponsorship Query", "Bug Report", "Other"];
+
+const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const form = e.currentTarget;
+        const data = new FormData(form);
+
+        await fetch('https://formsubmit.co/ajax/beatslevelone@gmail.com', {
+            method: 'POST',
+            body: data,
+        });
+
+        setSupportSuccess(true);
+        form.reset();
+    };
 
     return (
         <PageLayout title="Help and Support" subtitle="Need help with integration or have a question? Our team is here to assist you." icon={LifeBuoy}>
@@ -97,7 +114,7 @@ export const SupportPage: React.FC = () => {
                 </div>
                 
                 <div className="md:col-span-2">
-                    <form action="https://formsubmit.co/beatslevelone@gmail.com" method="POST" className="space-y-3.5">
+                    <form onSubmit={handleSupportSubmit} className="space-y-3.5">
                         <input type="hidden" name="_subject" value={`Apives Support Request: ${subject}`} />
                         <input type="hidden" name="contact_category" value={subject} />
                         
@@ -130,6 +147,13 @@ export const SupportPage: React.FC = () => {
                           className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500/50 outline-none transition-all placeholder-slate-700 resize-none" 
                           placeholder="Explain your technical query..."
                         ></textarea>
+{supportSuccess && (
+  <div className="bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
+    <CheckCircle2 size={14} />
+    Support request sent successfully. We’ll respond within 24–48 hours.
+  </div>
+)}
+
                         
                         <button 
                           type="submit" 
