@@ -349,6 +349,36 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
       </section>
 
       <section className="py-16 md:py-24 bg-black border-t border-white/5">
+{/* Community Sponsor */}
+<section className="py-10 md:py-14 bg-black border-t border-white/5">
+  <div className="max-w-5xl mx-auto px-6 text-center">
+    <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">
+      Community Sponsor
+    </p>
+
+    <a
+      href="https://scoutpanels.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all hover:scale-[1.02]"
+    >
+      <img
+        src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
+        alt="ScoutPanels"
+        className="h-8 md:h-10 object-contain"
+      />
+
+      <div className="text-left">
+        <p className="text-white font-bold text-sm md:text-base">
+          ScoutPanels
+        </p>
+        <p className="text-slate-400 text-xs md:text-sm">
+          Turning B2B feedback into adoption signals
+        </p>
+      </div>
+    </a>
+  </div>
+</section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
             <TrendingUp className="mr-3 text-mora-500" size={18} /> The Universal Grid
