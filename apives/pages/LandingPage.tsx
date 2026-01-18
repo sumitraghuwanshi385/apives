@@ -349,34 +349,40 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
       </section>
 
       <section className="py-16 md:py-24 bg-black border-t border-white/5">
-{/* Community Sponsor */}
-<section className="py-10 md:py-14 bg-black border-t border-white/5">
-  <div className="max-w-5xl mx-auto px-6 text-center">
-    <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">
-      Community Sponsor
-    </p>
 
-    <a
-      href="https://scoutpanels.com"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all hover:scale-[1.02]"
-    >
-      <img
-        src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
-        alt="ScoutPanels"
-        className="h-8 md:h-10 object-contain"
-      />
+  {/* Community Sponsor */}
+  <div className="py-6 md:py-8">
+    <div className="max-w-5xl mx-auto px-6 text-center">
+      <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">
+        Community Sponsor
+      </p>
 
-      <div className="text-left">
-        <p className="text-white font-bold text-sm md:text-base">
-          ScoutPanels
-        </p>
-        <p className="text-slate-400 text-xs md:text-sm">
-          Turning B2B feedback into adoption signals
-        </p>
-      </div>
-    </a>
+      <a
+        href="https://scoutpanels.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl 
+        border border-mora-500/30 
+        bg-gradient-to-br from-mora-500/10 to-transparent 
+        hover:from-mora-500/20 
+        transition-all hover:scale-[1.02] shadow-[0_0_40px_rgba(34,197,94,0.15)]"
+      >
+        <img
+          src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
+          alt="ScoutPanels"
+          className="h-8 md:h-10 object-contain rounded-xl bg-white/10 p-2"
+        />
+
+        <div className="text-left">
+          <p className="text-white font-bold text-sm md:text-base">
+            ScoutPanels
+          </p>
+          <p className="text-slate-400 text-xs md:text-sm">
+            Turning B2B Feedback into Adoption Signals
+          </p>
+        </div>
+      </a>
+    </div>
   </div>
 </section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
