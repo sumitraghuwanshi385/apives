@@ -348,10 +348,10 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
         </div>
       </section>
 
-      <section className="py-16 md:py-24 bg-black border-t border-white/5">
+      <section className="py-8 md:py-12 bg-black border-t border-white/5">
 
   {/* Community Sponsor */}
-  <div className="py-6 md:py-8">
+  <div className="pb-6 md:pb-8">
     <div className="max-w-5xl mx-auto px-6 text-center">
       <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">
         Community Sponsor
@@ -365,13 +365,15 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
         border border-mora-500/30 
         bg-gradient-to-br from-mora-500/10 to-transparent 
         hover:from-mora-500/20 
-        transition-all hover:scale-[1.02] shadow-[0_0_40px_rgba(34,197,94,0.15)]"
-      >
+        transition-all hover:scale-[1.02] 
+shadow-[0_0_40px_rgba(34,197,94,0.15)]
+hover:shadow-[0_0_60px_rgba(34,197,94,0.25)]
         <img
-          src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
-          alt="ScoutPanels"
-          className="h-8 md:h-10 object-contain rounded-xl bg-white/10 p-2"
-        />
+  src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
+  alt="ScoutPanels"
+  className="h-10 md:h-12 w-10 md:w-12 object-contain 
+  rounded-2xl bg-white/10 p-1"
+/>
 
         <div className="text-left">
           <p className="text-white font-bold text-sm md:text-base">
