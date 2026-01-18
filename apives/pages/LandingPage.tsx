@@ -384,7 +384,6 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
       </a>
     </div>
   </div>
-</section>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
             <TrendingUp className="mr-3 text-mora-500" size={18} /> The Universal Grid
