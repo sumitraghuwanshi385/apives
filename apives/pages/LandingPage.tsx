@@ -370,7 +370,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
     hover:shadow-[0_0_60px_rgba(34,197,94,0.25)]"
 >
   <img
-    src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
+    src="https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg"
     alt="ScoutPanels"
     className="h-10 md:h-12 w-10 md:w-12 object-contain 
       rounded-2xl bg-white/10 p-1"
