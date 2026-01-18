@@ -358,32 +358,33 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
       </p>
 
       <a
-        href="https://scoutpanels.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl 
-        border border-mora-500/30 
-        bg-gradient-to-br from-mora-500/10 to-transparent 
-        hover:from-mora-500/20 
-        transition-all hover:scale-[1.02] 
-shadow-[0_0_40px_rgba(34,197,94,0.15)]
-hover:shadow-[0_0_60px_rgba(34,197,94,0.25)]
-        <img
-  src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
-  alt="ScoutPanels"
-  className="h-10 md:h-12 w-10 md:w-12 object-contain 
-  rounded-2xl bg-white/10 p-1"
-/>
+  href="https://scoutpanels.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl 
+    border border-mora-500/30 
+    bg-gradient-to-br from-mora-500/10 to-transparent 
+    hover:from-mora-500/20 
+    transition-all hover:scale-[1.02] 
+    shadow-[0_0_40px_rgba(34,197,94,0.15)]
+    hover:shadow-[0_0_60px_rgba(34,197,94,0.25)]"
+>
+  <img
+    src="https://i.postimg.cc/mkzRkFQb/Untitled-design-(1).png"
+    alt="ScoutPanels"
+    className="h-10 md:h-12 w-10 md:w-12 object-contain 
+      rounded-2xl bg-white/10 p-1"
+  />
 
-        <div className="text-left">
-          <p className="text-white font-bold text-sm md:text-base">
-            ScoutPanels
-          </p>
-          <p className="text-slate-400 text-xs md:text-sm">
-            Turning B2B Feedback into Adoption Signals
-          </p>
-        </div>
-      </a>
+  <div className="text-left">
+    <p className="text-white font-bold text-sm md:text-base">
+      ScoutPanels
+    </p>
+    <p className="text-slate-400 text-xs md:text-sm">
+      Turning B2B Feedback into Adoption Signals
+    </p>
+  </div>
+</a>
     </div>
   </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
