@@ -11,7 +11,6 @@ import {
   TextQuote, Gauge, ShieldAlert, Key, Info,
   BookOpen, Rocket, CreditCard
 } from 'lucide-react';
-import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
 
 const syntaxHighlight = (json: string) => {
