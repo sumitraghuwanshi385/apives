@@ -11,6 +11,7 @@ import {
   TextQuote, Gauge, ShieldAlert, Key, Info,
   BookOpen, Rocket, CreditCard
 } from 'lucide-react';
+import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
 
 const syntaxHighlight = (json: string) => {
@@ -318,7 +319,7 @@ if (!api) {
       <div className="space-y-1">
         <div className="flex items-center gap-3">
           <div className={`w-2 h-2 rounded-full ${
-            api.pricing.type === 'Paid' || api.pricing.type === 'Premium'
+            api.pricing?.type === 'Paid' || api.pricing?.type === 'Premium'
               ? 'bg-blue-500'
               : 'bg-mora-500'
           } shadow-[0_0_10px_rgba(34,197,94,0.4)]`} />
@@ -332,7 +333,7 @@ if (!api) {
             {api.pricing.type}
           </p>
 
-          {api.rateLimit && (
+          {api?.rateLimit && (
             <div className="flex items-baseline gap-1.5 mt-1">
               <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">
                 Rate Limit:
