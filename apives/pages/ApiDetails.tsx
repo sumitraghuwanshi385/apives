@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiClient';
-import { Copy, Play, Terminal, ShieldCheck, Activity, Cpu, Globe, Lock, Cloud, Box, Check, Heart, Bookmark, CheckCircle2, Image as ImageIcon, Clock, Database, AlignLeft, Code, ArrowRight, Zap, Wifi, Calendar, Trophy, DollarSign, X, FileJson, ListFilter, TextQuote, Gauge, ShieldAlert, Key, Info } from 'lucide-react';
+import { Copy, Play, Terminal, ShieldCheck, Activity, Cpu, Globe, Lock, Cloud, Box, Check, Heart, Bookmark, CheckCircle2, Image as ImageIcon, Clock, Database, AlignLeft, Code, ArrowRight, Zap, Wifi, Calendar, Trophy, DollarSign, X, FileJson, ListFilter, TextQuote, Gauge, ShieldAlert, Key, Info,BookOpen,
+  Rocket,
+  CreditCard } from 'lucide-react';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
 
@@ -211,16 +213,7 @@ if (!api) {
 
              <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
                    </div>
-                   
-{/* 💰 Pricing Details */}
-{api.pricing?.type !== 'Free' && api.pricing?.details && (
-  <div className="mt-2 ml-1 text-[11px] md:text-sm text-slate-400">
-    <span className="text-white font-semibold">Pricing:</span>{' '}
-    {api.pricing.details}
-  </div>
-)}
-
-
+                 
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
                             <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{api.name}</h1>
@@ -249,7 +242,119 @@ if (!api) {
                 )}
                 {api.features && api.features.length > 0 && (
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><ShieldCheck className="mr-3 text-mora-500" size={14}/> Feature Matrix</h2><div className="grid grid-cols-1 md:grid-cols-2 gap-4">{api.features.map((f: string, i: number) => (<div key={i} className="flex items-center p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-mora-500/30 transition-all"><div className="w-6 h-6 rounded-full bg-mora-500/10 flex items-center justify-center mr-4 group-hover:bg-mora-500 transition-colors"><Check size={12} className="text-mora-500 group-hover:text-black" /></div><span className="text-slate-300 text-sm font-medium">{f}</span></div>))}</div></section>
-                )}
+          {(api.authMethod || api.productionReadiness || api.dataFreshness) && (
+  <section>
+    <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
+      <BookOpen className="mr-3 text-mora-500" size={14}/> Essential Knowledge
+    </h2>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      {api.productionReadiness && (
+        <div className="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 rounded-3xl p-5 md:p-7 flex items-center gap-5 shadow-xl">
+          <div className="w-11 h-11 rounded-xl bg-mora-500/10 flex items-center justify-center text-mora-500 border border-mora-500/20">
+            <Rocket size={18}/>
+          </div>
+          <div>
+            <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">
+              Readiness
+            </h4>
+            <p className="text-white font-mono text-[11px] leading-tight">
+              {api.productionReadiness}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {api.dataFreshness && (
+        <div className="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 rounded-3xl p-5 md:p-7 flex items-center gap-5 shadow-xl">
+          <div className="w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+            <Database size={18}/>
+          </div>
+          <div>
+            <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">
+              Data Flow
+            </h4>
+            <p className="text-white font-mono text-[11px] leading-tight">
+              {api.dataFreshness}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {api.authMethod && (
+        <div className="bg-gradient-to-br from-white/[0.05] to-transparent border border-white/10 rounded-3xl p-5 md:p-7 flex items-center gap-5 shadow-xl">
+          <div className="w-11 h-11 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
+            <Lock size={18}/>
+          </div>
+          <div>
+            <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">
+              Auth Type
+            </h4>
+            <p className="text-white font-mono text-[11px] leading-tight">
+              {api.authMethod}
+            </p>
+          </div>
+        </div>
+      )}
+
+    </div>
+  </section>
+)}     
+ <section>
+  <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
+    <CreditCard className="mr-3 text-mora-500" size={14}/> Pricing
+  </h2>
+
+  <div className="bg-dark-900 border border-white/10 rounded-3xl p-5 md:p-6 shadow-xl relative overflow-hidden group transition-all hover:bg-black/40">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+
+      <div className="space-y-1">
+        <div className="flex items-center gap-3">
+          <div className={`w-2 h-2 rounded-full ${
+            api.pricing.type === 'Paid' || api.pricing.type === 'Premium'
+              ? 'bg-blue-500'
+              : 'bg-mora-500'
+          } shadow-[0_0_10px_rgba(34,197,94,0.4)]`} />
+          <span className="text-[10px] text-slate-500 font-black uppercase tracking-widest">
+            Plan
+          </span>
+        </div>
+
+        <div className="pl-5">
+          <p className="text-xl font-display font-bold text-white tracking-tight">
+            {api.pricing.type}
+          </p>
+
+          {api.rateLimit && (
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">
+                Rate Limit:
+              </span>
+              <span className="text-xs font-mono font-bold text-mora-400">
+                {api.rateLimit}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {api.pricing.details && (
+        <div className="bg-mora-500/5 rounded-2xl p-4 border border-mora-500/20 shadow-[0_0_20px_rgba(34,197,94,0.05)] relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-mora-500/30"></div>
+          <span className="text-[9px] font-black text-mora-400 uppercase tracking-widest block mb-2 flex items-center gap-1.5">
+            <Info size={10}/> Description
+          </span>
+          <p className="text-xs text-slate-300 font-light leading-relaxed">
+            {api.pricing.details}
+          </p>
+        </div>
+      )}
+
+    </div>
+  </div>
+</section>
+
                 {hasEndpoints && (
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Terminal className="mr-3 text-mora-500" size={14}/> Endpoint Matrix</h2><div className="space-y-4 md:space-y-6">{api.endpoints.map((endpoint: any, idx: number) => (<div key={idx} className="bg-dark-900/30 border border-white/5 rounded-2xl overflow-hidden group"><div className="bg-white/[0.02] px-5 py-3 md:px-6 md:py-4 flex items-center gap-3 border-b border-white/5 overflow-x-auto no-scrollbar"><span className={`text-[8px] md:text-[9px] font-black px-3 py-0.5 rounded-full uppercase border tracking-widest ${endpoint.method === 'GET' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>{endpoint.method}</span><code className="text-[10px] md:text-xs font-mono text-slate-300 whitespace-nowrap">{endpoint.path}</code></div><div className="p-5 md:p-8"><p className="text-[11px] md:text-sm text-slate-400 mb-6 font-light">{endpoint.description}</p><div className="bg-black rounded-xl border border-white/10 p-4 md:p-6 relative group/code overflow-hidden shadow-inner"><pre className="text-[10px] md:text-xs font-mono text-slate-300 overflow-x-auto custom-scrollbar pb-1" dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(endpoint.responseExample || {}, null, 2)) }} /></div></div></div>))}</div></section>
                 )}
