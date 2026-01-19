@@ -231,7 +231,7 @@ if (!api) {
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
-                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{apiData.name}</h1>
+                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{api.name}</h1>
                             <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
