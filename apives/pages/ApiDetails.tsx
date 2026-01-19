@@ -329,7 +329,7 @@ if (!api) {
 
         <div className="pl-5">
           <p className="text-xl font-display font-bold text-white tracking-tight">
-            {api.pricing.type}
+            {api.pricing?.type}
           </p>
 
           {api?.rateLimit && (
@@ -338,21 +338,21 @@ if (!api) {
                 Rate Limit:
               </span>
               <span className="text-xs font-mono font-bold text-mora-400">
-                {api.rateLimit}
+                {api?.rateLimit}
               </span>
             </div>
           )}
         </div>
       </div>
 
-      {api.pricing.details && (
+      {api.pricing?.details && (
         <div className="bg-mora-500/5 rounded-2xl p-4 border border-mora-500/20 shadow-[0_0_20px_rgba(34,197,94,0.05)] relative overflow-hidden">
           <div className="absolute top-0 left-0 w-1 h-full bg-mora-500/30"></div>
           <span className="text-[9px] font-black text-mora-400 uppercase tracking-widest block mb-2 flex items-center gap-1.5">
             <Info size={10}/> Description
           </span>
           <p className="text-xs text-slate-300 font-light leading-relaxed">
-            {api.pricing.details}
+            {api.pricing?.details}
           </p>
         </div>
       )}
