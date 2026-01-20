@@ -120,39 +120,46 @@ const categoryOptions = [
   if (editId) {
     setEditingApiId(editId);
 
-    apiService.getApiById(editId).then((api) => {
-      // 🔹 FORM DATA
-      setFormData({
-        name: api.name || '',
-        provider: api.provider || user.name,
-        description: api.description || '',
-        category: api.category || 'AI',
-        pricing: api.pricing?.type || 'Free',
-        pricingDetails: api.pricing?.details || '',
-        website: api.externalUrl || '',
-        tags: (api.tags || []).join(', '),
-        latency: api.latency || 'Low',
-        stability: api.stability || 'Stable',
-        accessType: api.accessType || 'Public',
-      });
+    apiService.getApiById(editId)
+  .then((api) => {
+    if (!api) {
+      setError('API not found or deleted');
+      localStorage.removeItem('mora_edit_api_id');
+      return;
+    }
 
-      // 🔹 FEATURES
-      setFeatures(api.features?.length ? api.features : ['']);
-
-      // 🔹 ENDPOINTS
-      setEndpoints(
-        (api.endpoints || []).map((ep: any) => ({
-          method: ep.method,
-          path: ep.path,
-          description: ep.description,
-          bodyJson: JSON.stringify(ep.body || {}, null, 2),
-          responseJson: JSON.stringify(ep.responseExample || {}, null, 2),
-        }))
-      );
-
-      // 🔹 GALLERY
-      setGalleryBase64(api.gallery || []);
+    setFormData({
+      name: api?.name || '',
+      provider: api?.provider || user.name,
+      description: api?.description || '',
+      category: api?.category || 'AI',
+      pricing: api?.pricing?.type || 'Free',
+      pricingDetails: api?.pricing?.details || '',
+      website: api?.externalUrl || '',
+      tags: (api?.tags || []).join(', '),
+      latency: api?.latency || 'Low',
+      stability: api?.stability || 'Stable',
+      accessType: api?.accessType || 'Public',
     });
+
+    setFeatures(api?.features?.length ? api.features : ['']);
+
+    setEndpoints(
+      (api?.endpoints || []).map((ep: any) => ({
+        method: ep.method,
+        path: ep.path,
+        description: ep.description,
+        bodyJson: JSON.stringify(ep.body || {}, null, 2),
+        responseJson: JSON.stringify(ep.responseExample || {}, null, 2),
+      }))
+    );
+
+    setGalleryBase64(api?.gallery || []);
+  })
+  .catch(() => {
+    setError('Failed to load API for editing');
+    localStorage.removeItem('mora_edit_api_id');
+  });
   }
   // 👆👆👆 EDIT MODE END
 
