@@ -344,7 +344,7 @@ localStorage.removeItem('mora_edit_api_id')
 
           <div className="space-y-1.5">
               <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Description *</label>
-              <textarea required rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none resize-none" placeholder="Explain the value proposition..." />
+              <textarea required rows={8} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none resize-none" placeholder="Explain the value proposition..." />
           </div>
 
           {/* Visual Proofs (Gallery) */}
@@ -410,7 +410,7 @@ localStorage.removeItem('mora_edit_api_id')
   </label>
 
   <textarea
-    rows={4}
+    rows={6}
     value={formData.pricingDetails}
     onChange={(e) =>
       setFormData({ ...formData, pricingDetails: e.target.value })
@@ -479,28 +479,43 @@ localStorage.removeItem('mora_edit_api_id')
           </div>
 
           {/* Endpoints */}
-          <div className="space-y-3 pt-2 border-t border-white/5">
-             <div className="flex items-center justify-between ml-1">
-                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><Terminal size={12} className="text-mora-500" /> Interface Nodes</label>
-                <button
-  type="button"
-  onClick={addEndpoint}
-  disabled={endpoints.length >= 5}
-  className={`
-    text-[8px] font-bold uppercase flex items-center gap-1
-    ${
-      endpoints.length >= 5
-        ? 'text-slate-600 cursor-not-allowed'
-        : 'text-mora-500 hover:text-white'
-    }
-  `}
->
-  <Plus size={10}/> Add Node
-</button>
-<p className="text-[8px] text-slate-600 ml-1">
-  Max 5 interface nodes allowed
-</p>
-             </div>
+          <div className="space-y-2 pt-2 border-t border-white/5">
+
+  {/* Header Row */}
+  <div className="flex items-center justify-between ml-1">
+    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+      <Terminal size={12} className="text-mora-500" />
+      Interface Nodes
+    </label>
+
+    {/* Add Node – Pill Button */}
+    <button
+      type="button"
+      onClick={addEndpoint}
+      disabled={endpoints.length >= 5}
+      className={`
+        px-4 py-1.5
+        rounded-full
+        text-[8px] font-black uppercase tracking-widest
+        flex items-center gap-1
+        transition-all
+        ${
+          endpoints.length >= 5
+            ? 'bg-white/5 text-slate-600 cursor-not-allowed'
+            : 'bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black'
+        }
+      `}
+    >
+      <Plus size={10}/> Add Node
+    </button>
+  </div>
+
+  {/* Max limit text — JUST BELOW Interface Nodes */}
+  <p className="text-[8px] text-slate-600 ml-1">
+    Max 5 interface nodes allowed
+  </p>
+
+</div>
              
              <div className="space-y-3">
                 {endpoints.length === 0 && <div className="p-6 border border-white/5 border-dashed rounded-xl text-center text-slate-600 text-[10px] uppercase tracking-widest font-mono">No nodes registered.</div>}
