@@ -492,7 +492,7 @@ localStorage.removeItem('mora_edit_api_id')
   <div className="flex items-center justify-between ml-1">
     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
       <Terminal size={12} className="text-mora-500" />
-      Interface Nodes
+      Interface Nodes - Mock Examples
     </label>
 
     {/* Add Node – Pill Button */}
@@ -541,13 +541,13 @@ localStorage.removeItem('mora_edit_api_id')
     value={ep.bodyJson}
     onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)}
     className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-blue-300 h-20 outline-none"
-    placeholder="Body JSON"/>
+    placeholder="Mock Body JSON"/>
 
   <textarea
     value={ep.responseJson}
     onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)}
     className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-green-300 h-20 outline-none"
-    placeholder="Response JSON" />
+    placeholder="Mock Response JSON" />
   </div>
 </div>
 ))} 
