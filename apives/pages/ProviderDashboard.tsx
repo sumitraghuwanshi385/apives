@@ -329,7 +329,7 @@ const handleLogout = () => {
   };
 
   const updateEditEndpoint = (index: number, field: string, value: string) => {
-    const nextEndpoints = [...editingNode.endpoints];
+    const nextEndpoints = [...(editingNode.endpoints || [])];
     nextEndpoints[index] = { ...nextEndpoints[index], [field]: value };
     setEditingNode({ ...editingNode, endpoints: nextEndpoints });
   };
