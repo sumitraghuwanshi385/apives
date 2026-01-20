@@ -515,7 +515,7 @@ const addEditFeature = () => {
                          </div>
                       </div>
 
-                      {editingNode.pricing && editingNode.pricing?.type !== 'Free' && (
+                      {editingNode.pricing && (
   <div className="space-y-1.5 animate-fade-in">
     <label className="text-[10px] font-black uppercase ml-1 text-slate-500">
       Pricing Details
@@ -533,7 +533,11 @@ const addEditFeature = () => {
           }
         })
       }
-      placeholder="Explain pricing, plans, rate limits, billing..."
+      placeholder={
+        editingNode.pricing.type === 'Free'
+          ? 'Explain free tier limits, usage caps, rate limits...'
+          : 'Explain pricing, plans, rate limits, billing...'
+      }
       className="
         w-full bg-black border border-white/10 rounded-xl
         px-4 py-3 text-sm text-white
@@ -621,32 +625,37 @@ const addEditFeature = () => {
 
                       {/* Endpoints Structured UI (Playground Ready) */}
                       <div className="space-y-4 pt-4 border-t border-white/5">
-                         <div className="flex items-center justify-between ml-1">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><Terminal size={14} className="text-mora-500" /> Interface Nodes (Playground Ready)</label>
-                            <button
-  type="button"
-  onClick={addEditEndpoint}
-  disabled={editingNode.endpoints.length >= 5}
-  className={`
-    px-4 py-1.5
-    rounded-full
-    text-[9px] font-black uppercase tracking-widest
-    flex items-center gap-1
-    transition-all
-    ${
-      editingNode.endpoints.length >= 5
-        ? 'bg-white/5 text-slate-600 cursor-not-allowed'
-        : 'bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black'
-    }
-  `}
->
-  <Plus size={12}/> Add Node
-</button>
-                <p className="text-[9px] text-slate-600 ml-1">
+                         {/* Header row */}
+<div className="flex items-center justify-between ml-1">
+  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+    <Terminal size={14} className="text-mora-500" />
+    Interface Nodes (Playground Ready)
+  </label>
+
+  {/* Add Node – RIGHT CORNER */}
+  <button
+    type="button"
+    onClick={addEditEndpoint}
+    disabled={editingNode.endpoints.length >= 5}
+    className={`
+      px-4 py-1.5 rounded-full
+      text-[9px] font-black uppercase tracking-widest
+      flex items-center gap-1 transition-all
+      ${
+        editingNode.endpoints.length >= 5
+          ? 'bg-white/5 text-slate-600 cursor-not-allowed'
+          : 'bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black'
+      }
+    `}
+  >
+    <Plus size={12}/> Add Node
+  </button>
+</div>
+
+{/* 👇 MOVE THIS HERE */}
+<p className="text-[9px] text-slate-600 ml-1 mt-1">
   Max 5 interface nodes allowed
-</p>
-         </div>
-                         
+</p>                  
                          <div className="space-y-4">
                             {editingNode.endpoints.length === 0 && <div className="p-8 border-2 border-dashed border-white/5 rounded-3xl text-center text-slate-600 text-xs uppercase tracking-widest font-mono">No endpoints registered. Add one to enable Playground.</div>}
                             {editingNode.endpoints.map((ep: any, i: number) => (
