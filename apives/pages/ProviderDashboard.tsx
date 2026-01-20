@@ -506,50 +506,49 @@ const addEditEndpoint = () => {
                          </div>
                       </div>
 
-                      <label className="text-[10px] font-black uppercase ml-1">
-  Pricing Details
-</label>
+                      {editingNode.pricing.type !== 'Free' && (
+  <div className="space-y-1.5 animate-fade-in">
+    <label className="text-[10px] font-black uppercase ml-1 text-slate-500">
+      Pricing Details
+    </label>
 
-<textarea
-  rows={5}
-  value={editingNode.pricing.details}
-  onChange={(v) =>
-  setEditingNode({
-    ...editingNode,
-    pricing: {
-      ...editingNode.pricing,
-      type: v,
-      details: v === 'Free' ? '' : editingNode.pricing.details
-    }
-  })
-}
-  placeholder={
-    editingNode.pricing.type === 'Free'
-      ? 'Explain what is included in free tier...\n\nRate limits, usage caps'
-      : 'Explain pricing, plans, billing model...'
-  }
-  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3
-             text-sm text-white focus:border-mora-500 outline-none"
-/>
-                        </div>
-                      )}
+    <textarea
+      rows={5}
+      value={editingNode.pricing.details}
+      onChange={(e) =>
+        setEditingNode({
+          ...editingNode,
+          pricing: {
+            ...editingNode.pricing,
+            details: e.target.value
+          }
+        })
+      }
+      placeholder="Explain pricing, plans, rate limits, billing..."
+      className="
+        w-full bg-black border border-white/10 rounded-xl
+        px-4 py-3 text-sm text-white
+        focus:border-mora-500 outline-none
+        resize-none
+      "
+    />
+  </div>
+)}
 
 {/* Feature Matrix */}
                       <div className="space-y-3 pt-4 border-t border-white/5">
                          <div className="flex items-center justify-between ml-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ListPlus size={14} className="text-mora-500" /> Feature Matrix</label>
                             <button
-      type="button"
-      onClick={addEditFeature}
-      className="px-4 py-1.5 rounded-full text-[10px] font-black
-                 bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black" uppercase tracking-widest
+  type="button"
+  onClick={addEditFeature}
+  className="
+    px-4 py-1.5 rounded-full
+    text-[10px] font-black uppercase tracking-widest
+    bg-mora-500/15 text-mora-400
+    hover:bg-mora-500 hover:text-black
     flex items-center gap-1 transition-all
-    ${
-      editingNode.endpoints.length >= 5
-        ? 'bg-white/5 text-slate-600 cursor-not-allowed'
-        : 'bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black'
-    }
-  `}
+  "
 >
   <Plus size={12}/> Add Feature
 </button>
