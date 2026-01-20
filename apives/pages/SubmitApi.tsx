@@ -536,7 +536,6 @@ localStorage.removeItem('mora_edit_api_id')
                         <input value={ep.description} onChange={(e) => updateEndpoint(i, 'description', e.target.value)} className="w-full bg-black border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-slate-400 outline-none" placeholder="Endpoint objective..." />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
   {/* Mock Request */}
   <div className="space-y-1">
     <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">
@@ -545,13 +544,7 @@ localStorage.removeItem('mora_edit_api_id')
     <textarea
       value={ep.bodyJson}
       onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)}
-      className="
-        w-full bg-dark-950 border border-white/5
-        rounded-xl p-3
-        text-[10px] font-mono text-blue-300
-        h-28 outline-none
-        focus:border-mora-500/30
-      "
+      className="w-full bg-dark-950 border border-white/5 rounded-xl p-3 text-[10px] font-mono text-blue-300 h-28 outline-none focus:border-mora-500/30"
       spellCheck={false}
     />
   </div>
@@ -564,20 +557,14 @@ localStorage.removeItem('mora_edit_api_id')
     <textarea
       value={ep.responseJson}
       onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)}
-      className="
-        w-full bg-dark-950 border border-white/5
-        rounded-xl p-3
-        text-[10px] font-mono text-green-300
-        h-28 outline-none
-        focus:border-mora-500/30
-      "
+      className="w-full bg-dark-950 border border-white/5 rounded-xl p-3 text-[10px] font-mono text-green-300 h-28 outline-none focus:border-mora-500/30"
       spellCheck={false}
     />
   </div>
 </div>
 </div>
-   ))}
-      </div>      
+))}
+</div>     
       
           {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] flex items-center gap-2 animate-pulse"><AlertCircle size={14}/> {error}</div>}
 
