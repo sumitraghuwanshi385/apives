@@ -423,8 +423,9 @@ const addEditEndpoint = () => {
       )}
 
       {/* Full Feature Edit Modal */}
-      {editingNode && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {editingNode && editingNode.name && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+
               <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={() => setEditingNode(null)}></div>
               <div className="bg-dark-900 border border-white/10 rounded-[2.5rem] w-full max-w-4xl relative z-10 animate-slide-up overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
                   <div className="p-6 md:p-10 space-y-8">
@@ -506,7 +507,7 @@ const addEditEndpoint = () => {
                          </div>
                       </div>
 
-                      {editingNode.pricing.type !== 'Free' && (
+                      {editingNode.pricing && editingNode.pricing.type !== 'Free' && (
   <div className="space-y-1.5 animate-fade-in">
     <label className="text-[10px] font-black uppercase ml-1 text-slate-500">
       Pricing Details
@@ -514,7 +515,7 @@ const addEditEndpoint = () => {
 
     <textarea
       rows={5}
-      value={editingNode.pricing.details}
+      value={editingNode.pricing.details || ''}
       onChange={(e) =>
         setEditingNode({
           ...editingNode,
