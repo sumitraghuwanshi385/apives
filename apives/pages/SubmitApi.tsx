@@ -541,23 +541,19 @@ localStorage.removeItem('mora_edit_api_id')
     value={ep.bodyJson}
     onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)}
     className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-blue-300 h-20 outline-none"
-    placeholder="Body JSON"
-    spellCheck={false}
-  />
+    placeholder="Body JSON"/>
 
   <textarea
     value={ep.responseJson}
     onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)}
     className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-green-300 h-20 outline-none"
-    placeholder="Response JSON"
-    spellCheck={false}
-  />
+    placeholder="Response JSON" />
   </div>
 </div>
 ))} 
 </div>
 
-</div>
+      </div>
           {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] flex items-center gap-2 animate-pulse"><AlertCircle size={14}/> {error}</div>}
 
           <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-mora-600 text-white font-black rounded-full uppercase text-xs tracking-widest hover:bg-mora-500 shadow-xl shadow-mora-500/10 flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
