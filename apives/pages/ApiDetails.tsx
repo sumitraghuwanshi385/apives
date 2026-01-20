@@ -218,7 +218,17 @@ if (!api) {
   </div>
 )}
 
-             <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
+             <span
+  className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${
+    api.pricing.type === 'Free'
+      ? 'bg-green-500/10 text-green-400 border-green-500/20'
+      : api.pricing.type === 'Freemium'
+      ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+      : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+  }`}
+>
+  {api.pricing.type}
+</span>
                    </div>
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
@@ -249,12 +259,8 @@ if (!api) {
                 )}
                 {api.features && api.features.length > 0 && (
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><ShieldCheck className="mr-3 text-mora-500" size={14}/> Feature Matrix</h2><div className="grid grid-cols-1 md:grid-cols-2 gap-4">{api.features.map((f: string, i: number) => (<div key={i} className="flex items-center p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-mora-500/30 transition-all"><div className="w-6 h-6 rounded-full bg-mora-500/10 flex items-center justify-center mr-4 group-hover:bg-mora-500 transition-colors"><Check size={12} className="text-mora-500 group-hover:text-black" /></div><span className="text-slate-300 text-sm font-medium">{f}</span></div>))}</div></section>
-          )}           
-                {hasEndpoints && (
-                    <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Terminal className="mr-3 text-mora-500" size={14}/> Endpoint Matrix</h2><div className="space-y-4 md:space-y-6">{api.endpoints.map((endpoint: any, idx: number) => (<div key={idx} className="bg-dark-900/30 border border-white/5 rounded-2xl overflow-hidden group"><div className="bg-white/[0.02] px-5 py-3 md:px-6 md:py-4 flex items-center gap-3 border-b border-white/5 overflow-x-auto no-scrollbar"><span className={`text-[8px] md:text-[9px] font-black px-3 py-0.5 rounded-full uppercase border tracking-widest ${endpoint.method === 'GET' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>{endpoint.method}</span><code className="text-[10px] md:text-xs font-mono text-slate-300 whitespace-nowrap">{endpoint.path}</code></div><div className="p-5 md:p-8"><p className="text-[11px] md:text-sm text-slate-400 mb-6 font-light">{endpoint.description}</p><div className="bg-black rounded-xl border border-white/10 p-4 md:p-6 relative group/code overflow-hidden shadow-inner"><pre className="text-[10px] md:text-xs font-mono text-slate-300 overflow-x-auto custom-scrollbar pb-1" dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(endpoint.responseExample || {}, null, 2)) }} /></div></div></div>))}</div></section>
-                )}
-                <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Gauge className="mr-3 text-mora-500" size={14}/> Operational Stats</h2><div className="grid grid-cols-3 gap-3 md:gap-6"><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Latency</span><span className="text-lg md:text-3xl font-display font-black text-mora-400 leading-none">{api.latency}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Stability</span><span className="text-lg md:text-3xl font-display font-black text-blue-400 leading-none truncate">{api.stability || 'Stable'}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Access</span><span className="text-lg md:text-3xl font-display font-black text-white leading-none truncate">{api.accessType || 'Public'}</span></div></div></section>
-
+          )} 
+<section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Gauge className="mr-3 text-mora-500" size={14}/> Operational Stats</h2><div className="grid grid-cols-3 gap-3 md:gap-6"><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Latency</span><span className="text-lg md:text-3xl font-display font-black text-mora-400 leading-none">{api.latency}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Stability</span><span className="text-lg md:text-3xl font-display font-black text-blue-400 leading-none truncate">{api.stability || 'Stable'}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Access</span><span className="text-lg md:text-3xl font-display font-black text-white leading-none truncate">{api.accessType || 'Public'}</span></div></div></section>
 {/* 💰 Pricing Model */}
 <section className="mb-12 md:mb-16">
   {/* Section Heading */}
@@ -284,23 +290,25 @@ if (!api) {
   </div>
 
   {/* Pricing Card */}
-  <div
-    className="
-      relative
-      bg-white/[0.035]
-      border border-mora-500/20
-      rounded-2xl md:rounded-3xl
-      p-5 md:p-8
-      backdrop-blur-xl
-      shadow-[0_0_60px_rgba(34,197,94,0.18)]
-      overflow-hidden
-    "
-  >
-    {/* Soft Green Glow */}
-    <div className="absolute inset-0 rounded-3xl 
-      bg-gradient-to-br from-mora-500/20 via-transparent to-transparent
-      pointer-events-none" />
+<div
+  className="
+    relative
+    bg-white/[0.035]
+    border border-mora-500/30
+    rounded-2xl md:rounded-3xl
+    p-5 md:p-8
+    backdrop-blur-xl
+    overflow-hidden
 
+    before:content-['']
+    before:absolute
+    before:inset-0
+    before:rounded-2xl md:before:rounded-3xl
+    before:pointer-events-none
+    before:shadow-[inset_0_0_40px_rgba(34,197,94,0.45)]
+  "
+>
+   
     <div className="relative z-10">
       <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl">
         {api.pricing?.details ||
@@ -309,7 +317,11 @@ if (!api) {
     </div>
   </div>
 </section>
-
+          
+                {hasEndpoints && (
+                    <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Terminal className="mr-3 text-mora-500" size={14}/> Endpoint Matrix</h2><div className="space-y-4 md:space-y-6">{api.endpoints.map((endpoint: any, idx: number) => (<div key={idx} className="bg-dark-900/30 border border-white/5 rounded-2xl overflow-hidden group"><div className="bg-white/[0.02] px-5 py-3 md:px-6 md:py-4 flex items-center gap-3 border-b border-white/5 overflow-x-auto no-scrollbar"><span className={`text-[8px] md:text-[9px] font-black px-3 py-0.5 rounded-full uppercase border tracking-widest ${endpoint.method === 'GET' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>{endpoint.method}</span><code className="text-[10px] md:text-xs font-mono text-slate-300 whitespace-nowrap">{endpoint.path}</code></div><div className="p-5 md:p-8"><p className="text-[11px] md:text-sm text-slate-400 mb-6 font-light">{endpoint.description}</p><div className="bg-black rounded-xl border border-white/10 p-4 md:p-6 relative group/code overflow-hidden shadow-inner"><pre className="text-[10px] md:text-xs font-mono text-slate-300 overflow-x-auto custom-scrollbar pb-1" dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(endpoint.responseExample || {}, null, 2)) }} /></div></div></div>))}</div></section>
+                )}
+                
 {api.tags && api.tags.length > 0 && (
   <section>
     <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
