@@ -513,15 +513,16 @@ const addEditEndpoint = () => {
 <textarea
   rows={5}
   value={editingNode.pricing.details}
-  onChange={(e) =>
-    setEditingNode({
-      ...editingNode,
-      pricing: {
-        ...editingNode.pricing,
-        details: e.target.value
-      }
-    })
-  }
+  onChange={(v) =>
+  setEditingNode({
+    ...editingNode,
+    pricing: {
+      ...editingNode.pricing,
+      type: v,
+      details: v === 'Free' ? '' : editingNode.pricing.details
+    }
+  })
+}
   placeholder={
     editingNode.pricing.type === 'Free'
       ? 'Explain what is included in free tier...\n\nRate limits, usage caps'
@@ -550,12 +551,12 @@ const addEditEndpoint = () => {
     }
   `}
 >
-  <Plus size={12}/> Add Node
+  <Plus size={12}/> Add Feature
 </button>
                          </div>
 
 <p className="text-[9px] text-slate-600 ml-1">
-  Max 5 interface nodes allowed
+  Add key features of your API
 </p>
 
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
