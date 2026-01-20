@@ -533,9 +533,14 @@ localStorage.removeItem('mora_edit_api_id')
                             <input value={ep.path} onChange={(e) => updateEndpoint(i, 'path', e.target.value)} className="flex-1 bg-black border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-mora-500 outline-none" placeholder="/v1/endpoint" />
                         </div>
 
-                        <input value={ep.description} onChange={(e) => updateEndpoint(i, 'description', e.target.value)} className="w-full bg-black border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-slate-400 outline-none" placeholder="Endpoint objective..." />
+                        <input 
+  value={ep.description} 
+  onChange={(e) => updateEndpoint(i, 'description', e.target.value)} 
+  className="w-full bg-black border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-slate-400 outline-none" 
+  placeholder="Endpoint objective..." 
+/>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   {/* Mock Request */}
   <div className="space-y-1">
     <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">
@@ -547,6 +552,7 @@ localStorage.removeItem('mora_edit_api_id')
       className="w-full bg-dark-950 border border-white/5 rounded-xl p-3 text-[10px] font-mono text-blue-300 h-28 outline-none focus:border-mora-500/30"
       spellCheck={false}
     />
+  </div> {/* Fixed: Mock Request closing div */}
 
   {/* Mock Response */}
   <div className="space-y-1">
@@ -560,18 +566,25 @@ localStorage.removeItem('mora_edit_api_id')
       spellCheck={false}
     />
   </div>
-</div>
-))} 
-</div>
+</div> {/* Fixed: Grid closing div */}
 
-</div>
-          {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] flex items-center gap-2 animate-pulse"><AlertCircle size={14}/> {error}</div>}
+                    </div> // Closing individual endpoint card
+                ))} 
+            </div> {/* Closing endpoints space-y-3 list */}
+        </div> {/* Closing "Interface Nodes" main section */}
+    </div> {/* Closing form inner spacing container (if exists) */}
 
-          <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-mora-600 text-white font-black rounded-full uppercase text-xs tracking-widest hover:bg-mora-500 shadow-xl shadow-mora-500/10 flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
-            {isSubmitting ? <RefreshCw size={16} className="animate-spin" /> : <>Commission Protocol Node</>}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
+    {error && (
+        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] flex items-center gap-2 animate-pulse mt-4">
+            <AlertCircle size={14}/> {error}
+        </div>
+    )}
+
+    <button 
+        type="submit" 
+        disabled={isSubmitting} 
+        className="w-full mt-6 py-4 bg-mora-600 text-white font-black rounded-full uppercase text-xs tracking-widest hover:bg-mora-500 shadow-xl shadow-mora-500/10 flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50"
+    >
+        {isSubmitting ? <RefreshCw size={16} className="animate-spin" /> : <>Commission Protocol Node</>}
+    </button>
+</form>
