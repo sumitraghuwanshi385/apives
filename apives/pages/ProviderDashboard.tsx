@@ -507,7 +507,7 @@ const addEditEndpoint = () => {
                          </div>
                       </div>
 
-                      {editingNode.pricing && editingNode.pricing.type !== 'Free' && (
+                      {editingNode.pricing && editingNode.pricing?.type !== 'Free' && (
   <div className="space-y-1.5 animate-fade-in">
     <label className="text-[10px] font-black uppercase ml-1 text-slate-500">
       Pricing Details
