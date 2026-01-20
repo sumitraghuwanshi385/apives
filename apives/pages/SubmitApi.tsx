@@ -562,11 +562,9 @@ localStorage.removeItem('mora_edit_api_id')
     />
   </div>
 </div>
-
-</div>   {/* ✅ endpoint card CLOSE */}
-
 ))} 
 </div>
+
 </div>
           {error && <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-[10px] flex items-center gap-2 animate-pulse"><AlertCircle size={14}/> {error}</div>}
 
