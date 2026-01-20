@@ -220,15 +220,6 @@ if (!api) {
 
              <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${api.pricing.type === 'Free' ? 'bg-green-500/10 text-green-400 border-green-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>{api.pricing.type}</span>
                    </div>
-
- {/* 💰 Pricing Details */}
-{api.pricing?.type !== 'Free' && api.pricing?.details && (
-
-  <div className="mt-2 ml-1 text-[11px] md:text-sm text-slate-400">  
-    <span className="text-white font-semibold">Pricing:</span>{' '}  
-    {api.pricing.details} 
- </div>  
-)}  
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
@@ -263,6 +254,51 @@ if (!api) {
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Terminal className="mr-3 text-mora-500" size={14}/> Endpoint Matrix</h2><div className="space-y-4 md:space-y-6">{api.endpoints.map((endpoint: any, idx: number) => (<div key={idx} className="bg-dark-900/30 border border-white/5 rounded-2xl overflow-hidden group"><div className="bg-white/[0.02] px-5 py-3 md:px-6 md:py-4 flex items-center gap-3 border-b border-white/5 overflow-x-auto no-scrollbar"><span className={`text-[8px] md:text-[9px] font-black px-3 py-0.5 rounded-full uppercase border tracking-widest ${endpoint.method === 'GET' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>{endpoint.method}</span><code className="text-[10px] md:text-xs font-mono text-slate-300 whitespace-nowrap">{endpoint.path}</code></div><div className="p-5 md:p-8"><p className="text-[11px] md:text-sm text-slate-400 mb-6 font-light">{endpoint.description}</p><div className="bg-black rounded-xl border border-white/10 p-4 md:p-6 relative group/code overflow-hidden shadow-inner"><pre className="text-[10px] md:text-xs font-mono text-slate-300 overflow-x-auto custom-scrollbar pb-1" dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(endpoint.responseExample || {}, null, 2)) }} /></div></div></div>))}</div></section>
                 )}
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Gauge className="mr-3 text-mora-500" size={14}/> Operational Stats</h2><div className="grid grid-cols-3 gap-3 md:gap-6"><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Latency</span><span className="text-lg md:text-3xl font-display font-black text-mora-400 leading-none">{api.latency}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Stability</span><span className="text-lg md:text-3xl font-display font-black text-blue-400 leading-none truncate">{api.stability || 'Stable'}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Access</span><span className="text-lg md:text-3xl font-display font-black text-white leading-none truncate">{api.accessType || 'Public'}</span></div></div></section>
+
+{/* 💰 Pricing Overview */}
+<section className="mb-10 md:mb-14">
+  <div className="
+    relative
+    bg-white/[0.04]
+    border border-white/10
+    rounded-2xl md:rounded-3xl
+    p-5 md:p-8
+    backdrop-blur-xl
+    shadow-[0_0_40px_rgba(34,197,94,0.08)]
+  ">
+    <div className="absolute inset-0 rounded-3xl 
+      bg-gradient-to-br from-mora-500/10 to-transparent pointer-events-none" />
+
+    <div className="relative z-10">
+      <div className="flex items-center gap-3 mb-4">
+        <DollarSign size={14} className="text-mora-500" />
+
+        <span className="text-xs md:text-sm font-black uppercase tracking-[0.3em] text-slate-400">
+          Pricing Model
+        </span>
+
+        <span className={`
+          px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest
+          ${
+            api.pricing?.type === 'Free'
+              ? 'bg-green-500/15 text-green-400 border border-green-500/30'
+              : api.pricing?.type === 'Paid'
+              ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+              : 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
+          }
+        `}>
+          {api.pricing?.type || 'Free'}
+        </span>
+      </div>
+
+      <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl">
+        {api.pricing?.details ||
+          'Free tier includes limited usage for testing and evaluation. Upgrade for higher limits, advanced features, and production access.'}
+      </p>
+    </div>
+  </div>
+</section>
+
 {api.tags && api.tags.length > 0 && (
   <section>
     <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
