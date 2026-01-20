@@ -354,6 +354,14 @@ const addEditEndpoint = () => {
   });
 };
 
+/* 🔥 ADD THIS — REQUIRED */
+const addEditFeature = () => {
+  setEditingNode((prev: any) => ({
+    ...prev,
+    features: [...(prev.features || []), '']
+  }));
+};
+
   const removeEditEndpoint = (index: number) => {
     setEditingNode({
         ...editingNode,
