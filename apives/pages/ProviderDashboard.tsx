@@ -334,12 +334,25 @@ const handleLogout = () => {
     setEditingNode({ ...editingNode, endpoints: nextEndpoints });
   };
 
-  const addEditEndpoint = () => {
-    setEditingNode({
-        ...editingNode,
-        endpoints: [...editingNode.endpoints, { method: 'GET', path: '', description: '', bodyJson: '{}', responseJson: '{"status": "ok"}' }]
-    });
-  };
+  const MAX_ENDPOINTS = 5;
+
+const addEditEndpoint = () => {
+  if (editingNode.endpoints.length >= MAX_ENDPOINTS) return;
+
+  setEditingNode({
+    ...editingNode,
+    endpoints: [
+      ...editingNode.endpoints,
+      {
+        method: 'GET',
+        path: '',
+        description: '',
+        bodyJson: '{}',
+        responseJson: '{"status":"ok"}'
+      }
+    ]
+  });
+};
 
   const removeEditEndpoint = (index: number) => {
     setEditingNode({
@@ -447,7 +460,7 @@ const handleLogout = () => {
 
                       <div className="space-y-1.5">
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Description</label>
-                          <textarea rows={3} value={editingNode.description} onChange={(e) => setEditingNode({...editingNode, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 outline-none resize-none text-sm" />
+                          <textarea rows={6} value={editingNode.description} onChange={(e) => setEditingNode({...editingNode, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 outline-none resize-none text-sm" />
                       </div>
 
                       {/* Visual Proofs */}
@@ -496,7 +509,27 @@ const handleLogout = () => {
                       {editingNode.pricing.type !== 'Free' && (
                         <div className="space-y-1.5 animate-fade-in">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pricing Details</label>
-                            <input value={editingNode.pricing.details} onChange={(e) => setEditingNode({...editingNode, pricing: {...editingNode.pricing, details: e.target.value}})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 outline-none text-sm" placeholder="e.g. ₹0.10 per call" />
+
+                            <textarea
+  rows={5}
+  value={editingNode.pricing.details}
+  onChange={(e) =>
+    setEditingNode({
+      ...editingNode,
+      pricing: {
+        ...editingNode.pricing,
+        details: e.target.value
+      }
+    })
+  }
+  className="
+    w-full bg-black border border-white/10 rounded-xl
+    px-4 py-3 text-sm text-white
+    focus:border-mora-500 outline-none
+    resize-none leading-relaxed whitespace-pre-line
+  "
+  placeholder="Explain pricing, rate limits, plans..."
+/>
                         </div>
                       )}
 
@@ -504,8 +537,28 @@ const handleLogout = () => {
                       <div className="space-y-3 pt-4 border-t border-white/5">
                          <div className="flex items-center justify-between ml-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ListPlus size={14} className="text-mora-500" /> Feature Matrix</label>
-                            <button type="button" onClick={() => setEditingNode({...editingNode, features: [...editingNode.features, '']})} className="text-[10px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={12}/> Add</button>
+                            <button
+  type="button"
+  onClick={addEditEndpoint}
+  disabled={editingNode.endpoints.length >= 5}
+  className={`
+    px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest
+    flex items-center gap-1 transition-all
+    ${
+      editingNode.endpoints.length >= 5
+        ? 'bg-white/5 text-slate-600 cursor-not-allowed'
+        : 'bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black'
+    }
+  `}
+>
+  <Plus size={12}/> Add Node
+</button>
                          </div>
+
+<p className="text-[9px] text-slate-600 ml-1">
+  Max 5 interface nodes allowed
+</p>
+
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {editingNode.features.map((f: string, i: number) => (
                                 <div key={i} className="flex gap-2">
@@ -523,7 +576,39 @@ const handleLogout = () => {
                       {/* Tags */}
                       <div className="space-y-1.5">
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2"><Hash size={14} className="text-mora-500" /> Search Tags</label>
-                          <input value={editingNode.tagsString} onChange={(e) => setEditingNode({...editingNode, tagsString: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 outline-none text-sm" placeholder="e.g. Identity, KYC, Auth" />
+                          <input
+  value={editingNode.tagsString}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    const tagsArr = value
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+
+    // ❌ block after 5 tags
+    if (tagsArr.length > 5) return;
+
+    setEditingNode({ ...editingNode, tagsString: value });
+  }}
+  className="
+    w-full
+    bg-black
+    border border-white/10
+    rounded-xl
+    px-4 py-3
+    text-white
+    text-sm
+    focus:border-mora-500
+    outline-none
+  "
+  placeholder="e.g. KYC, Identity, AML"
+/>
+
+{/* OPTIONAL helper text */}
+<p className="text-[9px] text-slate-600 ml-1 mt-1">
+  Max 5 tags allowed
+</p>
                       </div>
 
                       {/* Endpoints Structured UI (Playground Ready) */}
