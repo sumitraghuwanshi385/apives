@@ -513,7 +513,6 @@ localStorage.removeItem('mora_edit_api_id')
     Max 5 interface nodes allowed
   </p>
 
-</div>
    <div className="space-y-3">
                 {endpoints.length === 0 && <div className="p-6 border border-white/5 border-dashed rounded-xl text-center text-slate-600 text-[10px] uppercase tracking-widest font-mono">No nodes registered.</div>}
                 {endpoints.map((ep, i) => (
