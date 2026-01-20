@@ -506,11 +506,11 @@ const addEditEndpoint = () => {
                          </div>
                       </div>
 
-                      {editingNode.pricing.type !== 'Free' && (
-                        <div className="space-y-1.5 animate-fade-in">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pricing Details</label>
+                      <label className="text-[10px] font-black uppercase ml-1">
+  Pricing Details
+</label>
 
-                            <textarea
+<textarea
   rows={5}
   value={editingNode.pricing.details}
   onChange={(e) =>
@@ -522,13 +522,13 @@ const addEditEndpoint = () => {
       }
     })
   }
-  className="
-    w-full bg-black border border-white/10 rounded-xl
-    px-4 py-3 text-sm text-white
-    focus:border-mora-500 outline-none
-    resize-none leading-relaxed whitespace-pre-line
-  "
-  placeholder="Explain pricing, rate limits, plans..."
+  placeholder={
+    editingNode.pricing.type === 'Free'
+      ? 'Explain what is included in free tier...\n\nRate limits, usage caps'
+      : 'Explain pricing, plans, billing model...'
+  }
+  className="w-full bg-black border border-white/10 rounded-xl px-4 py-3
+             text-sm text-white focus:border-mora-500 outline-none"
 />
                         </div>
                       )}
@@ -538,11 +538,10 @@ const addEditEndpoint = () => {
                          <div className="flex items-center justify-between ml-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ListPlus size={14} className="text-mora-500" /> Feature Matrix</label>
                             <button
-  type="button"
-  onClick={addEditEndpoint}
-  disabled={editingNode.endpoints.length >= 5}
-  className={`
-    px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest
+      type="button"
+      onClick={addEditFeature}
+      className="px-4 py-1.5 rounded-full text-[10px] font-black
+                 bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black" uppercase tracking-widest
     flex items-center gap-1 transition-all
     ${
       editingNode.endpoints.length >= 5
@@ -615,8 +614,29 @@ const addEditEndpoint = () => {
                       <div className="space-y-4 pt-4 border-t border-white/5">
                          <div className="flex items-center justify-between ml-1">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><Terminal size={14} className="text-mora-500" /> Interface Nodes (Playground Ready)</label>
-                            <button type="button" onClick={addEditEndpoint} className="text-[10px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={12}/> Add Node</button>
-                         </div>
+                            <button
+  type="button"
+  onClick={addEditEndpoint}
+  disabled={editingNode.endpoints.length >= 5}
+  className={`
+    px-4 py-1.5
+    rounded-full
+    text-[9px] font-black uppercase tracking-widest
+    flex items-center gap-1
+    transition-all
+    ${
+      editingNode.endpoints.length >= 5
+        ? 'bg-white/5 text-slate-600 cursor-not-allowed'
+        : 'bg-mora-500/15 text-mora-400 hover:bg-mora-500 hover:text-black'
+    }
+  `}
+>
+  <Plus size={12}/> Add Node
+</button>
+                <p className="text-[9px] text-slate-600 ml-1">
+  Max 5 interface nodes allowed
+</p>
+         </div>
                          
                          <div className="space-y-4">
                             {editingNode.endpoints.length === 0 && <div className="p-8 border-2 border-dashed border-white/5 rounded-3xl text-center text-slate-600 text-xs uppercase tracking-widest font-mono">No endpoints registered. Add one to enable Playground.</div>}
