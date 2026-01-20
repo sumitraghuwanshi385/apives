@@ -158,9 +158,22 @@ const categoryOptions = [
 
 }, [navigate]);
 
-  const addEndpoint = () => {
-    setEndpoints([...endpoints, { method: 'GET', path: '', description: '', bodyJson: '{}', responseJson: '{"status": "ok"}' }]);
-  };
+  const MAX_ENDPOINTS = 5;
+
+const addEndpoint = () => {
+  if (endpoints.length >= MAX_ENDPOINTS) return;
+
+  setEndpoints([
+    ...endpoints,
+    {
+      method: 'GET',
+      path: '',
+      description: '',
+      bodyJson: '{}',
+      responseJson: '{ "status": "ok" }'
+    }
+  ]);
+};
 
   const removeEndpoint = (index: number) => {
     setEndpoints(endpoints.filter((_, i) => i !== index));
@@ -331,7 +344,7 @@ localStorage.removeItem('mora_edit_api_id')
 
           <div className="space-y-1.5">
               <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Description *</label>
-              <textarea required rows={2} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none resize-none" placeholder="Explain the value proposition..." />
+              <textarea required rows={5} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none resize-none" placeholder="Explain the value proposition..." />
           </div>
 
           {/* Visual Proofs (Gallery) */}
@@ -391,12 +404,37 @@ localStorage.removeItem('mora_edit_api_id')
              </div>
           </div>
 
-          {formData.pricing !== 'Free' && (
-            <div className="space-y-1 animate-fade-in">
-                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Pricing Details</label>
-                <input value={formData.pricingDetails} onChange={(e) => setFormData({...formData, pricingDetails: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 outline-none" placeholder="e.g. ₹0.10 per call" />
-            </div>
-          )}
+          <div className="space-y-1 animate-fade-in">
+  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">
+    Pricing Details
+  </label>
+
+  <textarea
+    rows={4}
+    value={formData.pricingDetails}
+    onChange={(e) =>
+      setFormData({ ...formData, pricingDetails: e.target.value })
+    }
+    className="
+      w-full
+      bg-black
+      border border-white/10
+      rounded-xl
+      px-4 py-3
+      text-xs text-white
+      focus:border-mora-500
+      outline-none
+      resize-none
+      leading-relaxed
+      whitespace-pre-line
+    "
+    placeholder={
+      formData.pricing === 'Free'
+        ? 'Explain what is included in the free tier...\n\nRate limits, usage caps, etc.'
+        : '₹0.10 per call\n\nMonthly plans available'
+    }
+  />
+</div>
 
           {/* Features Matrix */}
           <div className="space-y-2">
@@ -444,7 +482,24 @@ localStorage.removeItem('mora_edit_api_id')
           <div className="space-y-3 pt-2 border-t border-white/5">
              <div className="flex items-center justify-between ml-1">
                 <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><Terminal size={12} className="text-mora-500" /> Interface Nodes</label>
-                <button type="button" onClick={addEndpoint} className="text-[8px] font-bold text-mora-500 uppercase hover:text-white transition-colors flex items-center gap-1"><Plus size={10}/> Add Node</button>
+                <button
+  type="button"
+  onClick={addEndpoint}
+  disabled={endpoints.length >= 5}
+  className={`
+    text-[8px] font-bold uppercase flex items-center gap-1
+    ${
+      endpoints.length >= 5
+        ? 'text-slate-600 cursor-not-allowed'
+        : 'text-mora-500 hover:text-white'
+    }
+  `}
+>
+  <Plus size={10}/> Add Node
+</button>
+<p className="text-[8px] text-slate-600 ml-1">
+  Max 5 interface nodes allowed
+</p>
              </div>
              
              <div className="space-y-3">
