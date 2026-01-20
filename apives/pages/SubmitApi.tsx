@@ -543,17 +543,17 @@ localStorage.removeItem('mora_edit_api_id')
       Mock Request JSON
     </span>
     <textarea
-      value={ep.bodyJson}
-      onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)}
-      className="
-        w-full bg-dark-950 border border-white/5
-        rounded-xl p-3
-        text-[10px] font-mono text-blue-300
-        h-28 outline-none
-        focus:border-mora-500/30
-      "
-      spellCheck={false}
-    />
+  value={ep.bodyJson}
+  onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)}
+  className="
+    w-full bg-dark-950 border border-white/5
+    rounded-xl p-3
+    text-[10px] font-mono text-blue-300
+    h-28 outline-none
+    focus:border-mora-500/30
+  "
+  spellCheck={false}
+/>
   </div>
 
   {/* Mock Response */}
