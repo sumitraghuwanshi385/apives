@@ -479,7 +479,7 @@ localStorage.removeItem('mora_edit_api_id')
           </div>
 
           {/* Endpoints */}
-          <div className="space-y-2 pt-2 border-t border-white/5">
+<div className="space-y-2 pt-2 border-t border-white/5">
 
   {/* Header Row */}
   <div className="flex items-center justify-between ml-1">
@@ -491,14 +491,12 @@ localStorage.removeItem('mora_edit_api_id')
     {/* Add Node – Pill Button */}
     <button
       type="button"
-      onClick={addEndpoint}
+      onClick={addEndpoint}   // ✅ FIXED
       disabled={endpoints.length >= 5}
       className={`
-        px-4 py-1.5
-        rounded-full
+        px-4 py-1.5 rounded-full
         text-[8px] font-black uppercase tracking-widest
-        flex items-center gap-1
-        transition-all
+        flex items-center gap-1 transition-all
         ${
           endpoints.length >= 5
             ? 'bg-white/5 text-slate-600 cursor-not-allowed'
@@ -510,14 +508,13 @@ localStorage.removeItem('mora_edit_api_id')
     </button>
   </div>
 
-  {/* Max limit text — JUST BELOW Interface Nodes */}
+  {/* Max limit text */}
   <p className="text-[8px] text-slate-600 ml-1">
     Max 5 interface nodes allowed
   </p>
 
 </div>
-             
-             <div className="space-y-3">
+   <div className="space-y-3">
                 {endpoints.length === 0 && <div className="p-6 border border-white/5 border-dashed rounded-xl text-center text-slate-600 text-[10px] uppercase tracking-widest font-mono">No nodes registered.</div>}
                 {endpoints.map((ep, i) => (
                     <div key={i} className="bg-black/50 border border-white/5 rounded-xl p-4 space-y-3 animate-fade-in relative group">
