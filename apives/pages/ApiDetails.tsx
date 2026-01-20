@@ -312,10 +312,10 @@ if (!api) {
 >
    
     <div className="relative z-10">
-      <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl">
-        {api.pricing?.details ||
-          'Free tier includes limited usage for testing and evaluation. Advanced features, higher rate limits, and production-grade access require an upgrade.'}
-      </p>
+      <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl whitespace-pre-line">
+  {api.pricing?.details ||
+    'Free tier includes limited usage for testing.\n\nUpgrade to unlock higher limits.\n\nProduction-ready access included.'}
+</p>
     </div>
   </div>
 </section>
