@@ -253,7 +253,7 @@ if (!api) {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-16">
         {!isLoading && api && activeTab === 'overview' && (
             <div className="space-y-10 md:space-y-16 animate-fade-in">
-                <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Box className="mr-3 text-mora-500" size={14}/> Node Description</h2><div className="bg-white/[0.03] rounded-2xl md:rounded-3xl p-6 md:p-10 border border-white/5 text-slate-300 text-sm md:text-lg leading-relaxed font-light">{api.description}</div></section>
+                <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Box className="mr-3 text-mora-500" size={14}/> Node Description</h2><div className="bg-white/[0.03] rounded-2xl md:rounded-3xl p-6 md:p-10 border border-white/5 text-slate-300 text-sm md:text-lg leading-relaxed font-light whitespace-pre-line">{api.description}</div></section>
                 {api.gallery && api.gallery.length > 0 && (
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><ImageIcon className="mr-3 text-mora-500" size={14}/> Neural Preview</h2><div className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x no-scrollbar">{api.gallery.map((img: string, i: number) => (<div key={i} className="flex-none w-64 md:w-[450px] aspect-video rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 snap-center shadow-2xl"><img src={img} className="w-full h-full object-cover" /></div>))}</div></section>
                 )}
@@ -295,18 +295,19 @@ if (!api) {
   className="
     relative
     bg-white/[0.03]
-    border border-mora-500/30
     rounded-2xl md:rounded-3xl
     p-5 md:p-8
     overflow-hidden
 
     before:content-['']
     before:absolute
-    before:-inset-[1px]
+    before:inset-0
     before:rounded-2xl md:before:rounded-3xl
     before:pointer-events-none
-    before:border
-    before:border-mora-500/30
+    before:bg-gradient-to-br
+    before:from-mora-500/15
+    before:via-transparent
+    before:to-transparent
   "
 >
    
