@@ -535,11 +535,47 @@ localStorage.removeItem('mora_edit_api_id')
 
                         <input value={ep.description} onChange={(e) => updateEndpoint(i, 'description', e.target.value)} className="w-full bg-black border border-white/10 rounded-xl px-3 py-1.5 text-[10px] text-slate-400 outline-none" placeholder="Endpoint objective..." />
 
-                        <div className="grid grid-cols-2 gap-2">
-                            <textarea value={ep.bodyJson} onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)} className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-blue-300 h-16 outline-none" spellCheck={false} placeholder='Body JSON' />
-                            <textarea value={ep.responseJson} onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)} className="w-full bg-dark-950 border border-white/5 rounded-lg p-2 text-[9px] font-mono text-green-300 h-16 outline-none" spellCheck={false} placeholder='Response JSON' />
-                        </div>
-                    </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+  {/* Mock Request */}
+  <div className="space-y-1">
+    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">
+      Mock Request JSON
+    </span>
+    <textarea
+      value={ep.bodyJson}
+      onChange={(e) => updateEndpoint(i, 'bodyJson', e.target.value)}
+      className="
+        w-full bg-dark-950 border border-white/5
+        rounded-xl p-3
+        text-[10px] font-mono text-blue-300
+        h-28 outline-none
+        focus:border-mora-500/30
+      "
+      spellCheck={false}
+    />
+  </div>
+
+  {/* Mock Response */}
+  <div className="space-y-1">
+    <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest ml-1">
+      Mock Response JSON
+    </span>
+    <textarea
+      value={ep.responseJson}
+      onChange={(e) => updateEndpoint(i, 'responseJson', e.target.value)}
+      className="
+        w-full bg-dark-950 border border-white/5
+        rounded-xl p-3
+        text-[10px] font-mono text-green-300
+        h-28 outline-none
+        focus:border-mora-500/30
+      "
+      spellCheck={false}
+    />
+  </div>
+
+</div>
                 ))}
              </div>
           </div>
