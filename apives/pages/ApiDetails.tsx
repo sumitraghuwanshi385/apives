@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Hash } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiClient';
 import {
@@ -262,6 +263,37 @@ if (!api) {
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Terminal className="mr-3 text-mora-500" size={14}/> Endpoint Matrix</h2><div className="space-y-4 md:space-y-6">{api.endpoints.map((endpoint: any, idx: number) => (<div key={idx} className="bg-dark-900/30 border border-white/5 rounded-2xl overflow-hidden group"><div className="bg-white/[0.02] px-5 py-3 md:px-6 md:py-4 flex items-center gap-3 border-b border-white/5 overflow-x-auto no-scrollbar"><span className={`text-[8px] md:text-[9px] font-black px-3 py-0.5 rounded-full uppercase border tracking-widest ${endpoint.method === 'GET' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'}`}>{endpoint.method}</span><code className="text-[10px] md:text-xs font-mono text-slate-300 whitespace-nowrap">{endpoint.path}</code></div><div className="p-5 md:p-8"><p className="text-[11px] md:text-sm text-slate-400 mb-6 font-light">{endpoint.description}</p><div className="bg-black rounded-xl border border-white/10 p-4 md:p-6 relative group/code overflow-hidden shadow-inner"><pre className="text-[10px] md:text-xs font-mono text-slate-300 overflow-x-auto custom-scrollbar pb-1" dangerouslySetInnerHTML={{ __html: syntaxHighlight(JSON.stringify(endpoint.responseExample || {}, null, 2)) }} /></div></div></div>))}</div></section>
                 )}
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Gauge className="mr-3 text-mora-500" size={14}/> Operational Stats</h2><div className="grid grid-cols-3 gap-3 md:gap-6"><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Latency</span><span className="text-lg md:text-3xl font-display font-black text-mora-400 leading-none">{api.latency}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Stability</span><span className="text-lg md:text-3xl font-display font-black text-blue-400 leading-none truncate">{api.stability || 'Stable'}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Access</span><span className="text-lg md:text-3xl font-display font-black text-white leading-none truncate">{api.accessType || 'Public'}</span></div></div></section>
+{api.tags && api.tags.length > 0 && (
+  <section>
+    <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
+      <Hash className="mr-3 text-mora-500" size={14}/> Node Tags
+    </h2>
+
+    <div className="flex flex-wrap gap-2 md:gap-3">
+      {api.tags.map((tag: string, i: number) => (
+        <div
+          key={i}
+          className="
+            flex items-center gap-2
+            px-4 py-2
+            rounded-full
+            bg-white/[0.03]
+            border border-white/10
+            text-slate-300
+            text-[10px] md:text-xs
+            font-mono
+            hover:border-mora-500/40
+            hover:text-mora-400
+            transition-all
+          "
+        >
+          <Hash size={12} className="text-mora-500/70" />
+          {tag}
+        </div>
+      ))}
+    </div>
+  </section>
+)}
             </div>
         )}
         {!isLoading && api && activeTab === 'playground' && hasEndpoints && (
