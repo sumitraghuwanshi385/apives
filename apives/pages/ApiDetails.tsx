@@ -255,45 +255,56 @@ if (!api) {
                 )}
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Gauge className="mr-3 text-mora-500" size={14}/> Operational Stats</h2><div className="grid grid-cols-3 gap-3 md:gap-6"><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Latency</span><span className="text-lg md:text-3xl font-display font-black text-mora-400 leading-none">{api.latency}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Stability</span><span className="text-lg md:text-3xl font-display font-black text-blue-400 leading-none truncate">{api.stability || 'Stable'}</span></div><div className="bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl p-4 md:p-8 flex flex-col gap-1 shadow-lg"><span className="text-[7px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Access</span><span className="text-lg md:text-3xl font-display font-black text-white leading-none truncate">{api.accessType || 'Public'}</span></div></div></section>
 
-{/* 💰 Pricing Overview */}
-<section className="mb-10 md:mb-14">
-  <div className="
-    relative
-    bg-white/[0.04]
-    border border-white/10
-    rounded-2xl md:rounded-3xl
-    p-5 md:p-8
-    backdrop-blur-xl
-    shadow-[0_0_40px_rgba(34,197,94,0.08)]
-  ">
+{/* 💰 Pricing Model */}
+<section className="mb-12 md:mb-16">
+  {/* Section Heading */}
+  <div className="flex items-center justify-between mb-4 md:mb-6">
+    <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] flex items-center">
+      <DollarSign className="mr-3 text-mora-500" size={14} />
+      Pricing Model
+    </h2>
+
+    {/* Pricing Type Badge */}
+    <span
+      className={`
+        px-4 py-1 rounded-full
+        text-[9px] md:text-[10px]
+        font-black uppercase tracking-widest
+        ${
+          api.pricing?.type === 'Free'
+            ? 'bg-green-500/10 text-green-400 border border-green-500/30'
+            : api.pricing?.type === 'Paid'
+            ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
+            : 'bg-purple-500/10 text-purple-400 border border-purple-500/30'
+        }
+      `}
+    >
+      {api.pricing?.type || 'Free'}
+    </span>
+  </div>
+
+  {/* Pricing Card */}
+  <div
+    className="
+      relative
+      bg-white/[0.035]
+      border border-mora-500/20
+      rounded-2xl md:rounded-3xl
+      p-5 md:p-8
+      backdrop-blur-xl
+      shadow-[0_0_60px_rgba(34,197,94,0.18)]
+      overflow-hidden
+    "
+  >
+    {/* Soft Green Glow */}
     <div className="absolute inset-0 rounded-3xl 
-      bg-gradient-to-br from-mora-500/10 to-transparent pointer-events-none" />
+      bg-gradient-to-br from-mora-500/20 via-transparent to-transparent
+      pointer-events-none" />
 
     <div className="relative z-10">
-      <div className="flex items-center gap-3 mb-4">
-        <DollarSign size={14} className="text-mora-500" />
-
-        <span className="text-xs md:text-sm font-black uppercase tracking-[0.3em] text-slate-400">
-          Pricing Model
-        </span>
-
-        <span className={`
-          px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest
-          ${
-            api.pricing?.type === 'Free'
-              ? 'bg-green-500/15 text-green-400 border border-green-500/30'
-              : api.pricing?.type === 'Paid'
-              ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
-              : 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
-          }
-        `}>
-          {api.pricing?.type || 'Free'}
-        </span>
-      </div>
-
       <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-3xl">
         {api.pricing?.details ||
-          'Free tier includes limited usage for testing and evaluation. Upgrade for higher limits, advanced features, and production access.'}
+          'Free tier includes limited usage for testing and evaluation. Advanced features, higher rate limits, and production-grade access require an upgrade.'}
       </p>
     </div>
   </div>
