@@ -313,6 +313,43 @@ export const DocumentationPage: React.FC = () => (
                 For power users, Apives supports complex endpoint definitions including custom headers and body parameters. Ensure your mock responses are accurate.
             </p>
         </section>
+<section className="not-prose">
+  <h3 className="text-white text-lg md:text-xl font-bold mb-4">
+    Makers of Apives
+  </h3>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    {/* Founder */}
+    <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
+      <h4 className="text-white font-bold text-sm mb-1">
+        Prince Gupta
+      </h4>
+      <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
+        Founder
+      </p>
+      <p className="text-slate-400 text-[11px] leading-relaxed">
+        Building Apives to bring clarity, trust, and structure to how developers
+        discover and evaluate APIs on the modern web.
+      </p>
+    </div>
+
+    {/* Co-Founder */}
+    <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
+      <h4 className="text-white font-bold text-sm mb-1">
+        Sumit Raghuwanshi
+      </h4>
+      <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
+        Co-Founder
+      </p>
+      <p className="text-slate-400 text-[11px] leading-relaxed">
+        Focused on platform architecture, reliability, and shaping Apives
+        into a scalable ecosystem for builders and API providers.
+      </p>
+    </div>
+
+  </div>
+</section>
     </div>
   </PageLayout>
 );
