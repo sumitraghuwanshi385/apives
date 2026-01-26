@@ -140,14 +140,22 @@ return (
 
     </div>  
 
-    <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">  
-      <p className="text-[12px] md:text-sm text-slate-500">  
-        &copy; 2025 Apives Ecosystem  
-      </p>  
-      <p className="text-[12px] md:text-sm text-slate-500 flex items-center font-medium">  
-        <span className="text-mora-400 mr-2">///</span> Global Digital Synapse  
-      </p>  
-    </div>  
+    <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+  <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2">
+    
+    {/* glowing /// */}
+    <span className="text-mora-500 font-black tracking-widest
+      drop-shadow-[0_0_6px_rgba(34,197,94,0.9)]
+      animate-pulse">
+      ///
+    </span>
+
+    <span>
+      &copy; 2025 Apives Ecosystem
+    </span>
+
+  </p>
+</div>
   </div>  
 
   {/* Feedback Modal - Reduced Size */}  
