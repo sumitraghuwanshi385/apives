@@ -334,7 +334,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
           <p className="text-slate-400 text-sm md:text-xl max-w-2xl mx-auto mt-4 font-light leading-relaxed animate-fade-in opacity-80">
             {isAuthenticated
               ? 'The grid is operational. Discover and integrate verified endpoint protocols.'
-              : 'A universal directory for high-performance APIs. Architect your projects with production-grade infrastructure.'}
+              : 'Apives curates APIs with clear pricing, stability, access types, and real endpoint examples. This helps developers avoid guesswork caused by incomplete docs or outdated GitHub repositories.'}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10 md:mt-14">
@@ -412,7 +412,7 @@ refetchLandingApis={refetchLandingApis}
         <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
-              <Zap className="mr-3 text-white" size={18} /> Fresh Protocols
+              <Zap className="mr-3 text-white" size={18} /> Fresh APIs
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
@@ -435,7 +435,7 @@ refetchLandingApis={refetchLandingApis}
       <section className="py-16 md:py-24 bg-black border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
-            <Heart className="mr-3 text-red-500" size={18} /> Popular Hubs
+            <Heart className="mr-3 text-red-500" size={18} /> Popular APIs
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
@@ -448,7 +448,7 @@ refetchLandingApis={refetchLandingApis}
 
           <div className="flex justify-center">
             <Link to="/popular" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all hover:bg-white/10 active:scale-95">
-              View Top Protocols
+              View Top APIs
             </Link>
           </div>
         </div>
