@@ -85,8 +85,8 @@ return (
         <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">Support</h3>  
         <ul className="space-y-2 md:space-y-3">  
           <li><Link to="/support" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Help & Support</Link></li>  
-          <li><Link to="/docs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Docs</Link></li>  
-          <li><Link to="/sponsorship" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Sponsorship</Link></li>  
+          <li><Link to="/docs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Documentation</Link></li>  
+          <li><Link to="/sponsorship" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">For Sponsorship</Link></li>  
           <li>  
               <button onClick={() => setIsFeedbackOpen(true)} className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors text-left">  
                   Feedback  
