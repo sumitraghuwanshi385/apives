@@ -345,7 +345,7 @@ return (
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10 md:mt-14">  
         <Link to="/browse" className="px-8 py-3.5 md:px-10 md:py-4 text-xs md:text-sm font-black text-black bg-mora-500 rounded-full transition-all hover:scale-105 hover:bg-white shadow-[0_0_30px_rgba(34,197,94,0.3)] active:scale-95 uppercase tracking-widest">  
-          Explore Directory  
+          Explore APIs  
         </Link>  
         <Link to="/submit" className="px-8 py-3.5 md:px-10 md:py-4 text-xs md:text-sm font-black text-white bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all active:scale-95 uppercase tracking-widest">  
           Submit API  
