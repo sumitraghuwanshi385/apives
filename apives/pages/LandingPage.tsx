@@ -8,7 +8,7 @@ Zap,
 Hash,
 Server,
 Trophy,
-Layout Grid
+LayoutGrid
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
