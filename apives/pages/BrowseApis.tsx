@@ -275,6 +275,10 @@ const [topIds, setTopIds] = useState<string[]>([]);
       <div className="absolute top-24 left-4 lg:left-8 z-30"><BackButton /></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div className="text-center mb-8 md:mb-12">
+  {/* ICON CHIP */}
+  <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/5 border border-white/10 mb-4 shadow-lg">
+    <LayoutGrid size={26} className="text-mora-500" />
         <div className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">The Universal Grid</h1>
           <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-light leading-relaxed">Explore Trusted APIs And Endpoints.</p>
