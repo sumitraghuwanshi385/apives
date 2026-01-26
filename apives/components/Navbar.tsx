@@ -87,7 +87,7 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center">
               <Link to="/" className="flex items-center group" onClick={() => setIsOpen(false)}>
                 <img 
-                  src="https://i.postimg.cc/Fsby98j9/IMG-20251219-132426.png" 
+                  src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png" 
                   alt="Apives Logo" 
                   className="w-9 h-9 md:w-16 md:h-16 object-contain transition-transform group-hover:rotate-12 duration-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                 />
