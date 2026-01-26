@@ -34,6 +34,15 @@ const RANK_BADGE_STYLES = [
   { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
 
+const SectionLoader = ({ label }: { label: string }) => (
+  <div className="flex items-center gap-2 text-slate-500 text-xs uppercase tracking-widest animate-pulse">
+    <span className="w-1.5 h-1.5 bg-mora-500 rounded-full" />
+    <span className="w-1.5 h-1.5 bg-mora-500/70 rounded-full" />
+    <span className="w-1.5 h-1.5 bg-mora-500/40 rounded-full" />
+    <span className="ml-2">{label}</span>
+  </div>
+);
+
 const ApiCard: React.FC<{
   api: ApiListing;
   topIds: string[];
@@ -220,6 +229,7 @@ export const LandingPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState('');
   const [allApis, setAllApis] = useState<ApiListing[]>([]);
+const [isLandingLoading, setIsLandingLoading] = useState(true);
   const [top3Ids, setTop3Ids] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -244,6 +254,7 @@ export const LandingPage: React.FC = () => {
             .slice(0, 3)
             .map(a => a.id)
         );
+setIsLandingLoading(false); // 🔥 YAHAN ADD KARO
         return;
       }
 
@@ -269,6 +280,7 @@ export const LandingPage: React.FC = () => {
           .slice(0, 3)
           .map(a => a.id)
       );
+setIsLandingLoading(false);
     } catch (e) {
       console.error('LandingPage fetch failed', e);
     }
@@ -389,10 +401,13 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
   </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
-            <TrendingUp className="mr-3 text-mora-500" size={18} /> The Universal Grid
+            <LayoutGrid className="mr-3 text-mora-500" size={18} /> The Universal Grid
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+         {isLandingLoading ? (
+  <SectionLoader label="Loading grid" />
+) : (
+ <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {featuredApis.map((api, idx) => (
               <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes} 
 refetchLandingApis={refetchLandingApis}
@@ -402,7 +417,7 @@ refetchLandingApis={refetchLandingApis}
 
           <div className="flex justify-center">
             <Link to="/browse" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">
-              Enter Directory
+              Browse All APIs
             </Link>
           </div>
         </div>
@@ -414,7 +429,9 @@ refetchLandingApis={refetchLandingApis}
             <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
               <Zap className="mr-3 text-white" size={18} /> Fresh APIs
             </h2>
-
+{isLandingLoading ? (
+  <SectionLoader label="Scanning new APIs" />
+) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {freshApis.map((api, idx) => (
                 <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
@@ -437,7 +454,8 @@ refetchLandingApis={refetchLandingApis}
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
             <Heart className="mr-3 text-red-500" size={18} /> Community Favorites
           </h2>
-
+{isLandingLoading ? (
+  <SectionLoader label="Checking community favorites" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
             {communityLoved.map((api, idx) => (
               <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
