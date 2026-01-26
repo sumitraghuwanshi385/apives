@@ -408,22 +408,29 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
          {isLandingLoading ? (
   <SectionLoader label="Loading grid" />
 ) : (
- <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-            {featuredApis.map((api, idx) => (
-              <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes} 
-refetchLandingApis={refetchLandingApis}
-/>
-            ))}
-          </div>
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+      {featuredApis.map((api, idx) => (
+        <ApiCard
+          key={`${api.id}-${idx}`}
+          api={api}
+          topIds={top3Ids}
+          onLikeChange={updateLandingUpvotes}
+          refetchLandingApis={refetchLandingApis}
+        />
+      ))}
+    </div>
 
-          <div className="flex justify-center">
-            <Link to="/browse" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">
-              Browse All APIs
-            </Link>
-          </div>
-        </div>
-      </section>
-
+    <div className="flex justify-center">
+      <Link
+        to="/browse"
+        className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95"
+      >
+        Browse All APIs
+      </Link>
+    </div>
+  </>
+)}
       {freshApis.length > 0 && (
         <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
