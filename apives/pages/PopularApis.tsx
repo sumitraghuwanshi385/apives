@@ -251,7 +251,7 @@ export const PopularApis: React.FC = () => {
             <div className="text-center mb-8 md:mb-12">
                 <div className="inline-flex items-center justify-center p-2.5 md:p-3 bg-red-500/10 rounded-2xl mb-4"><Heart className="text-red-500" size={24} md:size={32} /></div>
                 <h1 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight">Community Favorites</h1>
-                <p className="text-slate-400 mt-2 text-sm md:text-base font-light">Most integrated protocols.</p>
+                <p className="text-slate-400 mt-2 text-sm md:text-base font-light">Most Integrated APIs.</p>
             </div>
 
             <div className="max-w-xs mx-auto mb-10 md:mb-16 relative">
@@ -316,7 +316,7 @@ export const PopularApis: React.FC = () => {
 
             {visibleCount < filteredApis.length && filteredApis.length > 0 && (
                 <div className="flex justify-center">
-                    <button onClick={() => setVisibleCount(v => v + 12)} className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-all">Load More Nodes</button>
+                    <button onClick={() => setVisibleCount(v => v + 12)} className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-all">Load More APIs</button>
                 </div>
             )}
         </div>
