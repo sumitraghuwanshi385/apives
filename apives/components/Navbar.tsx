@@ -95,7 +95,7 @@ export const Navbar: React.FC = () => {
               
               <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">
                 <NavLink to="/" icon={HomeIcon}>Home</NavLink>
-                <NavLink to="/browse" icon={Search}>Directory</NavLink>
+                <NavLink to="/browse" icon={Search}>Explore APIs</NavLink>
                 <NavLink to="/submit" icon={PlusCircle}>Submit API</NavLink>
               </div>
             </div>
@@ -146,8 +146,8 @@ export const Navbar: React.FC = () => {
           <div className="lg:hidden border-t border-white/10 animate-fade-in bg-black absolute w-full left-0 top-full shadow-2xl overflow-hidden rounded-b-2xl md:rounded-b-3xl">
             <div className="px-4 pt-3 pb-4 space-y-1">
               <MobileNavLink to="/" icon={HomeIcon} onClick={() => setIsOpen(false)}>Home</MobileNavLink>
-              <MobileNavLink to="/browse" icon={Search} onClick={() => setIsOpen(false)}>Directory</MobileNavLink>
-              <MobileNavLink to="/fresh" icon={Zap} onClick={() => setIsOpen(false)}>Fresh Nodes</MobileNavLink>
+              <MobileNavLink to="/browse" icon={Search} onClick={() => setIsOpen(false)}>Explore APIs</MobileNavLink>
+              <MobileNavLink to="/fresh" icon={Zap} onClick={() => setIsOpen(false)}>New Releases</MobileNavLink>
               <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
               <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
               <div className="border-t border-white/10 my-2 opacity-30"></div>
