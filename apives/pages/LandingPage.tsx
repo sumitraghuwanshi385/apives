@@ -231,12 +231,8 @@ export const LandingPage: React.FC = () => {
   const [allApis, setAllApis] = useState<ApiListing[]>([]);
 const [isLandingLoading, setIsLandingLoading] = useState(true);
   const [top3Ids, setTop3Ids] = useState<string[]>([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  
   useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth < 768);
-  window.addEventListener('resize', handleResize);
-
   const user = localStorage.getItem('mora_user');
   if (user) {
     setIsAuthenticated(true);
@@ -285,8 +281,6 @@ setIsLandingLoading(false);
       console.error('LandingPage fetch failed', e);
     }
   })();
-
-  return () => window.removeEventListener('resize', handleResize);
 }, []);
 
 const updateLandingUpvotes = (apiId: string, delta: number) => {
