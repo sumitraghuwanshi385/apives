@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
+TrendingUp,
 Heart,
 Bookmark,
 Activity,
 Zap,
 Hash,
 Server,
-Trophy,
-LayoutGrid
+Trophy
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
@@ -394,7 +394,7 @@ rounded-2xl bg-white/10 p-1"
   </div>  
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
-            <LayoutGrid className="mr-3 text-mora-500" size={18} /> The Universal Grid  
+            <TrendingUp className="mr-3 text-mora-500" size={18} /> The Universal Grid  
           </h2>  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">  
         {featuredApis.map((api, idx) => (  
           <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
@@ -406,7 +406,7 @@ refetchLandingApis={refetchLandingApis}
 
 <div className="flex justify-center">  
         <Link to="/browse" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">  
-          Browse All APIs 
+          Enter Directory  
         </Link>  
       </div>  
     </div>  
