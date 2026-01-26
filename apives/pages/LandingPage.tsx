@@ -432,26 +432,35 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
     </>
 )}
       {freshApis.length > 0 && (
-        <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
-              <Zap className="mr-3 text-white" size={18} /> Fresh APIs
-            </h2>
-{isLandingLoading ? (
-  <SectionLoader label="Scanning new APIs" />
-) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-              {freshApis.map((api, idx) => (
-                <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
-refetchLandingApis={refetchLandingApis}
- />
-              ))}
-            </div>
+  <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
+        <Zap className="mr-3 text-white" size={18} /> Fresh APIs
+      </h2>
 
-            <div className="flex justify-center">
-              <Link to="/fresh" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">
-                View New Arrivals
-              </Link>
+      {isLandingLoading ? (
+        <SectionLoader label="Scanning new APIs" />
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+            {freshApis.map((api, idx) => (
+              <ApiCard
+                key={`new-${idx}`}
+                api={api}
+                topIds={top3Ids}
+                onLikeChange={updateLandingUpvotes}
+                refetchLandingApis={refetchLandingApis}
+              />
+            ))}
+          </div>
+
+          <div className="flex justify-center">
+            <Link
+              to="/fresh"
+              className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95"
+            >
+              View New Arrivals
+            </Link>
           </div>
         </>
       )}
