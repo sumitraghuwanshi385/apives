@@ -64,12 +64,12 @@ setSaved(savedApis.includes(api.id));
 const displayUpvotes = api.upvotes || 0;
 
 const handleSave = (e: React.MouseEvent) => {
-e.preventDefault(); e.stopPropagation();
-const userStr = localStorage.getItem('mora_user');
-if (!userStr) {
-navigate(/access?returnUrl=${encodeURIComponent(window.location.pathname)});
-return;
-}
+  e.preventDefault(); e.stopPropagation();
+  const userStr = localStorage.getItem('mora_user');
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+    return;
+  }
 
 const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');  
 if (saved) {  
@@ -87,10 +87,10 @@ e.preventDefault();
 e.stopPropagation();
 
 const userStr = localStorage.getItem('mora_user');
-if (!userStr) {
-navigate(/access?returnUrl=${encodeURIComponent(window.location.pathname)});
-return;
-}
+  if (!userStr) {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+    return;
+  }
 
 const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
 
@@ -100,7 +100,7 @@ await apiService.unlikeApi(api.id);
 
 setIsLiked(false);
 
-await refetchLandingApis();
+await refetchLandingApis?.();
 localStorage.setItem(
 'mora_liked_apis',
 JSON.stringify(likedApis.filter((id: string) => id !== api.id))
@@ -110,7 +110,7 @@ await apiService.likeApi(api.id);
 
 setIsLiked(true);
 
-await refetchLandingApis();
+await refetchLandingApis?.();
 localStorage.setItem(
 'mora_liked_apis',
 JSON.stringify([...likedApis, api.id])
@@ -126,7 +126,7 @@ const tags = Array.isArray(api.tags) ? api.tags : [];
 
 return (
 <Link
-to={/api/${api.id}}
+to={`/api/${api.id}`}
 className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30
 p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden
@@ -222,7 +222,9 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
 const [allApis, setAllApis] = useState<ApiListing[]>([]);
 const [top3Ids, setTop3Ids] = useState<string[]>([]);
-const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+const [isMobile, setIsMobile] = useState(
+  typeof window !== 'undefined' && window.innerWidth < 768
+);
 
 useEffect(() => {
 const handleResize = () => setIsMobile(window.innerWidth < 768);
