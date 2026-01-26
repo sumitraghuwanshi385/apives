@@ -335,7 +335,7 @@ export const FreshApis: React.FC = () => {
 
             {visibleCount < filteredApis.length && filteredApis.length > 0 && (
                 <div className="flex justify-center">
-                    <button onClick={() => setVisibleCount(v => v + 12)} className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-all">Load More Nodes</button>
+                    <button onClick={() => setVisibleCount(v => v + 12)} className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-all">Load More APIs</button>
                 </div>
             )}
         </div>
