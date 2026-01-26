@@ -276,8 +276,8 @@ const [topIds, setTopIds] = useState<string[]>([]);
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">The Grid</h1>
-          <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-light leading-relaxed">Search through verified endpoints.</p>
+          <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">The Universal Grid</h1>
+          <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-light leading-relaxed">Explore Trusted APIs And Endpoints.</p>
         </div>
 
         <div className="max-w-3xl mx-auto mb-10 md:mb-16 relative">
@@ -359,7 +359,7 @@ const [topIds, setTopIds] = useState<string[]>([]);
                         onClick={() => setVisibleCount(v => v + 12)}
                         className="px-8 py-3 md:px-10 md:py-4 bg-white/5 border border-white/10 rounded-full text-white font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
                     >
-                        Load More Nodes
+                        Load More APIs
                     </button>
                 </div>
             )}
@@ -367,13 +367,13 @@ const [topIds, setTopIds] = useState<string[]>([]);
         ) : (
             <div className="text-center py-20 px-6 animate-fade-in">
                 <Radar size={40} className="text-mora-500 mx-auto mb-4 opacity-50" />
-                <h3 className="text-2xl font-display font-bold text-white mb-2">Signal Lost</h3>
-                <p className="text-slate-400 text-sm max-w-md mx-auto mb-8 font-light">No protocol nodes matching your current parameters.</p>
+                <h3 className="text-2xl font-display font-bold text-white mb-2">No APIs Found</h3>
+                <p className="text-slate-400 text-sm max-w-md mx-auto mb-8 font-light">No results found. Try adjusting your filters.</p>
                 <button 
                     onClick={() => { setSearchTerm(''); setSelectedCategory('All'); }}
                     className="px-8 py-3 bg-mora-600 text-white font-black text-[10px] uppercase tracking-widest rounded-full"
                 >
-                    Reset Neural Scan
+                    Reset Filters
                 </button>
             </div>
         )}
