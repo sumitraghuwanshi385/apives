@@ -62,7 +62,7 @@ return (
             />  
         </div>  
         <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light">  
-          The next-generation API ecosystem for builders worldwide. Discover, integrate, and scale with ease.  
+          A next-gen API ecosystem where builders easily discover and understand APIs.
         </p>  
         <div className="flex items-center gap-3">  
             <a href="https://x.com/useapives" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group">  
@@ -98,8 +98,8 @@ return (
       <div className="md:col-span-2">  
         <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">Legal</h3>  
         <ul className="space-y-2 md:space-y-3">  
-          <li><Link to="/privacy" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Privacy</Link></li>  
-          <li><Link to="/terms" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Terms</Link></li>  
+          <li><Link to="/privacy" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>  
+          <li><Link to="/terms" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Terms of Service</Link></li>  
         </ul>  
       </div>  
 
