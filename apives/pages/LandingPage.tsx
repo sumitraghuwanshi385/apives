@@ -342,7 +342,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
               Explore Directory
             </Link>
             <Link to="/submit" className="px-8 py-3.5 md:px-10 md:py-4 text-xs md:text-sm font-black text-white bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all active:scale-95 uppercase tracking-widest">
-              Submit Node
+              Submit API
             </Link>
           </div>
         </div>
