@@ -279,10 +279,16 @@ const [topIds, setTopIds] = useState<string[]>([]);
   {/* ICON CHIP */}
   <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/5 border border-white/10 mb-4 shadow-lg">
     <LayoutGrid size={26} className="text-mora-500" />
-          <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">The Universal Grid</h1>
-          <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-light leading-relaxed">Explore Trusted APIs And Endpoints.</p>
-        </div>
+  </div>
 
+  <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">
+    The Universal Grid
+  </h1>
+
+  <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+    Explore Trusted APIs And Endpoints.
+  </p>
+</div>
         <div className="max-w-3xl mx-auto mb-10 md:mb-16 relative">
             <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full p-1 md:p-1.5 focus-within:border-mora-500/50 transition-all shadow-2xl group">
                 <Search className="ml-3 md:ml-5 text-slate-500 group-focus-within:text-mora-500 transition-colors" size={16} md:size={20} />
