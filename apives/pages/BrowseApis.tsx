@@ -278,7 +278,7 @@ const [topIds, setTopIds] = useState<string[]>([]);
 <div className="text-center mb-8 md:mb-12">
   {/* ICON CHIP */}
   <div className="inline-flex items-center justify-center p-3 md:p-3.5 bg-white/10 rounded-2xl mb-4">
-  <TrendingUp className="text-mora-500" size={24} md:size={28} />
+  <LayoutGrid className="text-mora-500" size={24} md:size={28} />
 </div>
 
   <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">
