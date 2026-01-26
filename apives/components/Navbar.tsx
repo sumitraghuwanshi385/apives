@@ -115,7 +115,7 @@ export const Navbar: React.FC = () => {
                 ) : (
                   <Link to="/access" className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
                       <Terminal size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Access Node</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest">Access Console</span>
                   </Link>
                 )}
               </div>
@@ -163,7 +163,7 @@ export const Navbar: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <MobileNavLink to="/access" icon={Terminal} onClick={() => setIsOpen(false)}>Access Node</MobileNavLink>
+                <MobileNavLink to="/access" icon={Terminal} onClick={() => setIsOpen(false)}>Access Console</MobileNavLink>
               )}
             </div>
           </div>
