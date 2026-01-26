@@ -435,7 +435,7 @@ refetchLandingApis={refetchLandingApis}
       <section className="py-16 md:py-24 bg-black border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">
-            <Heart className="mr-3 text-red-500" size={18} /> Popular APIs
+            <Heart className="mr-3 text-red-500" size={18} /> Community Favorites
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
