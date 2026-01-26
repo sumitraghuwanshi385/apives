@@ -429,7 +429,7 @@ const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
         Browse All APIs
       </Link>
     </div>
-  </>
+   </section>
 )}
       {freshApis.length > 0 && (
         <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">
@@ -477,6 +477,7 @@ refetchLandingApis={refetchLandingApis}
     ))}
   </div>
 )}
+
           <div className="flex justify-center">
             <Link to="/popular" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all hover:bg-white/10 active:scale-95">
               View Top APIs
