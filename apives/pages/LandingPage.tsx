@@ -8,7 +8,8 @@ import {
   Zap,
   Hash,
   Server,
-  Trophy
+  Trophy,
+  LayoutGrid
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
@@ -456,14 +457,19 @@ refetchLandingApis={refetchLandingApis}
           </h2>
 {isLandingLoading ? (
   <SectionLoader label="Checking community favorites" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-            {communityLoved.map((api, idx) => (
-              <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
-refetchLandingApis={refetchLandingApis}
-/>
-            ))}
-          </div>
-
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+    {communityLoved.map((api, idx) => (
+      <ApiCard
+        key={`loved-${idx}`}
+        api={api}
+        topIds={top3Ids}
+        onLikeChange={updateLandingUpvotes}
+        refetchLandingApis={refetchLandingApis}
+      />
+    ))}
+  </div>
+)}
           <div className="flex justify-center">
             <Link to="/popular" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all hover:bg-white/10 active:scale-95">
               View Top APIs
