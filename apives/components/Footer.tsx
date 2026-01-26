@@ -56,7 +56,7 @@ return (
       <div className="md:col-span-3">  
         <div className="flex items-center mb-4 md:mb-5">  
             <img   
-              src="https://i.postimg.cc/Fsby98j9/IMG-20251219-132426.png"   
+              src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"   
               alt="Apives Logo"   
               className="w-10 h-10 md:w-12 md:h-12 object-contain"  
             />  
