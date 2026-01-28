@@ -101,37 +101,7 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-              <div className="flex items-center space-x-2 md:space-x-3">
-
-{/* 🔥 Become a Sponsor CTA */}
-<Link
-  to="/sponsorship"
-  className="
-    flex items-center gap-2
-    px-5 py-2
-    rounded-full
-    text-[10px]
-    font-black
-    uppercase tracking-widest
-
-    bg-gradient-to-r from-mora-500/20 to-mora-500/10
-    border border-mora-500/40
-    text-mora-400
-
-    hover:from-mora-500 hover:to-mora-400
-    hover:text-black
-    hover:shadow-[0_0_30px_rgba(34,197,94,0.45)]
-
-    transition-all duration-300
-    active:scale-95
-  "
->
-  <Zap
-    size={14}
-    className="drop-shadow-[0_0_6px_rgba(34,197,94,0.6)]"
-  />
-  Become a Sponsor
-</Link>
+              <div className="hidden lg: flex items-center space-x-3">
 
                 {isAuthenticated ? (
                     <div className="flex items-center gap-2">
