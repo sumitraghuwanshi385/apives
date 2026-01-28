@@ -375,7 +375,7 @@ return (
   <section className="py-8 md:py-12 bg-black border-t border-white/5">
 
 {/* 🔥 TOTAL APIs STAT */}
-<div className="py-8 md:py-10 bg-black border-t border-white/5">
+<div className="py-8 md:py-10 bg-black">
   <div className="max-w-3xl mx-auto px-6">
     <div
       className="
