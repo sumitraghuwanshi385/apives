@@ -173,7 +173,25 @@ flex flex-col h-full"
         </p>  
       </div>  
     </div>  
-
+{/* 🔥 API CARD IMAGE GALLERY */}
+{api.gallery && api.gallery.length > 0 && (
+  <div className="flex overflow-x-auto gap-3 mb-3 snap-x no-scrollbar">
+    {api.gallery.slice(0, 5).map((img: string, i: number) => (
+      <div
+        key={i}
+        className="flex-none w-[90%] h-[150px] rounded-xl overflow-hidden
+        border border-white/10 snap-center bg-black"
+      >
+        <img
+          src={img}
+          alt={`${api.name}-${i}`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+    ))}
+  </div>
+)}
     <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-2 leading-relaxed font-light">  
       {api.description}  
     </p>  
