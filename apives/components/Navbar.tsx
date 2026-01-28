@@ -107,8 +107,7 @@ export const Navbar: React.FC = () => {
 <Link
   to="/sponsorship"
   className="
-    hidden lg:flex
-    items-center gap-2
+    flex items-center gap-2
     px-5 py-2
     rounded-full
     text-[10px]
@@ -127,7 +126,10 @@ export const Navbar: React.FC = () => {
     active:scale-95
   "
 >
-  <Zap size={14} className="drop-shadow-[0_0_6px_rgba(34,197,94,0.6)]" />
+  <Zap
+    size={14}
+    className="drop-shadow-[0_0_6px_rgba(34,197,94,0.6)]"
+  />
   Become a Sponsor
 </Link>
 
