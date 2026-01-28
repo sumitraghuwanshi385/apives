@@ -374,7 +374,7 @@ return (
 
   <section className="py-8 md:py-12 bg-black border-t border-white/5">
 
-{/* 🔥 TOTAL APIs COUNTER */}
+{/* 🔥 TOTAL APIs STAT */}
 <div className="py-8 md:py-10 bg-black border-t border-white/5">
   <div className="max-w-3xl mx-auto px-6">
     <div
@@ -382,24 +382,29 @@ return (
         relative
         rounded-2xl
         px-6 py-6 md:px-10 md:py-8
-        bg-white/[0.025]
-        border border-mora-500/20
+        bg-white/[0.03]
+        border border-white/10
         text-center
         overflow-hidden
-        shadow-[0_0_40px_rgba(34,197,94,0.18)]
       "
     >
-      {/* soft glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/10 via-transparent to-transparent"></div>
+      {/* subtle accent line */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-mora-500 rounded-full opacity-80"></div>
 
       <div className="relative z-10">
-        <p className="text-[9px] md:text-[10px] uppercase tracking-[0.45em] text-slate-500 mb-2">
-          Live APIs on Apives
+        {/* TITLE */}
+        <p className="text-[10px] md:text-xs uppercase tracking-[0.35em] text-slate-400 mb-3">
+          Total APIs Listed
         </p>
 
-        {/* COUNT – no blink, solid */}
-        <p className="text-4xl md:text-5xl font-display font-black text-mora-500">
+        {/* COUNT */}
+        <p className="text-4xl md:text-5xl font-display font-black text-white">
           {allApis.length}
+        </p>
+
+        {/* SUBTEXT */}
+        <p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
+          Live on Apives
         </p>
       </div>
     </div>
