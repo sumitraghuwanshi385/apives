@@ -375,36 +375,31 @@ return (
   <section className="py-8 md:py-12 bg-black border-t border-white/5">
 
 {/* 🔥 TOTAL APIs COUNTER */}
-<div className="py-12 md:py-16 bg-black border-t border-white/5">
-  <div className="max-w-4xl mx-auto px-6">
+<div className="py-8 md:py-10 bg-black border-t border-white/5">
+  <div className="max-w-3xl mx-auto px-6">
     <div
       className="
         relative
-        rounded-3xl
-        px-8 py-10 md:px-14 md:py-14
-        bg-white/[0.03]
-        border border-mora-500/30
+        rounded-2xl
+        px-6 py-6 md:px-10 md:py-8
+        bg-white/[0.025]
+        border border-mora-500/20
         text-center
         overflow-hidden
-        shadow-[0_0_80px_rgba(34,197,94,0.25)]
-        hover:shadow-[0_0_120px_rgba(34,197,94,0.45)]
-        transition-all
+        shadow-[0_0_40px_rgba(34,197,94,0.18)]
       "
     >
-      {/* glow layer */}
-      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/20 via-transparent to-transparent"></div>
+      {/* soft glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/10 via-transparent to-transparent"></div>
 
       <div className="relative z-10">
-        <p className="text-[10px] md:text-xs uppercase tracking-[0.5em] text-slate-400 mb-4">
-          Total APIs Listed
+        <p className="text-[9px] md:text-[10px] uppercase tracking-[0.45em] text-slate-500 mb-2">
+          Live APIs on Apives
         </p>
 
-        <p className="text-5xl md:text-7xl font-display font-black text-mora-500 animate-pulse-fast">
+        {/* COUNT – no blink, solid */}
+        <p className="text-4xl md:text-5xl font-display font-black text-mora-500">
           {allApis.length}
-        </p>
-
-        <p className="mt-4 text-xs md:text-sm text-slate-500 font-light">
-          Live • Verified • Production-ready APIs
         </p>
       </div>
     </div>
