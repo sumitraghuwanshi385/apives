@@ -191,8 +191,29 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                      <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1"><Server size={10} /> {api.provider}</p>
                     </div>
+{/* 🔥 API CARD IMAGE PREVIEW */}
+{api.gallery && api.gallery.length > 0 && (
+  <div className="flex overflow-x-auto gap-3 mb-3 snap-x no-scrollbar">
+    {api.gallery.slice(0, 5).map((img: string, i: number) => (
+      <div
+        key={i}
+        className="flex-none w-[90%] h-[150px]
+        rounded-xl overflow-hidden
+        border border-white/10
+        bg-black snap-center"
+      >
+        <img
+          src={img}
+          alt={`${api.name}-${i}`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+    ))}
+  </div>
+)}
                 </div>
-                <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-2 leading-relaxed font-light">{api.description}</p>
+                <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-4 leading-relaxed font-light">{api.description}</p>
                 <div className="flex flex-wrap gap-1.5 mb-6 mt-auto">
                     {api.tags.slice(0, 5).map(tag => (
                         <span key={tag} className="text-[9px] md:text-[10px] text-slate-500 bg-white/5 border border-white/10 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full flex items-center">
