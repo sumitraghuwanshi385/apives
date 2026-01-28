@@ -192,7 +192,7 @@ flex flex-col h-full"
     ))}
   </div>
 )}
-    <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-2 leading-relaxed font-light">  
+    <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-4 leading-relaxed font-light">  
       {api.description}  
     </p>  
 
