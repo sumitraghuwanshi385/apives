@@ -102,24 +102,25 @@ export const Navbar: React.FC = () => {
 
             <div className="flex items-center gap-2 md:gap-3">
 
-{/* 🔍 Mobile-only Search Icon */}
+{/* 🔍 Mobile-only Search icon */}
 <button
   onClick={() => navigate('/browse')}
   className="
     lg:hidden
-    bg-white/[0.06]
-    hover:bg-mora-500/20
-    text-slate-300 hover:text-mora-400
-    w-9 h-9
+    w-7 h-7 md:w-10 md:h-10
     flex items-center justify-center
     rounded-full
-    border border-white/15
-    transition-all
+    border
+    bg-white/[0.05]
+    backdrop-blur-[20px]
+    border-white/20
+    text-slate-300
+    hover:bg-white/[0.1]
     active:scale-90
+    transition-all
   "
-  aria-label="Search APIs"
 >
-  <Search size={16} />
+  <Search size={14} className="md:w-5 md:h-5" />
 </button>
 
               <div className="hidden lg:flex items-center space-x-3">
