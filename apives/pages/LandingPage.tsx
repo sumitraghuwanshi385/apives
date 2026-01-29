@@ -344,7 +344,7 @@ const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
-<section className="relative pt-24 md:pt-36 pb-16 md:pb-24 overflow-hidden">
+<section className="relative pt-24 md:pt-36 pb-8 md:pb-12 overflow-hidden">
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(34,197,94,0.1),transparent_70%)] pointer-events-none"></div>
 <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
 <h1 className="text-3xl md:text-8xl font-display font-bold text-white tracking-tighter mb-4 md:mb-8 leading-[1] animate-slide-up">
@@ -389,6 +389,14 @@ shadow-[0_0_30px_rgba(34,197,94,0.15)]
     overflow-hidden
   "
 >
+{/* animated green sweep */}
+<div className="
+  absolute -inset-[40%]
+  bg-gradient-to-r from-transparent via-mora-500/15 to-transparent
+  rotate-12
+  animate-[spin_18s_linear_infinite]
+  opacity-60
+"></div>
 
 {/* glow vignette */}
 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30 pointer-events-none"></div>
