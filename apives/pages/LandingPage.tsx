@@ -15,6 +15,25 @@ import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
+import { ApiListing } from '../types';
+import { apiService } from '../services/apiClient';
+let LANDING_API_CACHE: ApiListing[] | null = null;
+
+/* ===== SECTION LOADER ===== */
+const SectionLoader: React.FC<{ text: string }> = ({ text }) => (
+  <div className="w-full py-20 flex flex-col items-center justify-center gap-4">
+    <div className="relative w-12 h-12">
+      <div className="absolute inset-0 rounded-full border border-mora-500/20 animate-ping"></div>
+      <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin"></div>
+    </div>
+
+    <p className="text-xs uppercase tracking-[0.3em] text-slate-400 font-mono">
+      {text}
+    </p>
+  </div>
+);
+/* ========================== */
+
 const isNew = (dateString: string) => {
 if (!dateString) return false;
 const publishedDate = new Date(dateString).getTime();
@@ -241,6 +260,7 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
 const [allApis, setAllApis] = useState<ApiListing[]>([]);
 const [top3Ids, setTop3Ids] = useState<string[]>([]);
+const [isLoading, setIsLoading] = useState(true);
 const [isMobile, setIsMobile] = useState(
   typeof window !== 'undefined' && window.innerWidth < 768
 );
@@ -266,6 +286,7 @@ setTop3Ids(
 .slice(0, 3)
 .map(a => a.id)
 );
+setIsLoading(false);
 return;
 }
 
@@ -290,7 +311,8 @@ return;
       .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
       .slice(0, 3)  
       .map(a => a.id)  
-  );  
+  ); 
+setIsLoading(false);  
 } catch (e) {  
   console.error('LandingPage fetch failed', e);  
 }
@@ -488,14 +510,22 @@ rounded-2xl bg-white/10 p-1"
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
             <LayoutGrid className="mr-3 text-mora-500" size={18} /> The Universal Grid  
-          </h2>  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">  
-        {featuredApis.map((api, idx) => (  
-          <ApiCard key={`${api.id}-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
-
-refetchLandingApis={refetchLandingApis}
-/>
-))}
-</div>
+          </h2> 
+ {isLoading ? (
+  <SectionLoader text="Loading the Universal Grid" />
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+    {featuredApis.map((api, idx) => (
+      <ApiCard
+        key={`${api.id}-${idx}`}
+        api={api}
+        topIds={top3Ids}
+        onLikeChange={updateLandingUpvotes}
+        refetchLandingApis={refetchLandingApis}
+      />
+    ))}
+  </div>
+)}
 
 <div className="flex justify-center">  
         <Link to="/browse" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">  
@@ -512,14 +542,21 @@ refetchLandingApis={refetchLandingApis}
           <Zap className="mr-3 text-white" size={18} /> Fresh APIs  
         </h2>  
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">  
-          {freshApis.map((api, idx) => (  
-            <ApiCard key={`new-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
-
-refetchLandingApis={refetchLandingApis}
-/>
-))}
-</div>
+        {isLoading ? (
+  <SectionLoader text="Syncing fresh APIs" />
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+    {freshApis.map((api, idx) => (
+      <ApiCard
+        key={`new-${idx}`}
+        api={api}
+        topIds={top3Ids}
+        onLikeChange={updateLandingUpvotes}
+        refetchLandingApis={refetchLandingApis}
+      />
+    ))}
+  </div>
+)}
 
 <div className="flex justify-center">  
           <Link to="/fresh" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">  
@@ -536,14 +573,21 @@ refetchLandingApis={refetchLandingApis}
         <Heart className="mr-3 text-red-500" size={18} /> Community Favorites  
       </h2>  
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">  
-        {communityLoved.map((api, idx) => (  
-          <ApiCard key={`loved-${idx}`} api={api} topIds={top3Ids} onLikeChange={updateLandingUpvotes}
-
-refetchLandingApis={refetchLandingApis}
-/>
-))}
-</div>
+      {isLoading ? (
+  <SectionLoader text="Fetching community favorites" />
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
+    {communityLoved.map((api, idx) => (
+      <ApiCard
+        key={`loved-${idx}`}
+        api={api}
+        topIds={top3Ids}
+        onLikeChange={updateLandingUpvotes}
+        refetchLandingApis={refetchLandingApis}
+      />
+    ))}
+  </div>
+)}
 
 <div className="flex justify-center">  
         <Link to="/popular" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all hover:bg-white/10 active:scale-95">  
