@@ -112,6 +112,25 @@ export const Navbar: React.FC = () => {
                           <LayoutDashboard size={14} />
                           <span className="text-[10px] font-bold uppercase tracking-widest">Console</span>
                        </Link>
+
+                       <button onClick={handleLogout} className="bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 p-2.5 rounded-full border border-white/10 transition-all">
+                          <LogOut size={14} />
+                       </button>
+                    </div>
+                ) : (
+                  <Link to="/access" className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                      <Terminal size={14} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Access Console</span>
+                  </Link>
+                )}
+              </div>
+
+              {isAuthenticated && (
+                <Link to="/provider" className="lg:hidden flex items-center gap-1.5 bg-mora-500/10 border border-mora-500/30 text-mora-400 px-3.5 py-1 rounded-full text-[8px] font-black uppercase tracking-tighter shadow-md">
+                   <Cpu size={10} /> Console
+                </Link>
+              )}
+
 {/* 🔍 Mobile-only Search icon */}
 <button
   onClick={() => navigate('/browse')}
@@ -132,23 +151,6 @@ export const Navbar: React.FC = () => {
 >
   <Search size={14} className="md:w-5 md:h-5" />
 </button>
-                       <button onClick={handleLogout} className="bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 p-2.5 rounded-full border border-white/10 transition-all">
-                          <LogOut size={14} />
-                       </button>
-                    </div>
-                ) : (
-                  <Link to="/access" className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                      <Terminal size={14} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Access Console</span>
-                  </Link>
-                )}
-              </div>
-
-              {isAuthenticated && (
-                <Link to="/provider" className="lg:hidden flex items-center gap-1.5 bg-mora-500/10 border border-mora-500/30 text-mora-400 px-3.5 py-1 rounded-full text-[8px] font-black uppercase tracking-tighter shadow-md">
-                   <Cpu size={10} /> Console
-                </Link>
-              )}
 
               <div className="lg:hidden relative">
                 <button 
