@@ -15,10 +15,6 @@ import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
-import { ApiListing } from '../types';
-import { apiService } from '../services/apiClient';
-let LANDING_API_CACHE: ApiListing[] | null = null;
-
 /* ===== SECTION LOADER ===== */
 const SectionLoader: React.FC<{ text: string }> = ({ text }) => (
   <div className="w-full py-20 flex flex-col items-center justify-center gap-4">
