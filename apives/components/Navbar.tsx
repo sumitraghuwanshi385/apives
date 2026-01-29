@@ -101,27 +101,31 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
+
+{/* 🔍 Mobile-only Search Icon */}
+<button
+  onClick={() => navigate('/browse')}
+  className="
+    lg:hidden
+    bg-white/[0.06]
+    hover:bg-mora-500/20
+    text-slate-300 hover:text-mora-400
+    w-9 h-9
+    flex items-center justify-center
+    rounded-full
+    border border-white/15
+    transition-all
+    active:scale-90
+  "
+  aria-label="Search APIs"
+>
+  <Search size={16} />
+</button>
+
               <div className="hidden lg:flex items-center space-x-3">
 
                 {isAuthenticated ? (
                     <div className="flex items-center gap-2">
-<button
-  onClick={() => navigate('/browse')}
-  className="
-    bg-white/5
-    hover:bg-mora-500/15
-    text-slate-300 hover:text-mora-400
-    p-2.5
-    rounded-full
-    border border-white/10
-    hover:border-mora-500/40
-    transition-all
-    active:scale-90
-  "
-  title="Search APIs"
->
-  <Search size={14} />
-</button>
                        <Link to="/provider" className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 border border-white/10 hover:border-mora-500/50 text-slate-300 hover:text-mora-400 px-5 py-2 rounded-full transition-all duration-300">
                           <LayoutDashboard size={14} />
                           <span className="text-[10px] font-bold uppercase tracking-widest">Console</span>
