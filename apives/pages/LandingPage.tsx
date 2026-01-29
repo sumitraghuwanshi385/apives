@@ -361,7 +361,7 @@ return (
           : 'Apives curates APIs with clear pricing, stability, access types, and real endpoint examples. This helps developers avoid guesswork caused by incomplete docs or outdated GitHub repositories.'}  
       </p>  
 
-      <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10 md:mt-14">  
+      <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 md:mt-8">  
         <Link to="/browse" className="px-8 py-3.5 md:px-10 md:py-4 text-xs md:text-sm font-black text-black bg-mora-500 rounded-full transition-all hover:scale-105 hover:bg-white shadow-[0_0_30px_rgba(34,197,94,0.3)] active:scale-95 uppercase tracking-widest">  
           Explore APIs  
         </Link>  
@@ -376,14 +376,15 @@ return (
 
 {/* 🔥 TOTAL APIs STAT */}
 <div className="py-4 md:py-6 bg-black">
-  <div className="max-w-3xl mx-auto px-4 md:px-8 lg:px-12">
-    <div
+  <div className="w-full max-w-none mx-auto px-4 md:px-10 lg:px-20">
+<div
   className="
     relative
     rounded-xl md:rounded-2xl
     px-5 py-5 md:px-8 md:py-6
     bg-white/[0.03]
-    border border-white/8
+    border border-mora-500/30
+shadow-[0_0_30px_rgba(34,197,94,0.15)]
     text-center
     overflow-hidden
   "
@@ -394,8 +395,8 @@ return (
   absolute inset-0
   bg-[radial-gradient(circle_at_25%_20%,rgba(34,197,94,0.18),transparent_55%),
       radial-gradient(circle_at_75%_80%,rgba(34,197,94,0.12),transparent_60%)]
-  animate-[pulse_6s_ease-in-out_infinite]
-  opacity-70
+  animate-[pulse_8s_ease-in-out_infinite]
+opacity-60
 "></div>
 
       {/* subtle accent line */}
