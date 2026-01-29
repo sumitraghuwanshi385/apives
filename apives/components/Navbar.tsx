@@ -102,11 +102,21 @@ export const Navbar: React.FC = () => {
 
             <div className="flex items-center gap-2 md:gap-3">
 
+
+
+              <div className="hidden lg:flex items-center space-x-3">
+
+                {isAuthenticated ? (
+                    <div className="flex items-center gap-2">
+                       <Link to="/provider" className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 border border-white/10 hover:border-mora-500/50 text-slate-300 hover:text-mora-400 px-5 py-2 rounded-full transition-all duration-300">
+                          <LayoutDashboard size={14} />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Console</span>
+                       </Link>
 {/* 🔍 Mobile-only Search icon */}
 <button
   onClick={() => navigate('/browse')}
   className="
-    lg:hidden
+    md:hidden
     w-7 h-7 md:w-10 md:h-10
     flex items-center justify-center
     rounded-full
@@ -122,15 +132,6 @@ export const Navbar: React.FC = () => {
 >
   <Search size={14} className="md:w-5 md:h-5" />
 </button>
-
-              <div className="hidden lg:flex items-center space-x-3">
-
-                {isAuthenticated ? (
-                    <div className="flex items-center gap-2">
-                       <Link to="/provider" className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 border border-white/10 hover:border-mora-500/50 text-slate-300 hover:text-mora-400 px-5 py-2 rounded-full transition-all duration-300">
-                          <LayoutDashboard size={14} />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Console</span>
-                       </Link>
                        <button onClick={handleLogout} className="bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 p-2.5 rounded-full border border-white/10 transition-all">
                           <LogOut size={14} />
                        </button>
