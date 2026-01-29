@@ -1,40 +1,11 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Activity, FileText, Lock, CheckCircle2, ChevronRight, List, LifeBuoy, HelpCircle, Mail, Handshake, Target, Rocket, Zap } from 'lucide-react';
+import { ShieldCheck, Activity, FileText, Lock, CheckCircle2, ChevronRight, List, LifeBuoy, HelpCircle, Mail, Handshake, Target, Rocket, Zap,  Crown,
+  Layers,
+  Compass,
+  TerminalSquare,
+  Users } from 'lucide-react';
 import { BackButton } from '../components/BackButton';
 import { CustomSelect } from '../components/CustomSelect';
-
-// 🔶 Sponsorship Tier Icons (Custom SVGs)
-
-const ApexIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M12 2L22 20H2L12 2Z" fill="#22c55e" />
-  </svg>
-);
-
-const PrimeIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <rect x="4" y="4" width="16" height="16" rx="4" fill="#38bdf8" />
-  </svg>
-);
-
-const ZenithIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="9" fill="#f59e0b" />
-  </svg>
-);
-
-const ConsoleIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <rect x="2" y="5" width="20" height="14" rx="2" fill="#a855f7" />
-  </svg>
-);
-
-const CommunityIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <circle cx="8" cy="12" r="4" fill="#22c55e" />
-    <circle cx="16" cy="12" r="4" fill="#22c55e" />
-  </svg>
-);
 
 const PageLayout: React.FC<{ title: string; subtitle: string; icon: React.ElementType; children: React.ReactNode }> = ({ title, subtitle, icon: Icon, children }) => (
   <div className="min-h-screen bg-black pt-28 pb-20 relative selection:bg-mora-500/30">
@@ -69,125 +40,165 @@ export const SponsorshipPage: React.FC = () => (
         <div className="bg-white/5 border border-white/10 p-5 rounded-2xl">
           <Rocket className="text-mora-500 mb-3" size={20} />
           <h3 className="text-white font-bold text-base mb-1.5">Brand Visibility</h3>
-          <p className="text-slate-400 text-xs leading-relaxed">Get prominent placement across our platform, including the landing page, directory sidebar, and newsletters.</p>
+          <p className="text-slate-400 text-xs leading-relaxed">Secure high-impact placement across Apives from the landing grid and discovery flows to curated communications, ensuring your brand is seen exactly where developers evaluate and trust APIs.</p>
         </div>
       </div>
 
       <div className="border-t border-white/10 pt-10 space-y-10">
 
-  <h3 className="text-xl font-bold text-white text-center">
-    Sponsor Placement Structure
-  </h3>
-
-  <p className="text-slate-400 text-sm text-center max-w-xl mx-auto">
-    Apives offers limited, high-signal sponsorship placements designed
-    to maximize visibility without compromising developer trust.
-  </p>
+  {/* HEADER */}
+  <div>
+    <h3 className="text-xl md:text-2xl font-display font-bold text-white mb-3">
+      Sponsor Placement Structure
+    </h3>
+    <p className="text-slate-400 text-sm leading-relaxed">
+      Apives is not just an API directory — it’s a living ecosystem where developers
+      discover, trust, and integrate production-ready APIs.
+      <br /><br />
+      Our sponsorship structure is designed to give brands contextual visibility,
+      long-term credibility, and direct exposure to active builders at the right moments.
+      <br /><br />
+      Each tier is intentionally limited to maintain signal over noise.
+    </p>
+  </div>
 
   {/* APEX */}
-  <div className="space-y-4">
+  <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <ApexIcon />
+      <Crown className="text-amber-400" size={18} />
       <h4 className="text-white font-bold">Apex Sponsors</h4>
     </div>
-
-    <ul className="space-y-2 text-xs text-slate-300">
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Slots: 2 (exclusive)
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Displayed below “Total APIs Listed”
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Highest landing page visibility
-      </li>
+    <p className="text-slate-400 text-xs">
+      Top-tier brand visibility for category-defining companies.
+    </p>
+    <ul className="space-y-2">
+      {[
+        'Slots: 2',
+        'Displayed directly below “Total APIs Listed”',
+        'First impression visibility on the landing page',
+        'Premium branding & trust association'
+      ].map((t, i) => (
+        <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+          <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+          {t}
+        </li>
+      ))}
     </ul>
+    <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
+      Label: Apex Sponsor
+    </span>
   </div>
 
   {/* PRIME */}
-  <div className="space-y-4">
+  <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <PrimeIcon />
+      <Layers className="text-sky-400" size={18} />
       <h4 className="text-white font-bold">Prime Sponsors</h4>
     </div>
-
-    <ul className="space-y-2 text-xs text-slate-300">
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Slots: 4
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Landing page (above footer)
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Persistent visibility across site
-      </li>
+    <p className="text-slate-400 text-xs">
+      Always-visible, long-term brand presence.
+    </p>
+    <ul className="space-y-2">
+      {[
+        'Slots: 4',
+        'Displayed on the Landing Page (above Footer)',
+        'Consistent exposure across all pages',
+        'Strong recall without disrupting UX'
+      ].map((t, i) => (
+        <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+          <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+          {t}
+        </li>
+      ))}
     </ul>
+    <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
+      Label: Prime Sponsor
+    </span>
   </div>
 
   {/* ZENITH */}
-  <div className="space-y-4">
+  <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <ZenithIcon />
+      <Compass className="text-orange-400" size={18} />
       <h4 className="text-white font-bold">Zenith Sponsors</h4>
     </div>
-
-    <ul className="space-y-2 text-xs text-slate-300">
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Slots: 2
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Browse APIs page placement
-      </li>
+    <p className="text-slate-400 text-xs">
+      Discovery-focused placement for high-intent users.
+    </p>
+    <ul className="space-y-2">
+      {[
+        'Slots: 2',
+        'Displayed on the Browse APIs page',
+        'Visible during core discovery flows',
+        'Aligned with high-intent users'
+      ].map((t, i) => (
+        <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+          <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+          {t}
+        </li>
+      ))}
     </ul>
+    <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
+      Label: Zenith Sponsor
+    </span>
   </div>
 
   {/* CONSOLE */}
-  <div className="space-y-4">
+  <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <ConsoleIcon />
-      <h4 className="text-white font-bold">Console Partners (Dashboard)</h4>
+      <TerminalSquare className="text-purple-400" size={18} />
+      <h4 className="text-white font-bold">Console Partners</h4>
     </div>
-
-    <ul className="space-y-2 text-xs text-slate-300">
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Slots: 2
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Inside Developer Console
-      </li>
+    <p className="text-slate-400 text-xs">
+      Infrastructure & tooling trust layer.
+    </p>
+    <ul className="space-y-2">
+      {[
+        'Slots: 2',
+        'Displayed inside the Developer Console',
+        'Official infrastructure / tooling partners',
+        'High trust, low noise placement'
+      ].map((t, i) => (
+        <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+          <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+          {t}
+        </li>
+      ))}
     </ul>
+    <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
+      Label: Console Partner
+    </span>
   </div>
 
   {/* COMMUNITY */}
-  <div className="space-y-4">
+  <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <CommunityIcon />
+      <Users className="text-green-400" size={18} />
       <h4 className="text-white font-bold">Community Sponsors</h4>
     </div>
-
-    <ul className="space-y-2 text-xs text-slate-300">
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Fresh APIs page: 2 slots
-      </li>
-      <li className="flex gap-2">
-        <CheckCircle2 className="text-green-500" size={14} />
-        Community Favorites page: 2 slots
-      </li>
+    <p className="text-slate-400 text-xs">
+      Supporting the ecosystem and developer adoption.
+    </p>
+    <ul className="space-y-2">
+      {[
+        'Fresh APIs page: 2 slots',
+        'Community Favorites page: 2 slots',
+        'Embedded inside community-focused experiences',
+        'Built for ecosystem-first brands'
+      ].map((t, i) => (
+        <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
+          <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+          {t}
+        </li>
+      ))}
     </ul>
+    <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
+      Label: Community Sponsor
+    </span>
   </div>
 
 </div>
+
       <div className="bg-mora-500/10 border border-mora-500/20 rounded-2xl p-6 text-center">
         <h3 className="text-lg font-bold text-white mb-1.5">Ready to Interface?</h3>
         <p className="text-slate-400 text-xs mb-5">For detailed pricing and packages, reach out to our team.</p>
