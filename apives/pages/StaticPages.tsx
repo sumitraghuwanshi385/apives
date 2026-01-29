@@ -13,7 +13,7 @@ const PageLayout: React.FC<{ title: string; subtitle: string; icon: React.Elemen
     <div className="absolute top-28 left-4 lg:left-8 z-20">
       <BackButton />
     </div>
-    <div className="max-w-2xl mx-auto px-6 relative z-10 pt-8">
+    <div className="max-w-2xl lg:max-w-6xl xl:max-w-7xl mx-auto px-6 relative z-10 pt-8">
       <div className="mb-10 text-center">
         <div className="inline-flex items-center justify-center p-2.5 bg-mora-500/10 rounded-2xl border border-mora-500/20 mb-5 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
             <Icon size={28} className="text-mora-500" />
