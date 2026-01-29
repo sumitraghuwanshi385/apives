@@ -52,8 +52,7 @@ export const SponsorshipPage: React.FC = () => (
       Sponsor Placement Structure
     </h3>
     <p className="text-slate-400 text-sm leading-relaxed">
-      Apives is not just an API directory — it’s a living ecosystem where developers
-      discover, trust, and integrate production-ready APIs.
+      Apives is next-gen API ecosystem where builders easily discover and understand APIs.
       <br /><br />
       Our sponsorship structure is designed to give brands contextual visibility,
       long-term credibility, and direct exposure to active builders at the right moments.
@@ -201,7 +200,7 @@ export const SponsorshipPage: React.FC = () => (
 
       <div className="bg-mora-500/10 border border-mora-500/20 rounded-2xl p-6 text-center">
         <h3 className="text-lg font-bold text-white mb-1.5">Ready to Interface?</h3>
-        <p className="text-slate-400 text-xs mb-5">For detailed pricing and packages, reach out to our team.</p>
+        <p className="text-slate-400 text-xs mb-5">For detailed pricing,additional placement opportunities and packages, reach out to our team.</p>
         <div className="flex flex-col items-center gap-3">
           <a href="mailto:beatslevelone@gmail.com" className="bg-mora-600 hover:bg-mora-500 text-white font-bold py-2.5 px-8 rounded-full transition-all shadow-lg flex items-center gap-2 text-xs">
             <Mail size={16} /> beatslevelone@gmail.com
