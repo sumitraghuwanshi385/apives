@@ -530,8 +530,7 @@ rounded-2xl bg-white/10 p-1"
       </div>  
     </div>  
   </section>  
-
-  {freshApis.length > 0 && (  
+ 
     <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">  
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
         <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
