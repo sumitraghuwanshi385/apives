@@ -372,7 +372,7 @@ return (
     </div>  
   </section>  
 
-  <section className="py-3 md:py-5 bg-black border-t border-white/5">
+<section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
 
 {/* 🔥 TOTAL APIs STAT */}
 <div className="py-4 md:py-6 bg-black">
@@ -389,6 +389,9 @@ shadow-[0_0_30px_rgba(34,197,94,0.15)]
     overflow-hidden
   "
 >
+
+{/* glow vignette */}
+<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30 pointer-events-none"></div>
 
 {/* soft animated green background */}
 <div className="
@@ -426,9 +429,15 @@ opacity-60
 
   <div className="pb-6 md:pb-8">  
     <div className="max-w-5xl mx-auto px-6 text-center">  
-      <p className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">  
-        Community Sponsor  
-      </p>  <a
+      <p className="
+  text-[10px] md:text-xs
+  uppercase tracking-[0.35em]
+  font-black
+  bg-gradient-to-r from-amber-400 to-yellow-600
+  bg-clip-text text-transparent
+  mb-4
+">
+  Apex Sponsor     </p>  <a
 
 href="https://scoutpanels.com"
 target="_blank"
