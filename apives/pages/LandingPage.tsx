@@ -372,22 +372,32 @@ return (
     </div>  
   </section>  
 
-  <section className="py-8 md:py-12 bg-black border-t border-white/5">
+  <section className="py-3 md:py-5 bg-black border-t border-white/5">
 
 {/* 🔥 TOTAL APIs STAT */}
-<div className="py-8 md:py-10 bg-black">
-  <div className="max-w-3xl mx-auto px-6">
+<div className="py-4 md:py-6 bg-black">
+  <div className="max-w-3xl mx-auto px-4 md:px-8 lg:px-12">
     <div
-      className="
-        relative
-        rounded-2xl
-        px-6 py-6 md:px-10 md:py-8
-        bg-white/[0.03]
-        border border-white/10
-        text-center
-        overflow-hidden
-      "
-    >
+  className="
+    relative
+    rounded-xl md:rounded-2xl
+    px-5 py-5 md:px-8 md:py-6
+    bg-white/[0.03]
+    border border-white/8
+    text-center
+    overflow-hidden
+  "
+>
+
+{/* soft animated green background */}
+<div className="
+  absolute inset-0
+  bg-[radial-gradient(circle_at_25%_20%,rgba(34,197,94,0.18),transparent_55%),
+      radial-gradient(circle_at_75%_80%,rgba(34,197,94,0.12),transparent_60%)]
+  animate-[pulse_6s_ease-in-out_infinite]
+  opacity-70
+"></div>
+
       {/* subtle accent line */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-mora-500 rounded-full opacity-80"></div>
 
