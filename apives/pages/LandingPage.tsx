@@ -560,7 +560,6 @@ rounded-2xl bg-white/10 p-1"
         </div>  
       </div>  
     </section>  
-  )}  
 
   <section className="py-16 md:py-24 bg-black border-t border-white/5">  
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
