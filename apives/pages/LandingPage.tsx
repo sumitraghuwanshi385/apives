@@ -476,13 +476,11 @@ href="https://scoutpanels.com"
 target="_blank"
 rel="noopener noreferrer"
 className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl
-border border-mora-500/30
-bg-gradient-to-br from-mora-500/10 to-transparent
-hover:from-mora-500/20
-transition-all hover:scale-[1.02]
-shadow-[0_0_40px_rgba(34,197,94,0.15)]
-hover:shadow-[0_0_60px_rgba(34,197,94,0.25)]"
-
+border border-amber-400/40
+bg-gradient-to-br from-amber-400/15 to-transparent
+hover:from-amber-400/25
+shadow-[0_0_40px_rgba(245,158,11,0.25)]
+hover:shadow-[0_0_60px_rgba(245,158,11,0.45)]
 > 
 
 <img  
@@ -595,15 +593,16 @@ rounded-2xl bg-white/10 p-1"
   <div className="max-w-5xl mx-auto px-6 text-center">
 
     <p className="
-      text-[10px] md:text-xs
-      uppercase tracking-[0.35em]
-      font-black
-      bg-gradient-to-r from-slate-200 to-slate-400
-      bg-clip-text text-transparent
-      mb-4
-    ">
-      Prime Sponsor
-    </p>
+  mt-12 md:mt-16
+  text-[10px] md:text-xs
+  uppercase tracking-[0.35em]
+  font-black
+  bg-gradient-to-r from-slate-200 to-slate-400
+  bg-clip-text text-transparent
+  mb-4
+">
+  Prime Sponsor
+</p>
 
     <a
       href="https://serpapi.com"
