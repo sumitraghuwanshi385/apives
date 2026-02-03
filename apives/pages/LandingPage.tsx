@@ -471,18 +471,16 @@ opacity-60
   mb-4
 ">
   Apex Sponsor     </p>  <a
-
-href="https://scoutpanels.com"
-target="_blank"
-rel="noopener noreferrer"
-className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl
-border border-amber-400/40
-bg-gradient-to-br from-amber-400/15 to-transparent
-hover:from-amber-400/25
-shadow-[0_0_40px_rgba(245,158,11,0.25)]
-hover:shadow-[0_0_60px_rgba(245,158,11,0.45)]
-> 
-
+  href="https://scoutpanels.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl
+  border border-amber-400/40
+  bg-gradient-to-br from-amber-400/15 to-transparent
+  hover:from-amber-400/25
+  shadow-[0_0_40px_rgba(245,158,11,0.25)]
+  hover:shadow-[0_0_60px_rgba(245,158,11,0.45)]"
+>
 <img  
 src="https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg"  
 alt="ScoutPanels"  
