@@ -587,6 +587,7 @@ rounded-2xl bg-white/10 p-1"
     </div> 
 
 {/* PRIME SPONSOR */}
+{SHOW_PRIME_SPONSOR && (
 <div className="pb-6 md:pb-8">
   <div className="max-w-5xl mx-auto px-6 text-center">
 
