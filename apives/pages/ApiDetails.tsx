@@ -332,10 +332,40 @@ if (!api) {
       onTouchStart={() => setShowGalleryControls(true)}
       onMouseMove={() => setShowGalleryControls(true)}
     >
+{/* IMAGE COUNTER PILL */}
+<div
+  className="
+    absolute top-3 right-3 z-20
+    h-7 md:h-8
+    px-3 md:px-4
+    rounded-full
+    flex items-center justify-center
+
+    bg-white/5
+    border border-white/10
+    text-slate-300
+
+    backdrop-blur-sm
+    text-[10px] md:text-xs
+    font-mono font-bold
+    uppercase
+  "
+>
+  {galleryIndex + 1} / {api.gallery.length}
+</div>
+
       {/* IMAGES */}
 <div
   id="api-gallery-strip"
-  className="flex overflow-x-auto snap-x no-scrollbar relative"
+  className="
+  flex
+  overflow-x-auto
+  snap-x
+  snap-mandatory
+  scroll-smooth
+  no-scrollbar
+  relative
+"
 >
   {api.gallery.map((img: string, i: number) => (
     <div
@@ -343,7 +373,7 @@ if (!api) {
       className="
         flex-none
         w-full
-        h-[160px] md:h-[190px]
+        h-[190px] md:h-[220px]
         rounded-2xl
         overflow-hidden
         border border-white/10
@@ -365,10 +395,11 @@ if (!api) {
     {/* LEFT */}
     {galleryIndex > 0 && (
       <button
-        onClick={() =>
-          document
-            .getElementById('api-gallery-strip')
-            ?.scrollBy({ left: -300, behavior: 'smooth' })
+        onClick={() => {
+  const el = document.getElementById('api-gallery-strip');
+  if (!el) return;
+  el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
+}}
         }
         className="
           absolute left-3 top-1/2 -translate-y-1/2
@@ -392,10 +423,11 @@ if (!api) {
     {/* RIGHT */}
     {galleryIndex < api.gallery.length - 1 && (
       <button
-        onClick={() =>
-          document
-            .getElementById('api-gallery-strip')
-            ?.scrollBy({ left: 300, behavior: 'smooth' })
+        onClick={() => {
+  const el = document.getElementById('api-gallery-strip');
+  if (!el) return;
+  el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
+}}
         }
         className="
           absolute right-3 top-1/2 -translate-y-1/2
