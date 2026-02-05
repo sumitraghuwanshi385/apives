@@ -134,10 +134,6 @@ setIsLiked(likedApis.includes(id));
   }
 };
 
-  const handleSaveToggle = () => {
-    const userStr = localStorage.getItem('mora_user');
-    if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
-
 const handleShare = async () => {
   if (!api) return;
 
@@ -159,7 +155,11 @@ const handleShare = async () => {
     console.error('Share failed', err);
   }
 };
-    
+
+  const handleSaveToggle = () => {
+    const userStr = localStorage.getItem('mora_user');
+    if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
+
     const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
     if (isSaved) {
         setIsSaved(false);
