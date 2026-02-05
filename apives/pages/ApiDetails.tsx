@@ -383,12 +383,9 @@ if (!api) {
               className="w-full h-full object-cover"
               draggable={false}
             />
-          </div>
-        ))}
       </div>
-    </div>
-  </section>
-)}
+    ))}
+  </div>
                 
       {/* LEFT + RIGHT CONTROLS */}
 {showGalleryControls && (
