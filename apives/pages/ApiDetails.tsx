@@ -320,75 +320,76 @@ if (!api) {
         {!isLoading && api && activeTab === 'overview' && (
             <div className="space-y-10 md:space-y-16 animate-fade-in">
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Box className="mr-3 text-mora-500" size={14}/> Node Description</h2><div className="bg-white/[0.03] rounded-2xl md:rounded-3xl p-6 md:p-10 border border-white/5 text-slate-300 text-sm md:text-lg leading-relaxed font-light whitespace-pre-line">{api.description}</div></section>
-                {api.gallery && api.gallery.length > 0 && (
+{api.gallery && api.gallery.length > 0 && (
   <section>
-    <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
-      <ImageIcon className="mr-3 text-mora-500" size={14} />
-      Interface Preview
-    </h2>
+    {/* HEADING + COUNTER ROW */}
+    <div className="flex items-center justify-between mb-4 md:mb-6">
+      <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] flex items-center">
+        <ImageIcon className="mr-3 text-mora-500" size={14} />
+        Interface Preview
+      </h2>
 
+      {/* COUNTER PILL (HEADING KE SAATH) */}
+      <div
+        className="
+          h-7 md:h-8
+          px-3 md:px-4
+          rounded-full
+          flex items-center justify-center
+          bg-white/5
+          border border-white/10
+          text-slate-300
+          backdrop-blur-sm
+          text-[10px] md:text-xs
+          font-mono font-bold
+        "
+      >
+        {galleryIndex + 1} / {api.gallery.length}
+      </div>
+    </div>
+
+    {/* GALLERY */}
     <div
       className="relative"
       onTouchStart={() => setShowGalleryControls(true)}
       onMouseMove={() => setShowGalleryControls(true)}
     >
-{/* IMAGE COUNTER PILL */}
-<div
-  className="
-    absolute top-3 right-3 z-20
-    h-7 md:h-8
-    px-3 md:px-4
-    rounded-full
-    flex items-center justify-center
-
-    bg-white/5
-    border border-white/10
-    text-slate-300
-
-    backdrop-blur-sm
-    text-[10px] md:text-xs
-    font-mono font-bold
-    uppercase
-  "
->
-  {galleryIndex + 1} / {api.gallery.length}
-</div>
-
-      {/* IMAGES */}
-<div
-  id="api-gallery-strip"
-  className="
-  flex
-  overflow-x-auto
-  snap-x
-  snap-mandatory
-  scroll-smooth
-  no-scrollbar
-  relative
-"
->
-  {api.gallery.map((img: string, i: number) => (
-    <div
-      key={i}
-      className="
-        flex-none
-        w-full
-        h-[190px] md:h-[220px]
-        rounded-2xl
-        overflow-hidden
-        border border-white/10
-        bg-black
-      "
-    >
-      <img
-        src={img}
-        className="w-full h-full object-cover"
-        draggable={false}
-      />
+      <div
+        id="api-gallery-strip"
+        className="
+          flex
+          overflow-x-auto
+          snap-x
+          snap-mandatory
+          scroll-smooth
+          no-scrollbar
+        "
+      >
+        {api.gallery.map((img: string, i: number) => (
+          <div
+            key={i}
+            className="
+              flex-none
+              w-full
+              h-[190px] md:h-[220px]
+              rounded-2xl
+              overflow-hidden
+              border border-white/10
+              bg-black
+            "
+          >
+            <img
+              src={img}
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
+          </div>
+        ))}
+      </div>
     </div>
-  ))}
-</div>
-
+  </section>
+)}
+                
       {/* LEFT + RIGHT CONTROLS */}
 {showGalleryControls && (
   <>
