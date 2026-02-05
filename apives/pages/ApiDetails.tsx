@@ -45,8 +45,8 @@ console.log('DETAILS PAGE ID 👉', id);
   const [isSaved, setIsSaved] = useState(false);
   const [upvotes, setUpvotes] = useState(0);
 const [showGalleryControls, setShowGalleryControls] = useState(true);
+const [galleryIndex, setGalleryIndex] = useState(0);
 
-  
    useEffect(() => {
   if (!id) return;
 
@@ -90,6 +90,20 @@ setIsLiked(likedApis.includes(id));
 
   loadApi();
 }, [id]);
+
+useEffect(() => {
+  const el = document.getElementById('api-gallery-strip');
+  if (!el) return;
+
+  const onScroll = () => {
+    const width = el.clientWidth;
+    const index = Math.round(el.scrollLeft / width);
+    setGalleryIndex(index);
+  };
+
+  el.addEventListener('scroll', onScroll);
+  return () => el.removeEventListener('scroll', onScroll);
+}, [api?.gallery]);
 
 useEffect(() => {
   if (!showGalleryControls) return;
@@ -319,50 +333,55 @@ if (!api) {
       onMouseMove={() => setShowGalleryControls(true)}
     >
       {/* IMAGES */}
-      <div
-        id="api-gallery-strip"
-        className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x no-scrollbar"
-      >
-        {api.gallery.map((img: string, i: number) => (
-          <div
-            key={i}
-            className="flex-none w-64 md:w-[450px] aspect-video rounded-2xl overflow-hidden border border-white/10 snap-center shadow-2xl"
-          >
-            <img
-              src={img}
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-          </div>
-        ))}
-      </div>
+<div
+  id="api-gallery-strip"
+  className="flex overflow-x-auto gap-3 pb-3 snap-x no-scrollbar relative"
+>
+  {api.gallery.map((img: string, i: number) => (
+    <div
+      key={i}
+      className="
+        flex-none
+        w-[90%] md:w-[85%]
+        h-[150px] md:h-[180px]
+        snap-center
+        rounded-xl
+        overflow-hidden
+        border border-white/10
+        bg-black
+      "
+    >
+      <img
+        src={img}
+        className="w-full h-full object-cover select-none"
+        draggable={false}
+      />
+    </div>
+  ))}
+</div>
 
       {/* LEFT + RIGHT CONTROLS (SAME AS SHARE BUTTON) */}
-      {showGalleryControls && (
-        <>
-          {/* LEFT */}
-          <button
-            onClick={() =>
-              document
-                .getElementById('api-gallery-strip')
-                ?.scrollBy({ left: -300, behavior: 'smooth' })
-            }
+      {showGalleryControls && galleryIndex > 0 && (
+  <button
+    onClick={() =>
+      document
+        .getElementById('api-gallery-strip')
+        ?.scrollBy({ left: -300, behavior: 'smooth' })
+    }
             className="
   absolute left-3 top-1/2 -translate-y-1/2
   h-8 md:h-10 w-8 md:w-10
   rounded-full
   flex items-center justify-center
 
-  bg-emerald-500/15
+  bg-emerald-500/20
   border border-emerald-400/40
   text-emerald-300
 
   backdrop-blur-sm
-  shadow-lg shadow-emerald-500/30
 
   hover:bg-emerald-500/30
   hover:text-white
-  hover:shadow-emerald-500/60
 
   transition-all
   active:scale-95
@@ -372,11 +391,12 @@ if (!api) {
           </button>
 
           {/* RIGHT */}
-          <button
-            onClick={() =>
-              document
-                .getElementById('api-gallery-strip')
-                ?.scrollBy({ left: 300, behavior: 'smooth' })
+{showGalleryControls && galleryIndex < api.gallery.length - 1 && (
+  <button
+    onClick={() =>
+      document
+        .getElementById('api-gallery-strip')
+        ?.scrollBy({ left: 300, behavior: 'smooth' })
             }
             className="
   absolute right-3 top-1/2 -translate-y-1/2
@@ -384,16 +404,14 @@ if (!api) {
   rounded-full
   flex items-center justify-center
 
-  bg-emerald-500/15
+  bg-emerald-500/20
   border border-emerald-400/40
   text-emerald-300
 
   backdrop-blur-sm
-  shadow-lg shadow-emerald-500/30
 
   hover:bg-emerald-500/30
   hover:text-white
-  hover:shadow-emerald-500/60
 
   transition-all
   active:scale-95
