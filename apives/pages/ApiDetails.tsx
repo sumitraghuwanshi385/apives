@@ -324,7 +324,7 @@ if (!api) {
   <section>
     <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
       <ImageIcon className="mr-3 text-mora-500" size={14} />
-      Neural Preview
+      Interface Preview
     </h2>
 
     <div
@@ -335,29 +335,28 @@ if (!api) {
       {/* IMAGES */}
 <div
   id="api-gallery-strip"
-  className="flex overflow-x-auto gap-3 pb-3 snap-x no-scrollbar relative"
+  className="flex overflow-x-auto snap-x no-scrollbar relative"
 >
-  {api.gallery.map((img: string, i: number) => (
-    <div
-      key={i}
-      className="
-        flex-none
-        w-[90%] md:w-[85%]
-        h-[150px] md:h-[180px]
-        snap-center
-        rounded-xl
-        overflow-hidden
-        border border-white/10
-        bg-black
-      "
-    >
-      <img
-        src={img}
-        className="w-full h-full object-cover select-none"
-        draggable={false}
-      />
-    </div>
-  ))}
+  {{api.gallery.map((img: string, i: number) => (
+  <div
+    key={i}
+    className="
+      flex-none
+      w-full
+      h-[160px] md:h-[190px]
+      rounded-2xl
+      overflow-hidden
+      border border-white/10
+      bg-black
+    "
+  >
+    <img
+      src={img}
+      className="w-full h-full object-cover"
+      draggable={false}
+    />
+  </div>
+))}
 </div>
 
       {/* LEFT + RIGHT CONTROLS */}
