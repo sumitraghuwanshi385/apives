@@ -400,7 +400,6 @@ if (!api) {
   if (!el) return;
   el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
 }}
-        }
         className="
           absolute left-3 top-1/2 -translate-y-1/2
           h-8 md:h-10 w-8 md:w-10
@@ -428,7 +427,6 @@ if (!api) {
   if (!el) return;
   el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
 }}
-        }
         className="
           absolute right-3 top-1/2 -translate-y-1/2
           h-8 md:h-10 w-8 md:w-10
