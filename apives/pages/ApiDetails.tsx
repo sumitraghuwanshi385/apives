@@ -44,6 +44,7 @@ console.log('DETAILS PAGE ID 👉', id);
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [upvotes, setUpvotes] = useState(0);
+const [showGalleryControls, setShowGalleryControls] = useState(true);
 
   
    useEffect(() => {
@@ -89,6 +90,16 @@ setIsLiked(likedApis.includes(id));
 
   loadApi();
 }, [id]);
+
+useEffect(() => {
+  if (!showGalleryControls) return;
+
+  const t = setTimeout(() => {
+    setShowGalleryControls(false);
+  }, 3000);
+
+  return () => clearTimeout(t);
+}, [showGalleryControls]);
 
   const handleLike = async () => {
   const userStr = localStorage.getItem('mora_user');
@@ -296,8 +307,92 @@ if (!api) {
             <div className="space-y-10 md:space-y-16 animate-fade-in">
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Box className="mr-3 text-mora-500" size={14}/> Node Description</h2><div className="bg-white/[0.03] rounded-2xl md:rounded-3xl p-6 md:p-10 border border-white/5 text-slate-300 text-sm md:text-lg leading-relaxed font-light whitespace-pre-line">{api.description}</div></section>
                 {api.gallery && api.gallery.length > 0 && (
-                    <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><ImageIcon className="mr-3 text-mora-500" size={14}/> Neural Preview</h2><div className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x no-scrollbar">{api.gallery.map((img: string, i: number) => (<div key={i} className="flex-none w-64 md:w-[450px] aspect-video rounded-2xl md:rounded-3xl overflow-hidden border border-white/10 snap-center shadow-2xl"><img src={img} className="w-full h-full object-cover" /></div>))}</div></section>
-                )}
+  <section>
+    <h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center">
+      <ImageIcon className="mr-3 text-mora-500" size={14} />
+      Neural Preview
+    </h2>
+
+    <div
+      className="relative"
+      onTouchStart={() => setShowGalleryControls(true)}
+      onMouseMove={() => setShowGalleryControls(true)}
+    >
+      {/* IMAGES */}
+      <div
+        id="api-gallery-strip"
+        className="flex overflow-x-auto gap-4 md:gap-6 pb-4 snap-x no-scrollbar"
+      >
+        {api.gallery.map((img: string, i: number) => (
+          <div
+            key={i}
+            className="flex-none w-64 md:w-[450px] aspect-video rounded-2xl overflow-hidden border border-white/10 snap-center shadow-2xl"
+          >
+            <img
+              src={img}
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* LEFT + RIGHT CONTROLS (SAME AS SHARE BUTTON) */}
+      {showGalleryControls && (
+        <>
+          {/* LEFT */}
+          <button
+            onClick={() =>
+              document
+                .getElementById('api-gallery-strip')
+                ?.scrollBy({ left: -300, behavior: 'smooth' })
+            }
+            className="
+              absolute left-3 top-1/2 -translate-y-1/2
+              h-8 md:h-10 w-8 md:w-10
+              rounded-full
+              flex items-center justify-center
+              bg-white/5
+              border border-white/10
+              text-slate-300
+              hover:bg-white/10
+              hover:text-white
+              transition-all
+              active:scale-95
+            "
+          >
+            ‹
+          </button>
+
+          {/* RIGHT */}
+          <button
+            onClick={() =>
+              document
+                .getElementById('api-gallery-strip')
+                ?.scrollBy({ left: 300, behavior: 'smooth' })
+            }
+            className="
+              absolute right-3 top-1/2 -translate-y-1/2
+              h-8 md:h-10 w-8 md:w-10
+              rounded-full
+              flex items-center justify-center
+              bg-white/5
+              border border-white/10
+              text-slate-300
+              hover:bg-white/10
+              hover:text-white
+              transition-all
+              active:scale-95
+            "
+          >
+            ›
+          </button>
+        </>
+      )}
+    </div>
+  </section>
+)}
+
                 {api.features && api.features.length > 0 && (
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><ShieldCheck className="mr-3 text-mora-500" size={14}/> Feature Matrix</h2><div className="grid grid-cols-1 md:grid-cols-2 gap-4">{api.features.map((f: string, i: number) => (<div key={i} className="flex items-center p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-mora-500/30 transition-all"><div className="w-6 h-6 rounded-full bg-mora-500/10 flex items-center justify-center mr-4 group-hover:bg-mora-500 transition-colors"><Check size={12} className="text-mora-500 group-hover:text-black" /></div><span className="text-slate-300 text-sm font-medium">{f}</span></div>))}</div></section>
           )} 
