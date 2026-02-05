@@ -329,23 +329,27 @@ if (!api) {
         Interface Preview
       </h2>
 
-      {/* COUNTER PILL (HEADING KE SAATH) */}
-      <div
-        className="
-          h-7 md:h-8
-          px-3 md:px-4
-          rounded-full
-          flex items-center justify-center
-          bg-white/5
-          border border-white/10
-          text-slate-300
-          backdrop-blur-sm
-          text-[10px] md:text-xs
-          font-mono font-bold
-        "
-      >
-        {galleryIndex + 1} / {api.gallery.length}
-      </div>
+      {/* COUNTER PILL (GREEN FREE STYLE) */}
+<div
+  className="
+    h-7 md:h-8
+    px-3 md:px-4
+    rounded-full
+    flex items-center justify-center
+
+    bg-emerald-500/15
+    border border-emerald-400/30
+    text-emerald-300
+
+    backdrop-blur-sm
+    text-[10px] md:text-xs
+    font-mono font-bold
+
+    shadow-[0_0_12px_rgba(16,185,129,0.25)]
+  "
+>
+  {galleryIndex + 1} / {api.gallery.length}
+</div>
     </div>
 
     {/* GALLERY */}
@@ -394,21 +398,20 @@ if (!api) {
     {galleryIndex > 0 && (
       <button
         onClick={() => {
-  const el = document.getElementById('api-gallery-strip');
-  if (!el) return;
-  el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
-}}
+          const el = document.getElementById('api-gallery-strip');
+          if (!el) return;
+          el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
+        }}
         className="
           absolute left-3 top-1/2 -translate-y-1/2
           h-8 md:h-10 w-8 md:w-10
           rounded-full
           flex items-center justify-center
-          bg-emerald-500/20
-          border border-emerald-400/40
-          text-emerald-300
+          bg-black/60
+          border border-white/20
+          text-white
           backdrop-blur-sm
-          hover:bg-emerald-500/30
-          hover:text-white
+          hover:bg-black/80
           transition-all
           active:scale-95
         "
@@ -421,21 +424,20 @@ if (!api) {
     {galleryIndex < api.gallery.length - 1 && (
       <button
         onClick={() => {
-  const el = document.getElementById('api-gallery-strip');
-  if (!el) return;
-  el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
-}}
+          const el = document.getElementById('api-gallery-strip');
+          if (!el) return;
+          el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
+        }}
         className="
           absolute right-3 top-1/2 -translate-y-1/2
           h-8 md:h-10 w-8 md:w-10
           rounded-full
           flex items-center justify-center
-          bg-emerald-500/20
-          border border-emerald-400/40
-          text-emerald-300
+          bg-black/60
+          border border-white/20
+          text-white
           backdrop-blur-sm
-          hover:bg-emerald-500/30
-          hover:text-white
+          hover:bg-black/80
           transition-all
           active:scale-95
         "
