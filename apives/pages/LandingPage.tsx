@@ -660,6 +660,7 @@ rounded-2xl bg-white/10 p-1"
           View Top APIs  
         </Link>  
       </div>
+
 {/* PRIME SPONSOR */}
 <div className="pb-6 md:pb-8">
   <div className="max-w-5xl mx-auto px-6 text-center">
@@ -683,14 +684,19 @@ rounded-2xl bg-white/10 p-1"
       target="_blank"
       rel="noopener noreferrer"
       className="
-        relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl
-        border border-white/20
-        bg-gradient-to-br from-white/10 to-transparent
-        hover:from-white/20
-        transition-all hover:scale-[1.02]
-        shadow-[0_0_40px_rgba(255,255,255,0.12)]
-        hover:shadow-[0_0_60px_rgba(255,255,255,0.22)]
-      "
+  relative inline-flex items-center gap-3
+  px-5 md:px-6 py-3 md:py-3.5
+  max-w-[520px] w-full
+  rounded-2xl
+
+  border border-white/20
+  bg-gradient-to-br from-white/10 to-transparent
+  hover:from-white/20
+
+  transition-all hover:scale-[1.02]
+  shadow-[0_0_40px_rgba(255,255,255,0.12)]
+  hover:shadow-[0_0_60px_rgba(255,255,255,0.22)]
+"
     >
       <img
         src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
