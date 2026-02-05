@@ -9,7 +9,7 @@ import {
   Image as ImageIcon, Clock, Database, AlignLeft,
   Code, ArrowRight, Zap, Wifi, Calendar,
   Trophy, DollarSign, X, FileJson, ListFilter,
-  TextQuote, Gauge, ShieldAlert, Key, Info,
+  TextQuote, Gauge, ShieldAlert, Key, Info,Share2 
 } from 'lucide-react';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
@@ -137,6 +137,26 @@ setIsLiked(likedApis.includes(id));
   const handleSaveToggle = () => {
     const userStr = localStorage.getItem('mora_user');
     if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
+
+const handleShare = async () => {
+  const shareUrl = window.location.href;
+  const shareText = `${api.name} on Apives`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: api.name,
+        text: shareText,
+        url: shareUrl,
+      });
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Link copied');
+    }
+  } catch (err) {
+    console.error('Share failed', err);
+  }
+};
     
     const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
     if (isSaved) {
@@ -243,8 +263,27 @@ if (!api) {
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleLike} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isLiked ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Heart size={12} className={isLiked ? 'fill-current' : ''} /> <span className="ml-2">{upvotes}</span></button>
                             <button onClick={handleSaveToggle} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
-                            <a href={api.externalUrl} target="_blank" className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95">Visit <Globe size={12} className="ml-2" /></a>
-                        </div>
+                            <a href={api.externalUrl} target="_blank" className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95">Visit <Globe size={12} className="ml-2" />
+</a>                       
+<button
+  onClick={handleShare}
+  className="
+    h-8 md:h-10 w-8 md:w-10
+    rounded-full
+    flex items-center justify-center
+    bg-white/5
+    border border-white/10
+    text-slate-300
+    hover:bg-white/10
+    hover:text-white
+    transition-all
+    active:scale-95
+  "
+  title="Share API"
+>
+  <Share2 size={14} />
+</button>
+</div>
                     </div>
                 </div>
         </div>
