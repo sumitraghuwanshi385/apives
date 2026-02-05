@@ -360,69 +360,63 @@ if (!api) {
   ))}
 </div>
 
-      {/* LEFT + RIGHT CONTROLS (SAME AS SHARE BUTTON) */}
-      {showGalleryControls && galleryIndex > 0 && (
-  <button
-    onClick={() =>
-      document
-        .getElementById('api-gallery-strip')
-        ?.scrollBy({ left: -300, behavior: 'smooth' })
-    }
-            className="
-  absolute left-3 top-1/2 -translate-y-1/2
-  h-8 md:h-10 w-8 md:w-10
-  rounded-full
-  flex items-center justify-center
+      {/* LEFT + RIGHT CONTROLS */}
+{showGalleryControls && (
+  <>
+    {/* LEFT */}
+    {galleryIndex > 0 && (
+      <button
+        onClick={() =>
+          document
+            .getElementById('api-gallery-strip')
+            ?.scrollBy({ left: -300, behavior: 'smooth' })
+        }
+        className="
+          absolute left-3 top-1/2 -translate-y-1/2
+          h-8 md:h-10 w-8 md:w-10
+          rounded-full
+          flex items-center justify-center
+          bg-emerald-500/20
+          border border-emerald-400/40
+          text-emerald-300
+          backdrop-blur-sm
+          hover:bg-emerald-500/30
+          hover:text-white
+          transition-all
+          active:scale-95
+        "
+      >
+        ‹
+      </button>
+    )}
 
-  bg-emerald-500/20
-  border border-emerald-400/40
-  text-emerald-300
-
-  backdrop-blur-sm
-
-  hover:bg-emerald-500/30
-  hover:text-white
-
-  transition-all
-  active:scale-95
-"
-          >
-            ‹
-          </button>
-
-          {/* RIGHT */}
-{showGalleryControls && galleryIndex < api.gallery.length - 1 && (
-  <button
-    onClick={() =>
-      document
-        .getElementById('api-gallery-strip')
-        ?.scrollBy({ left: 300, behavior: 'smooth' })
-            }
-            className="
-  absolute right-3 top-1/2 -translate-y-1/2
-  h-8 md:h-10 w-8 md:w-10
-  rounded-full
-  flex items-center justify-center
-
-  bg-emerald-500/20
-  border border-emerald-400/40
-  text-emerald-300
-
-  backdrop-blur-sm
-
-  hover:bg-emerald-500/30
-  hover:text-white
-
-  transition-all
-  active:scale-95
-"
-          >
-            ›
-          </button>
-        </>
-      )}
-    </div>
-  </section>
+    {/* RIGHT */}
+    {galleryIndex < api.gallery.length - 1 && (
+      <button
+        onClick={() =>
+          document
+            .getElementById('api-gallery-strip')
+            ?.scrollBy({ left: 300, behavior: 'smooth' })
+        }
+        className="
+          absolute right-3 top-1/2 -translate-y-1/2
+          h-8 md:h-10 w-8 md:w-10
+          rounded-full
+          flex items-center justify-center
+          bg-emerald-500/20
+          border border-emerald-400/40
+          text-emerald-300
+          backdrop-blur-sm
+          hover:bg-emerald-500/30
+          hover:text-white
+          transition-all
+          active:scale-95
+        "
+      >
+        ›
+      </button>
+    )}
+  </>
 )}
 
                 {api.features && api.features.length > 0 && (
