@@ -94,6 +94,28 @@ const isNew = (createdAt?: string) => {
     const [saved, setSaved] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [upvotes, setUpvotes] = useState(api.upvotes);
+const [showArrows, setShowArrows] = useState(false);
+const [galleryIndex, setGalleryIndex] = useState(0);
+
+useEffect(() => {
+  if (!showArrows) return;
+  const t = setTimeout(() => setShowArrows(false), 3000);
+  return () => clearTimeout(t);
+}, [showArrows]);
+
+useEffect(() => {
+  const el = document.getElementById(`loved-gallery-${api._id}`);
+  if (!el) return;
+
+  const onScroll = () => {
+    const cardWidth = el.clientWidth * 0.9;
+    const index = Math.round(el.scrollLeft / cardWidth);
+    setGalleryIndex(index);
+  };
+
+  el.addEventListener('scroll', onScroll);
+  return () => el.removeEventListener('scroll', onScroll);
+}, [api._id]);
     
     const apiId = api._id;
 const rankIndex = topIds.indexOf(apiId);
@@ -183,25 +205,83 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                 </div>
 {/* 🔥 API CARD IMAGE PREVIEW */}
 {api.gallery && api.gallery.length > 0 && (
-  <div className="flex overflow-x-auto gap-3 mb-3 snap-x no-scrollbar">
-    {api.gallery.slice(0, 5).map((img: string, i: number) => (
-      <div
-        key={i}
-        className="flex-none w-[90%] h-[150px]
-        rounded-xl overflow-hidden
-        border border-white/10
-        bg-black snap-center"
+  <div
+    className="relative mb-3"
+    onMouseEnter={() => setShowArrows(true)}
+    onMouseLeave={() => setShowArrows(false)}
+    onTouchStart={() => setShowArrows(true)}
+  >
+    {/* IMAGE STRIP */}
+    <div
+      id={`loved-gallery-${api._id}`}
+      className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
+    >
+      {api.gallery.slice(0, 5).map((img: string, i: number) => (
+        <div
+          key={i}
+          className="flex-none w-[90%] h-[150px]
+          rounded-xl overflow-hidden
+          border border-white/10
+          bg-black snap-center"
+        >
+          <img
+            src={img}
+            alt={`${api.name}-${i}`}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+
+    {/* LEFT ARROW */}
+    {showArrows && galleryIndex > 0 && (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const el = document.getElementById(`loved-gallery-${api._id}`);
+          if (!el) return;
+          el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
+        }}
+        className="
+          absolute left-2 top-1/2 -translate-y-1/2
+          h-8 w-8 rounded-full
+          bg-black/60 border border-white/20
+          text-white text-lg
+          flex items-center justify-center
+          backdrop-blur-sm
+        "
       >
-        <img
-          src={img}
-          alt={`${api.name}-${i}`}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-      </div>
-    ))}
+        ‹
+      </button>
+    )}
+
+    {/* RIGHT ARROW */}
+    {showArrows && galleryIndex < api.gallery.length - 1 && (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const el = document.getElementById(`loved-gallery-${api._id}`);
+          if (!el) return;
+          el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
+        }}
+        className="
+          absolute right-2 top-1/2 -translate-y-1/2
+          h-8 w-8 rounded-full
+          bg-black/60 border border-white/20
+          text-white text-lg
+          flex items-center justify-center
+          backdrop-blur-sm
+        "
+      >
+        ›
+      </button>
+    )}
   </div>
 )}
+
                 <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-4 leading-relaxed font-light">{api.description}</p>
                 
                 <div className="flex flex-wrap gap-1.5 mb-6 mt-auto">
