@@ -329,28 +329,28 @@ if (!api) {
         Interface Preview
       </h2>
 
-      {/* COUNTER PILL (GREEN FREE STYLE) */}
+      {/* COUNTER PILL — EXACT SAME AS FREE */}
 <div
   className="
-    h-7 md:h-8
-    px-3 md:px-4
+    bg-green-500/10
+    text-green-400
+    border border-green-500/20
+
+    px-4 md:px-5
+    py-1
     rounded-full
+
+    text-[8px] md:text-[10px]
+    font-black
+    uppercase
+    tracking-widest
+
     flex items-center justify-center
-
-    bg-emerald-500/15
-    border border-emerald-400/30
-    text-emerald-300
-
-    backdrop-blur-sm
-    text-[10px] md:text-xs
-    font-mono font-bold
-
-    shadow-[0_0_12px_rgba(16,185,129,0.25)]
   "
 >
   {galleryIndex + 1} / {api.gallery.length}
 </div>
-    </div>
+</div>
 
     {/* GALLERY */}
     <div
