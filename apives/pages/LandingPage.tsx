@@ -60,6 +60,18 @@ const navigate = useNavigate();
 const [saved, setSaved] = useState(false);
 const [isLiked, setIsLiked] = useState(false);
 const [showArrows, setShowArrows] = useState(false);
+const [galleryIndex, setGalleryIndex] = useState(0);
+
+// 🔥 STEP 4 — auto hide arrows after 3 sec
+useEffect(() => {
+  if (!showArrows) return;
+
+  const timer = setTimeout(() => {
+    setShowArrows(false);
+  }, 3000);
+
+  return () => clearTimeout(timer);
+}, [showArrows]);
 
 const rankIndex = topIds.indexOf(api.id);
 const isTopTier = rankIndex !== -1;
@@ -79,6 +91,21 @@ setSaved(savedApis.includes(api.id));
 }, [api.id]);
 
 const displayUpvotes = api.upvotes || 0;
+
+// 🔥 STEP 2 – gallery scroll index tracker
+useEffect(() => {
+  const el = document.getElementById(`card-gallery-${api.id}`);
+  if (!el) return;
+
+  const onScroll = () => {
+    const cardWidth = el.clientWidth * 0.9; // w-[90%]
+    const index = Math.round(el.scrollLeft / cardWidth);
+    setGalleryIndex(index);
+  };
+
+  el.addEventListener('scroll', onScroll);
+  return () => el.removeEventListener('scroll', onScroll);
+}, [api.id]);
 
 const handleSave = (e: React.MouseEvent) => {
   e.preventDefault(); e.stopPropagation();
@@ -220,50 +247,40 @@ flex flex-col h-full"
     </div>
 
     {/* LEFT ARROW */}
-    {showArrows && (
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const el = document.getElementById(`card-gallery-${api.id}`);
-          if (!el) return;
-          el.scrollBy({ left: -200, behavior: 'smooth' });
-        }}
-        className="
-          absolute left-2 top-1/2 -translate-y-1/2
-          h-8 w-8 rounded-full
-          bg-black/60 border border-white/20
-          text-white text-lg
-          flex items-center justify-center
-          backdrop-blur-sm
-        "
-      >
-        ‹
-      </button>
-    )}
+{showArrows && galleryIndex > 0 && (
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const el = document.getElementById(`card-gallery-${api.id}`);
+      if (!el) return;
+      el.scrollBy({ left: -200, behavior: 'smooth' });
+    }}
+    className="absolute left-2 top-1/2 -translate-y-1/2
+      h-8 w-8 rounded-full bg-black/60 border border-white/20
+      text-white text-lg flex items-center justify-center backdrop-blur-sm"
+  >
+    ‹
+  </button>
+)}
 
-    {/* RIGHT ARROW */}
-    {showArrows && (
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const el = document.getElementById(`card-gallery-${api.id}`);
-          if (!el) return;
-          el.scrollBy({ left: 200, behavior: 'smooth' });
-        }}
-        className="
-          absolute right-2 top-1/2 -translate-y-1/2
-          h-8 w-8 rounded-full
-          bg-black/60 border border-white/20
-          text-white text-lg
-          flex items-center justify-center
-          backdrop-blur-sm
-        "
-      >
-        ›
-      </button>
-    )}
+{/* RIGHT ARROW */}
+{{showArrows && galleryIndex < api.gallery.length - 1 && (
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const el = document.getElementById(`card-gallery-${api.id}`);
+      if (!el) return;
+      el.scrollBy({ left: 200, behavior: 'smooth' });
+    }}
+    className="absolute right-2 top-1/2 -translate-y-1/2
+      h-8 w-8 rounded-full bg-black/60 border border-white/20
+      text-white text-lg flex items-center justify-center backdrop-blur-sm"
+  >
+    ›
+  </button>
+)}
   </div>
 )}
     <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-4 leading-relaxed font-light">  
