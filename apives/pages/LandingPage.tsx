@@ -62,6 +62,17 @@ const [isLiked, setIsLiked] = useState(false);
 const [showArrows, setShowArrows] = useState(false);
 const [galleryIndex, setGalleryIndex] = useState(0);
 
+const ADMIN_EMAIL = "beatslevelone@gmail.com";
+
+const isAdminUser = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("mora_user") || "null");
+    return user?.email === ADMIN_EMAIL;
+  } catch {
+    return false;
+  }
+};
+
 // 🔥 STEP 4 — auto hide arrows after 3 sec
 useEffect(() => {
   if (!showArrows) return;
@@ -76,6 +87,9 @@ useEffect(() => {
 const rankIndex = topIds.indexOf(api.id);
 const isTopTier = rankIndex !== -1;
 const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
+
+const isVerified =
+  isAdminUser() && api.verified === true;
 
 useEffect(() => {
 
@@ -203,8 +217,32 @@ flex flex-col h-full"
 
   <div className="relative z-10 flex flex-col h-full">  
     <div className="mb-2">  
-      <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight truncate group-hover:text-mora-400 transition-colors flex items-center gap-2">  
-        {api.name}  
+      <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight truncate group-hover:text-mora-400 transition-colors flex items-center gap-2">
+  {api.name}
+
+  {isVerified && (
+    <span
+      className="
+        inline-flex items-center justify-center
+        h-4 w-4 md:h-5 md:w-5
+        rounded-full
+        bg-emerald-500
+        text-black
+        text-[10px] md:text-xs
+        font-black
+      "
+      title="Verified by Apives"
+    >
+      ✓
+    </span>
+  )}
+
+  {isNew(api.publishedAt) && (
+    <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+      New
+    </span>
+  )}
+</h3>
         {isNew(api.publishedAt) && (  
           <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">New</span>  
         )}  
