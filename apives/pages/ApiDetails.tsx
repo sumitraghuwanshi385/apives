@@ -348,18 +348,25 @@ if (!api) {
                 ?.scrollBy({ left: -300, behavior: 'smooth' })
             }
             className="
-              absolute left-3 top-1/2 -translate-y-1/2
-              h-8 md:h-10 w-8 md:w-10
-              rounded-full
-              flex items-center justify-center
-              bg-white/5
-              border border-white/10
-              text-slate-300
-              hover:bg-white/10
-              hover:text-white
-              transition-all
-              active:scale-95
-            "
+  absolute left-3 top-1/2 -translate-y-1/2
+  h-8 md:h-10 w-8 md:w-10
+  rounded-full
+  flex items-center justify-center
+
+  bg-emerald-500/15
+  border border-emerald-400/40
+  text-emerald-300
+
+  backdrop-blur-sm
+  shadow-lg shadow-emerald-500/30
+
+  hover:bg-emerald-500/30
+  hover:text-white
+  hover:shadow-emerald-500/60
+
+  transition-all
+  active:scale-95
+"
           >
             ‹
           </button>
@@ -372,18 +379,25 @@ if (!api) {
                 ?.scrollBy({ left: 300, behavior: 'smooth' })
             }
             className="
-              absolute right-3 top-1/2 -translate-y-1/2
-              h-8 md:h-10 w-8 md:w-10
-              rounded-full
-              flex items-center justify-center
-              bg-white/5
-              border border-white/10
-              text-slate-300
-              hover:bg-white/10
-              hover:text-white
-              transition-all
-              active:scale-95
-            "
+  absolute right-3 top-1/2 -translate-y-1/2
+  h-8 md:h-10 w-8 md:w-10
+  rounded-full
+  flex items-center justify-center
+
+  bg-emerald-500/15
+  border border-emerald-400/40
+  text-emerald-300
+
+  backdrop-blur-sm
+  shadow-lg shadow-emerald-500/30
+
+  hover:bg-emerald-500/30
+  hover:text-white
+  hover:shadow-emerald-500/60
+
+  transition-all
+  active:scale-95
+"
           >
             ›
           </button>
