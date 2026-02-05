@@ -59,6 +59,7 @@ refetchLandingApis?: () => Promise<void>;
 const navigate = useNavigate();
 const [saved, setSaved] = useState(false);
 const [isLiked, setIsLiked] = useState(false);
+const [showArrows, setShowArrows] = useState(false);
 
 const rankIndex = topIds.indexOf(api.id);
 const isTopTier = rankIndex !== -1;
@@ -188,23 +189,81 @@ flex flex-col h-full"
         </p>  
       </div>  
     </div>  
+
 {/* 🔥 API CARD IMAGE GALLERY */}
 {api.gallery && api.gallery.length > 0 && (
-  <div className="flex overflow-x-auto gap-3 mb-3 snap-x no-scrollbar">
-    {api.gallery.slice(0, 5).map((img: string, i: number) => (
-      <div
-        key={i}
-        className="flex-none w-[90%] h-[150px] rounded-xl overflow-hidden
-        border border-white/10 snap-center bg-black"
+  <div
+    className="relative mb-3"
+    onMouseEnter={() => setShowArrows(true)}
+    onMouseLeave={() => setShowArrows(false)}
+    onTouchStart={() => setShowArrows(true)}
+  >
+    {/* IMAGE STRIP */}
+    <div
+      id={`card-gallery-${api.id}`}
+      className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
+    >
+      {api.gallery.slice(0, 5).map((img: string, i: number) => (
+        <div
+          key={i}
+          className="flex-none w-[90%] h-[150px] rounded-xl overflow-hidden
+          border border-white/10 snap-center bg-black"
+        >
+          <img
+            src={img}
+            alt={`${api.name}-${i}`}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      ))}
+    </div>
+
+    {/* LEFT ARROW */}
+    {showArrows && (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const el = document.getElementById(`card-gallery-${api.id}`);
+          if (!el) return;
+          el.scrollBy({ left: -200, behavior: 'smooth' });
+        }}
+        className="
+          absolute left-2 top-1/2 -translate-y-1/2
+          h-8 w-8 rounded-full
+          bg-black/60 border border-white/20
+          text-white text-lg
+          flex items-center justify-center
+          backdrop-blur-sm
+        "
       >
-        <img
-          src={img}
-          alt={`${api.name}-${i}`}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-      </div>
-    ))}
+        ‹
+      </button>
+    )}
+
+    {/* RIGHT ARROW */}
+    {showArrows && (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const el = document.getElementById(`card-gallery-${api.id}`);
+          if (!el) return;
+          el.scrollBy({ left: 200, behavior: 'smooth' });
+        }}
+        className="
+          absolute right-2 top-1/2 -translate-y-1/2
+          h-8 w-8 rounded-full
+          bg-black/60 border border-white/20
+          text-white text-lg
+          flex items-center justify-center
+          backdrop-blur-sm
+        "
+      >
+        ›
+      </button>
+    )}
   </div>
 )}
     <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-4 leading-relaxed font-light">  
