@@ -265,7 +265,7 @@ flex flex-col h-full"
 )}
 
 {/* RIGHT ARROW */}
-{{showArrows && galleryIndex < api.gallery.length - 1 && (
+{showArrows && galleryIndex < api.gallery.length - 1 && (
   <button
     onClick={(e) => {
       e.preventDefault();
