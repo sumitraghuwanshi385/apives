@@ -660,9 +660,6 @@ rounded-2xl bg-white/10 p-1"
           View Top APIs  
         </Link>  
       </div>
-    </a>
-  </div>
-</div>  
     </div> 
   </section>  
 </div>
