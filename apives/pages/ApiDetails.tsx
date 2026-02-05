@@ -139,6 +139,8 @@ setIsLiked(likedApis.includes(id));
     if (!userStr) { navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`); return; }
 
 const handleShare = async () => {
+  if (!api) return;
+
   const shareUrl = window.location.href;
   const shareText = `${api.name} on Apives`;
 
