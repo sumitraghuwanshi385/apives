@@ -418,6 +418,8 @@ if (!api) {
     )}
   </>
 )}
+</div>
+</section>
 
                 {api.features && api.features.length > 0 && (
                     <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><ShieldCheck className="mr-3 text-mora-500" size={14}/> Feature Matrix</h2><div className="grid grid-cols-1 md:grid-cols-2 gap-4">{api.features.map((f: string, i: number) => (<div key={i} className="flex items-center p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-mora-500/30 transition-all"><div className="w-6 h-6 rounded-full bg-mora-500/10 flex items-center justify-center mr-4 group-hover:bg-mora-500 transition-colors"><Check size={12} className="text-mora-500 group-hover:text-black" /></div><span className="text-slate-300 text-sm font-medium">{f}</span></div>))}</div></section>
