@@ -711,7 +711,8 @@ rounded-2xl bg-white/10 p-1"
       <div className="text-left">
         <p className="text-white font-bold text-sm md:text-base">
           SerpApi
-        <p
+</p>
+     <p
   className="
     text-slate-400
     text-[11px] md:text-xs
