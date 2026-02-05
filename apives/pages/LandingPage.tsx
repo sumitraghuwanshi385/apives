@@ -711,10 +711,16 @@ rounded-2xl bg-white/10 p-1"
       <div className="text-left">
         <p className="text-white font-bold text-sm md:text-base">
           SerpApi
-        </p>
-        <p className="text-slate-400 text-xs md:text-sm max-w-xs">
-          Real-time Google Search results via a fast, reliable API built for developers.
-        </p>
+        <p
+  className="
+    text-slate-400
+    text-[11px] md:text-xs
+    leading-snug
+    max-w-[320px] md:max-w-[360px]
+  "
+>
+  Real-time Google Search results via a fast, reliable API built for developers.
+</p>
       </div>
     </a>
   </div>
