@@ -337,26 +337,26 @@ if (!api) {
   id="api-gallery-strip"
   className="flex overflow-x-auto snap-x no-scrollbar relative"
 >
-  {{api.gallery.map((img: string, i: number) => (
-  <div
-    key={i}
-    className="
-      flex-none
-      w-full
-      h-[160px] md:h-[190px]
-      rounded-2xl
-      overflow-hidden
-      border border-white/10
-      bg-black
-    "
-  >
-    <img
-      src={img}
-      className="w-full h-full object-cover"
-      draggable={false}
-    />
-  </div>
-))}
+  {api.gallery.map((img: string, i: number) => (
+    <div
+      key={i}
+      className="
+        flex-none
+        w-full
+        h-[160px] md:h-[190px]
+        rounded-2xl
+        overflow-hidden
+        border border-white/10
+        bg-black
+      "
+    >
+      <img
+        src={img}
+        className="w-full h-full object-cover"
+        draggable={false}
+      />
+    </div>
+  ))}
 </div>
 
       {/* LEFT + RIGHT CONTROLS */}
