@@ -332,30 +332,21 @@ if (!api) {
 {isVerified && (
   <button
     onClick={(e) => {
-      e.stopPropagation(); // ❗ outside click se bachane ke liye
+      e.stopPropagation();
       setShowVerifyInfo(v => !v);
     }}
     title="Verified by Apives"
-    className="
-      ml-1.5
-      h-6 w-6 md:h-7 md:w-7
-      flex items-center justify-center
-      transition
-      hover:scale-110
-    "
+    className="ml-1.5 h-7 w-7 md:h-8 md:w-8 flex items-center justify-center"
   >
     <svg
       viewBox="0 0 24 24"
       className="w-full h-full"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* blue scalloped shape */}
       <path
-        fill="#1D9BF0"
+        fill="#22C55E"
         d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
       />
-
-      {/* black check */}
       <path
         d="M9.2 12.3l2 2.1 4.6-4.8"
         stroke="#000"
@@ -370,21 +361,23 @@ if (!api) {
 
   {/* ℹ️ VERIFY INFO (SIMPLE, NO ICON, NO GLOW) */}
   {isVerified && showVerifyInfo && (
-    <div
-      className="
-        absolute top-full left-0 mt-2
-        bg-dark-900
-        border border-white/10
-        rounded-md
-        px-3 py-2
-        text-[11px]
-        text-slate-300
-        z-50
-      "
-    >
-      This API is verified by Apives.
-    </div>
-  )}
+  <div
+    className="
+      absolute top-full left-0 mt-2
+      bg-green-500/10
+      border border-green-500/30
+      rounded-full
+      px-4 py-1.5
+      text-[11px]
+      text-green-400
+      font-medium
+      whitespace-nowrap
+      z-50
+    "
+  >
+    Verified by Apives
+  </div>
+)}
 
   {/* 🔐 ADMIN VERIFY BUTTON */}
   {isAdminUser() && !isVerified && (
