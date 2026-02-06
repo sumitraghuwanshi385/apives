@@ -328,57 +328,72 @@ if (!api) {
       {api.name}
     </span>
 
-   {isVerified && (
-      <span className="relative inline-flex items-center">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowVerifyInfo(v => !v);
-          }}
-          title="Verified by Apives"
-          className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center shrink-0"
-        >
-          <svg viewBox="0 0 24 24" className="w-full h-full">
-            <path
-              fill="#22C55E"
-              d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
-            />
-            <path
-              d="M9.2 12.3l2 2.1 4.6-4.8"
-              stroke="#000"
-              strokeWidth="2"
-              fill="none"
-            />
-          </svg>
-        </button>
+ {isVerified && (
+  <span
+    ref={verifyRef}
+    className="relative inline-flex items-center align-middle"
+  >
+    {/* ✅ VERIFIED BADGE */}
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        setShowVerifyInfo(v => !v);
+      }}
+      title="Verified by Apives"
+      className="
+        ml-1
+        inline-flex
+        h-5 w-5
+        md:h-6 md:w-6
+        items-center
+        justify-center
+        align-middle
+        shrink-0
+      "
+    >
+      <svg viewBox="0 0 24 24" className="w-full h-full">
+        <path
+          fill="#22C55E"
+          d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
+        />
+        <path
+          d="M9.2 12.3l2 2.1 4.6-4.8"
+          stroke="#000"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </svg>
+    </button>
 
-        {showVerifyInfo && (
-          <span
-            className="
-              absolute
-              top-full
-              left-1/2
-              -translate-x-1/2
-              mt-1.5
-              bg-green-600
-              border border-green-700
-              rounded-full
-              px-3 py-0.5
-              text-[10px]
-              text-white
-              font-semibold
-              whitespace-nowrap
-              shadow-lg
-              z-50
-            "
-          >
-            Manually Verified by Apives
-          </span>
-        )}
+    {/* ✅ TOOLTIP */}
+    {showVerifyInfo && (
+      <span
+        className="
+          absolute
+          top-full
+          left-1/2
+          -translate-x-1/2
+          mt-1.5
+          bg-green-600
+          border border-green-700
+          rounded-full
+          px-3 py-0.5
+          text-[10px]
+          text-white
+          font-semibold
+          whitespace-nowrap
+          shadow-lg
+          z-50
+        "
+      >
+        Manually Verified by Apives
       </span>
     )}
-
+  </span>
+)}
   {/* 🔐 ADMIN VERIFY BUTTON */}
   {isAdminUser() && !isVerified && (
     <button
