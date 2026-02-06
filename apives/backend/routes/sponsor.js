@@ -21,18 +21,20 @@ const SponsorEvent =
 
 // Route
 router.post("/track", async (req, res) => {
+  console.log("🔥 SPONSOR HIT:", req.body);
+
   try {
     const { sponsor, type, page } = req.body;
 
     await SponsorEvent.create({
-      sponsor,
-      type,
-      page,
+      sponsor: sponsor,
+      type: type,
+      page: page,
     });
 
     res.json({ success: true });
   } catch (err) {
-    console.error("Sponsor track error:", err);
+    console.error("❌ Sponsor track error:", err);
     res.status(500).json({ success: false });
   }
 });
