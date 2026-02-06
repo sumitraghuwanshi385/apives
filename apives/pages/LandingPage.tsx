@@ -342,7 +342,6 @@ flex flex-col h-full"
   md:aspect-[16/9]
   rounded-xl
   overflow-hidden
-"
           border border-white/10 snap-center bg-black"
         >
           <img
