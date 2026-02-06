@@ -321,8 +321,7 @@ if (!api) {
     mb-2
     tracking-tight
     leading-[1.1]
-    flex items-center
-    gap-0.5
+    flex items-center gap-[2px]
     relative
   "
 >
@@ -330,7 +329,7 @@ if (!api) {
 
   {/* ✅ VERIFIED BADGE — TWITTER STYLE */}
 {isVerified && (
-  <div className="relative flex items-center ml-1.5">
+  <div className="relative flex items-center ml-[2px]">
     {/* VERIFIED BADGE */}
     <button
       onClick={(e) => {
@@ -338,7 +337,11 @@ if (!api) {
         setShowVerifyInfo(v => !v);
       }}
       title="Verified by Apives"
-      className="h-7 w-7 md:h-8 md:w-8 flex items-center justify-center"
+      className="
+        h-6 w-6
+        md:h-9 md:w-9
+        flex items-center justify-center
+      "
     >
       <svg
         viewBox="0 0 24 24"
@@ -360,23 +363,30 @@ if (!api) {
       </svg>
     </button>
 
-    {/* VERIFY PILL — RIGHT NEXT TO BADGE */}
+    {/* ✅ VERIFY DESCRIPTION — CENTER NICHÉ */}
     {showVerifyInfo && (
       <div
         className="
-          ml-1.5
+          absolute
+          top-full
+          left-1/2
+          -translate-x-1/2
+          mt-1.5
+
           bg-green-600
           border border-green-700
           rounded-full
-          px-3 py-1
+
+          px-4 py-1
           text-[11px]
           text-white
           font-semibold
           whitespace-nowrap
           shadow-lg
+          z-50
         "
       >
-       This API is Manually Verified by Apives
+        Manually Verified by Apives
       </div>
     )}
   </div>
