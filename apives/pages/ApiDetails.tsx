@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Hash } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiClient';
-import VerifiedBadge from "../components/Verify Badge";
 import {
   Copy, Play, Terminal, ShieldCheck,
   Activity, Cpu, Globe, Lock, Cloud, Box,
@@ -314,27 +313,38 @@ if (!api) {
     tracking-tight
     leading-[1.1]
     flex items-center
-    gap-1.5
+    gap-1
     relative
   "
 >
   {api.name}
 
-  {/* VERIFIED BADGE */}
+  {/* ✅ GREEN VERIFIED TICK (NO IMPORT) */}
   {isVerified && (
     <button
       onClick={(e) => {
         e.stopPropagation();
         setShowVerifyInfo(v => !v);
       }}
-      className="mt-1"
       title="Verified by Apives"
+      className="
+        ml-1
+        h-4 w-4 md:h-5 md:w-5
+        rounded-full
+        bg-green-500
+        text-black
+        text-[10px]
+        font-black
+        flex items-center justify-center
+        hover:scale-110
+        transition
+      "
     >
-      <VerifiedBadge size={18} />
+      ✓
     </button>
   )}
 
-  {/* INFO BOX — NO ICON, NO GLOW */}
+  {/* ℹ️ VERIFY INFO (SIMPLE, NO ICON, NO GLOW) */}
   {isVerified && showVerifyInfo && (
     <div
       className="
@@ -352,12 +362,15 @@ if (!api) {
     </div>
   )}
 
-  {/* ADMIN VERIFY */}
+  {/* 🔐 ADMIN VERIFY BUTTON */}
   {isAdminUser() && !isVerified && (
     <button
       onClick={() => {
         const updated = [...verifiedApis, api.id || api._id];
-        localStorage.setItem("apives_verified_apis", JSON.stringify(updated));
+        localStorage.setItem(
+          "apives_verified_apis",
+          JSON.stringify(updated)
+        );
         window.location.reload();
       }}
       className="
@@ -377,14 +390,17 @@ if (!api) {
     </button>
   )}
 
-  {/* ADMIN UNVERIFY */}
+  {/* 🔓 ADMIN UNVERIFY BUTTON */}
   {isAdminUser() && isVerified && (
     <button
       onClick={() => {
         const updated = verifiedApis.filter(
-          vid => vid !== (api.id || api._id)
+          v => v !== (api.id || api._id)
         );
-        localStorage.setItem("apives_verified_apis", JSON.stringify(updated));
+        localStorage.setItem(
+          "apives_verified_apis",
+          JSON.stringify(updated)
+        );
         window.location.reload();
       }}
       className="
@@ -404,6 +420,7 @@ if (!api) {
     </button>
   )}
 </h1>
+
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
