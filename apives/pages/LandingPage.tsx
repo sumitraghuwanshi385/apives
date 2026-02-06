@@ -301,9 +301,7 @@ flex flex-col h-full"
             "
           >
             Manually Verified by Apives
-          </div>
-        )}
-  </div> 
+          </span>
 )}
 
   {isNew(api.publishedAt) && (
