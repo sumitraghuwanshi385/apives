@@ -108,8 +108,19 @@ const rankIndex = topIds.indexOf(api.id);
 const isTopTier = rankIndex !== -1;
 const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
-const isVerified =
-  isAdminUser() && api.verified === true;
+const getVerifiedApis = (): string[] => {
+  try {
+    return JSON.parse(
+      localStorage.getItem("apives_verified_apis") || "[]"
+    );
+  } catch {
+    return [];
+  }
+};
+
+const verifiedApis = getVerifiedApis();
+
+const isVerified = verifiedApis.includes(api.id);
 
 useEffect(() => {
 
