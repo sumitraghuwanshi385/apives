@@ -279,7 +279,6 @@ flex flex-col h-full"
           </svg>
         </button>
 
-        {/* VERIFY PILL */}
         {showVerifyInfo && (
           <span
             className="
@@ -302,13 +301,16 @@ flex flex-col h-full"
           >
             Manually Verified by Apives
           </span>
-)}
+        )}
+      </span>
+    )}
 
-  {isNew(api.publishedAt) && (
-    <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
-      New
-    </span>
-  )}
+    {isNew(api.publishedAt) && (
+      <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+        New
+      </span>
+    )}
+  </span>
 </h3>
       <div className="flex items-center gap-2 mt-1">  
         <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 uppercase tracking-tighter">  
