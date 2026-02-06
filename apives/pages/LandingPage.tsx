@@ -303,7 +303,8 @@ flex flex-col h-full"
             Manually Verified by Apives
           </div>
         )}
-  </div>  
+  </div> 
+)}
 
   {isNew(api.publishedAt) && (
     <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
