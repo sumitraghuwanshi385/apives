@@ -304,73 +304,70 @@ if (!api) {
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
-                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1] flex items-center gap-3 relative">
+<h1 className="
+  text-2xl md:text-5xl
+  font-display font-bold
+  text-white
+  mb-2
+  tracking-tight
+  leading-[1.1]
+  flex items-center
+  gap-1.5   /* 👈 name ke bilkul paas */
+  relative
+">
   {api.name}
 
-  {/* ✅ VERIFIED BADGE */}
+  {/* ✅ VERIFIED BADGE — TWITTER STYLE */}
   {isVerified && (
     <button
       onClick={(e) => {
         e.stopPropagation();
-        setShowVerifyInfo(!showVerifyInfo);
+        setShowVerifyInfo(prev => !prev);
       }}
+      title="Verified by Apives"
       className="
-        relative
-        h-6 w-6 md:h-7 md:w-7
-        rounded-full
-        bg-mora-500
+        ml-0.5
+        h-5 w-5 md:h-6 md:w-6
         flex items-center justify-center
-        shadow-[0_0_12px_rgba(34,197,94,0.45)]
+        bg-mora-500
+        text-black
+        shadow-[0_0_10px_rgba(168,85,247,0.55)]
         hover:scale-110
         transition-all
-      "
-      title="Verified by Apives"
-    >
-      {/* flower style */}
-      <div className="absolute inset-0 rounded-full bg-mora-500 blur-[6px] opacity-60"></div>
 
-      {/* check */}
-      <Check
-        size={14}
-        className="relative z-10 text-black font-black"
-        strokeWidth={4}
-      />
+        /* ⭐ twitter-like badge (NOT circle) */
+        clip-path-[polygon(
+          50%_0%,65%_12%,85%_15%,88%_35%,100%_50%,
+          88%_65%,85%_85%,65%_88%,50%_100%,
+          35%_88%,15%_85%,12%_65%,0%_50%,
+          12%_35%,15%_15%,35%_12%
+        )]
+      "
+    >
+      ✓
     </button>
   )}
 
-  {/* ℹ️ VERIFY INFO POPOVER */}
+  {/* ℹ️ VERIFIED INFO — ONE LINE */}
   {isVerified && showVerifyInfo && (
     <div
       className="
-        absolute top-full left-0 mt-3
-        w-[260px]
+        absolute top-full left-0 mt-2
         bg-dark-900
         border border-mora-500/30
-        rounded-xl
-        p-4
+        rounded-lg
+        px-3 py-2
         text-[11px]
         text-slate-300
-        shadow-[0_0_40px_rgba(34,197,94,0.25)]
+        shadow-[0_0_25px_rgba(168,85,247,0.25)]
         z-50
-        animate-fade-in
       "
     >
-      <div className="flex items-start gap-2">
-        <CheckCircle2 className="text-mora-500 mt-0.5" size={16} />
-        <div>
-          <p className="font-bold text-white mb-1">
-            Verified by Apives
-          </p>
-          <p className="text-slate-400 leading-relaxed">
-            This API has been manually reviewed and verified by the Apives team
-            for authenticity, stability, and provider legitimacy.
-          </p>
-        </div>
-      </div>
+      This API is verified by Apives for authenticity and trust.
     </div>
   )}
 
-  {/* 🔐 ADMIN VERIFY BUTTON */}
+  {/* 🔐 ADMIN VERIFY */}
   {isAdminUser() && !isVerified && (
     <button
       onClick={() => {
@@ -382,6 +379,7 @@ if (!api) {
         window.location.reload();
       }}
       className="
+        ml-2
         px-3 py-1
         rounded-full
         bg-mora-500/20
@@ -394,6 +392,36 @@ if (!api) {
       "
     >
       Verify
+    </button>
+  )}
+
+  {/* 🔓 ADMIN UNVERIFY */}
+  {isAdminUser() && isVerified && (
+    <button
+      onClick={() => {
+        const updated = verifiedApis.filter(
+          vid => vid !== (api.id || api._id)
+        );
+        localStorage.setItem(
+          "apives_verified_apis",
+          JSON.stringify(updated)
+        );
+        window.location.reload();
+      }}
+      className="
+        ml-2
+        px-3 py-1
+        rounded-full
+        bg-red-500/10
+        text-red-400
+        border border-red-500/30
+        text-[10px]
+        font-black
+        uppercase
+        tracking-widest
+      "
+    >
+      Unverify
     </button>
   )}
 </h1>
