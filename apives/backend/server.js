@@ -20,10 +20,12 @@ console.log("🔍 Mongo URI Status:", process.env.MONGO_URI ? "Loaded ✅" : "Mi
 // Routes Import
 const authRoutes = require('./routes/auth');
 const apiRoutes = require('./routes/apis');
+const sponsorRoutes = require('./routes/sponsor');
 
 // Routes Use
 app.use('/api/auth', authRoutes);
 app.use('/api/apis', apiRoutes);
+app.use('/api/sponsor', sponsorRoutes);
 
 // Database Connection
 const DB_URI = process.env.MONGO_URI;
