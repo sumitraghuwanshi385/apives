@@ -543,11 +543,12 @@ if (!api) {
           <div
             key={i}
             className="
-              flex-none
-              w-full
-              h-[190px] md:h-[220px]
-              rounded-2xl
-              overflow-hidden
+  flex-none
+  w-[90%]
+  aspect-[16/9]
+  md:aspect-[16/9]
+  rounded-xl
+  overflow-hidden
               border border-white/10
               bg-black
             "
