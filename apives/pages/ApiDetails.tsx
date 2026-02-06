@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Hash } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiClient';
-import VerifiedBadge from "../components/VerifiedBadge";
+import VerifiedBadge from "../components/Verify Badge";
 import {
   Copy, Play, Terminal, ShieldCheck,
   Activity, Cpu, Globe, Lock, Cloud, Box,
