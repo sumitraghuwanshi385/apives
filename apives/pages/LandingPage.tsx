@@ -390,6 +390,10 @@ useEffect(() => {
 const handleResize = () => setIsMobile(window.innerWidth < 768);
 window.addEventListener('resize', handleResize);
 
+// 🔥 Sponsor impressions
+  trackSponsor("serpapi", "impression");
+  trackSponsor("scoutpanels", "impression");
+
 const user = localStorage.getItem('mora_user');
 if (user) {
 setIsAuthenticated(true);
@@ -441,9 +445,6 @@ setIsLoading(false);
 })();
 
 return () => window.removeEventListener('resize', handleResize);
-// 🔥 Sponsor impressions
-  trackSponsor("serpapi", "impression");
-  trackSponsor("scoutpanels", "impression");
 }, []);
 
 const updateLandingUpvotes = (apiId: string, delta: number) => {
