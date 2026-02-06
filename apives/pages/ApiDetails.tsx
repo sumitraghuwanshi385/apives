@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Hash } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiClient';
+import VerifiedBadge from "../components/VerifiedBadge";
 import {
   Copy, Play, Terminal, ShieldCheck,
   Activity, Cpu, Globe, Lock, Cloud, Box,
@@ -304,78 +305,59 @@ if (!api) {
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
-<h1 className="
-  text-2xl md:text-5xl
-  font-display font-bold
-  text-white
-  mb-2
-  tracking-tight
-  leading-[1.1]
-  flex items-center
-  gap-1.5   /* 👈 name ke bilkul paas */
-  relative
-">
+<h1
+  className="
+    text-2xl md:text-5xl
+    font-display font-bold
+    text-white
+    mb-2
+    tracking-tight
+    leading-[1.1]
+    flex items-center
+    gap-1.5
+    relative
+  "
+>
   {api.name}
 
-  {/* ✅ VERIFIED BADGE — TWITTER STYLE */}
+  {/* VERIFIED BADGE */}
   {isVerified && (
     <button
       onClick={(e) => {
         e.stopPropagation();
-        setShowVerifyInfo(prev => !prev);
+        setShowVerifyInfo(v => !v);
       }}
+      className="mt-1"
       title="Verified by Apives"
-      className="
-        ml-0.5
-        h-5 w-5 md:h-6 md:w-6
-        flex items-center justify-center
-        bg-mora-500
-        text-black
-        shadow-[0_0_10px_rgba(168,85,247,0.55)]
-        hover:scale-110
-        transition-all
-
-        /* ⭐ twitter-like badge (NOT circle) */
-        clip-path-[polygon(
-          50%_0%,65%_12%,85%_15%,88%_35%,100%_50%,
-          88%_65%,85%_85%,65%_88%,50%_100%,
-          35%_88%,15%_85%,12%_65%,0%_50%,
-          12%_35%,15%_15%,35%_12%
-        )]
-      "
     >
-      ✓
+      <VerifiedBadge size={18} />
     </button>
   )}
 
-  {/* ℹ️ VERIFIED INFO — ONE LINE */}
+  {/* INFO BOX — NO ICON, NO GLOW */}
   {isVerified && showVerifyInfo && (
     <div
       className="
         absolute top-full left-0 mt-2
         bg-dark-900
-        border border-mora-500/30
-        rounded-lg
+        border border-white/10
+        rounded-md
         px-3 py-2
         text-[11px]
         text-slate-300
-        shadow-[0_0_25px_rgba(168,85,247,0.25)]
         z-50
       "
     >
-      This API is verified by Apives for authenticity and trust.
+      This API is verified by Apives.
     </div>
   )}
 
-  {/* 🔐 ADMIN VERIFY */}
+  {/* ADMIN VERIFY */}
   {isAdminUser() && !isVerified && (
     <button
       onClick={() => {
         const updated = [...verifiedApis, api.id || api._id];
-        localStorage.setItem(
-          "apives_verified_apis",
-          JSON.stringify(updated)
-        );
+        localStorage.setItem("apives_verified_apis", JSON.stringify(updated));
         window.location.reload();
       }}
       className="
@@ -395,17 +377,14 @@ if (!api) {
     </button>
   )}
 
-  {/* 🔓 ADMIN UNVERIFY */}
+  {/* ADMIN UNVERIFY */}
   {isAdminUser() && isVerified && (
     <button
       onClick={() => {
         const updated = verifiedApis.filter(
           vid => vid !== (api.id || api._id)
         );
-        localStorage.setItem(
-          "apives_verified_apis",
-          JSON.stringify(updated)
-        );
+        localStorage.setItem("apives_verified_apis", JSON.stringify(updated));
         window.location.reload();
       }}
       className="
@@ -425,7 +404,6 @@ if (!api) {
     </button>
   )}
 </h1>
-
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
