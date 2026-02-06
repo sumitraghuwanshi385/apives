@@ -14,6 +14,25 @@ import {
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
 
+const ADMIN_EMAIL = "beatslevelone@gmail.com";
+
+const isAdminUser = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("mora_user") || "null");
+    return user?.email === ADMIN_EMAIL;
+  } catch {
+    return false;
+  }
+};
+
+const getVerifiedApis = (): string[] => {
+  try {
+    return JSON.parse(localStorage.getItem("apives_verified_apis") || "[]");
+  } catch {
+    return [];
+  }
+};
+
 const syntaxHighlight = (json: string) => {
     if (!json) return '';
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -46,6 +65,9 @@ console.log('DETAILS PAGE ID 👉', id);
   const [upvotes, setUpvotes] = useState(0);
 const [showGalleryControls, setShowGalleryControls] = useState(true);
 const [galleryIndex, setGalleryIndex] = useState(0);
+
+const verifiedApis = getVerifiedApis();
+const isVerified = verifiedApis.includes(api?.id || api?._id);
 
    useEffect(() => {
   if (!id) return;
@@ -280,7 +302,52 @@ if (!api) {
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
-                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{api.name}</h1>
+                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{api.name}
+{/* ✅ GREEN TICK – SABKE LIYE */}
+  {isVerified && (
+    <span
+      className="
+        inline-flex items-center justify-center
+        h-5 w-5
+        rounded-full
+        bg-emerald-500
+        text-black
+        text-xs
+        font-black
+      "
+      title="Verified by Apives"
+    >
+      ✓
+    </span>
+  )}
+
+  {/* 🔐 VERIFY BUTTON – SIRF ADMIN */}
+  {isAdminUser() && !isVerified && (
+    <button
+      onClick={() => {
+        const updated = [...verifiedApis, api.id || api._id];
+        localStorage.setItem(
+          "apives_verified_apis",
+          JSON.stringify(updated)
+        );
+        window.location.reload();
+      }}
+      className="
+        px-3 py-1
+        rounded-full
+        bg-emerald-500/20
+        text-emerald-400
+        border border-emerald-500/30
+        text-[10px]
+        font-black
+        uppercase
+        tracking-widest
+      "
+    >
+      Verify
+    </button>
+  )}
+</h1>
                             <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
