@@ -15,6 +15,18 @@ import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
+const trackSponsor = (sponsor: string, type: "impression" | "click") => {
+  fetch("/api/sponsor/track", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sponsor,
+      type,
+      page: window.location.pathname
+    })
+  }).catch(() => {});
+};
+
 /* ===== SECTION LOADER ===== */
 const SectionLoader: React.FC<{ text: string }> = ({ text }) => (
   <div className="w-full py-20 flex flex-col items-center justify-center gap-4">
@@ -221,21 +233,25 @@ flex flex-col h-full"
   {api.name}
 
   {isVerified && (
-    <span
-      className="
-        inline-flex items-center justify-center
-        h-4 w-4 md:h-5 md:w-5
-        rounded-full
-        bg-emerald-500
-        text-black
-        text-[10px] md:text-xs
-        font-black
-      "
-      title="Verified by Apives"
-    >
-      ✓
-    </span>
-  )}
+  <span
+    title="Verified by Apives"
+    className="
+      inline-flex items-center justify-center
+      h-5 w-5 md:h-6 md:w-6
+      rounded-full
+      bg-emerald-500
+      shadow-[0_0_12px_rgba(34,197,94,0.45)]
+      ml-1
+    "
+  >
+    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 md:w-4 md:h-4">
+      <path
+        fill="#000"
+        d="M9.2 12.3l2 2.1 4.6-4.8"
+      />
+    </svg>
+  </span>
+)}
 
   {isNew(api.publishedAt) && (
     <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
@@ -425,6 +441,9 @@ setIsLoading(false);
 })();
 
 return () => window.removeEventListener('resize', handleResize);
+// 🔥 Sponsor impressions
+  trackSponsor("serpapi", "impression");
+  trackSponsor("scoutpanels", "impression");
 }, []);
 
 const updateLandingUpvotes = (apiId: string, delta: number) => {
@@ -583,6 +602,7 @@ opacity-60
   href="https://scoutpanels.com"
   target="_blank"
   rel="noopener noreferrer"
+  onClick={() => trackSponsor("scoutpanels", "click")}
   className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl
   border border-amber-400/40
   bg-gradient-to-br from-amber-400/15 to-transparent
@@ -716,6 +736,7 @@ rounded-2xl bg-white/10 p-1"
       href="https://serpapi.com"
       target="_blank"
       rel="noopener noreferrer"
+onClick={() => trackSponsor("serpapi", "click")}
       className="
   relative inline-flex items-center gap-3
   px-5 md:px-6 py-3 md:py-3.5
