@@ -80,6 +80,7 @@ const [saved, setSaved] = useState(false);
 const [isLiked, setIsLiked] = useState(false);
 const [showArrows, setShowArrows] = useState(false);
 const [galleryIndex, setGalleryIndex] = useState(0);
+const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
 const ADMIN_EMAIL = "beatslevelone@gmail.com";
 
@@ -239,25 +240,59 @@ flex flex-col h-full"
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight truncate group-hover:text-mora-400 transition-colors flex items-center gap-2">
   {api.name}
 
-  {isVerified && (
-  <span
-    title="Verified by Apives"
-    className="
-      inline-flex items-center justify-center
-      h-5 w-5 md:h-6 md:w-6
-      rounded-full
-      bg-emerald-500
-      shadow-[0_0_12px_rgba(34,197,94,0.45)]
-      ml-1
-    "
-  >
-    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 md:w-4 md:h-4">
-      <path
-        fill="#000"
-        d="M9.2 12.3l2 2.1 4.6-4.8"
-      />
-    </svg>
-  </span>
+ {isVerified && (
+  <div className="relative flex items-center ml-1">
+    {/* GREEN VERIFIED BADGE */}
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowVerifyInfo(v => !v);
+      }}
+      title="Verified by Apives"
+      className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center"
+    >
+      <svg viewBox="0 0 24 24" className="w-full h-full">
+        <path
+          fill="#22C55E"
+          d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
+        />
+        <path
+          d="M9.2 12.3l2 2.1 4.6-4.8"
+          stroke="#000"
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
+    </button>
+
+    {/* ✅ GREEN PILL DESCRIPTION */}
+    {showVerifyInfo && (
+      <div
+        className="
+          absolute
+          top-full
+          left-1/2
+          -translate-x-1/2
+          mt-1
+
+          bg-green-600
+          border border-green-700
+          rounded-full
+          px-3 py-0.5
+
+          text-[10px]
+          text-white
+          font-semibold
+          whitespace-nowrap
+          shadow-lg
+          z-50
+        "
+      >
+        Manually Verified by Apives
+      </div>
+    )}
+  </div>
 )}
 
   {isNew(api.publishedAt) && (
