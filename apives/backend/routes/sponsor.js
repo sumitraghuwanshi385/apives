@@ -1,27 +1,25 @@
-import express from "express";
-import mongoose from "mongoose";
+const express = require("express");
+const mongoose = require("mongoose");
 
 const router = express.Router();
 
-// 1️⃣ Schema
+// Schema
 const SponsorEventSchema = new mongoose.Schema({
-  sponsor: String,   // "serpapi"
-  type: String,      // "impression" | "click"
+  sponsor: String,
+  type: String, // "impression" | "click"
   page: String,
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-// 2️⃣ Model (IMPORTANT: collection name same)
-const SponsorEvent = mongoose.model(
-  "SponsorEvent",
-  SponsorEventSchema,
-  "sponsor_events"
-);
+// Model (collection fix)
+const SponsorEvent =
+  mongoose.models.SponsorEvent ||
+  mongoose.model("SponsorEvent", SponsorEventSchema, "sponsor_events");
 
-// 3️⃣ API
+// Route
 router.post("/track", async (req, res) => {
   try {
     const { sponsor, type, page } = req.body;
@@ -29,14 +27,14 @@ router.post("/track", async (req, res) => {
     await SponsorEvent.create({
       sponsor,
       type,
-      page
+      page,
     });
 
     res.json({ success: true });
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error("Sponsor track error:", err);
     res.status(500).json({ success: false });
   }
 });
 
-export default router;
+module.exports = router;
