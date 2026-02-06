@@ -66,6 +66,8 @@ console.log('DETAILS PAGE ID 👉', id);
 const [showGalleryControls, setShowGalleryControls] = useState(true);
 const [galleryIndex, setGalleryIndex] = useState(0);
 
+const [showVerifyInfo, setShowVerifyInfo] = useState(false);
+
 const verifiedApis = getVerifiedApis();
 const isVerified = verifiedApis.includes(api?.id || api?._id);
 
@@ -302,26 +304,73 @@ if (!api) {
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
-                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1]">{api.name}
-{/* ✅ GREEN TICK – SABKE LIYE */}
+                            <h1 className="text-2xl md:text-5xl font-display font-bold text-white mb-2 tracking-tight leading-[1.1] flex items-center gap-3 relative">
+  {api.name}
+
+  {/* ✅ VERIFIED BADGE */}
   {isVerified && (
-    <span
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        setShowVerifyInfo(!showVerifyInfo);
+      }}
       className="
-        inline-flex items-center justify-center
-        h-5 w-5
+        relative
+        h-6 w-6 md:h-7 md:w-7
         rounded-full
-        bg-emerald-500
-        text-black
-        text-xs
-        font-black
+        bg-mora-500
+        flex items-center justify-center
+        shadow-[0_0_12px_rgba(34,197,94,0.45)]
+        hover:scale-110
+        transition-all
       "
       title="Verified by Apives"
     >
-      ✓
-    </span>
+      {/* flower style */}
+      <div className="absolute inset-0 rounded-full bg-mora-500 blur-[6px] opacity-60"></div>
+
+      {/* check */}
+      <Check
+        size={14}
+        className="relative z-10 text-black font-black"
+        strokeWidth={4}
+      />
+    </button>
   )}
 
-  {/* 🔐 VERIFY BUTTON – SIRF ADMIN */}
+  {/* ℹ️ VERIFY INFO POPOVER */}
+  {isVerified && showVerifyInfo && (
+    <div
+      className="
+        absolute top-full left-0 mt-3
+        w-[260px]
+        bg-dark-900
+        border border-mora-500/30
+        rounded-xl
+        p-4
+        text-[11px]
+        text-slate-300
+        shadow-[0_0_40px_rgba(34,197,94,0.25)]
+        z-50
+        animate-fade-in
+      "
+    >
+      <div className="flex items-start gap-2">
+        <CheckCircle2 className="text-mora-500 mt-0.5" size={16} />
+        <div>
+          <p className="font-bold text-white mb-1">
+            Verified by Apives
+          </p>
+          <p className="text-slate-400 leading-relaxed">
+            This API has been manually reviewed and verified by the Apives team
+            for authenticity, stability, and provider legitimacy.
+          </p>
+        </div>
+      </div>
+    </div>
+  )}
+
+  {/* 🔐 ADMIN VERIFY BUTTON */}
   {isAdminUser() && !isVerified && (
     <button
       onClick={() => {
@@ -335,9 +384,9 @@ if (!api) {
       className="
         px-3 py-1
         rounded-full
-        bg-emerald-500/20
-        text-emerald-400
-        border border-emerald-500/30
+        bg-mora-500/20
+        text-mora-400
+        border border-mora-500/30
         text-[10px]
         font-black
         uppercase
@@ -348,7 +397,8 @@ if (!api) {
     </button>
   )}
 </h1>
-                            <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
+
+                      <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
                                 <span className="font-mono text-slate-500 text-[9px] md:text-sm">{new Date(api.publishedAt).toLocaleDateString()}</span>
