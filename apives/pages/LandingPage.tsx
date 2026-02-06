@@ -16,15 +16,22 @@ import { apiService } from '../services/apiClient';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
-  fetch("/api/sponsor/track", {
+  fetch("http://localhost:5000/api/sponsor/track", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      sponsor,
-      type,
+      sponsor: sponsor,
+      type: type,
       page: window.location.pathname
     })
-  }).catch(() => {});
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("✅ Sponsor tracked:", data);
+    })
+    .catch(err => {
+      console.error("❌ Sponsor track failed:", err);
+    });
 };
 
 /* ===== SECTION LOADER ===== */
@@ -387,12 +394,11 @@ const [isMobile, setIsMobile] = useState(
 );
 
 useEffect(() => {
-const handleResize = () => setIsMobile(window.innerWidth < 768);
-window.addEventListener('resize', handleResize);
-
 // 🔥 Sponsor impressions
   trackSponsor("serpapi", "impression");
   trackSponsor("scoutpanels", "impression");
+const handleResize = () => setIsMobile(window.innerWidth < 768);
+window.addEventListener('resize', handleResize);
 
 const user = localStorage.getItem('mora_user');
 if (user) {
