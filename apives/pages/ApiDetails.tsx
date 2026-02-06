@@ -68,6 +68,15 @@ const [galleryIndex, setGalleryIndex] = useState(0);
 
 const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
+useEffect(() => {
+  if (!showVerifyInfo) return;
+
+  const close = () => setShowVerifyInfo(false);
+  document.addEventListener("click", close);
+
+  return () => document.removeEventListener("click", close);
+}, [showVerifyInfo]);
+
 const verifiedApis = getVerifiedApis();
 const isVerified = verifiedApis.includes(api?.id || api?._id);
 
@@ -319,30 +328,45 @@ if (!api) {
 >
   {api.name}
 
-  {/* ✅ GREEN VERIFIED TICK (NO IMPORT) */}
-  {isVerified && (
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        setShowVerifyInfo(v => !v);
-      }}
-      title="Verified by Apives"
-      className="
-        ml-1
-        h-4 w-4 md:h-5 md:w-5
-        rounded-full
-        bg-green-500
-        text-black
-        text-[10px]
-        font-black
-        flex items-center justify-center
-        hover:scale-110
-        transition
-      "
+  {/* ✅ VERIFIED BADGE — TWITTER STYLE */}
+{isVerified && (
+  <button
+    onClick={(e) => {
+      e.stopPropagation(); // ❗ outside click se bachane ke liye
+      setShowVerifyInfo(v => !v);
+    }}
+    title="Verified by Apives"
+    className="
+      ml-1.5
+      h-6 w-6 md:h-7 md:w-7
+      flex items-center justify-center
+      transition
+      hover:scale-110
+    "
+  >
+    <svg
+      viewBox="0 0 24 24"
+      className="w-full h-full"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      ✓
-    </button>
-  )}
+      {/* blue scalloped shape */}
+      <path
+        fill="#1D9BF0"
+        d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
+      />
+
+      {/* black check */}
+      <path
+        d="M9.2 12.3l2 2.1 4.6-4.8"
+        stroke="#000"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  </button>
+)}
 
   {/* ℹ️ VERIFY INFO (SIMPLE, NO ICON, NO GLOW) */}
   {isVerified && showVerifyInfo && (
