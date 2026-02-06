@@ -249,7 +249,7 @@ flex flex-col h-full"
   <div className="relative z-10 flex flex-col h-full">  
     <div className="mb-2">  
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
-  <span className="inline-flex items-center gap-1.5 align-middle">
+  <span className="inline-flex items-center gap-0.5 align-middle">
     <span className="truncate max-w-[85%]">
       {api.name}
     </span>
@@ -335,7 +335,14 @@ flex flex-col h-full"
       {api.gallery.slice(0, 5).map((img: string, i: number) => (
         <div
           key={i}
-          className="flex-none w-[90%] h-[150px] rounded-xl overflow-hidden
+          className="
+  flex-none
+  w-[90%]
+  aspect-[16/9]
+  md:aspect-[16/9]
+  rounded-xl
+  overflow-hidden
+"
           border border-white/10 snap-center bg-black"
         >
           <img
