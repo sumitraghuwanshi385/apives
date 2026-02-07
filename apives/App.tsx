@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import SponsorAnalytics from "./pages/SponsorAnalytics";
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
@@ -48,6 +49,8 @@ function App() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/support" element={<SupportPage />} />
             <Route path="/sponsorship" element={<SponsorshipPage />} />
+{/* Admin Routes */}
+<Route path="/admin/sponsors" element={<SponsorAnalytics />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
