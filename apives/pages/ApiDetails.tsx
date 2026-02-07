@@ -319,17 +319,19 @@ if (!api) {
   </div>
 )}
 
-             <span
-  className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${
-    api.pricing.type === 'Free'
-      ? 'bg-green-500/10 text-green-400 border-green-500/20'
-      : api.pricing.type === 'Freemium'
-      ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
-      : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-  }`}
->
-  {api.pricing.type}
-</span>
+             {api?.pricing?.type && (
+  <span
+    className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${
+      api.pricing.type === 'Free'
+        ? 'bg-green-500/10 text-green-400 border-green-500/20'
+        : api.pricing.type === 'Freemium'
+        ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+    }`}
+  >
+    {api.pricing.type}
+  </span>
+)}
                    </div>
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
@@ -487,16 +489,33 @@ if (!api) {
 </div>
 
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
-                                <span>By <span className="text-white font-medium">{api.provider}</span></span>
-                                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                                <span className="font-mono text-slate-500 text-[9px] md:text-sm">{new Date(api.publishedAt).toLocaleDateString()}</span>
+                                {api?.provider && (
+  <span>
+    By <span className="text-white font-medium">{api.provider}</span>
+  </span>
+)}
+
+{api?.publishedAt && (
+  <span className="font-mono text-slate-500 text-[9px] md:text-sm">
+    {new Date(api.publishedAt).toLocaleDateString()}
+  </span>
+)}
+
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleLike} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isLiked ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Heart size={12} className={isLiked ? 'fill-current' : ''} /> <span className="ml-2">{upvotes}</span></button>
                             <button onClick={handleSaveToggle} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
-                            <a href={api.externalUrl} target="_blank" className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95">Visit <Globe size={12} className="ml-2" />
-</a>                       
+                            {api?.externalUrl && (
+  <a
+    href={api.externalUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95"
+  >
+    Visit <Globe size={12} className="ml-2" />
+  </a>
+)}
 <button
   onClick={handleShare}
   className="
@@ -525,7 +544,7 @@ if (!api) {
         {!isLoading && api && activeTab === 'overview' && (
             <div className="space-y-10 md:space-y-16 animate-fade-in">
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Box className="mr-3 text-mora-500" size={14}/> Node Description</h2><div className="bg-white/[0.03] rounded-2xl md:rounded-3xl p-6 md:p-10 border border-white/5 text-slate-300 text-sm md:text-lg leading-relaxed font-light whitespace-pre-line">{api.description}</div></section>
-{api.gallery && api.gallery.length > 0 && (
+{api?.gallery?.length > 0 && (
   <section>
     {/* HEADING + COUNTER ROW */}
     <div className="flex items-center justify-between mb-4 md:mb-6">
@@ -574,7 +593,7 @@ className="
   no-scrollbar
 "
       >
-        {api.gallery.map((img: string, i: number) => (
+        {api.gallery?.map((img: string, i: number) => (
           <div
   className="
     flex-none
