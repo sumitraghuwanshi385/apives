@@ -227,6 +227,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     <span className="break-words">
       {api.name}
     </span>
+
 {isVerified && (
   <span className="relative inline-flex items-center ml-1 shrink-0">
     <button
@@ -275,6 +276,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     )}
   </span>
 )}
+</span>
 
                         {isNew(api.createdAt) && (
   <span className="text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
