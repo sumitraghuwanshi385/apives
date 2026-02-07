@@ -253,25 +253,12 @@ const rank =
   upvotes >= 5   ? RANK_STYLES[2] :
   null;
 
-// 🆕 NEW BADGE LOGIC — last 15 days
-const isNew = (date?: string) => {
-  if (!date) return false;
-
-  const created = new Date(date);
-  const now = new Date();
-
-  const diffDays =
-    (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
-
-  return diffDays <= 15;
-};
-
 // ⏳ LOADING
 if (isLoading) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
       <div className="text-slate-400 font-mono text-[10px] uppercase tracking-widest">
-        Loading Details...
+        Loading node...
       </div>
     </div>
   );
@@ -282,7 +269,7 @@ if (!api) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
       <div className="text-red-400 font-mono text-[10px] uppercase tracking-widest">
-        API not found or deleted
+        Node not found or deleted
       </div>
     </div>
   );
@@ -292,17 +279,9 @@ if (!api) {
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
 
 
-     <div
-  className="
-    absolute
-    top-24 md:top-28
-    left-4 lg:left-8
-    z-30
-  "
->
+      <div className="absolute top-20 left-4 lg:left-8 z-30">
   <BackButton />
 </div>
-
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -319,19 +298,17 @@ if (!api) {
   </div>
 )}
 
-             {api?.pricing?.type && (
-  <span
-    className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${
-      api.pricing.type === 'Free'
-        ? 'bg-green-500/10 text-green-400 border-green-500/20'
-        : api.pricing.type === 'Freemium'
-        ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
-        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-    }`}
-  >
-    {api.pricing.type}
-  </span>
-)}
+             <span
+  className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border uppercase tracking-widest ${
+    api.pricing.type === 'Free'
+      ? 'bg-green-500/10 text-green-400 border-green-500/20'
+      : api.pricing.type === 'Freemium'
+      ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+      : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+  }`}
+>
+  {api.pricing.type}
+</span>
                    </div>
                
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
@@ -344,19 +321,15 @@ if (!api) {
     mb-2
     tracking-tight
     leading-[1.1]
+    flex items-center gap-1
     relative
   "
 >
-  <span className="inline-flex flex-wrap items-center gap-2">
+  <span className="break-words">{api.name}</span>
 
-    {/* API NAME */}
-    <span className="break-words">
-      {api.name}
-    </span>
-
-    {/* ✅ VERIFIED BADGE */}
-    {isVerified && (
-      <span className="relative inline-flex items-center shrink-0">
+  {/* ✅ VERIFIED BADGE */}
+  {isVerified && (
+      <span className="relative inline-flex items-center">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -364,11 +337,7 @@ if (!api) {
             setShowVerifyInfo(v => !v);
           }}
           title="Verified by Apives"
-          className="
-            h-6 w-6
-            md:h-8 md:w-8
-            flex items-center justify-center
-          "
+          className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center shrink-0"
         >
           <svg viewBox="0 0 24 24" className="w-full h-full">
             <path
@@ -384,7 +353,6 @@ if (!api) {
           </svg>
         </button>
 
-        {/* VERIFY DESCRIPTION */}
         {showVerifyInfo && (
           <span
             className="
@@ -392,11 +360,11 @@ if (!api) {
               top-full
               left-1/2
               -translate-x-1/2
-              mt-2
+              mt-1.5
               bg-green-600
               border border-green-700
               rounded-full
-              px-3 py-1
+              px-3 py-0.5
               text-[10px]
               text-white
               font-semibold
@@ -410,26 +378,6 @@ if (!api) {
         )}
       </span>
     )}
-
-    {/* 🆕 NEW BADGE (VERIFY ke baad hi) */}
-    {isNew(api.publishedAt) && (
-      <span
-        className="
-          text-[9px] md:text-[11px]
-          bg-white
-          text-black
-          px-2 py-0.5
-          rounded-full
-          font-black
-          uppercase
-          tracking-wide
-        "
-      >
-        New
-      </span>
-    )}
-
-  </span>
 </h1>
 
 <div className="flex gap-2 mt-2">
@@ -489,33 +437,16 @@ if (!api) {
 </div>
 
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
-                                {api?.provider && (
-  <span>
-    By <span className="text-white font-medium">{api.provider}</span>
-  </span>
-)}
-
-{api?.publishedAt && (
-  <span className="font-mono text-slate-500 text-[9px] md:text-sm">
-    {new Date(api.publishedAt).toLocaleDateString()}
-  </span>
-)}
-
+                                <span>By <span className="text-white font-medium">{api.provider}</span></span>
+                                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
+                                <span className="font-mono text-slate-500 text-[9px] md:text-sm">{new Date(api.publishedAt).toLocaleDateString()}</span>
                             </div>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleLike} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isLiked ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Heart size={12} className={isLiked ? 'fill-current' : ''} /> <span className="ml-2">{upvotes}</span></button>
                             <button onClick={handleSaveToggle} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
-                            {api?.externalUrl && (
-  <a
-    href={api.externalUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95"
-  >
-    Visit <Globe size={12} className="ml-2" />
-  </a>
-)}
+                            <a href={api.externalUrl} target="_blank" className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95">Visit <Globe size={12} className="ml-2" />
+</a>                       
 <button
   onClick={handleShare}
   className="
@@ -544,7 +475,7 @@ if (!api) {
         {!isLoading && api && activeTab === 'overview' && (
             <div className="space-y-10 md:space-y-16 animate-fade-in">
                 <section><h2 className="text-xs md:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mb-4 md:mb-6 flex items-center"><Box className="mr-3 text-mora-500" size={14}/> Node Description</h2><div className="bg-white/[0.03] rounded-2xl md:rounded-3xl p-6 md:p-10 border border-white/5 text-slate-300 text-sm md:text-lg leading-relaxed font-light whitespace-pre-line">{api.description}</div></section>
-{api?.gallery?.length > 0 && (
+{api.gallery && api.gallery.length > 0 && (
   <section>
     {/* HEADING + COUNTER ROW */}
     <div className="flex items-center justify-between mb-4 md:mb-6">
@@ -593,24 +524,25 @@ className="
   no-scrollbar
 "
       >
-        {api.gallery?.map((img: string, i: number) => (
+        {api.gallery.map((img: string, i: number) => (
           <div
-  className="
-    flex-none
-    w-[90%]
-    aspect-[16/9]
-    max-h-[420px]
-    rounded-xl
-    overflow-hidden
-    border border-white/10
-    bg-black
-  "
->
-     <img
-  src={img}
-  className="w-full h-full object-contain"
-  draggable={false}
-/>
+            key={i}
+            className="
+  flex-none
+  w-[90%]
+  aspect-[16/9]
+  md:aspect-[16/9]
+  rounded-xl
+  overflow-hidden
+              border border-white/10
+              bg-black
+            "
+          >
+            <img
+              src={img}
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
       </div>
     ))}
   </div>
@@ -806,4 +738,3 @@ className="
     </div>
   );
 };
-l
