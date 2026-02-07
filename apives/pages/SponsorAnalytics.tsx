@@ -18,6 +18,15 @@ type SponsorStat = {
 
 type Range = "24h" | "7d" | "30d";
 
+/* ================= HELPERS ================= */
+
+const getCtrColor = (ctr: string) => {
+  const val = parseFloat(ctr);
+  if (val < 1) return "text-red-400";
+  if (val < 3) return "text-yellow-400";
+  return "text-green-400";
+};
+
 /* ================= PAGE ================= */
 
 export default function SponsorAnalytics() {
@@ -33,13 +42,12 @@ export default function SponsorAnalytics() {
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState<Range>("7d");
 
-  /* ================= FETCH ================= */
+  /* ================= FETCH (REAL DATA) ================= */
 
   useEffect(() => {
     setLoading(true);
 
-    // future-ready: backend me range add ho sakta
-    fetch("https://apives.onrender.com/api/sponsor/stats")
+    fetch(`https://apives.onrender.com/api/sponsor/stats?range=${range}`)
       .then((res) => res.json())
       .then((json) => {
         setData(json || []);
@@ -63,7 +71,7 @@ export default function SponsorAnalytics() {
       ? ((totalClicks / totalImpressions) * 100).toFixed(2)
       : "0.00";
 
-  /* ================= CSV ================= */
+  /* ================= CSV EXPORT ================= */
 
   const downloadCSV = () => {
     const headers = ["Sponsor", "Impressions", "Clicks", "CTR"];
@@ -99,7 +107,7 @@ export default function SponsorAnalytics() {
 
   return (
     <div className="min-h-screen bg-black text-white px-4 md:px-12 pt-6 pb-36">
-      {/* TITLE (UPPER) */}
+      {/* TITLE */}
       <div className="mb-6">
         <h1 className="text-3xl md:text-5xl font-bold mb-2">
           Sponsor Analytics
@@ -151,7 +159,7 @@ export default function SponsorAnalytics() {
         {data.map((s) => (
           <div
             key={s.sponsor}
-            className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition"
+            className="bg-white/5 border border-white/10 rounded-2xl p-6"
           >
             <h3 className="text-lg font-semibold mb-4 capitalize">
               {s.sponsor}
@@ -159,7 +167,11 @@ export default function SponsorAnalytics() {
 
             <Metric label="Impressions" value={s.impressions} />
             <Metric label="Clicks" value={s.clicks} />
-            <Metric label="CTR" value={`${s.ctr}%`} green />
+            <Metric
+              label="CTR"
+              value={`${s.ctr}%`}
+              color={getCtrColor(s.ctr)}
+            />
           </div>
         ))}
       </div>
@@ -197,7 +209,7 @@ export default function SponsorAnalytics() {
                 <td className="p-4 capitalize">{s.sponsor}</td>
                 <td className="p-4">{s.impressions}</td>
                 <td className="p-4">{s.clicks}</td>
-                <td className="p-4 text-green-400 font-semibold">
+                <td className={`p-4 font-semibold ${getCtrColor(s.ctr)}`}>
                   {s.ctr}%
                 </td>
               </tr>
@@ -242,18 +254,16 @@ function KPI({
 function Metric({
   label,
   value,
-  green,
+  color,
 }: {
   label: string;
   value: number | string;
-  green?: boolean;
+  color?: string;
 }) {
   return (
     <div className="flex justify-between text-sm mb-3">
       <span className="text-slate-400">{label}</span>
-      <span className={`font-bold ${green ? "text-green-400" : ""}`}>
-        {value}
-      </span>
+      <span className={`font-bold ${color ?? ""}`}>{value}</span>
     </div>
   );
 }
