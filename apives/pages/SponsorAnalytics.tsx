@@ -8,12 +8,18 @@ import {
   Download,
 } from "lucide-react";
 
+/* ================= TYPES ================= */
+
 type SponsorStat = {
   sponsor: string;
   impressions: number;
   clicks: number;
   ctr: string;
 };
+
+type Range = "24h" | "7d" | "30d";
+
+/* ================= PAGE ================= */
 
 export default function SponsorAnalytics() {
   const navigate = useNavigate();
@@ -28,28 +34,40 @@ export default function SponsorAnalytics() {
 
   const [data, setData] = useState<SponsorStat[]>([]);
   const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState<Range>("7d");
+
+  /* ================= FETCH ================= */
 
   useEffect(() => {
-    fetch("https://apives.onrender.com/api/sponsor/stats")
+    setLoading(true);
+
+    // (future ready) range backend me add ho sakta
+    fetch(`https://apives.onrender.com/api/sponsor/stats`)
       .then((res) => res.json())
       .then((json) => {
-        setData(json);
+        setData(json || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [range]);
 
-  /* 📊 GLOBAL METRICS */
-  const totals = useMemo(() => {
-    const impressions = data.reduce((a, b) => a + b.impressions, 0);
-    const clicks = data.reduce((a, b) => a + b.clicks, 0);
-    const ctr =
-      impressions > 0 ? ((clicks / impressions) * 100).toFixed(2) : "0.00";
+  /* ================= GLOBAL METRICS ================= */
 
-    return { impressions, clicks, ctr };
-  }, [data]);
+  let totalImpressions = 0;
+  let totalClicks = 0;
 
-  /* ⬇️ CSV DOWNLOAD */
+  data.forEach((d) => {
+    totalImpressions += d.impressions;
+    totalClicks += d.clicks;
+  });
+
+  const avgCtr =
+    totalImpressions > 0
+      ? ((totalClicks / totalImpressions) * 100).toFixed(2)
+      : "0.00";
+
+  /* ================= CSV ================= */
+
   const downloadCSV = () => {
     const headers = ["Sponsor", "Impressions", "Clicks", "CTR"];
     const rows = data.map((d) => [
@@ -59,17 +77,18 @@ export default function SponsorAnalytics() {
       d.ctr,
     ]);
 
-    const csv =
-      [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
 
     const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "sponsor-analytics.csv";
+    a.download = `sponsor-analytics-${range}.csv`;
     a.click();
   };
+
+  /* ================= LOADING ================= */
 
   if (loading) {
     return (
@@ -79,82 +98,79 @@ export default function SponsorAnalytics() {
     );
   }
 
+  /* ================= UI ================= */
+
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-12 py-10 pb-32">
-      {/* 🔙 HEADER */}
-      <div className="flex items-center gap-4 mb-10 mt-6">
+    <div className="min-h-screen bg-black text-white px-4 md:px-12 py-10 pb-40">
+      {/* HEADER */}
+      <div className="flex items-center gap-4 mb-8">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition"
+          className="flex items-center gap-2 text-slate-400 hover:text-white"
         >
           <ArrowLeft size={18} />
           Back
         </button>
       </div>
 
-      {/* 🧠 TITLE */}
-      <div className="mb-10">
-        <h1 className="text-3xl md:text-5xl font-bold mb-3">
+      {/* TITLE */}
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-5xl font-bold mb-2">
           Sponsor Analytics
         </h1>
-        <p className="text-slate-400 max-w-xl">
-          Real-time sponsor performance insights directly from production
-          database.
+        <p className="text-slate-400">
+          Real sponsor performance from production database
         </p>
       </div>
 
-      {/* 🔢 GLOBAL KPIs */}
+      {/* RANGE FILTER */}
+      <div className="flex gap-2 mb-10">
+        {(["24h", "7d", "30d"] as Range[]).map((r) => (
+          <button
+            key={r}
+            onClick={() => setRange(r)}
+            className={`px-4 py-2 rounded-lg text-sm border ${
+              range === r
+                ? "bg-white text-black"
+                : "border-white/20 text-slate-400 hover:text-white"
+            }`}
+          >
+            {r}
+          </button>
+        ))}
+      </div>
+
+      {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-        <KPI
-          icon={<Eye size={18} />}
-          label="Total Impressions"
-          value={totals.impressions}
-        />
-        <KPI
-          icon={<MousePointerClick size={18} />}
-          label="Total Clicks"
-          value={totals.clicks}
-        />
+        <KPI icon={<Eye size={18} />} label="Total Impressions" value={totalImpressions} />
+        <KPI icon={<MousePointerClick size={18} />} label="Total Clicks" value={totalClicks} />
         <KPI
           icon={<BarChart3 size={18} />}
           label="Average CTR"
-          value={`${totals.ctr}%`}
+          value={`${avgCtr}%`}
           highlight
         />
       </div>
 
-      {/* 📦 SPONSOR CARDS */}
+      {/* SPONSOR CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14">
         {data.map((s) => (
           <div
             key={s.sponsor}
-            className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition"
+            className="bg-white/5 border border-white/10 rounded-2xl p-6"
           >
             <h3 className="text-lg font-semibold mb-4 capitalize">
               {s.sponsor}
             </h3>
 
-            <MetricRow
-              icon={<Eye size={14} />}
-              label="Impressions"
-              value={s.impressions}
-            />
-            <MetricRow
-              icon={<MousePointerClick size={14} />}
-              label="Clicks"
-              value={s.clicks}
-            />
-            <MetricRow
-              icon={<BarChart3 size={14} />}
-              label="CTR"
-              value={`${s.ctr}%`}
-              green
-            />
+            <Metric label="Impressions" value={s.impressions} />
+            <Metric label="Clicks" value={s.clicks} />
+            <Metric label="CTR" value={`${s.ctr}%`} green />
           </div>
         ))}
       </div>
 
-      {/* 📈 MINI GRAPH (visual balance) */}
+      {/* SIMPLE GRAPH */}
       <div className="mb-14">
         <h2 className="text-lg font-semibold mb-4 text-slate-300">
           Click Distribution
@@ -165,9 +181,7 @@ export default function SponsorAnalytics() {
             <div key={s.sponsor} className="flex-1">
               <div
                 className="bg-mora-500 rounded-t-md"
-                style={{
-                  height: `${Math.max(10, s.clicks * 10)}px`,
-                }}
+                style={{ height: `${Math.max(10, s.clicks * 10)}px` }}
               />
               <p className="text-xs text-center mt-2 text-slate-400 capitalize">
                 {s.sponsor}
@@ -177,14 +191,14 @@ export default function SponsorAnalytics() {
         </div>
       </div>
 
-      {/* 📋 TABLE + EXPORT */}
+      {/* TABLE */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-300">
           Detailed Breakdown
         </h2>
         <button
           onClick={downloadCSV}
-          className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition"
+          className="flex items-center gap-2 text-sm text-slate-400 hover:text-white"
         >
           <Download size={14} />
           Export CSV
@@ -205,7 +219,7 @@ export default function SponsorAnalytics() {
             {data.map((s) => (
               <tr
                 key={s.sponsor}
-                className="border-t border-white/5 hover:bg-white/5 transition"
+                className="border-t border-white/5 hover:bg-white/5"
               >
                 <td className="p-4 capitalize">{s.sponsor}</td>
                 <td className="p-4">{s.impressions}</td>
@@ -222,7 +236,7 @@ export default function SponsorAnalytics() {
   );
 }
 
-/* 🔹 Small Components */
+/* ================= COMPONENTS ================= */
 
 function KPI({
   icon,
@@ -241,33 +255,25 @@ function KPI({
         {icon}
         <span className="text-sm">{label}</span>
       </div>
-      <div
-        className={`text-3xl font-bold ${
-          highlight ? "text-green-400" : ""
-        }`}
-      >
+      <div className={`text-3xl font-bold ${highlight ? "text-green-400" : ""}`}>
         {value}
       </div>
     </div>
   );
 }
 
-function MetricRow({
-  icon,
+function Metric({
   label,
   value,
   green,
 }: {
-  icon: React.ReactNode;
   label: string;
   value: number | string;
   green?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between text-sm mb-3">
-      <span className="flex items-center gap-2 text-slate-400">
-        {icon} {label}
-      </span>
+    <div className="flex justify-between text-sm mb-3">
+      <span className="text-slate-400">{label}</span>
       <span className={`font-bold ${green ? "text-green-400" : ""}`}>
         {value}
       </span>
