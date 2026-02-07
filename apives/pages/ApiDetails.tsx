@@ -258,7 +258,7 @@ if (isLoading) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
       <div className="text-slate-400 font-mono text-[10px] uppercase tracking-widest">
-        Loading node...
+        Loading Details...
       </div>
     </div>
   );
@@ -269,7 +269,7 @@ if (!api) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
       <div className="text-red-400 font-mono text-[10px] uppercase tracking-widest">
-        Node not found or deleted
+        API not found or deleted
       </div>
     </div>
   );
@@ -279,7 +279,14 @@ if (!api) {
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
 
 
-      <div className="absolute top-20 left-4 lg:left-8 z-30">
+     <div
+  className="
+    absolute
+    top-24 md:top-28   /* 👈 desktop/laptop me niche */
+    left-4 lg:left-8
+    z-30
+  "
+>
   <BackButton />
 </div>
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
@@ -321,15 +328,19 @@ if (!api) {
     mb-2
     tracking-tight
     leading-[1.1]
-    flex items-center gap-1
     relative
   "
 >
-  <span className="break-words">{api.name}</span>
+  <span className="inline-flex flex-wrap items-center gap-2">
 
-  {/* ✅ VERIFIED BADGE */}
-  {isVerified && (
-      <span className="relative inline-flex items-center">
+    {/* API NAME */}
+    <span className="break-words">
+      {api.name}
+    </span>
+
+    {/* ✅ VERIFIED BADGE */}
+    {isVerified && (
+      <span className="relative inline-flex items-center shrink-0">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -337,7 +348,11 @@ if (!api) {
             setShowVerifyInfo(v => !v);
           }}
           title="Verified by Apives"
-          className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center shrink-0"
+          className="
+            h-6 w-6
+            md:h-8 md:w-8
+            flex items-center justify-center
+          "
         >
           <svg viewBox="0 0 24 24" className="w-full h-full">
             <path
@@ -353,6 +368,7 @@ if (!api) {
           </svg>
         </button>
 
+        {/* VERIFY DESCRIPTION */}
         {showVerifyInfo && (
           <span
             className="
@@ -360,11 +376,11 @@ if (!api) {
               top-full
               left-1/2
               -translate-x-1/2
-              mt-1.5
+              mt-2
               bg-green-600
               border border-green-700
               rounded-full
-              px-3 py-0.5
+              px-3 py-1
               text-[10px]
               text-white
               font-semibold
@@ -378,6 +394,26 @@ if (!api) {
         )}
       </span>
     )}
+
+    {/* 🆕 NEW BADGE (VERIFY ke baad hi) */}
+    {isNew(api.publishedAt) && (
+      <span
+        className="
+          text-[9px] md:text-[11px]
+          bg-white
+          text-black
+          px-2 py-0.5
+          rounded-full
+          font-black
+          uppercase
+          tracking-wide
+        "
+      >
+        New
+      </span>
+    )}
+
+  </span>
 </h1>
 
 <div className="flex gap-2 mt-2">
@@ -526,23 +562,22 @@ className="
       >
         {api.gallery.map((img: string, i: number) => (
           <div
-            key={i}
-            className="
-  flex-none
-  w-[90%]
-  aspect-[16/9]
-  md:aspect-[16/9]
-  rounded-xl
-  overflow-hidden
-              border border-white/10
-              bg-black
-            "
-          >
-            <img
-              src={img}
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
+  className="
+    flex-none
+    w-[90%]
+    aspect-[16/9]
+    max-h-[420px]   /* 👈 desktop limit */
+    rounded-xl
+    overflow-hidden
+    border border-white/10
+    bg-black
+  "
+>
+     <img
+  src={img}
+  className="w-full h-full object-contain"
+  draggable={false}
+/>
       </div>
     ))}
   </div>
@@ -738,3 +773,4 @@ className="
     </div>
   );
 };
+l
