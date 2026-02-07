@@ -89,6 +89,12 @@ const BrowseApiCard: React.FC<{
     const [upvotes, setUpvotes] = useState(api.upvotes);
 const [showArrows, setShowArrows] = useState(false);
 const [galleryIndex, setGalleryIndex] = useState(0);
+const [showVerifyInfo, setShowVerifyInfo] = useState(false);
+
+const verifiedApis = JSON.parse(
+  localStorage.getItem("apives_verified_apis") || "[]"
+);
+const isVerified = verifiedApis.includes(api._id);
 
 // 🔥 auto hide arrows after 3 sec
 useEffect(() => {
@@ -208,8 +214,68 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-2">
-                    <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors flex items-center gap-2">
-                        {api.name}
+                    <h3 className="
+  font-display
+  font-bold
+  text-white
+  text-base md:text-lg
+  leading-snug
+  group-hover:text-mora-400
+  transition-colors
+">
+  <span className="inline-flex items-center gap-1">
+    <span className="break-words">
+      {api.name}
+    </span>
+{isVerified && (
+  <span className="relative inline-flex items-center ml-1 shrink-0">
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowVerifyInfo(v => !v);
+      }}
+      title="Verified by Apives"
+      className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center"
+    >
+      <svg viewBox="0 0 24 24" className="w-full h-full">
+        <path
+          fill="#22C55E"
+          d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
+        />
+        <path
+          d="M9.2 12.3l2 2.1 4.6-4.8"
+          stroke="#000"
+          strokeWidth="2"
+          fill="none"
+        />
+      </svg>
+    </button>
+
+    {showVerifyInfo && (
+      <span className="
+        absolute
+        top-full
+        left-1/2
+        -translate-x-1/2
+        mt-1.5
+        bg-green-600
+        border border-green-700
+        rounded-full
+        px-3 py-0.5
+        text-[10px]
+        text-white
+        font-semibold
+        whitespace-nowrap
+        shadow-lg
+        z-50
+      ">
+        Manually Verified by Apives
+      </span>
+    )}
+  </span>
+)}
+
                         {isNew(api.createdAt) && (
   <span className="text-[8px] md:text-[10px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">
     New
@@ -234,13 +300,16 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
       className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
     >
       {api.gallery.slice(0, 5).map((img: string, i: number) => (
-        <div
-          key={i}
-          className="flex-none w-[90%] h-[150px]
-          rounded-xl overflow-hidden
-          border border-white/10
-          bg-black snap-center"
-        >
+        <div className="
+  flex-none
+  w-[90%]
+  aspect-[16/9]
+  rounded-xl
+  overflow-hidden
+  border border-white/10
+  bg-black
+  snap-center
+">
           <img
             src={img}
             alt={`${api.name}-${i}`}
