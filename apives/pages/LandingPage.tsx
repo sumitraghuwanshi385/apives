@@ -34,6 +34,22 @@ const trackSponsor = (sponsor: string, type: "impression" | "click") => {
     });
 };
 
+// AFTER ✅ ADD THIS
+const handleSponsorClick = (
+  sponsor: string,
+  baseUrl: string
+) => {
+  // 1️⃣ click track
+  trackSponsor(sponsor, "click");
+
+  // 2️⃣ utm url
+  const utmUrl =
+    `${baseUrl}?utm_source=apives&utm_medium=sponsor&utm_campaign=apives_api_marketplace`;
+
+  // 3️⃣ redirect
+  window.open(utmUrl, "_blank", "noopener,noreferrer");
+};
+
 /* ===== SECTION LOADER ===== */
 const SectionLoader: React.FC<{ text: string }> = ({ text }) => (
   <div className="w-full py-20 flex flex-col items-center justify-center gap-4">
@@ -658,10 +674,14 @@ opacity-60
   mb-4
 ">
   Apex Sponsor     </p>  <a
-  href="https://scoutpanels.com"
-  target="_blank"
-  rel="noopener noreferrer"
-  onClick={() => trackSponsor("scoutpanels", "click")}
+  href="#"
+  onClick={(e) => {
+    e.preventDefault();
+    handleSponsorClick(
+      "scoutpanels",
+      "https://scoutpanels.com"
+    );
+  }}
   className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl
   border border-amber-400/40
   bg-gradient-to-br from-amber-400/15 to-transparent
@@ -792,10 +812,14 @@ rounded-2xl bg-white/10 p-1"
     </p>
 
     <a
-      href="https://serpapi.com"
-      target="_blank"
-      rel="noopener noreferrer"
-onClick={() => trackSponsor("serpapi", "click")}
+  href="#"
+  onClick={(e) => {
+    e.preventDefault();
+    handleSponsorClick(
+      "serpapi",
+      "https://serpapi.com"
+    );
+  }}
       className="
   relative inline-flex items-center gap-3
   px-5 md:px-6 py-3 md:py-3.5
