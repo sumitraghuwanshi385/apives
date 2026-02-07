@@ -34,9 +34,15 @@ export default function SponsorAnalytics() {
   const userRaw = localStorage.getItem("mora_user");
   const user = userRaw ? JSON.parse(userRaw) : null;
 
-  if (!user || user.email !== "beatslevelone@gmail.com") {
-    return <Navigate to="/" replace />;
-  }
+  // ❌ Not logged in → login page
+if (!user) {
+  return <Navigate to="/access" replace />;
+}
+
+// ❌ Logged in but not admin → home
+if (user.email !== "beatslevelone@gmail.com") {
+  return <Navigate to="/" replace />;
+}
 
   const [data, setData] = useState<SponsorStat[]>([]);
   const [loading, setLoading] = useState(true);
