@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import {
-  ArrowLeft,
   BarChart3,
   MousePointerClick,
   Eye,
@@ -22,8 +21,6 @@ type Range = "24h" | "7d" | "30d";
 /* ================= PAGE ================= */
 
 export default function SponsorAnalytics() {
-  const navigate = useNavigate();
-
   /* 🔐 ADMIN GUARD */
   const userRaw = localStorage.getItem("mora_user");
   const user = userRaw ? JSON.parse(userRaw) : null;
@@ -41,8 +38,8 @@ export default function SponsorAnalytics() {
   useEffect(() => {
     setLoading(true);
 
-    // (future ready) range backend me add ho sakta
-    fetch(`https://apives.onrender.com/api/sponsor/stats`)
+    // future-ready: backend me range add ho sakta
+    fetch("https://apives.onrender.com/api/sponsor/stats")
       .then((res) => res.json())
       .then((json) => {
         setData(json || []);
@@ -101,38 +98,27 @@ export default function SponsorAnalytics() {
   /* ================= UI ================= */
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-12 py-10 pb-40">
-      {/* HEADER */}
-      <div className="flex items-center gap-4 mb-8">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-white"
-        >
-          <ArrowLeft size={18} />
-          Back
-        </button>
-      </div>
-
-      {/* TITLE */}
-      <div className="mb-8">
+    <div className="min-h-screen bg-black text-white px-4 md:px-12 pt-6 pb-36">
+      {/* TITLE (UPPER) */}
+      <div className="mb-6">
         <h1 className="text-3xl md:text-5xl font-bold mb-2">
           Sponsor Analytics
         </h1>
-        <p className="text-slate-400">
-          Real sponsor performance from production database
+        <p className="text-slate-400 max-w-xl">
+          Real-time sponsor performance from production database
         </p>
       </div>
 
-      {/* RANGE FILTER */}
-      <div className="flex gap-2 mb-10">
+      {/* RANGE FILTER – GREEN PILLS */}
+      <div className="flex gap-3 mb-10">
         {(["24h", "7d", "30d"] as Range[]).map((r) => (
           <button
             key={r}
             onClick={() => setRange(r)}
-            className={`px-4 py-2 rounded-lg text-sm border ${
+            className={`px-5 py-2 rounded-full text-sm font-medium transition ${
               range === r
-                ? "bg-white text-black"
-                : "border-white/20 text-slate-400 hover:text-white"
+                ? "bg-green-500 text-black shadow-md"
+                : "border border-green-500/40 text-green-400 hover:bg-green-500/10"
             }`}
           >
             {r}
@@ -142,8 +128,16 @@ export default function SponsorAnalytics() {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-        <KPI icon={<Eye size={18} />} label="Total Impressions" value={totalImpressions} />
-        <KPI icon={<MousePointerClick size={18} />} label="Total Clicks" value={totalClicks} />
+        <KPI
+          icon={<Eye size={18} />}
+          label="Total Impressions"
+          value={totalImpressions}
+        />
+        <KPI
+          icon={<MousePointerClick size={18} />}
+          label="Total Clicks"
+          value={totalClicks}
+        />
         <KPI
           icon={<BarChart3 size={18} />}
           label="Average CTR"
@@ -157,7 +151,7 @@ export default function SponsorAnalytics() {
         {data.map((s) => (
           <div
             key={s.sponsor}
-            className="bg-white/5 border border-white/10 rounded-2xl p-6"
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition"
           >
             <h3 className="text-lg font-semibold mb-4 capitalize">
               {s.sponsor}
@@ -170,35 +164,14 @@ export default function SponsorAnalytics() {
         ))}
       </div>
 
-      {/* SIMPLE GRAPH */}
-      <div className="mb-14">
-        <h2 className="text-lg font-semibold mb-4 text-slate-300">
-          Click Distribution
-        </h2>
-
-        <div className="flex items-end gap-4 h-40">
-          {data.map((s) => (
-            <div key={s.sponsor} className="flex-1">
-              <div
-                className="bg-mora-500 rounded-t-md"
-                style={{ height: `${Math.max(10, s.clicks * 10)}px` }}
-              />
-              <p className="text-xs text-center mt-2 text-slate-400 capitalize">
-                {s.sponsor}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* TABLE */}
+      {/* TABLE + EXPORT */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-slate-300">
           Detailed Breakdown
         </h2>
         <button
           onClick={downloadCSV}
-          className="flex items-center gap-2 text-sm text-slate-400 hover:text-white"
+          className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition"
         >
           <Download size={14} />
           Export CSV
@@ -219,7 +192,7 @@ export default function SponsorAnalytics() {
             {data.map((s) => (
               <tr
                 key={s.sponsor}
-                className="border-t border-white/5 hover:bg-white/5"
+                className="border-t border-white/5 hover:bg-white/5 transition"
               >
                 <td className="p-4 capitalize">{s.sponsor}</td>
                 <td className="p-4">{s.impressions}</td>
@@ -255,7 +228,11 @@ function KPI({
         {icon}
         <span className="text-sm">{label}</span>
       </div>
-      <div className={`text-3xl font-bold ${highlight ? "text-green-400" : ""}`}>
+      <div
+        className={`text-3xl font-bold ${
+          highlight ? "text-green-400" : ""
+        }`}
+      >
         {value}
       </div>
     </div>
