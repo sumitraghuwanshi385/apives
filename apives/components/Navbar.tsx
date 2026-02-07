@@ -20,6 +20,7 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [isLoggingOut, setIsLoggingOut] = useState(false);  const location = useLocation();
 const navigate = useNavigate();
 const isAuthPage = location.pathname === '/access';
+const isOnboardingPage = location.pathname === '/onboarding';
 const userRaw = localStorage.getItem("mora_user");
 const user = userRaw ? JSON.parse(userRaw) : null;
 const isAdmin = user?.email === "beatslevelone@gmail.com";
@@ -55,7 +56,7 @@ navigate('/');
 }, 1000);
 };
 
-if (isAuthPage) return null;
+if (isAuthPage || isOnboardingPage) return null;
 
 const navContainerStyle = isScrolled && !isOpen
 ? "top-4 md:top-6 w-[92%] max-w-7xl rounded-full border border-white/20 bg-white/[0.03] backdrop-blur-[40px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] py-1.5 md:py-2"
