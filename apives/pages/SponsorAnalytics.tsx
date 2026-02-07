@@ -106,16 +106,20 @@ export default function SponsorAnalytics() {
   /* ================= UI ================= */
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-12 pt-26 pb-36">
-      {/* TITLE */}
-      <div className="mb-6">
-        <h1 className="text-3xl md:text-5xl font-bold mb-2">
-          Sponsor Analytics
-        </h1>
-        <p className="text-slate-400 max-w-xl">
-          Real-time sponsor performance from production database
-        </p>
-      </div>
+  <div className="min-h-screen bg-black text-white px-4 md:px-12 pb-36">
+    
+    {/* NAVBAR SPACER */}
+    <div className="h-20 md:h-24" />
+
+    {/* TITLE */}
+    <div className="mb-6">
+      <h1 className="text-3xl md:text-5xl font-bold mb-2">
+        Sponsor Analytics
+      </h1>
+      <p className="text-slate-400 max-w-xl">
+        Real-time sponsor performance from production database
+      </p>
+    </div>
 
       {/* RANGE FILTER – GREEN PILLS */}
       <div className="flex gap-3 mb-10">
