@@ -176,7 +176,7 @@ transition-all
         </div>    
       </div>    
     </div>    {isOpen && (    
-  <div className="lg:hidden border-t border-white/10 animate-fade-in bg-black absolute w-full left-0 top-full shadow-2xl overflow-hidden rounded-b-2xl md:rounded-b-3xl">    
+  <div className="border-t border-white/10 animate-fade-in bg-black absolute w-full left-0 top-full shadow-2xl overflow-hidden rounded-b-2xl md:rounded-b-3xl">    
     <div className="px-4 pt-3 pb-4 space-y-1">    
       <MobileNavLink to="/" icon={HomeIcon} onClick={() => setIsOpen(false)}>Home</MobileNavLink>    
       <MobileNavLink to="/browse" icon={Search} onClick={() => setIsOpen(false)}>Explore APIs</MobileNavLink>    
