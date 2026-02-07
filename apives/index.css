@@ -1,0 +1,29 @@
+/* ===== GLOBAL SCROLLBAR FIX ===== */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto !important;
+  background-color: #000;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #22c55e; /* mora green */
+  border-radius: 10px;
+  border: 2px solid #0b0b0b;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #22c55e #0b0b0b;
+}
