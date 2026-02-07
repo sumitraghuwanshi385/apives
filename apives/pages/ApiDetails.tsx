@@ -295,13 +295,14 @@ if (!api) {
      <div
   className="
     absolute
-    top-24 md:top-28   /* 👈 desktop/laptop me niche */
+    top-24 md:top-28
     left-4 lg:left-8
     z-30
   "
 >
   <BackButton />
 </div>
+
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -579,7 +580,7 @@ className="
     flex-none
     w-[90%]
     aspect-[16/9]
-    max-h-[420px]   /* 👈 desktop limit */
+    max-h-[420px]
     rounded-xl
     overflow-hidden
     border border-white/10
