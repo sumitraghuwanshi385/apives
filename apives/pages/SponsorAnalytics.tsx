@@ -106,7 +106,7 @@ export default function SponsorAnalytics() {
   /* ================= UI ================= */
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-12 pt-6 pb-36">
+    <div className="min-h-screen bg-black text-white px-4 md:px-12 pt-26 pb-36">
       {/* TITLE */}
       <div className="mb-6">
         <h1 className="text-3xl md:text-5xl font-bold mb-2">
