@@ -1,3 +1,4 @@
+console.log("✅ sponsor.js file loaded");
 const express = require("express");
 const mongoose = require("mongoose");
 
@@ -41,6 +42,7 @@ router.post("/track", async (req, res) => {
 
 // 📊 Sponsor Analytics
 router.get("/stats", async (req, res) => {
+console.log("📊 /api/sponsor/stats HIT");
   try {
     const stats = await SponsorEvent.aggregate([
       {
