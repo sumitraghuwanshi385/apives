@@ -16,7 +16,7 @@ import { apiService } from '../services/apiClient';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
-  fetch("https://apives.onrender.com/api/sponsor/track", {
+ console.log("SPONSOR TRACK FIRED 👉", sponsor, type); fetch("https://apives.onrender.com/api/sponsor/track", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
