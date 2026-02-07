@@ -20,6 +20,9 @@ const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [isLoggingOut, setIsLoggingOut] = useState(false);  const location = useLocation();
 const navigate = useNavigate();
 const isAuthPage = location.pathname === '/access';
+const userRaw = localStorage.getItem("mora_user");
+const user = userRaw ? JSON.parse(userRaw) : null;
+const isAdmin = user?.email === "beatslevelone@gmail.com";
 
 useEffect(() => {
 const handleScroll = () => {
@@ -103,7 +106,21 @@ return (
                <Link to="/provider" className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 border border-white/10 hover:border-mora-500/50 text-slate-300 hover:text-mora-400 px-5 py-2 rounded-full transition-all duration-300">    
                   <LayoutDashboard size={14} />    
                   <span className="text-[10px] font-bold uppercase tracking-widest">Console</span>    
-               </Link>    
+               </Link>  
+{isAdmin && (
+  <Link
+    to="/admin/sponsors"
+    className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 
+               border border-white/10 hover:border-mora-500/50 
+               text-slate-300 hover:text-mora-400 
+               px-5 py-2 rounded-full transition-all duration-300"
+  >
+    <ShieldCheck size={14} />
+    <span className="text-[10px] font-bold uppercase tracking-widest">
+      Sponsor Analytics
+    </span>
+  </Link>
+)}  
 
                <button onClick={handleLogout} className="bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 p-2.5 rounded-full border border-white/10 transition-all">    
                   <LogOut size={14} />    
@@ -169,7 +186,16 @@ transition-all
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
         <>    
-          <MobileNavLink to="/provider" icon={LayoutDashboard} onClick={() => setIsOpen(false)}>Console</MobileNavLink>    
+          <MobileNavLink to="/provider" icon={LayoutDashboard} onClick={() => setIsOpen(false)}>Console</MobileNavLink>  
+{isAdmin && (
+  <MobileNavLink
+    to="/admin/sponsors"
+    icon={ShieldCheck}
+    onClick={() => setIsOpen(false)}
+  >
+    Sponsor Analytics
+  </MobileNavLink>
+)}  
           <button     
             onClick={handleLogout}     
             className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-red-400 hover:bg-red-500/5 transition-all uppercase tracking-wide mt-1"    
