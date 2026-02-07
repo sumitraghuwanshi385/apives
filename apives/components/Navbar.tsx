@@ -161,7 +161,7 @@ transition-all
 > 
 
   <Search size={14} className="md:w-5 md:h-5" />    
-</button>  <div className="lg:hidden relative">    
+</button>  <div className="relative">    
             <button     
               onClick={() => setIsOpen(!isOpen)}     
               className={`w-7 h-7 md:w-10 md:h-10 flex items-center justify-center rounded-full border shadow-lg transition-all duration-300 ${    
