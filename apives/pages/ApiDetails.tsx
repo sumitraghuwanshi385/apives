@@ -78,7 +78,9 @@ useEffect(() => {
 }, [showVerifyInfo]);
 
 const verifiedApis = getVerifiedApis();
-const isVerified = verifiedApis.includes(api?.id || api?._id);
+const isVerified =
+  !!api &&
+  verifiedApis.some(v => v === api.id || v === api._id);
 
    useEffect(() => {
   if (!id) return;
