@@ -258,7 +258,7 @@ if (isLoading) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
       <div className="text-slate-400 font-mono text-[10px] uppercase tracking-widest">
-        Loading node...
+        Loading Details...
       </div>
     </div>
   );
@@ -269,7 +269,7 @@ if (!api) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark-950">
       <div className="text-red-400 font-mono text-[10px] uppercase tracking-widest">
-        Node not found or deleted
+        API not found or deleted
       </div>
     </div>
   );
@@ -279,7 +279,7 @@ if (!api) {
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
 
 
-      <div className="absolute top-20 left-4 lg:left-8 z-30">
+      <div className="absolute top-20 md:top-28 left-4 lg:left-8 z-30">
   <BackButton />
 </div>
       <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
