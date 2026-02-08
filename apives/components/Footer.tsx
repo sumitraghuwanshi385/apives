@@ -68,6 +68,47 @@ return (
             <a href="https://x.com/useapives" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group">  
                 <XIcon className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />  
             </a>  
+
+
+  {/* /// green divider */}
+  <span
+    className="
+      text-mora-500
+      font-black
+      tracking-widest
+      text-[10px] md:text-[12px]
+      drop-shadow-[0_0_6px_rgba(34,197,94,0.9)]
+      animate-pulse
+      select-none
+    "
+  >
+    ///
+  </span>
+
+  {/* ☕ Buy Me a Coffee */}
+  <a
+    href="https://buymeacoffee.com/apives"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      flex items-center justify-center
+      w-8 h-8 md:w-9 md:h-9
+      rounded-full
+      bg-white/5 hover:bg-white/10
+      border border-white/5
+      transition-all
+      hover:scale-105
+      active:scale-95
+    "
+  >
+    <img
+      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
+      alt="Buy me a coffee"
+      className="w-4 h-4 md:w-5 md:h-5 object-contain"
+    />
+  </a>
+
+</div>
         </div>  
       </div>  
 
@@ -139,29 +180,6 @@ return (
 
     </div> 
 
-{/* ☕ Buy Me a Coffee */}
-<div className="mt-4 flex justify-center">
-  <a
-    href="https://buymeacoffee.com/apives"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="
-      transition-transform
-      hover:scale-105
-      active:scale-95
-    "
-  >
-    <img
-      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
-      alt="Buy me a coffee"
-      className="
-        h-9 md:h-10
-        object-contain
-        drop-shadow-[0_0_12px_rgba(255,193,7,0.35)]
-      "
-    />
-  </a>
-</div>
         </div>  
       
 
