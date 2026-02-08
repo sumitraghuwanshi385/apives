@@ -216,6 +216,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                 <div className="mb-2">
                     <h3
   className="
+    relative
     font-display
     font-bold
     text-white
@@ -223,15 +224,13 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     leading-snug
     group-hover:text-mora-400
     transition-colors
+    pr-16   /* 🔥 right space for badges */
   "
 >
- <span className="flex items-center gap-0.5">
     {/* ✅ API NAME */}
     <span className="flex-1 min-w-0 break-words leading-tight">
   {api.name}
 </span>
-
-<span className="flex items-center gap-0.5 shrink-0 whitespace-nowrap">
 
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
@@ -310,9 +309,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   New
 </span>
     )}
-
-  </span>
-</span>
+</div>
 </h3>
                      <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1"><Server size={10} /> {api.provider}</p>
