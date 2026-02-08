@@ -566,18 +566,22 @@ className="
       >
         {api.gallery.map((img: string, i: number) => (
           <div
-            key={i}
-            className="
-  flex-none
-  w-[90%]
-  aspect-[16/9]
-  md:aspect-[16/9]
-  rounded-xl
-  overflow-hidden
-              border border-white/10
-              bg-black
-            "
-          >
+  key={i}
+  className="
+    flex-none
+
+    w-[88%]            /* mobile */
+    md:w-[75%]         /* tablet */
+    lg:w-[65%]         /* desktop */
+
+    aspect-video
+    rounded-xl
+    overflow-hidden
+    border border-white/10
+    bg-black
+    snap-center
+  "
+>
             <img
               src={img}
               className="w-full h-full object-cover"
@@ -594,10 +598,17 @@ className="
     {galleryIndex > 0 && (
       <button
         onClick={() => {
-          const el = document.getElementById('api-gallery-strip');
-          if (!el) return;
-          el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
-        }}
+  const el = document.getElementById('api-gallery-strip');
+  if (!el) return;
+
+  const card = el.querySelector('div');
+  if (!card) return;
+
+  el.scrollBy({
+    left: -(card.clientWidth + 24),
+    behavior: 'smooth',
+  });
+}}
         className="
           absolute left-3 top-1/2 -translate-y-1/2
           h-8 md:h-10 w-8 md:w-10
@@ -620,10 +631,17 @@ className="
     {galleryIndex < api.gallery.length - 1 && (
       <button
         onClick={() => {
-          const el = document.getElementById('api-gallery-strip');
-          if (!el) return;
-          el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
-        }}
+  const el = document.getElementById('api-gallery-strip');
+  if (!el) return;
+
+  const card = el.querySelector('div');
+  if (!card) return;
+
+  el.scrollBy({
+    left: card.clientWidth + 24,
+    behavior: 'smooth',
+  });
+}}
         className="
           absolute right-3 top-1/2 -translate-y-1/2
           h-8 md:h-10 w-8 md:w-10
