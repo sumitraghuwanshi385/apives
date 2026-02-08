@@ -148,7 +148,7 @@ return (
     "
   >
     <img
-      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08-16-44-16-359_lpyta.png"
+      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
       alt="Buy me a coffee"
       className="
         h-9 md:h-10
