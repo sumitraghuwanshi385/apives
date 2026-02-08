@@ -214,7 +214,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-2">
-                    <<h3
+                    <h3
   className="
     relative
     font-display
