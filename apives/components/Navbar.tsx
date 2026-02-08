@@ -1,6 +1,6 @@
  import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Zap } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -92,7 +92,7 @@ return (
       <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">    
         <NavLink to="/" icon={HomeIcon}>Home</NavLink>    
         <NavLink to="/browse" icon={Search}>Explore APIs</NavLink>    
-        <NavLink to="/sponsorship" icon={Radio}>
+        <NavLink to="/sponsorship" icon={Handshake}>
   For Sponsorship
 </NavLink>   
       </div>    
