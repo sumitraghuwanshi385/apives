@@ -265,17 +265,12 @@ flex flex-col h-full"
   <div className="relative z-10 flex flex-col h-full">  
     <div className="mb-2">  
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
- <span className="inline-flex items-center align-middle">
-   <span className="
-  block
-  w-full
-  break-words
-  leading-tight
-">
+ <span className="inline-flex items-center flex-wrap gap-0.5 leading-none">
+   <span className="break-words leading-tight">
   {api.name}
 </span>
     {isVerified && (
-      <span className="relative inline-flex items-center">
+      <span className="inline-flex items-center shrink-0">
         <button
           onClick={(e) => {
             e.preventDefault();
