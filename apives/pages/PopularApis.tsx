@@ -395,7 +395,13 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
                     <div className="flex gap-3 md:gap-4">
                         <div className="flex items-center gap-1 text-[10px] md:text-xs text-slate-500"><Activity size={12} className="text-mora-500" /><span className="text-slate-300">{api.latency}</span></div>
                         <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs text-slate-500 group/like">
-                            <Heart size={12} className={`${isLiked ? 'text-red-500 fill-current shadow-[0_0_10px_rgba(239,68,68,0.3)]' : 'text-red-500/50 group-hover/like:text-red-500'} transition-all`} />
+                            <Heart
+  size={12}
+  className={`${isLiked
+    ? 'text-red-500 fill-current drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]'
+    : 'text-red-500/50 group-hover/like:text-red-500'
+  } transition-all`}
+/>
                             <span className="text-slate-300 font-mono">{upvotes}</span>
                         </button>
                     </div>
