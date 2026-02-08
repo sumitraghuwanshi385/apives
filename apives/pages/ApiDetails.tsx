@@ -294,10 +294,12 @@ if (!api) {
     <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
 
 
-      <div className="absolute top-20 md:top-28 left-4 lg:left-8 z-30">
-  <BackButton />
+      <div className="absolute top-16 md:top-24 left-4 lg:left-8 z-30">
+  <div className="mb-4 md:mb-6">
+    <BackButton />
+  </div>
 </div>
-      <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
+    <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
            
@@ -398,23 +400,22 @@ if (!api) {
     )}
 
     {/* 🆕 NEW BADGE — 15 DAYS LOGIC */}
-    {isVerified && isNew(api.publishedAt) && (
-      <span className="
-        text-[9px] md:text-[11px]
-        bg-white
-        text-black
-        px-2 py-0.5
-        rounded-full
-        font-black
-        uppercase
-        tracking-wide
-      ">
-        New
-      </span>
-    )}
-
+    {isNew(api.publishedAt) && (
+  <span
+    className="
+      text-[9px] md:text-[11px]
+      bg-white
+      text-black
+      px-2 py-0.5
+      rounded-full
+      font-black
+      uppercase
+      tracking-wide
+    "
+  >
+    New
   </span>
-</h1>
+)}
 
 <div className="flex gap-2 mt-2">
   {isAdminUser() && !isVerified && (
