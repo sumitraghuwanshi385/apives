@@ -135,6 +135,29 @@ return (
                     </button>  
                 </div>  
             </form>  
+{/* ☕ Buy Me a Coffee */}
+<div className="mt-4 flex justify-center">
+  <a
+    href="https://buymeacoffee.com/apives"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      transition-transform
+      hover:scale-105
+      active:scale-95
+    "
+  >
+    <img
+      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08-16-44-16-359_lpyta.png"
+      alt="Buy me a coffee"
+      className="
+        h-9 md:h-10
+        object-contain
+        drop-shadow-[0_0_12px_rgba(255,193,7,0.35)]
+      "
+    />
+  </a>
+</div>
         </div>  
       </div>  
 
