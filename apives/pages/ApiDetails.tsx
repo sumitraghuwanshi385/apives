@@ -340,15 +340,16 @@ if (!api) {
     leading-[1.1]
   "
 >
-<span className="inline-flex items-center align-middle">
+<span className="inline-flex items-center flex-wrap gap-0.5 leading-none">
+
     {/* API NAME */}
-    <span className="break-words">
-      {api.name}
+    <span className="break-words leading-tight">
+    {api.name}
     </span>
 
     {/* ✅ VERIFIED BADGE */}
     {isVerified && (
-      <span className="relative inline-flex items-center shrink-0">
+      <span className="inline-flex items-center shrink-0">
         <button
           type="button"
           onClick={(e) => {
