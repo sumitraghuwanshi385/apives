@@ -225,16 +225,15 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     transition-colors
   "
 >
- <span className="inline-flex items-center
-flex-wrap gap-0.5 leading-none">
+ <span className="inline-flex items-center gap-0.5 align-baseline">
     {/* ✅ API NAME */}
-    <span className="break-words leading-tight">
-      {api.name}
-    </span>
+    <span className="inline-block break-words leading-tight">
+  {api.name}
+</span>
 
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
-      <span className="inline-flex items-center shrink-0">
+      <span className="inline-flex items-center align-baseline shrink-0">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -291,22 +290,23 @@ flex-wrap gap-0.5 leading-none">
     {/* ✅ NEW BADGE — BASELINE ALIGNED (NICHE NAHI) */}
     {isNew(api.createdAt) && (
       <span className="
-        ml-1
-        inline-flex
-        items-center
-        text-[8px] md:text-[9px]
-        bg-white
-        text-black
-        px-2
-        py-0.5
-        rounded-full
-        font-bold
-        uppercase
-        tracking-wide
-        leading-none
-      ">
-        New
-      </span>
+  ml-1
+  inline-flex
+  items-center
+  align-baseline
+  text-[8px] md:text-[9px]
+  bg-white
+  text-black
+  px-2
+  py-0.5
+  rounded-full
+  font-bold
+  uppercase
+  tracking-wide
+  leading-none
+">
+  New
+</span>
     )}
 
   </span>
