@@ -253,6 +253,19 @@ const rank =
   upvotes >= 5   ? RANK_STYLES[2] :
   null;
 
+// 🆕 NEW BADGE LOGIC — last 15 days
+const isNew = (date?: string) => {
+  if (!date) return false;
+
+  const created = new Date(date);
+  const now = new Date();
+
+  const diffDays =
+    (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+
+  return diffDays <= 15;
+};
+
 // ⏳ LOADING
 if (isLoading) {
   return (
