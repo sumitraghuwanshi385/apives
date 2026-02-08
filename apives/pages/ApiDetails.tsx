@@ -340,7 +340,7 @@ if (!api) {
     leading-[1.1]
   "
 >
-  <span className="inline-flex flex-wrap items-center gap-2">
+ <span className="inline-flex flex-wrap items-center gap-1 md:gap-2">
 
     {/* API NAME */}
     <span className="break-words">
@@ -415,7 +415,7 @@ if (!api) {
   >
     New
   </span>
-)}
+</h1>
 
 <div className="flex gap-2 mt-2">
   {isAdminUser() && !isVerified && (
