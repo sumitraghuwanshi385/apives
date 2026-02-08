@@ -265,7 +265,7 @@ flex flex-col h-full"
   <div className="relative z-10 flex flex-col h-full">  
     <div className="mb-2">  
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
-  <span className="inline-flex items-center gap-0.5 align-middle">
+ <span className="inline-flex items-center align-middle">
    <span className="
   block
   w-full
@@ -434,7 +434,13 @@ flex flex-col h-full"
         </div>  
 
         <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like">  
-          <Heart size={12} className={`${isLiked ? 'text-red-500 fill-current shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'text-red-500/50 group-hover/like:text-red-500'} transition-all`} />  
+       <Heart
+  size={12}
+  className={`${isLiked
+    ? 'text-red-500 fill-current drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]'
+    : 'text-red-500/50 group-hover/like:text-red-500'
+  } transition-all`}
+/>
           <span className="text-slate-300 font-mono">{displayUpvotes}</span>  
         </button>  
       </div>  
