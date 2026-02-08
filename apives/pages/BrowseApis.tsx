@@ -242,7 +242,11 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
             setShowVerifyInfo(v => !v);
           }}
           title="Verified by Apives"
-          className="h-4 w-4 md:h-5 md:w-5 flex items-center justify-center"
+          className="
+    h-5 w-5
+    md:h-6 md:w-6
+    flex items-center justify-center
+    shrink-0"
         >
           <svg viewBox="0 0 24 24" className="w-full h-full">
             <path
