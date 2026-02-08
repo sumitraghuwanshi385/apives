@@ -340,8 +340,7 @@ if (!api) {
     leading-[1.1]
   "
 >
- <span className="inline-flex flex-wrap items-center gap-1 md:gap-2">
-
+<span className="inline-flex items-center align-middle">
     {/* API NAME */}
     <span className="break-words">
       {api.name}
@@ -399,23 +398,26 @@ if (!api) {
       </span>
     )}
 
-    {/* 🆕 NEW BADGE — 15 DAYS LOGIC */}
-    {isNew(api.publishedAt) && (
-  <span
-    className="
-      text-[9px] md:text-[11px]
-      bg-white
-      text-black
-      px-2 py-0.5
-      rounded-full
-      font-black
-      uppercase
-      tracking-wide
-    "
-  >
-    New
-  </span>
-)}
+    {/* ✅ NEW BADGE — BASELINE ALIGNED (NICHE NAHI) */}
+    {isNew(api.createdAt) && (
+      <span className="
+        ml-1
+        inline-flex
+        items-center
+        text-[8px] md:text-[9px]
+        bg-white
+        text-black
+        px-2
+        py-0.5
+        rounded-full
+        font-bold
+        uppercase
+        tracking-wide
+        leading-none
+      ">
+        New
+      </span>
+    )}
 
   </span>
 </h1>
