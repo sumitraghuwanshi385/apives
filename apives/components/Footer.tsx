@@ -130,7 +130,16 @@ return (
       <div className="md:col-span-2">  
         <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">Legal</h3>  
         <ul className="space-y-2 md:space-y-3">  
-          <li><Link to="/privacy" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>  
+          <li><Link to="/privacy" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+{/* 🍪 Cookie Policy */}
+  <li>
+    <Link
+      to="/cookies"
+      className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+    >
+      Cookie Policy
+    </Link>
+  </li>  
           <li><Link to="/terms" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Terms of Service</Link></li>  
         </ul>  
       </div>  
