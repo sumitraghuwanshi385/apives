@@ -63,7 +63,7 @@ function App() {
             {/* Footer pages */}
             <Route path="/enterprise" element={<EnterprisePage />} />
             <Route path="/docs" element={<DocumentationPage />} />
-            <Route path="/status" element={<StatusPage />} /
+            <Route path="/status" element={<StatusPage />} />
             <Route path="/cookies" element={<CookiesPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
