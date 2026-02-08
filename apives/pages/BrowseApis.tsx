@@ -214,9 +214,8 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-2">
-                    <h3
+          <h3
   className="
-    relative
     font-display
     font-bold
     text-white
@@ -224,28 +223,18 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     leading-snug
     group-hover:text-mora-400
     transition-colors
-    pr-16
   "
 >
-  {/* ✅ API NAME */}
-  <span className="block break-words leading-tight">
-    {api.name}
-  </span>
+  <span className="inline-flex items-center flex-wrap gap-0.5 leading-none">
 
-  {/* ✅ BADGES CONTAINER — ABSOLUTE, STABLE */}
-  <div
-    className="
-      absolute
-      right-0
-      top-[0.15em]
-      flex
-      items-center
-      gap-1
-    "
-  >
+    {/* ✅ API NAME */}
+    <span className="break-words leading-tight">
+      {api.name}
+    </span>
+
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
-      <span className="inline-flex items-center align-baseline shrink-0">
+      <span className="inline-flex items-center shrink-0">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -302,27 +291,28 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     {/* ✅ NEW BADGE — BASELINE ALIGNED (NICHE NAHI) */}
     {isNew(api.createdAt) && (
       <span className="
-  ml-1
-  inline-flex
-  items-center
-  align-baseline
-  text-[8px] md:text-[9px]
-  bg-white
-  text-black
-  px-2
-  py-0.5
-  rounded-full
-  font-bold
-  uppercase
-  tracking-wide
-  leading-none
-">
-  New
-</span>
+        ml-1
+        inline-flex
+        items-center
+        text-[8px] md:text-[9px]
+        bg-white
+        text-black
+        px-2
+        py-0.5
+        rounded-full
+        font-bold
+        uppercase
+        tracking-wide
+        leading-none
+      ">
+        New
+      </span>
     )}
-</div>
+
+  </span>
 </h3>
-                     <div className="flex items-center gap-2 mt-1">
+           
+              <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1"><Server size={10} /> {api.provider}</p>
                     </div>
                 </div>
