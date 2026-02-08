@@ -465,13 +465,17 @@ const [topIds, setTopIds] = useState<string[]>([]);
     const lowerTerm = searchTerm.toLowerCase();
 
     const filtered = allApis.filter(api =>
-      (selectedCategory === 'All' || api.category === selectedCategory) &&
-      (
-        api.name.toLowerCase().includes(lowerTerm) ||
-        api.description.toLowerCase().includes(lowerTerm) ||
-        api.provider.toLowerCase().includes(lowerTerm)
-      )
-    );
+  (selectedCategory === 'All' || api.category === selectedCategory) &&
+  (
+    api.name.toLowerCase().includes(lowerTerm) ||
+    api.description.toLowerCase().includes(lowerTerm) ||
+    api.provider.toLowerCase().includes(lowerTerm) ||
+    (Array.isArray(api.tags) &&
+      api.tags.some(tag =>
+        tag.toLowerCase().includes(lowerTerm)
+      ))
+  )
+);
 
     setFilteredApis(shuffleArray(filtered));
     setIsLoading(false);
@@ -489,15 +493,15 @@ const [topIds, setTopIds] = useState<string[]>([]);
 <div className="text-center mb-8 md:mb-12">
   {/* ICON CHIP */}
   <div className="inline-flex items-center justify-center p-3 md:p-3.5 bg-white/10 rounded-2xl mb-4">
-  <LayoutGrid className="text-mora-500" size={24} md:size={28} />
+  <Search className="text-mora-500" size={24} md:size={28} />
 </div>
 
   <h1 className="text-3xl md:text-6xl font-display font-bold text-white mb-2 md:mb-4 tracking-tight">
-    The Universal Grid
+    Explore APIs 
   </h1>
 
   <p className="text-slate-400 text-sm md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
-    Explore Trusted APIs And Endpoints.
+    Browse Trusted APIs And Endpoints.
   </p>
 </div>
         <div className="max-w-3xl mx-auto mb-10 md:mb-16 relative">
