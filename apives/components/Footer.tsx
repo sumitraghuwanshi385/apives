@@ -179,8 +179,6 @@ return (
  </div>  
 
     </div> 
-
-        </div>  
       
 
     <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
