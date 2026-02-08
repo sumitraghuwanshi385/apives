@@ -214,16 +214,16 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     transition-colors
   "
 >
-  <span className="inline whitespace-normal align-baseline">
+  <span className="inline-flex items-center flex-wrap gap-0.5 leading-none">
 
     {/* ✅ API NAME */}
-    <span className="break-words leading-tight inline">
+    <span className="break-words leading-tight">
       {api.name}
     </span>
 
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
-      <span className="relative inline-flex items-center align-baseline ml-1 shrink-0">
+      <span className="inline-flex items-center shrink-0">
         <button
           onClick={(e) => {
             e.preventDefault();
