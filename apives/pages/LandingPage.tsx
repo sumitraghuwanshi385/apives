@@ -325,13 +325,30 @@ flex flex-col h-full"
       </span>
     )}
 
-    {isNew(api.publishedAt) && (
-      <span className="text-[8px] bg-white text-black px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+   {/* ✅ NEW BADGE — BASELINE ALIGNED (NICHE NAHI) */}
+    {isNew(api.createdAt) && (
+      <span className="
+        ml-1
+        inline-flex
+        items-center
+        text-[8px] md:text-[9px]
+        bg-white
+        text-black
+        px-2
+        py-0.5
+        rounded-full
+        font-bold
+        uppercase
+        tracking-wide
+        leading-none
+      ">
         New
       </span>
     )}
+
   </span>
 </h3>
+
       <div className="flex items-center gap-2 mt-1">  
         <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 uppercase tracking-tighter">  
           <Server size={10} className="text-mora-500/50" /> {api.provider}  
