@@ -92,7 +92,9 @@ return (
       <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">    
         <NavLink to="/" icon={HomeIcon}>Home</NavLink>    
         <NavLink to="/browse" icon={Search}>Explore APIs</NavLink>    
-        <NavLink to="/submit" icon={PlusCircle}>Submit API</NavLink>    
+        <NavLink to="/sponsorship" icon={Radio}>
+  For Sponsorship
+</NavLink>   
       </div>    
     </div>    
 
