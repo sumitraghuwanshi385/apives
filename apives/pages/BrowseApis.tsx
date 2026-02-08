@@ -320,6 +320,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
   New
 </span>
     )}
+</div>
 </h3>
                      <div className="flex items-center gap-2 mt-1">
                          <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1"><Server size={10} /> {api.provider}</p>
