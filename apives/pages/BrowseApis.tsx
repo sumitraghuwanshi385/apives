@@ -225,16 +225,16 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     transition-colors
   "
 >
- <span className="inline whitespace-normal align-baseline">
+ <span className="inline-flex items-center flex-wrap gap-1 leading-none">
 
     {/* ✅ API NAME */}
-    <span className="break-words leading-tight inline">
+    <span className="break-words leading-tight">
       {api.name}
     </span>
 
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
-      <span className="relative inline-flex items-center align-baseline ml-1 shrink-0">
+      <span className="inline-flex items-center shrink-0">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -436,7 +436,6 @@ export const BrowseApis: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 const [topIds, setTopIds] = useState<string[]>([]);
   const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
-  const [visibleCount, setVisibleCount] = useState(12);
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -569,7 +568,7 @@ const [topIds, setTopIds] = useState<string[]>([]);
         ) : filteredApis.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
-              {filteredApis.slice(0, visibleCount).map((api) => (
+              {filteredApis.map((api) => (
                 <BrowseApiCard
     key={api._id}
     api={api}
@@ -577,16 +576,6 @@ const [topIds, setTopIds] = useState<string[]>([]);
   />
 ))}
             </div>
-            {visibleCount < filteredApis.length && (
-                <div className="flex justify-center">
-                    <button 
-                        onClick={() => setVisibleCount(v => v + 12)}
-                        className="px-8 py-3 md:px-10 md:py-4 bg-white/5 border border-white/10 rounded-full text-white font-bold text-[10px] md:text-xs uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
-                    >
-                        Load More APIs
-                    </button>
-                </div>
-            )}
           </>
         ) : (
             <div className="text-center py-20 px-6 animate-fade-in">
