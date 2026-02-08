@@ -100,9 +100,8 @@ return (
       className="h-8 md:h-9 object-contain"
     />
   </a>
-</div>
+</div>  
       </div>  
-</div>
 
       <div className="md:col-span-2">  
         <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">Platform</h3>  
@@ -167,10 +166,10 @@ return (
                         <ArrowRight size={12} />  
                     </button>  
                 </div>  
-           </form>  
- </div>  
-    </div> 
-      
+            </form>  
+        </div>  
+      </div>  
+  </div>  
 
     <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
   <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2">
