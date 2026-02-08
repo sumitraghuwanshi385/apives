@@ -135,6 +135,10 @@ return (
                     </button>  
                 </div>  
             </form>  
+ </div>  
+
+    </div> 
+
 {/* ☕ Buy Me a Coffee */}
 <div className="mt-4 flex justify-center">
   <a
@@ -159,9 +163,7 @@ return (
   </a>
 </div>
         </div>  
-      </div>  
-
-    </div>  
+      
 
     <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
   <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2">
