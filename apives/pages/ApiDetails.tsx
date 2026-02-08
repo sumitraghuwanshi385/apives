@@ -415,6 +415,9 @@ if (!api) {
   >
     New
   </span>
+)}
+
+  </span>
 </h1>
 
 <div className="flex gap-2 mt-2">
