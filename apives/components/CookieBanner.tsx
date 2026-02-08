@@ -35,7 +35,7 @@ export const CookieBanner = () => {
         justify-between
       ">
         <p className="text-sm text-slate-300 leading-relaxed">
-          We use cookies to improve your experience and analyze traffic.
+          We use cookies to improve Apives. Choose what works for you.
           <span className="text-slate-400"> You can accept or reject.</span>
         </p>
 
