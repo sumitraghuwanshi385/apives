@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShieldCheck, Activity, FileText, Lock, CheckCircle2, ChevronRight, List, LifeBuoy, HelpCircle, Mail, Handshake, Target, Rocket, Zap,  Crown,
   Layers,
   Compass,
-  TerminalSquare,
+  TerminalSquare,Cookie, 
   Users } from 'lucide-react';
 import { BackButton } from '../components/BackButton';
 import { CustomSelect } from '../components/CustomSelect';
@@ -305,7 +305,7 @@ export const CookiesPage: React.FC = () => (
   <PageLayout
     title="Cookie Policy"
     subtitle="A simple and transparent explanation of how cookies help Apives work better for you."
-    icon={ShieldCheck}
+    icon={Cookie}
   >
     <div className="prose prose-invert max-w-none text-slate-400 space-y-6">
 
@@ -324,7 +324,7 @@ export const CookiesPage: React.FC = () => (
           How Apives uses cookies
         </h3>
         <p className="text-xs leading-relaxed">
-          Apives uses cookies only to support basic platform functionality — like
+          Apives uses cookies only to support basic platform functionality like
           remembering your session, keeping you logged in, and maintaining a consistent
           experience as you explore APIs.
         </p>
@@ -336,7 +336,7 @@ export const CookiesPage: React.FC = () => (
         </h3>
         <p className="text-xs leading-relaxed">
           We do not use cookies for intrusive tracking, cross-site profiling,
-          or selling personal data. Our goal is usability — not surveillance.
+          or selling personal data. Our goal is usability, not surveillance.
         </p>
       </section>
 
