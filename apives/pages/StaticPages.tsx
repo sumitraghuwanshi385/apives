@@ -301,6 +301,68 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         </PageLayout>
     );
 };
+export const CookiesPage: React.FC = () => (
+  <PageLayout
+    title="Cookie Policy"
+    subtitle="A simple and transparent explanation of how cookies help Apives work better for you."
+    icon={ShieldCheck}
+  >
+    <div className="prose prose-invert max-w-none text-slate-400 space-y-6">
+
+      <section>
+        <h3 className="text-white text-lg font-bold mb-2">
+          What are cookies?
+        </h3>
+        <p className="text-xs leading-relaxed">
+          Cookies are small pieces of data stored in your browser. They help websites
+          remember simple preferences and keep things running smoothly between visits.
+        </p>
+      </section>
+
+      <section>
+        <h3 className="text-white text-lg font-bold mb-2">
+          How Apives uses cookies
+        </h3>
+        <p className="text-xs leading-relaxed">
+          Apives uses cookies only to support basic platform functionality — like
+          remembering your session, keeping you logged in, and maintaining a consistent
+          experience as you explore APIs.
+        </p>
+      </section>
+
+      <section>
+        <h3 className="text-white text-lg font-bold mb-2">
+          What we don’t do
+        </h3>
+        <p className="text-xs leading-relaxed">
+          We do not use cookies for intrusive tracking, cross-site profiling,
+          or selling personal data. Our goal is usability — not surveillance.
+        </p>
+      </section>
+
+      <section>
+        <h3 className="text-white text-lg font-bold mb-2">
+          Your choice
+        </h3>
+        <p className="text-xs leading-relaxed">
+          You’re free to accept or decline cookies. Even if you choose not to allow them,
+          most parts of Apives will continue to work normally.
+        </p>
+      </section>
+
+      <section>
+        <h3 className="text-white text-lg font-bold mb-2">
+          Questions?
+        </h3>
+        <p className="text-xs leading-relaxed">
+          If you have any questions about cookies or privacy, feel free to reach out at
+          <span className="text-mora-400 font-semibold"> beatslevelone@gmail.com</span>.
+        </p>
+      </section>
+
+    </div>
+  </PageLayout>
+);
 
 export const PrivacyPage: React.FC = () => (
   <PageLayout title="Privacy Policy" subtitle="How we handle your data. Simple and clear rules for our users." icon={Lock}>
