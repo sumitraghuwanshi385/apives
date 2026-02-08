@@ -225,11 +225,13 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     transition-colors
   "
 >
- <span className="inline-flex items-center gap-0.5 align-baseline">
+ <span className="inline items-baseline">
     {/* ✅ API NAME */}
-    <span className="inline-block break-words leading-tight">
+    <span className="inline break-words leading-tight">
   {api.name}
 </span>
+
+<span className="inline-flex items-center gap-1 whitespace-nowrap align-baseline">
 
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
