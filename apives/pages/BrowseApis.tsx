@@ -214,7 +214,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="mb-2">
-                    <h3
+                    <<h3
   className="
     relative
     font-display
@@ -224,14 +224,25 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     leading-snug
     group-hover:text-mora-400
     transition-colors
-    pr-16   /* 🔥 right space for badges */
+    pr-16
   "
 >
-    {/* ✅ API NAME */}
-    <span className="flex-1 min-w-0 break-words leading-tight">
-  {api.name}
-</span>
+  {/* ✅ API NAME */}
+  <span className="block break-words leading-tight">
+    {api.name}
+  </span>
 
+  {/* ✅ BADGES CONTAINER — ABSOLUTE, STABLE */}
+  <div
+    className="
+      absolute
+      right-0
+      top-[0.15em]
+      flex
+      items-center
+      gap-1
+    "
+  >
     {/* ✅ VERIFIED BADGE — NAME KE BILKUL PASS */}
     {isVerified && (
       <span className="inline-flex items-center align-baseline shrink-0">
