@@ -225,8 +225,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     transition-colors
   "
 >
- <span className="inline-flex items-center flex-wrap gap-1 leading-none">
-
+ <span className= "inline-flex items-center align-middle">
     {/* ✅ API NAME */}
     <span className="break-words leading-tight">
       {api.name}
