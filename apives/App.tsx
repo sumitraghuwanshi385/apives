@@ -13,6 +13,18 @@ import { FreshApis } from './pages/FreshApis';
 import { PopularApis } from './pages/PopularApis';
 import { OnboardingPage } from './pages/Onboarding';
 import { EnterprisePage, DocumentationPage, StatusPage, PrivacyPage, TermsPage, SupportPage, SponsorshipPage } from './pages/StaticPages';
+import { CookieBanner } from "./components/CookieBanner";
+
+function App() {
+  return (
+    <>
+      <CookieBanner />
+      {/* baaki routes / layout */}
+    </>
+  );
+}
+
+export default App;
 
 // Scroll to top on route change
 const ScrollToTop = () => {
