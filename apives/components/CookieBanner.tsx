@@ -78,15 +78,24 @@ export const CookieBanner = () => {
       text-green-400
       px-5 py-2.5
       rounded-full
-      flex items-center justify-center
+      flex items-center justify-center gap-1
       text-sm font-medium
       shadow-[0_8px_30px_rgba(0,0,0,0.5)]
       whitespace-nowrap
     "
   >
-    All set. Enjoy Apives 💚
-        </div>
-      )}
-    </>
-  );
-};
+    <span>Thank you. Enjoy Apives</span>
+
+    <span
+      className="
+        text-green-500
+        drop-shadow-[0_0_6px_rgba(34,197,94,0.9)]
+        flex items-center
+      "
+    >
+      <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+        <path d="M12 21s-7.5-4.35-10-9.28C.55 8.6 2.3 5.5 5.6 5.5c2 0 3.4 1.2 4.4 2.6 1-1.4 2.4-2.6 4.4-2.6 3.3 0 5.05 3.1 3.6 6.22C19.5 16.65 12 21 12 21z" />
+      </svg>
+    </span>
+  </div>
+)}
