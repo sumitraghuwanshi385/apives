@@ -54,8 +54,11 @@ export const CookieBanner = () => {
     h-8 w-8
     rounded-full
     bg-black/70 backdrop-blur
-    border border-white/10
+    border border-green-500/30
+shadow-[0_0_10px_rgba(34,197,94,0.25)]
+hover:border-green-400/50
     hover:bg-white/20
+hover:shadow-[0_0_18px_rgba(34,197,94,0.55)]
     flex items-center justify-center
     transition
   "
