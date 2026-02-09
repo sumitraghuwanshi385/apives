@@ -62,7 +62,7 @@ export const CookieBanner = () => {
           {/* TEXT */}
           <div className="pr-10">
             <p className="text-sm text-slate-300 leading-relaxed">
-              We use cookies to improve Apives. Choose what works for you.
+              We use cookies to improve Apives.
             </p>
 
             <p className="text-xs text-slate-400 mt-1">
