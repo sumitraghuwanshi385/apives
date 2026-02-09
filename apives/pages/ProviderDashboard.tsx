@@ -8,9 +8,6 @@ import {
 import {
   DndContext,
   closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
 } from "@dnd-kit/core";
 
 import {
