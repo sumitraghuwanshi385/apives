@@ -471,20 +471,8 @@ const addEditFeature = () => {
                       <div className="space-y-1.5">
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Description</label>
                           <textarea rows={6} value={editingNode.description} onChange={(e) => setEditingNode({...editingNode, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 outline-none resize-none text-sm" />
-                      </div>
-
-                      
-    id={img}
-    src={img}
-    onRemove={() =>
-      setEditingNode({
-        ...editingNode,
-        gallery: editingNode.gallery.filter((i: string) => i !== img),
-      })
-    }
-  />
-))}
-
+                      </div>                  
+   
  {/* Visual Proofs */}
                       <div className="space-y-4 pt-4 border-t border-white/5">
                           <div className="flex items-center justify-between ml-1">
