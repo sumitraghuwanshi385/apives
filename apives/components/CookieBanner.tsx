@@ -71,13 +71,15 @@ export const CookieBanner = () => {
       {/* ✅ TOAST (independent) */}
       {showToast && (
         <div className="
-  fixed bottom-24 left-1/2 -translate-x-1/2 z-[200]
-  bg-green-500 text-black
+  fixed bottom-16 left-1/2 -translate-x-1/2 z-[200]
+  bg-black/60 backdrop-blur-xl
+  border border-green-500/30
+  text-green-400
   h-10 px-6
   rounded-full
   flex items-center justify-center
   text-sm font-semibold
-  shadow-lg
+  shadow-[0_10px_40px_rgba(0,0,0,0.6)]
   whitespace-nowrap
 ">
           Preferences saved. Enjoy exploring Apives 💚
