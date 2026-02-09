@@ -381,10 +381,10 @@ export const PrivacyPage: React.FC = () => (
         </section>
         <section>
   <h3 className="text-white text-lg font-bold mb-2">
-    3. Platform Integrity & Verification
+    3. Platform Trust & Verification 
   </h3>
   <p className="text-xs leading-relaxed">
-    Apives highlights APIs based on quality, clarity, and platform standards. Verified badges indicate that a listing has been manually reviewed for accuracy and authenticity at the time of approval. Verification does not imply ownership, control, or ongoing monitoring of third-party services. Our goal is to reduce noise and help developers discover reliable APIs with confidence.
+    Apives highlights APIs based on quality, clarity, and platform standards. Verified badges indicate that a listing has been manually reviewed for accuracy and authenticity. Verification does not imply ownership, control, or ongoing monitoring of third-party services. Our goal is to reduce noise and help developers discover reliable APIs with confidence.
   </p>
 </section>
         <section>
@@ -395,10 +395,18 @@ export const PrivacyPage: React.FC = () => (
         </section>
         <section>
             <h3 className="text-white text-lg font-bold mb-2">5. Deleting Your Info</h3>
-            <p className="text-xs leading-relaxed">
-                Your data is yours. If you want to delete your account or any API you listed, just send us an email at our support address: beatslevelone@gmail.com. We'll manually wipe your data.
-            </p>
-        </section>
+        <p className="text-xs leading-relaxed">
+    Your data is yours. If you want to delete your account or any API you listed,
+    just email us at{" "}
+    <a
+      href="mailto:beatslevelone@gmail.com"
+      className="text-green-400 hover:text-green-300 underline underline-offset-2 transition"
+    >
+      beatslevelone@gmail.com
+    </a>.
+    We’ll manually remove your information.
+  </p>
+</section>
     </div>
   </PageLayout>
 );
