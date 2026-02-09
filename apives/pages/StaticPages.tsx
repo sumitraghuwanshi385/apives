@@ -380,11 +380,13 @@ export const PrivacyPage: React.FC = () => (
             </p>
         </section>
         <section>
-            <h3 className="text-white text-lg font-bold mb-2">3. Tracking & Cookies</h3>
-            <p className="text-xs leading-relaxed">
-                We might use small cookies to remember your login session. We don't use aggressive tracking to follow you around the internet. We aren't in the business of selling your data to advertisers.
-            </p>
-        </section>
+  <h3 className="text-white text-lg font-bold mb-2">
+    3. Platform Integrity & Verification
+  </h3>
+  <p className="text-xs leading-relaxed">
+    Apives highlights APIs based on quality, clarity, and platform standards. Verified badges indicate that a listing has been manually reviewed for accuracy and authenticity at the time of approval. Verification does not imply ownership, control, or ongoing monitoring of third-party services. Our goal is to reduce noise and help developers discover reliable APIs with confidence.
+  </p>
+</section>
         <section>
             <h3 className="text-white text-lg font-bold mb-2">4. Security Expectations</h3>
             <p className="text-xs leading-relaxed">
