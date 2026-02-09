@@ -5,17 +5,6 @@ import {
     Cpu, Activity, Zap, Bookmark, LogOut, Globe, TrendingUp, Clock, LayoutGrid, Radio,
     Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info
 } from 'lucide-react';
-import {
-  DndContext,
-  closestCenter,
-} from "@dnd-kit/core";
-
-import {
-  SortableContext,
-  useSortable,
-  arrayMove,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
 import { apiService } from '../services/apiClient'; // ✅ backend calls
@@ -37,53 +26,6 @@ const Tooltip: React.FC<{ children: React.ReactNode; content: string }> = ({ chi
       <div className="absolute bottom-full mb-2 hidden group-hover/tooltip:block px-3 py-1.5 bg-gray-900 text-white text-[10px] font-bold rounded-lg whitespace-nowrap border border-white/10 shadow-xl z-50 animate-fade-in pointer-events-none">
         {content}
         <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-      </div>
-    </div>
-  );
-};
-
-const DraggableImage = ({
-  id,
-  src,
-  onRemove,
-}: {
-  id: string;
-  src: string;
-  onRemove: () => void;
-}) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="aspect-video bg-black rounded-xl border border-white/10 relative overflow-hidden cursor-grab active:cursor-grabbing"
-    >
-      <img src={src} className="w-full h-full object-cover pointer-events-none" />
-
-      <button
-        type="button"
-        onClick={onRemove}
-        className="absolute top-1 right-1 p-1 bg-black/80 rounded-full text-white"
-      >
-        <X size={12} />
-      </button>
-
-      <div className="absolute bottom-1 left-1 text-[9px] px-2 py-0.5 rounded-full bg-black/70 border border-green-500/40 text-green-400">
-        Drag
       </div>
     </div>
   );
@@ -532,41 +474,7 @@ const addEditFeature = () => {
                           <textarea rows={6} value={editingNode.description} onChange={(e) => setEditingNode({...editingNode, description: e.target.value})} className="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-white focus:border-mora-500 outline-none resize-none text-sm" />
                       </div>
 
-                      {/* Visual Proofs */}
-<div className="space-y-4 pt-4 border-t border-white/5">
-  <div className="flex items-center justify-between ml-1">
-    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
-      <ImageIcon size={14} className="text-mora-500" /> Neural Previews
-    </label>
-    <span className="text-[9px] text-slate-600">
-      {editingNode.gallery?.length || 0}/4
-    </span>
-  </div>
-
-  <DndContext
-    collisionDetection={closestCenter}
-    onDragEnd={(event) => {
-      const { active, over } = event;
-      if (!over || active.id === over.id) return;
-
-      setEditingNode((prev: any) => {
-        const oldIndex = prev.gallery.indexOf(active.id);
-        const newIndex = prev.gallery.indexOf(over.id);
-        return {
-          ...prev,
-          gallery: arrayMove(prev.gallery, oldIndex, newIndex),
-        };
-      });
-    }}
-  >
-    <SortableContext
-      items={editingNode.gallery}
-      strategy={rectSortingStrategy}
-    >
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {editingNode.gallery?.map((img: string) => (
-  <DraggableImage
-    key={img}
+                      
     id={img}
     src={img}
     onRemove={() =>
@@ -578,22 +486,25 @@ const addEditFeature = () => {
   />
 ))}
 
-        {editingNode.gallery?.length < 4 && (
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="aspect-video bg-white/5 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-slate-600 hover:text-white hover:border-mora-500/50 transition-all"
-          >
-            <Plus size={20} />
-            <span className="text-[8px] font-black uppercase tracking-widest mt-1">
-              Upload
-            </span>
-          </button>
-        )}
-      </div>
-    </SortableContext>
-  </DndContext>
-</div>
+ {/* Visual Proofs */}
+                      <div className="space-y-4 pt-4 border-t border-white/5">
+                          <div className="flex items-center justify-between ml-1">
+                              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2"><ImageIcon size={14} className="text-mora-500" /> Neural Previews</label>
+                              <span className="text-[9px] text-slate-600">{editingNode.gallery?.length || 0}/4</span>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                              {editingNode.gallery?.map((img: string, i: number) => (
+                                  <div key={i} className="aspect-video bg-black rounded-xl border border-white/10 relative overflow-hidden group">
+                                      <img src={img} className="w-full h-full object-cover" />
+                                      <button type="button" onClick={() => setEditingNode({...editingNode, gallery: editingNode.gallery.filter((_:any, idx:number) => idx !== i)})} className="absolute top-1 right-1 p-1 bg-black/80 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"><X size={12}/></button>
+                                  </div>
+                              ))}
+                              {editingNode.gallery?.length < 4 && (
+                                  <button type="button" onClick={() => fileInputRef.current?.click()} className="aspect-video bg-white/5 border-2 border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-slate-600 hover:text-white hover:border-mora-500/50 transition-all">
+                                      <Plus size={20}/>
+                                      <span className="text-[8px] font-black uppercase tracking-widest mt-1">Upload</span>
+                                  </button>
+                              )}
                           </div>
                           <input type="file" multiple ref={fileInputRef} onChange={handleEditGalleryUpload} className="hidden" accept="image/*" />
                       </div>
