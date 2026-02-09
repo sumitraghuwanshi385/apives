@@ -46,9 +46,20 @@ export const CookieBanner = () => {
       >
         {/* ❌ CLOSE */}
         <button
-          onClick={() => closeWithSave("rejected")}
-          className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-        >
+  onClick={() => closeWithSave("rejected")}
+  className="
+    absolute
+    top-3 right-3
+    md:-top-3 md:-right-3
+    h-8 w-8
+    rounded-full
+    bg-black/70 backdrop-blur
+    border border-white/10
+    hover:bg-white/20
+    flex items-center justify-center
+    transition
+  "
+>
           <X size={14} className="text-slate-300" />
         </button>
 
