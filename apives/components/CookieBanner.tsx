@@ -15,7 +15,6 @@ export const CookieBanner = () => {
     localStorage.setItem("apives_cookie_consent", value);
     setShow(false);
 
-    // show greeting only on accept
     if (value === "accepted") {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2200);
@@ -65,17 +64,16 @@ export const CookieBanner = () => {
             <p className="text-sm text-slate-300 leading-relaxed">
               We use cookies to improve Apives. Choose what works for you.
             </p>
-<p> className="text-slate-400"> You can accept or reject.</p>
-              <span className="ml-1">
-                For more details, visit{" "}
-                <Link
-                  to="/cookies"
-                  className="text-green-400 hover:text-green-300 underline underline-offset-2 transition"
-                >
-                  Cookie Policy
-                </Link>
-                .
-              </span>
+
+            <p className="text-xs text-slate-400 mt-1">
+              You can accept or reject. For more details, visit{" "}
+              <Link
+                to="/cookies"
+                className="text-green-400 hover:text-green-300 underline underline-offset-2 transition"
+              >
+                Cookie Policy
+              </Link>
+              .
             </p>
           </div>
 
@@ -127,7 +125,6 @@ export const CookieBanner = () => {
             text-sm font-semibold
             shadow-lg
             z-[110]
-            animate-fade-in
           "
         >
           Preferences saved. Enjoy exploring Apives 💚
