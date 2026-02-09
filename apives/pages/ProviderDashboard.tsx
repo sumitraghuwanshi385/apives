@@ -568,18 +568,18 @@ const addEditFeature = () => {
     >
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {editingNode.gallery?.map((img: string) => (
-          <SortableImage
-            key={img}
-            id={img}
-            img={img}
-            onRemove={() =>
-              setEditingNode({
-                ...editingNode,
-                gallery: editingNode.gallery.filter((i: string) => i !== img),
-              })
-            }
-          />
-        ))}
+  <DraggableImage
+    key={img}
+    id={img}
+    src={img}
+    onRemove={() =>
+      setEditingNode({
+        ...editingNode,
+        gallery: editingNode.gallery.filter((i: string) => i !== img),
+      })
+    }
+  />
+))}
 
         {editingNode.gallery?.length < 4 && (
           <button
