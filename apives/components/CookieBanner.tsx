@@ -63,11 +63,9 @@ export const CookieBanner = () => {
           {/* TEXT */}
           <div className="pr-10">
             <p className="text-sm text-slate-300 leading-relaxed">
-              We use cookies to keep Apives smooth, fast, and reliable.
+              We use cookies to improve Apives. Choose what works for you.
             </p>
-
-            <p className="text-xs text-slate-400 mt-1">
-              You’re always in control.
+<p> className="text-slate-400"> You can accept or reject.</p>
               <span className="ml-1">
                 For more details, visit{" "}
                 <Link
