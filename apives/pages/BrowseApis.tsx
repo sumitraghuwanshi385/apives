@@ -262,27 +262,49 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
           </svg>
         </button>
 
-     {showVerifyInfo && (
-  <span
+ {showVerifyInfo && (
+  <div
     className="
       absolute
       left-1/2
       -translate-x-1/2
-      -top-8
-      bg-green-600
-      border border-green-700
-      rounded-full
-      px-3 py-0.5
-      text-[10px]
-      text-white
-      font-semibold
-      whitespace-nowrap
-      shadow-lg
-      z-[100]
+      top-full
+      mt-2
+      z-[200]
+      pointer-events-none
     "
   >
-    Manually Verified by Apives
-  </span>
+    <div
+      className="
+        relative
+        bg-green-600
+        border border-green-700
+        rounded-full
+        px-3 py-1
+        text-[10px]
+        text-white
+        font-semibold
+        whitespace-nowrap
+        shadow-xl
+      "
+    >
+      {/* 🔺 ARROW — PILL SE HI NIKLA */}
+      <span
+        className="
+          absolute
+          left-1/2
+          -translate-x-1/2
+          -top-1
+          w-2 h-2
+          bg-green-600
+          rotate-45
+          border-l border-t border-green-700
+        "
+      />
+
+      Manually verified by Apives
+    </div>
+  </div>
 )}
       </span>
     )}
@@ -433,6 +455,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 
 export const BrowseApis: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+const [selectedPricing, setSelectedPricing] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 const [topIds, setTopIds] = useState<string[]>([]);
   const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
@@ -463,18 +486,24 @@ const [topIds, setTopIds] = useState<string[]>([]);
 
     const lowerTerm = searchTerm.toLowerCase();
 
-    const filtered = allApis.filter(api =>
-  (selectedCategory === 'All' || api.category === selectedCategory) &&
-  (
+    const filtered = allApis.filter(api => {
+  const categoryMatch =
+    selectedCategory === 'All' || api.category === selectedCategory;
+
+  const pricingMatch =
+    selectedPricing === 'All' || api.pricing?.type === selectedPricing;
+
+  const searchMatch =
     api.name.toLowerCase().includes(lowerTerm) ||
     api.description.toLowerCase().includes(lowerTerm) ||
     api.provider.toLowerCase().includes(lowerTerm) ||
     (Array.isArray(api.tags) &&
       api.tags.some(tag =>
         tag.toLowerCase().includes(lowerTerm)
-      ))
-  )
-);
+      ));
+
+  return categoryMatch && pricingMatch && searchMatch;
+});
 
     setFilteredApis(shuffleArray(filtered));
     setIsLoading(false);
@@ -528,6 +557,29 @@ const [topIds, setTopIds] = useState<string[]>([]);
             {showFilters && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl mt-4 md:mt-6 px-4 z-[60]">
                     <div className="bg-black/95 border border-mora-500/30 rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] animate-slide-up backdrop-blur-[50px] ring-1 ring-white/10">
+{/* PRICING */}
+<div className="mb-6">
+  <h4 className="text-[10px] md:text-xs font-black text-mora-400 uppercase tracking-[0.4em] mb-3">
+    Pricing
+  </h4>
+
+  <div className="flex flex-wrap gap-2">
+    {['All', 'Free', 'Freemium', 'Paid'].map(price => (
+      <button
+        key={price}
+        onClick={() => setSelectedPricing(price)}
+        className={`px-4 py-2 rounded-full text-[9px] md:text-[11px] font-bold uppercase border transition-all
+          ${
+            selectedPricing === price
+              ? 'bg-mora-500 text-black border-mora-500'
+              : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+          }`}
+      >
+        {price}
+      </button>
+    ))}
+  </div>
+</div>
                         <div className="flex items-center justify-between mb-6 md:mb-8">
                             <h4 className="text-[10px] md:text-xs font-black text-mora-400 uppercase tracking-[0.4em]">Category</h4>
                             <button onClick={() => setShowFilters(false)} className="p-2 text-slate-500 hover:text-white">
