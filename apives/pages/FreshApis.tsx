@@ -273,6 +273,9 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     Manually Verified by Apives
   </span>
 )}
+  </span>
+)}
+
 
     {/* ✅ NEW BADGE — BASELINE ALIGNED (NICHE NAHI) */}
     {isNew(api.createdAt) && (
