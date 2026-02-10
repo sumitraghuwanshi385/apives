@@ -252,28 +252,39 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         </button>
 
         {showVerifyInfo && (
-  <span
+  <div
     className="
       absolute
       left-1/2
       -translate-x-1/2
-      -top-8
-      bg-green-600
-      border border-green-700
-      rounded-full
-      px-3 py-0.5
-      text-[10px]
-      text-white
-      font-semibold
-      whitespace-nowrap
-      shadow-lg
-      z-[100]
+      bottom-full
+      mb-2
+      z-[200]
+      flex flex-col items-center
     "
   >
-    Manually Verified by Apives
-  </span>
+    {/* ARROW */}
+    <div className="w-2 h-2 bg-green-600 rotate-45 translate-y-1 border border-green-700"></div>
+
+    {/* PILL */}
+    <div
+      className="
+        bg-green-600
+        border border-green-700
+        rounded-full
+        px-3 py-1
+        text-[10px]
+        text-white
+        font-semibold
+        whitespace-nowrap
+        shadow-xl
+      "
+    >
+      Manually verified by Apives
+    </div>
+  </div>
 )}
-  </span>
+ </span>
 )}
 
 
@@ -550,3 +561,4 @@ export const FreshApis: React.FC = () => {
     </div>
   );
 };
+
