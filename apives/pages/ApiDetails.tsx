@@ -765,6 +765,17 @@ className="
         </div>
       ))}
     </div>
+
+<p className="text-[9px] text-slate-500 mt-2 ml-1 leading-relaxed">
+  If any information here feels inaccurate or incomplete, we sincerely apologize.
+  Please feel free to reach us at{" "}
+  <a
+    href="mailto:beatslevelone@gmail.com"
+    className="text-green-400 hover:text-green-300 underline underline-offset-2"
+  >
+    beatslevelone@gmail.com
+  </a>
+</p>
   </section>
 )}
             </div>
