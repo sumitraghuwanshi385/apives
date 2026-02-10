@@ -260,13 +260,12 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
       top-full
       mt-2
       z-[200]
-      flex flex-col items-center
       pointer-events-none
     "
   >
-    {/* PILL */}
     <div
       className="
+        relative
         bg-green-600
         border border-green-700
         rounded-full
@@ -278,11 +277,22 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
         shadow-xl
       "
     >
+      {/* 🔺 ARROW — PILL SE HI NIKLA */}
+      <span
+        className="
+          absolute
+          left-1/2
+          -translate-x-1/2
+          -top-1
+          w-2 h-2
+          bg-green-600
+          rotate-45
+          border-l border-t border-green-700
+        "
+      />
+
       Manually verified by Apives
     </div>
-
-    {/* ARROW (Niche se upar point karega) */}
-    <div className="w-2 h-2 bg-green-600 rotate-45 -mt-1 border border-green-700"></div>
   </div>
 )}
  </span>
