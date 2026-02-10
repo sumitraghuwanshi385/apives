@@ -270,7 +270,7 @@ flex flex-col h-full"
   {api.name}
 </span>
     {isVerified && (
-      <span className="inline-flex items-center shrink-0">
+     <span className="inline-flex items-center shrink-0 relative">
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -295,28 +295,27 @@ flex flex-col h-full"
         </button>
 
         {showVerifyInfo && (
-          <span
-            className="
-              absolute
-              top-full
-              left-1/2
-              -translate-x-1/2
-              mt-1.5
-              bg-green-600
-              border border-green-700
-              rounded-full
-              px-3 py-0.5
-              text-[10px]
-              text-white
-              font-semibold
-              whitespace-nowrap
-              shadow-lg
-              z-50
-            "
-          >
-            Manually Verified by Apives
-          </span>
-        )}
+  <span
+    className="
+      absolute
+      left-1/2
+      -translate-x-1/2
+      -top-8
+      bg-green-600
+      border border-green-700
+      rounded-full
+      px-3 py-0.5
+      text-[10px]
+      text-white
+      font-semibold
+      whitespace-nowrap
+      shadow-lg
+      z-[100]
+    "
+  >
+    Manually Verified by Apives
+  </span>
+)}
       </span>
     )}
 
