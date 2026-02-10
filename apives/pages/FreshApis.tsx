@@ -251,21 +251,19 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
           </svg>
         </button>
 
-        {showVerifyInfo && (
+      {showVerifyInfo && (
   <div
     className="
       absolute
       left-1/2
       -translate-x-1/2
-      bottom-full
-      mb-2
+      top-full
+      mt-2
       z-[200]
       flex flex-col items-center
+      pointer-events-none
     "
   >
-    {/* ARROW */}
-    <div className="w-2 h-2 bg-green-600 rotate-45 translate-y-1 border border-green-700"></div>
-
     {/* PILL */}
     <div
       className="
@@ -282,6 +280,9 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
     >
       Manually verified by Apives
     </div>
+
+    {/* ARROW (Niche se upar point karega) */}
+    <div className="w-2 h-2 bg-green-600 rotate-45 -mt-1 border border-green-700"></div>
   </div>
 )}
  </span>
