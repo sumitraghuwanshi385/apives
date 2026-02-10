@@ -441,6 +441,7 @@ const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
 }
 
 export const FreshApis: React.FC = () => {
+const [selectedPricing, setSelectedPricing] = useState<string>('All');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
   const [visibleCount, setVisibleCount] = useState(12);
@@ -479,12 +480,17 @@ export const FreshApis: React.FC = () => {
     );
 
     // ✅ 4. category filter — LOCAL DATA
-    const filtered =
-      selectedCategory === 'All'
-        ? freshApis
-        : freshApis.filter(api => api.category === selectedCategory);
+    const filtered = freshApis.filter(api => {
+  const categoryMatch =
+    selectedCategory === 'All' || api.category === selectedCategory;
 
-    setFilteredApis(filtered);
+  const pricingMatch =
+    selectedPricing === 'All' || api.pricing?.type === selectedPricing;
+
+  return categoryMatch && pricingMatch;
+});
+
+setFilteredApis(filtered);
     setIsLoading(false);
   };
 
@@ -516,6 +522,37 @@ export const FreshApis: React.FC = () => {
                 {showFilters && (
                     <div className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl mt-4 px-4 z-[60]">
                          <div className="bg-black/95 border border-mora-500/30 rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-2xl animate-slide-up backdrop-blur-xl">
+
+{/* PRICING FILTER */}
+<div className="mb-6">
+  <h4 className="text-[10px] md:text-xs font-black text-mora-400 uppercase tracking-[0.4em] mb-3">
+    Pricing
+  </h4>
+
+  <div className="flex flex-wrap gap-2">
+    {['All', 'Free', 'Freemium', 'Paid'].map(price => (
+      <button
+        key={price}
+        onClick={() => setSelectedPricing(price)}
+        className={`
+          px-4 py-2
+          rounded-full
+          text-[9px] md:text-[11px]
+          font-bold uppercase
+          border transition-all
+          ${
+            selectedPricing === price
+              ? 'bg-mora-500 text-black border-mora-500 shadow-md'
+              : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
+          }
+        `}
+      >
+        {price}
+      </button>
+    ))}
+  </div>
+</div>
+
                             <div className="flex items-center justify-between mb-6 md:mb-8">
                                 <h4 className="text-[10px] md:text-xs font-black text-mora-400 uppercase tracking-[0.4em]">Category</h4>
                                 <button onClick={() => setShowFilters(false)} className="p-2 text-slate-500 hover:text-white transition-colors">
