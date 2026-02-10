@@ -295,26 +295,48 @@ flex flex-col h-full"
         </button>
 
         {showVerifyInfo && (
-  <span
+  <div
     className="
       absolute
       left-1/2
       -translate-x-1/2
-      -top-8
-      bg-green-600
-      border border-green-700
-      rounded-full
-      px-3 py-0.5
-      text-[10px]
-      text-white
-      font-semibold
-      whitespace-nowrap
-      shadow-lg
-      z-[100]
+      top-full
+      mt-2
+      z-[200]
+      pointer-events-none
     "
   >
-    Manually Verified by Apives
-  </span>
+    <div
+      className="
+        relative
+        bg-green-600
+        border border-green-700
+        rounded-full
+        px-3 py-1
+        text-[10px]
+        text-white
+        font-semibold
+        whitespace-nowrap
+        shadow-xl
+      "
+    >
+      {/* 🔺 ARROW — PILL SE HI NIKLA */}
+      <span
+        className="
+          absolute
+          left-1/2
+          -translate-x-1/2
+          -top-1
+          w-2 h-2
+          bg-green-600
+          rotate-45
+          border-l border-t border-green-700
+        "
+      />
+
+      Manually verified by Apives
+    </div>
+  </div>
 )}
       </span>
     )}
