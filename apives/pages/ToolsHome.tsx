@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  Code2,
   ShieldCheck,
   Braces,
   Webhook,
