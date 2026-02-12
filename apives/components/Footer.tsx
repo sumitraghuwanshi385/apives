@@ -191,7 +191,7 @@ return (
     </span>
 
     <span>
-      &copy; 2025 Apives Ecosystem
+      &copy; 2025 Apives Ecosystem • Made with 💚
     </span>
 
   </p>
