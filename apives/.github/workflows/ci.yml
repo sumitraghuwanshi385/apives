@@ -10,5 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Basic check
-        run: echo "Apives build check passed ✅"
+        run: |
+          echo "Apives build check passed ✅"
