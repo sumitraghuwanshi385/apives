@@ -13,6 +13,7 @@ import {
 
 const STORAGE_KEY = "apives_usecase_voice";
 const NOTE_KEY = "apives_voice_global_note";
+
 const VOICE_KEYWORDS = [
   "voice",
   "speech",
@@ -46,6 +47,9 @@ const VoiceLoader = () => (
   </div>
 );
 
+/* ===============================
+   YOUTUBE PREVIEW
+================================ */
 const YouTubePreview = ({ url }: { url: string }) => {
   let videoId = "";
 
@@ -77,12 +81,6 @@ const YouTubePreview = ({ url }: { url: string }) => {
           className="w-32 h-20 object-cover rounded-lg"
           loading="lazy"
         />
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-8 h-8 bg-black/60 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm ml-0.5">▶</span>
-          </div>
-        </div>
       </div>
 
       <div className="flex flex-col">
@@ -97,6 +95,9 @@ const YouTubePreview = ({ url }: { url: string }) => {
   );
 };
 
+/* ===============================
+   INSIGHT RENDERER
+================================ */
 const InsightRenderer = ({ text }: { text: string }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const youtubeRegex =
@@ -107,15 +108,11 @@ const InsightRenderer = ({ text }: { text: string }) => {
   return (
     <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
       {paragraphs.map((para, i) => {
-        if (!para.trim()) {
-          return <div key={i} className="h-4" />;
-        }
+        if (!para.trim()) return <div key={i} className="h-4" />;
 
         const urls = para.match(urlRegex);
 
-        if (!urls) {
-          return <p key={i}>{para}</p>;
-        }
+        if (!urls) return <p key={i}>{para}</p>;
 
         return (
           <div key={i} className="space-y-3">
@@ -170,7 +167,7 @@ export default function BuildVoiceToText() {
         const db = list.map(a => ({ ...a, id: a._id }));
         setAllApis(db);
       } catch (e) {
-        console.error("Voice API fetch failed", e);
+        console.error(e);
       } finally {
         setLoading(false);
       }
@@ -211,7 +208,6 @@ export default function BuildVoiceToText() {
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-20 px-4 md:px-8">
 
-      {/* HEADER */}
       <div className="max-w-7xl mx-auto mb-6 flex items-center justify-between">
         <BackButton />
 
@@ -249,7 +245,6 @@ export default function BuildVoiceToText() {
         )}
       </div>
 
-      {/* HERO */}
       <div className="max-w-4xl mx-auto text-center mb-8">
         <h1 className="text-3xl md:text-6xl font-display font-bold text-white">
           Voice to Text
@@ -259,102 +254,37 @@ export default function BuildVoiceToText() {
         </p>
       </div>
 
-      {/* ===== ARCHITECTURE SECTIONS ===== */}
-      <div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">
-
-        {/* SECTION 1 */}
-        <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 text-center md:text-left">
-            <h2 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-snug
-              bg-gradient-to-r from-green-400 to-emerald-400
-              bg-clip-text text-transparent">
-              Speech Architecture Essentials.
-            </h2>
-
-            <p className="mt-1.5 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">
-              Reliable speech systems must handle streaming ingestion,
-              real-time decoding, multilingual support, speaker separation,
-              and production-grade scaling before going live.
+      {/* OPERATIONAL INSIGHT */}
+      {(note || admin) && (
+        <div className="max-w-5xl mx-auto mb-14">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
+              <Radio size={14} className="text-mora-500" />
+              Operational Insight
             </p>
+
+            {admin ? (
+              <>
+                <textarea
+                  value={noteDraft}
+                  onChange={e => setNoteDraft(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
+                  rows={4}
+                />
+                <button
+                  onClick={saveNote}
+                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
+                >
+                  Update
+                </button>
+              </>
+            ) : (
+              <InsightRenderer text={note} />
+            )}
           </div>
         </div>
+      )}
 
-        {/* SECTION 2 */}
-        <div className="flex flex-col md:flex-row-reverse items-center">
-          <div className="md:w-1/2 text-center md:text-right">
-            <h2 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-snug
-              bg-gradient-to-r from-purple-400 to-pink-400
-              bg-clip-text text-transparent">
-              Accuracy, Latency & Cost Intelligence.
-            </h2>
-
-            <p className="mt-1.5 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:ml-auto">
-              Speech APIs must balance word accuracy, low-latency streaming,
-              background noise handling, and predictable pricing models
-              for scalable production systems.
-            </p>
-          </div>
-        </div>
-
-        {/* SECTION 3 */}
-        <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 text-center md:text-left">
-            <h2 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-snug
-              bg-gradient-to-r from-blue-400 to-cyan-400
-              bg-clip-text text-transparent">
-              API Selection Defines Transcription Quality.
-            </h2>
-
-            <p className="mt-1.5 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">
-              The right speech API determines recognition precision,
-              language coverage, diarization support, and system stability.
-              Poor choices result in transcription errors and rising costs.
-            </p>
-          </div>
-        </div>
-
-      </div>
-
-      {/* SPACE */}
-      <div className="mt-12">
-
-        {/* OPERATIONAL INSIGHT */}
-        {(note || admin) && (
-          <div className="max-w-5xl mx-auto mb-14">
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-              <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
-                <Radio size={14} className="text-mora-500" />
-                Operational Insight
-              </p>
-
-              {admin ? (
-                <>
-                  <textarea
-                    value={noteDraft}
-                    onChange={e => setNoteDraft(e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
-                    rows={3}
-                  />
-                  <button
-                    onClick={saveNote}
-                    className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
-                  >
-                    Update
-                  </button>
-                </>
-              ) : (
-                <InsightRenderer text={note} />
-                  In production speech systems, monitoring latency spikes,
-                  handling noisy input, and managing streaming timeouts
-                  are critical for reliability and user trust.
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* CURATED HEADING */}
       <div className="max-w-7xl mx-auto mb-6 px-1">
         <div className="flex items-center gap-2 mb-1">
           <Layers size={18} className="text-mora-500" />
@@ -362,13 +292,8 @@ export default function BuildVoiceToText() {
             Curated Speech APIs
           </h3>
         </div>
-
-        <p className="text-xs text-slate-400 max-w-xl">
-          Production-ready APIs selected for building scalable voice recognition systems.
-        </p>
       </div>
 
-      {/* API CARDS */}
       {loading ? (
         <VoiceLoader />
       ) : (
@@ -377,12 +302,6 @@ export default function BuildVoiceToText() {
             <ApiCard key={api.id} api={api} topIds={[]} />
           ))}
         </div>
-      )}
-
-      {!loading && visibleApis.length === 0 && (
-        <p className="text-center text-slate-500 mt-16 text-sm">
-          No speech APIs selected yet.
-        </p>
       )}
     </div>
   );
