@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ChevronDown, Check } from "lucide-react";
+
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
-import { ArrowLeft, ChevronDown, Check } from "lucide-react";
+import { ApiCard } from "../../components/ApiCard";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
 const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
@@ -23,15 +25,22 @@ export default function BuildChatbots() {
   const [allApis, setAllApis] = useState<ApiListing[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiService.getAllApis().then((res: any[]) => {
-      const db = (Array.isArray(res) ? res : res?.data || []).map(a => ({
-        ...a,
-        id: a._id
-      }));
-      setAllApis(db);
-    });
+    (async () => {
+      try {
+        const res = await apiService.getAllApis();
+        const list = Array.isArray(res) ? res : res?.data || [];
+
+        const db = list.map(a => ({ ...a, id: a._id }));
+        setAllApis(db);
+      } catch (e) {
+        console.error("Chatbot API fetch failed", e);
+      } finally {
+        setLoading(false);
+      }
+    })();
 
     setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
   }, []);
@@ -106,8 +115,8 @@ export default function BuildChatbots() {
           Best APIs to Build AI Chatbots
         </h1>
         <p className="mt-4 text-slate-400 text-sm md:text-base">
-          Planning to build a SaaS, AI wrapper, or ChatGPT-style app?
-          These APIs are trusted, scalable, and production-ready.
+          Build SaaS apps, AI wrappers, or ChatGPT-style products using
+          scalable, production-ready APIs.
         </p>
       </div>
 
@@ -116,8 +125,8 @@ export default function BuildChatbots() {
         <h3 className="text-white font-bold mb-4">💡 Before You Choose an API</h3>
 
         <ul className="text-slate-300 text-sm space-y-2 mb-6">
-          <li>🔹 MVP → fast setup & docs clarity</li>
-          <li>🔹 Scale → rate limits & pricing</li>
+          <li>🔹 MVP → fast setup & clean docs</li>
+          <li>🔹 Scale → rate limits & predictable pricing</li>
           <li>🔹 Production → reliability & versioning</li>
         </ul>
 
@@ -126,9 +135,9 @@ export default function BuildChatbots() {
             Things to Compare
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
-            <span>• Pricing</span>
-            <span>• Speed</span>
-            <span>• Docs quality</span>
+            <span>• Pricing model</span>
+            <span>• Response speed</span>
+            <span>• API docs</span>
             <span>• Rate limits</span>
             <span>• Reliability</span>
             <span>• Integration ease</span>
@@ -137,13 +146,19 @@ export default function BuildChatbots() {
       </div>
 
       {/* API CARDS */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {visibleApis.map(api => (
-          <ApiCard key={api.id} api={api} topIds={[]} />
-        ))}
-      </div>
+      {loading ? (
+        <p className="text-center text-slate-500 mt-20 text-sm">
+          Loading chatbot APIs…
+        </p>
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visibleApis.map(api => (
+            <ApiCard key={api.id} api={api} topIds={[]} />
+          ))}
+        </div>
+      )}
 
-      {visibleApis.length === 0 && (
+      {!loading && visibleApis.length === 0 && (
         <p className="text-center text-slate-500 mt-12 text-sm">
           No APIs selected yet.
         </p>
