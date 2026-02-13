@@ -117,32 +117,31 @@ const InsightRenderer = ({ text }: { text: string }) => {
 
             {/* Render detected URLs */}
             {urls.map((url, idx) => {
-              // ✅ YouTube link → preview card
-              if (youtubeRegex.test(url)) {
-                return <YouTubePreview key={idx} url={url} />;
-              }
 
-              // ✅ Normal website → glass pill
-              const domain = new URL(url).hostname.replace("www.", "");
-              const label = domain.includes("apives")
-                ? "Apives"
-                : domain;
+  // ✅ YouTube link → preview component
+  if (youtubeRegex.test(url)) {
+    return <YouTubePreview key={idx} url={url} />;
+  }
 
-              return (
-                <a
-                  key={idx}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block px-5 py-2 rounded-full
-                  bg-white/10 border border-white/20
-                  backdrop-blur-md text-xs text-slate-200
-                  hover:bg-white/20 transition"
-                >
-                  {label}
-                </a>
-              );
-            })}
+  // ✅ Normal website → glass pill
+  const domain = new URL(url).hostname.replace("www.", "");
+  const label = domain.includes("apives") ? "Apives" : domain;
+
+  return (
+    <a
+      key={idx}
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block px-5 py-2 rounded-full
+      bg-white/10 border border-white/20
+      backdrop-blur-md text-xs text-slate-200
+      hover:bg-white/20 transition"
+    >
+      {label}
+    </a>
+  );
+})}
           </div>
         );
       })}
