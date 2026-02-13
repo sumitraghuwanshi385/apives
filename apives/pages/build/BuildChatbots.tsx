@@ -7,7 +7,8 @@ import {
   ChevronDown,
   Check,
   Bot,
-  Zap
+  Zap,
+  Radio
 } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
@@ -63,14 +64,19 @@ export default function BuildChatbots() {
       }
     })();
 
-    setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    // ✅ only load selectedIds if admin
+    if (admin) {
+      setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+    } else {
+      setSelectedIds([]);
+    }
 
     const savedNote = localStorage.getItem(NOTE_KEY);
     if (savedNote) {
       setNote(savedNote);
       setNoteDraft(savedNote);
     }
-  }, []);
+  }, [admin]);
 
   const toggleApi = (id: string) => {
     const updated = selectedIds.includes(id)
@@ -86,9 +92,9 @@ export default function BuildChatbots() {
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
   });
 
-  const visibleApis = admin
-    ? chatbotApis.filter(api => selectedIds.includes(api.id))
-    : chatbotApis;
+  const visibleApis = chatbotApis.filter(api =>
+  selectedIds.includes(api.id)
+);
 
   const saveNote = () => {
     localStorage.setItem(NOTE_KEY, noteDraft);
@@ -157,34 +163,26 @@ export default function BuildChatbots() {
           </h3>
 
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
-
-            {/* MVP GREEN */}
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
               <p className="font-bold text-green-400 mb-1">MVP Ready</p>
-              <p className="text-slate-300 leading-relaxed">
-                Rapid integration APIs designed for immediate prototyping,
-                minimal authentication overhead, and predictable early-stage deployments.
+              <p className="text-slate-300">
+                Fast prototyping, low friction onboarding, instant value.
               </p>
             </div>
 
-            {/* SCALE PURPLE */}
             <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3">
               <p className="font-bold text-purple-400 mb-1">Scale Safe</p>
-              <p className="text-slate-300 leading-relaxed">
-                Architected for concurrency bursts, controlled rate limits,
-                stable streaming pipelines, and resilient backend orchestration.
+              <p className="text-slate-300">
+                Stable concurrency, burst handling, predictable limits.
               </p>
             </div>
 
-            {/* PRODUCTION BLUE */}
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
               <p className="font-bold text-blue-400 mb-1">Production Grade</p>
-              <p className="text-slate-300 leading-relaxed">
-                Long-context stability, structured output reliability,
-                versioning discipline, and uptime confidence for revenue-critical systems.
+              <p className="text-slate-300">
+                Long-context reliability and uptime guarantees.
               </p>
             </div>
-
           </div>
         </div>
 
@@ -198,27 +196,45 @@ export default function BuildChatbots() {
           </div>
 
           <p className="text-[12px] text-slate-400 leading-relaxed">
-            Modern chatbot systems require memory orchestration,
-            multi-step reasoning control, fallback logic, and intelligent retries.
-          </p>
-
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            They must handle token budgeting, streaming UX expectations,
-            structured outputs, and latency sensitivity under real users.
-          </p>
-
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            Selecting the right API determines not just performance —
-            but long-term system stability, cost efficiency, and scalability.
-          </p>
-
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            Strong architecture reduces silent failures, hallucination risks,
-            and operational surprises during growth phases.
+            Memory orchestration, fallback logic, retries, cost control,
+            and UX-safe streaming define real chatbot systems.
           </p>
         </div>
 
       </div>
+
+      {/* OPERATIONAL INSIGHT (RESTORED) */}
+      {(note || admin) && (
+        <div className="max-w-5xl mx-auto mb-14">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
+              <Radio size={14} className="text-mora-500" />
+              Operational Insight
+            </p>
+
+            {admin ? (
+              <>
+                <textarea
+                  value={noteDraft}
+                  onChange={e => setNoteDraft(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
+                  rows={3}
+                />
+                <button
+                  onClick={saveNote}
+                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
+                >
+                  Update
+                </button>
+              </>
+            ) : (
+              <p className="text-sm text-slate-300 whitespace-pre-line">
+                {note}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* API CARDS */}
       {loading ? (
