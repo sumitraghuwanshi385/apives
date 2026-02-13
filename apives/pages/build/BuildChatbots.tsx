@@ -5,7 +5,9 @@ import ApiCard from "../../components/ApiCard";
 import { BackButton } from "../../components/BackButton";
 import {
   ChevronDown,
-  Check
+  Check,
+  Bot,
+  Sparkles
 } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
@@ -22,7 +24,7 @@ const isAdmin = () => {
 };
 
 /* ===============================
-   LOADER (Footer-aligned)
+   LOADER
 ================================ */
 const ChatbotLoader = () => (
   <div className="flex flex-col items-center justify-center mt-24 mb-32 gap-3">
@@ -93,6 +95,31 @@ export default function BuildChatbots() {
     setNote(noteDraft);
   };
 
+  /* URL Detection Renderer */
+  const renderNoteWithLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
+
+    return text.split(urlRegex).map((part, index) => {
+      if (part.match(urlRegex)) {
+        const url = part.startsWith("http") ? part : `https://${part}`;
+        return (
+          <div key={index} className="mt-2">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-green-500/10 border border-green-500/30
+              text-green-400 px-3 py-2 rounded-lg text-xs break-all hover:bg-green-500/20 transition"
+            >
+              {part}
+            </a>
+          </div>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-20 px-4 md:px-8">
 
@@ -140,88 +167,70 @@ export default function BuildChatbots() {
           AI Chatbots
         </h1>
         <p className="mt-3 text-slate-400 text-sm md:text-lg">
-          Production-ready conversational APIs curated for real-world usage.
+          Production-ready conversational AI systems built for real SaaS environments.
         </p>
       </div>
 
-      {/* EVALUATION + BUILDING */}
+      {/* MAIN GRID */}
       <div className="max-w-6xl mx-auto mb-10 grid md:grid-cols-3 gap-4">
 
-        {/* HOW WE EVALUATE */}
+        {/* UNDERSTAND CHATBOT AI */}
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-4">
-          <h3 className="text-white font-bold mb-4">
-             Understand Chatbot APIs
+          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+            <Sparkles size={16} className="text-mora-500" />
+            Understand Chatbot AI
           </h3>
 
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
             <div className="bg-black/40 border border-white/10 rounded-xl p-3">
               <p className="font-bold text-white mb-1">MVP Ready</p>
               <p className="text-slate-400 leading-relaxed">
-                APIs that can be plugged into a prototype within hours,
-                with clean auth flows, predictable responses, and minimal setup friction.
+                Rapid integration APIs designed for immediate prototyping,
+                minimal authentication overhead, and consistent response behavior.
               </p>
             </div>
 
             <div className="bg-black/40 border border-white/10 rounded-xl p-3">
               <p className="font-bold text-white mb-1">Scale Safe</p>
               <p className="text-slate-400 leading-relaxed">
-                Providers that maintain performance under concurrency,
-                handle bursts gracefully, and expose transparent rate limits.
+                Architected for concurrency, rate-limit clarity,
+                and stable streaming under heavy production traffic.
               </p>
             </div>
 
             <div className="bg-black/40 border border-white/10 rounded-xl p-3">
               <p className="font-bold text-white mb-1">Production Grade</p>
               <p className="text-slate-400 leading-relaxed">
-                APIs with versioning discipline, stable long-context behavior,
-                and reliability suitable for paying customers.
-              </p>
-            </div>
-          </div>
-
-          {/* EXTRA BOXES */}
-          <div className="grid sm:grid-cols-3 gap-3 mt-4 text-xs">
-            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
-              <p className="font-bold text-white mb-1">Latency Consistency</p>
-              <p className="text-slate-400">
-                Response times that remain predictable across regions and load.
-              </p>
-            </div>
-
-            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
-              <p className="font-bold text-white mb-1">Cost Transparency</p>
-              <p className="text-slate-400">
-                Clear pricing mechanics without hidden token traps.
-              </p>
-            </div>
-
-            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
-              <p className="font-bold text-white mb-1">Developer Experience</p>
-              <p className="text-slate-400">
-                Docs, SDKs, examples, and error feedback that save engineering time.
+                Long-context stability, structured output control,
+                and operational reliability suitable for paying customers.
               </p>
             </div>
           </div>
         </div>
 
-        {/* BUILDING CHATBOTS */}
+        {/* SMART CHATBOT SYSTEMS BOX */}
         <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-4">
-          <p className="text-white font-bold text-sm mb-1">
-            Building Chatbots ≠ Just LLM Calls
-          </p>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
-            Reliable chat systems require orchestration, memory handling,
-            retry logic, and UX-aware streaming, not just text generation.
+          <div className="flex items-center gap-2 mb-2">
+            <Bot size={16} className="text-mora-500" />
+            <p className="text-white font-bold text-sm">
+              Smart Chatbot Systems
+            </p>
+          </div>
+          <p className="text-[12px] text-slate-400 leading-relaxed">
+            Modern chatbot systems require memory orchestration,
+            multi-step reasoning control, fallback logic,
+            cost monitoring, and UX-aware streaming delivery.
+            Choosing the right API defines long-term stability.
           </p>
         </div>
       </div>
 
-      {/* NOTE */}
+      {/* OPERATIONAL INSIGHT */}
       {(note || admin) && (
         <div className="max-w-5xl mx-auto mb-14">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
             <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
-              Note
+              Operational Insight
             </p>
 
             {admin ? (
@@ -240,9 +249,9 @@ export default function BuildChatbots() {
                 </button>
               </>
             ) : (
-              <p className="text-sm text-slate-300 whitespace-pre-line">
-                {note}
-              </p>
+              <div className="text-sm text-slate-300 whitespace-pre-line">
+                {renderNoteWithLinks(note)}
+              </div>
             )}
           </div>
         </div>
