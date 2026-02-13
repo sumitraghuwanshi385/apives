@@ -214,20 +214,29 @@ const toggleApi = async (id: string) => {
     curatedApiIds: updated
   });
 };
+const chatbotApis = allApis.filter(api => {
+  const text = `${api.name} ${api.description || ""}`.toLowerCase();
+  return CHATBOT_KEYWORDS.some(k => text.includes(k));
+});
   
   // ✅ Public + admin both see curated APIs
   const visibleApis = allApis.filter(api =>
   selectedIds.includes(api.id)
 );
 
-  const saveNote = () => {
-  const payload: ChatbotNotePayload = {
-    text: noteDraft,
-    curatedIds: selectedIds
-  };
+  const saveNote = async () => {
+  try {
+    const res = await apiService.updateUsecase("chatbots", {
+      operationalInsight: noteDraft,
+      curatedApiIds: selectedIds
+    });
 
-  localStorage.setItem(NOTE_KEY, JSON.stringify(payload));
-  setNote(noteDraft);
+    setNote(res.operationalInsight);
+    setNoteDraft(res.operationalInsight);
+    setSelectedIds(res.curatedApiIds);
+  } catch (e) {
+    console.error("Failed to save operational insight", e);
+  }
 };
 
   return (
