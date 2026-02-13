@@ -112,4 +112,25 @@ updateApiStatus: async (id: string, status: 'active' | 'paused') => {
     const res = await axiosInstance.delete(`/apis/${id}`);
     return res.data;
   },
+// ===============================
+// 🔥 USECASE (Chatbots, Payments, etc.)
+// ===============================
+
+// GET usecase by slug
+getUsecaseBySlug: async (slug: string) => {
+  const res = await axiosInstance.get(`/usecase/${slug}`);
+  return res.data;
+},
+
+// UPDATE usecase (admin only)
+updateUsecase: async (
+  slug: string,
+  data: {
+    operationalInsight: string;
+    curatedApiIds: string[];
+  }
+) => {
+  const res = await axiosInstance.put(`/usecase/${slug}`, data);
+  return res.data;
+},
 };
