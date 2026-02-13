@@ -5,12 +5,8 @@ import ApiCard from "../../components/ApiCard";
 import { BackButton } from "../../components/BackButton";
 import { ChevronDown, Check } from "lucide-react";
 
-/* ===============================
-   CONFIG
-================================ */
-
 const STORAGE_KEY = "apives_usecase_chatbots";
-const GLOBAL_NOTE_KEY = "apives_chatbot_global_note";
+const NOTE_KEY = "apives_chatbot_global_note";
 const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
 
 const isAdmin = () => {
@@ -25,27 +21,22 @@ const isAdmin = () => {
 /* ===============================
    LOADER
 ================================ */
-
 const ChatbotLoader = () => (
-  <div className="flex flex-col items-center justify-center mt-28 gap-5">
-    <div className="relative w-14 h-14">
-      <div className="absolute inset-0 rounded-full border border-mora-500/30 animate-ping" />
-      <div className="absolute inset-0 rounded-full border border-mora-500 border-t-transparent animate-spin" />
+  <div className="flex flex-col items-center justify-center mt-24 gap-6">
+    <div className="relative w-16 h-16">
+      <div className="absolute inset-0 rounded-full border-2 border-mora-500/30 animate-ping" />
+      <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin" />
     </div>
 
     <p className="text-[11px] font-mono uppercase tracking-[0.35em] text-slate-400">
-      Loading Chatbot API
+      Initializing Chatbot API
     </p>
 
     <p className="text-xs text-slate-500 max-w-xs text-center">
-      Evaluating latency, context depth, streaming and production behavior
+      Evaluating latency, context depth, and conversational stability
     </p>
   </div>
 );
-
-/* ===============================
-   PAGE
-================================ */
 
 export default function BuildChatbots() {
   const admin = isAdmin();
@@ -55,8 +46,8 @@ export default function BuildChatbots() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [globalNote, setGlobalNote] = useState("");
-  const [draftNote, setDraftNote] = useState("");
+  const [note, setNote] = useState("");
+  const [noteDraft, setNoteDraft] = useState("");
 
   /* LOAD DATA */
   useEffect(() => {
@@ -74,24 +65,13 @@ export default function BuildChatbots() {
 
     setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
 
-    const savedNote = localStorage.getItem(GLOBAL_NOTE_KEY);
+    const savedNote = localStorage.getItem(NOTE_KEY);
     if (savedNote) {
-      setGlobalNote(savedNote);
-      setDraftNote(savedNote);
+      setNote(savedNote);
+      setNoteDraft(savedNote);
     }
   }, []);
 
-  /* FILTER CHATBOT APIS */
-  const chatbotApis = allApis.filter(api => {
-    const text = `${api.name} ${api.description || ""}`.toLowerCase();
-    return CHATBOT_KEYWORDS.some(k => text.includes(k));
-  });
-
-  const visibleApis = admin
-    ? chatbotApis.filter(api => selectedIds.includes(api.id))
-    : chatbotApis;
-
-  /* CURATION */
   const toggleApi = (id: string) => {
     const updated = selectedIds.includes(id)
       ? selectedIds.filter(x => x !== id)
@@ -101,52 +81,47 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  const saveGlobalNote = () => {
-    localStorage.setItem(GLOBAL_NOTE_KEY, draftNote);
-    setGlobalNote(draftNote);
+  const chatbotApis = allApis.filter(api => {
+    const text = `${api.name} ${api.description || ""}`.toLowerCase();
+    return CHATBOT_KEYWORDS.some(k => text.includes(k));
+  });
+
+  const visibleApis = admin
+    ? chatbotApis.filter(api => selectedIds.includes(api.id))
+    : chatbotApis;
+
+  const saveNote = () => {
+    localStorage.setItem(NOTE_KEY, noteDraft);
+    setNote(noteDraft);
   };
 
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-24 px-4 md:px-8">
 
       {/* HEADER */}
-      <div className="max-w-7xl mx-auto flex items-center justify-between mb-14">
+      <div className="max-w-7xl mx-auto flex items-center justify-between mb-12">
         <BackButton />
 
         <div className="flex items-center gap-3">
-
-          {/* 🔥 CURATED PILL */}
-          <span
-            className="
-              px-4 py-1.5
-              rounded-full
-              bg-white/5
-              border border-white/10
-              text-[10px]
-              font-mono
-              text-slate-300
-              tracking-wide
-              select-none
-            "
-          >
+          {/* CURATED PILL */}
+          <span className="
+            px-4 py-1.5 rounded-full
+            bg-white/5 border border-white/10
+            text-[10px] font-mono tracking-wide text-slate-300
+          ">
             Curated by <span className="text-mora-400">Apives</span>
           </span>
 
-          {/* ADMIN DROPDOWN */}
+          {/* ADMIN CURATE */}
           {admin && (
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(v => !v)}
                 className="
                   flex items-center gap-2
-                  px-4 py-2
-                  rounded-full
-                  bg-mora-500
-                  text-black
-                  text-[10px]
-                  font-black
-                  uppercase
-                  tracking-widest
+                  px-4 py-2 rounded-full
+                  bg-mora-500 text-black
+                  text-[10px] font-black uppercase tracking-widest
                 "
               >
                 Curate APIs <ChevronDown size={14} />
@@ -187,18 +162,17 @@ export default function BuildChatbots() {
       </div>
 
       {/* BEFORE YOU CHOOSE */}
-      <div className="max-w-6xl mx-auto mb-20 grid md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto mb-16 grid md:grid-cols-3 gap-6">
 
-        {/* MAIN */}
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-white font-bold mb-6">
-            Before you choose a Chatbot API
+          <h3 className="text-white font-bold mb-4">
+            How Apives evaluates Chatbot APIs
           </h3>
 
-          <div className="space-y-3 text-sm text-slate-300">
-            <p>🚀 <b>MVP</b> → Fast setup, minimal auth, clean docs</p>
-            <p>📈 <b>Scale</b> → Streaming, predictable token pricing</p>
-            <p>🏭 <b>Production</b> → Reliability, versioning, uptime history</p>
+          <div className="space-y-2 text-sm text-slate-300">
+            <p><b>MVP</b> → Fast setup, minimal auth, clean docs</p>
+            <p><b>Scale</b> → Streaming, predictable token economics</p>
+            <p><b>Production</b> → Reliability, versioning, uptime history</p>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-2">
@@ -213,13 +187,9 @@ export default function BuildChatbots() {
               <span
                 key={item}
                 className="
-                  px-3 py-1.5
-                  rounded-full
-                  bg-black/40
-                  border border-white/10
-                  text-[10px]
-                  text-slate-300
-                  font-mono
+                  px-3 py-1.5 rounded-full
+                  bg-black/40 border border-white/10
+                  text-[10px] font-mono text-slate-300
                 "
               >
                 {item}
@@ -228,22 +198,21 @@ export default function BuildChatbots() {
           </div>
         </div>
 
-        {/* CHATBOT THINKING */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
           <p className="text-white font-bold mb-2">
-            Building Chatbots ≠ Just LLM Calls
+            Building Chatbots ≠ Just LLM calls
           </p>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Real chatbots need memory, retries, streaming UX, cost control
-            and stable behavior under load. Apives surfaces APIs that survive
-            real production traffic — not demos.
+            Production chatbots need memory, retries, streaming UX,
+            cost control and stable behavior under load.
+            Apives highlights APIs that survive real usage.
           </p>
         </div>
       </div>
 
       {/* GLOBAL NOTE */}
-      {(globalNote || admin) && (
-        <div className="max-w-5xl mx-auto mb-20">
+      {(note || admin) && (
+        <div className="max-w-5xl mx-auto mb-16">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
             <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">
               Builder note
@@ -252,14 +221,14 @@ export default function BuildChatbots() {
             {admin ? (
               <>
                 <textarea
-                  value={draftNote}
-                  onChange={e => setDraftNote(e.target.value)}
-                  placeholder="Write a note visible to all builders…"
+                  value={noteDraft}
+                  onChange={e => setNoteDraft(e.target.value)}
                   rows={3}
+                  placeholder="Write a note for all builders…"
                   className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
                 />
                 <button
-                  onClick={saveGlobalNote}
+                  onClick={saveNote}
                   className="px-4 py-2 rounded-full bg-mora-500 text-black text-[10px] font-black uppercase tracking-widest"
                 >
                   Save note
@@ -267,7 +236,7 @@ export default function BuildChatbots() {
               </>
             ) : (
               <p className="text-sm text-slate-300 whitespace-pre-line">
-                {globalNote}
+                {note}
               </p>
             )}
           </div>
@@ -286,7 +255,7 @@ export default function BuildChatbots() {
       )}
 
       {!loading && visibleApis.length === 0 && (
-        <p className="text-center text-slate-500 mt-20 text-sm">
+        <p className="text-center text-slate-500 mt-16 text-sm">
           No chatbot APIs selected yet.
         </p>
       )}
