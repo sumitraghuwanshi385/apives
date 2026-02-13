@@ -162,6 +162,32 @@ const ApiCard: React.FC<Props> = ({
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
 
+{/* API NOTE */}
+{(() => {
+  const key = `apives_api_note_${api.id}`;
+  const saved = localStorage.getItem(key);
+
+  if (!saved && !isAdmin()) return null;
+
+  return (
+    <div className="mb-3 bg-mora-500/10 border border-mora-500/30 rounded-xl px-3 py-2">
+      {isAdmin() ? (
+        <textarea
+          defaultValue={saved || ""}
+          onBlur={e => localStorage.setItem(key, e.target.value)}
+          placeholder="Add internal note for this API"
+          className="w-full bg-transparent text-xs text-white outline-none resize-none"
+          rows={2}
+        />
+      ) : (
+        <p className="text-xs text-slate-300 whitespace-pre-line">
+          {saved}
+        </p>
+      )}
+    </div>
+  );
+})()}
+
       {/* HEADER */}
       <div className="flex justify-between items-center mb-3 relative z-20">
         <div className="flex items-center gap-1.5 md:gap-2">
