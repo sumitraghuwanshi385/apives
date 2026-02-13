@@ -192,12 +192,18 @@ export default function BuildChatbots() {
     // ✅ FIX: ALWAYS load curated APIs (logout ke baad bhi)
     setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
 
-    const savedNote = localStorage.getItem(NOTE_KEY);
-    if (savedNote) {
-      setNote(savedNote);
-      setNoteDraft(savedNote);
-    }
-  }, []);
+    const saved = localStorage.getItem(NOTE_KEY);
+if (saved) {
+  try {
+    const parsed = JSON.parse(saved);
+    setNote(parsed.text || "");
+    setNoteDraft(parsed.text || "");
+    setSelectedIds(parsed.curatedIds || []);
+  } catch {
+    setNote(saved);
+    setNoteDraft(saved);
+  }
+}, []);
 
   const toggleApi = (id: string) => {
     const updated = selectedIds.includes(id)
@@ -214,10 +220,9 @@ export default function BuildChatbots() {
   });
 
   // ✅ Public + admin both see curated APIs
-  const visibleApis =
-  selectedIds.length > 0
-    ? chatbotApis.filter(api => selectedIds.includes(api.id))
-    : chatbotApis;
+  const visibleApis = chatbotApis.filter(api =>
+  selectedIds.includes(api.id)
+);
 
   const saveNote = () => {
     localStorage.setItem(NOTE_KEY, noteDraft);
