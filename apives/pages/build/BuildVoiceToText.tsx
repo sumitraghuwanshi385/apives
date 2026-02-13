@@ -126,14 +126,19 @@ const InsightRenderer = ({ text }: { text: string }) => {
           <div key={i} className="space-y-3">
             <p>{para.replace(urlRegex, "").trim()}</p>
 
+           {/* Render detected URLs */}
             {urls.map((url, idx) => {
-              if (youtubeRegex.test(url)) {
-                return <YouTubePreview key={idx} url={url} />;
-              }
 
-              const domain = new URL(url).hostname.replace("www.", "");
+  // ✅ YouTube link → preview component
+  if (youtubeRegex.test(url)) {
+    return <YouTubePreview key={idx} url={url} />;
+  }
 
-              return (
+  // ✅ Normal website → glass pill
+  const domain = new URL(url).hostname.replace("www.", "");
+  const label = domain.includes("apives") ? "Apives" : domain;
+
+  return (
                 <a
                   key={idx}
                   href={url}
