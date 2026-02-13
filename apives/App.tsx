@@ -53,7 +53,10 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/browse" element={<BrowseApis />} />
+
+            {/* 🔥 BUILD PAGES */}
             <Route path="/build/chatbots" element={<BuildChatbots />} />
+
             <Route path="/submit" element={<SubmitApi />} />
             <Route path="/api/:id" element={<ApiDetails />} />
             <Route path="/provider" element={<ProviderDashboard />} />
