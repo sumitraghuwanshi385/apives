@@ -103,32 +103,6 @@ const YouTubePreview = ({ url }: { url: string }) => {
   );
 };
 
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block rounded-2xl overflow-hidden
-      bg-white/5 border border-white/10 backdrop-blur-md
-      hover:bg-white/10 transition"
-    >
-      <div className="flex">
-        <img
-          src={meta.thumbnail_url}
-          className="w-40 h-24 object-cover"
-        />
-        <div className="p-4 flex flex-col justify-center">
-          <p className="text-white text-sm font-semibold line-clamp-2">
-            {meta.title}
-          </p>
-          <p className="text-slate-400 text-xs mt-1">
-            {meta.author_name}
-          </p>
-        </div>
-      </div>
-    </a>
-  );
-};
 
 const InsightRenderer = ({ text }: { text: string }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
