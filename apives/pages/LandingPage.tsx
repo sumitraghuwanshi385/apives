@@ -9,7 +9,8 @@ Zap,
 Hash,
 Server,
 Trophy,
-LayoutGrid
+LayoutGrid,
+Image
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
@@ -775,42 +776,42 @@ rounded-2xl bg-white/10 p-1"
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
 
       {[
-        {
-          title: "AI Chatbots",
-          desc: "LLMs, chat, assistants",
-          icon: Zap,
-          link: "/build/chatbots?usecase=chatbots"
-        },
-        {
-          title: "Voice to Text",
-          desc: "Speech recognition APIs",
-          icon: Activity,
-          link: "/browse?usecase=voice"
-        },
-        {
-          title: "Image Generation",
-          desc: "Text → Image models",
-          icon: LayoutGrid,
-          link: "/browse?usecase=image"
-        },
-        {
-          title: "Payments",
-          desc: "Billing & subscriptions",
-          icon: Server,
-          link: "/browse?usecase=payments"
-        },
-        {
-          title: "Authentication",
-          desc: "Login, OTP, identity",
-          icon: Hash,
-          link: "/browse?usecase=auth"
-        },
-        {
-          title: "Analytics",
-          desc: "Tracking & insights",
-          icon: TrendingUp,
-          link: "/browse?usecase=analytics"
-        }
+  {
+    title: "AI Chatbots",
+    desc: "LLMs, chat, assistants",
+    icon: Zap,
+    link: "/build/chatbots"
+  },
+  {
+    title: "Voice to Text",
+    desc: "Speech recognition APIs",
+    icon: Activity,
+    link: "/build/voice"
+  },
+  {
+    title: "Image Generation",
+    desc: "Text → Image models",
+    icon: Image,
+    link: "/build/image-generation"
+  },
+  {
+    title: "Payments",
+    desc: "Billing & subscriptions",
+    icon: Server,
+    link: "/build/payments"
+  },
+  {
+    title: "Authentication",
+    desc: "Login, OTP, identity",
+    icon: Hash,
+    link: "/build/authentication"
+  },
+  {
+    title: "Analytics",
+    desc: "Tracking & insights",
+    icon: TrendingUp,
+    link: "/build/analytics"
+  }
       ].map((item, i) => (
         <Link
           key={i}
