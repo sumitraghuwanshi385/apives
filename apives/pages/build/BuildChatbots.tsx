@@ -274,101 +274,66 @@ export default function BuildChatbots() {
         </p>
       </div>
 
-      {/* MAIN GRID */}
-      <div className="max-w-6xl mx-auto mb-10 grid md:grid-cols-3 gap-4">
+     {/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
+<div className="max-w-6xl mx-auto mt-24 space-y-28 px-2">
 
-        {/* UNDERSTAND CHATBOT AI */}
-        <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-4">
-          <div className="mb-4">
-  <h3 className="text-white font-bold mb-2 flex items-center gap-2">
-    <Zap size={16} className="text-mora-500" />
-    Production Architecture Essentials
-  </h3>
+  {/* SECTION 1 — LEFT (GREEN) */}
+  <div className="flex flex-col md:flex-row items-center">
+    <div className="md:w-1/2 text-center md:text-left">
+      <h2 className="text-3xl md:text-4xl font-extrabold
+        bg-gradient-to-r from-green-400 to-emerald-400
+        bg-clip-text text-transparent tracking-tight">
+        Production Architecture Essentials.
+      </h2>
 
-  <p className="text-xs text-slate-400">
-    Every serious AI chatbot must handle these six system layers before going live.
-  </p>
+      <p className="mt-4 text-slate-400 leading-relaxed max-w-xl mx-auto md:mx-0">
+        Every serious AI chatbot must handle six critical system layers before going live —
+        rapid MVP readiness, scale safety, production reliability, stable latency,
+        predictable token economics, and developer-friendly tooling.
+      </p>
+    </div>
+  </div>
+
+  {/* SECTION 2 — RIGHT (PURPLE) */}
+  <div className="flex flex-col md:flex-row-reverse items-center">
+    <div className="md:w-1/2 text-center md:text-right">
+      <h2 className="text-3xl md:text-4xl font-extrabold
+        bg-gradient-to-r from-purple-400 to-pink-400
+        bg-clip-text text-transparent tracking-tight">
+        Performance & Cost Intelligence.
+      </h2>
+
+      <p className="mt-4 text-slate-400 leading-relaxed max-w-xl mx-auto md:ml-auto">
+        Modern chatbots are infrastructure systems, not prompts.
+        They require memory orchestration, retry strategies, fallback handling,
+        and streaming UX optimization.
+        <br /><br />
+        Cost controls and latency guarantees directly define user retention
+        and long-term profitability.
+      </p>
+    </div>
+  </div>
+
+  {/* SECTION 3 — LEFT (BLUE) */}
+  <div className="flex flex-col md:flex-row items-center">
+    <div className="md:w-1/2 text-center md:text-left">
+      <h2 className="text-3xl md:text-4xl font-extrabold
+        bg-gradient-to-r from-blue-400 to-cyan-400
+        bg-clip-text text-transparent tracking-tight">
+        API Selection Defines Success.
+      </h2>
+
+      <p className="mt-4 text-slate-400 leading-relaxed max-w-xl mx-auto md:mx-0">
+        Choosing the right AI API determines scalability, reliability,
+        and long-term system health.
+        <br /><br />
+        Poor API choices lead to hidden costs, unstable latency,
+        and brittle systems that collapse under real user load.
+      </p>
+    </div>
+  </div>
+
 </div>
-
-          <div className="grid sm:grid-cols-3 gap-3 text-xs">
-
-            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
-              <p className="font-bold text-green-400 mb-1">MVP Ready</p>
-              <p className="text-slate-300">
-                Fast prototyping, instant auth, minimal setup, and early traction readiness.
-              </p>
-            </div>
-
-            <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3">
-              <p className="font-bold text-purple-400 mb-1">Scale Safe</p>
-              <p className="text-slate-300">
-                Designed for burst traffic, queue stability, and predictable rate limits.
-              </p>
-            </div>
-
-            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
-              <p className="font-bold text-blue-400 mb-1">Production Grade</p>
-              <p className="text-slate-300">
-                SLA confidence, versioning discipline, and long-context reliability.
-              </p>
-            </div>
-
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
-              <p className="font-bold text-yellow-400 mb-1">Latency Stable</p>
-              <p className="text-slate-300">
-                Predictable response times across regions and concurrent workloads.
-              </p>
-            </div>
-
-            <div className="bg-pink-500/10 border border-pink-500/30 rounded-xl p-3">
-              <p className="font-bold text-pink-400 mb-1">Cost Predictable</p>
-              <p className="text-slate-300">
-                Transparent pricing models with controllable token economics.
-              </p>
-            </div>
-
-            <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-3">
-              <p className="font-bold text-cyan-400 mb-1">Dev Friendly</p>
-              <p className="text-slate-300">
-                Clean docs, SDKs, error clarity, and fast debugging loops.
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-        {/* SMART CHATBOT SYSTEMS */}
-        <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Bot size={16} className="text-mora-500" />
-            <p className="text-white font-bold text-sm">
-              Smart Chatbot Systems
-            </p>
-          </div>
-
-          <p className="text-[12px] text-slate-400 leading-relaxed">
-            Modern chatbots are systems, not prompts.
-          </p>
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            They require memory orchestration, retry strategies,
-            and fallback logic for unpredictable user behavior.
-          </p>
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            Cost controls, latency guarantees, and streaming UX
-            directly impact retention and trust.
-          </p>
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-  Choosing the right API determines scalability,
-  reliability, and long-term system health.
-</p>
-
-<p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-  Poor API choices often lead to hidden costs, unstable latency,
-  and brittle systems that fail under real user load.
-</p>
-        </div>
-
-      </div>
 
       {/* OPERATIONAL INSIGHT */}
       {(note || admin) && (
