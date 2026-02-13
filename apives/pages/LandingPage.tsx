@@ -750,6 +750,129 @@ rounded-2xl bg-white/10 p-1"
 </a>  
     </div>  
   </div>  
+
+{/* ===============================
+ WHAT ARE YOU BUILDING TODAY
+================================ */}
+<section className="py-10 md:py-16 bg-black border-t border-white/5 relative overflow-hidden">
+
+  {/* glow */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none" />
+
+  <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+
+    {/* Header */}
+    <div className="text-center mb-8 md:mb-12">
+      <h2 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
+        What are you building today?
+      </h2>
+      <p className="mt-2 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+        Choose a use-case and explore APIs curated specifically for that build.
+      </p>
+    </div>
+
+    {/* Grid */}
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+
+      {[
+        {
+          title: "AI Chatbots",
+          desc: "LLMs, chat, assistants",
+          icon: Zap,
+          link: "/browse?usecase=chatbots"
+        },
+        {
+          title: "Voice to Text",
+          desc: "Speech recognition APIs",
+          icon: Activity,
+          link: "/browse?usecase=voice"
+        },
+        {
+          title: "Image Generation",
+          desc: "Text → Image models",
+          icon: LayoutGrid,
+          link: "/browse?usecase=image"
+        },
+        {
+          title: "Payments",
+          desc: "Billing & subscriptions",
+          icon: Server,
+          link: "/browse?usecase=payments"
+        },
+        {
+          title: "Authentication",
+          desc: "Login, OTP, identity",
+          icon: Hash,
+          link: "/browse?usecase=auth"
+        },
+        {
+          title: "Analytics",
+          desc: "Tracking & insights",
+          icon: TrendingUp,
+          link: "/browse?usecase=analytics"
+        }
+      ].map((item, i) => (
+        <Link
+          key={i}
+          to={item.link}
+          className="
+            group relative
+            bg-dark-900/50 hover:bg-dark-900/80
+            border border-white/10 hover:border-mora-500/40
+            rounded-2xl
+            p-4 md:p-6
+            transition-all duration-500
+            hover:-translate-y-1
+            overflow-hidden
+          "
+        >
+          {/* hover glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-mora-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+          <div className="relative z-10 flex flex-col gap-3">
+
+            {/* Icon */}
+            <div className="
+              w-10 h-10 md:w-12 md:h-12
+              rounded-xl
+              flex items-center justify-center
+              bg-mora-500/10
+              border border-mora-500/30
+              text-mora-400
+              shadow-[0_0_20px_rgba(34,197,94,0.25)]
+            ">
+              <item.icon size={22} />
+            </div>
+
+            {/* Text */}
+            <div>
+              <h3 className="text-white font-bold text-sm md:text-base tracking-tight">
+                {item.title}
+              </h3>
+              <p className="text-slate-400 text-[11px] md:text-sm mt-1">
+                {item.desc}
+              </p>
+            </div>
+
+            {/* CTA */}
+            <span className="
+              mt-auto
+              inline-flex items-center gap-1
+              text-[10px] md:text-xs
+              font-black uppercase tracking-widest
+              text-mora-400
+            ">
+              Explore APIs →
+            </span>
+
+          </div>
+        </Link>
+      ))}
+
+    </div>
+  </div>
+</section>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
           <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
             <LayoutGrid className="mr-3 text-mora-500" size={18} /> The Universal Grid  
