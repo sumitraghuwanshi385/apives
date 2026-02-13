@@ -6,6 +6,7 @@ import BuildVoiceToText from "./pages/build/BuildVoiceToText";
 import BuildPayments from "./pages/build/BuildPayments";
 import BuildAuthentication from "./pages/build/BuildAuthentication";
 import BuildAnalytics from "./pages/build/BuildAnalytics";
+import BuildImageGeneration from "./pages/build/BuildImageGeneration";
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 
 import { Navbar } from './components/Navbar';
@@ -62,6 +63,7 @@ return (
     <Route path="/build/payments" element={<BuildPayments />} />
 <Route path="/build/authentication" element={<BuildAuthentication />} />
             <Route path="/build/analytics" element={<BuildAnalytics />} />
+<Route path="/build/image-generation" element={<BuildImageGeneration />} />
     <Route path="/submit" element={<SubmitApi />} />    
     <Route path="/api/:id" element={<ApiDetails />} />    
     <Route path="/provider" element={<ProviderDashboard />} />    
