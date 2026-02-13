@@ -55,7 +55,7 @@ return (
 
     {/* 🔥 BUILD */}    
     <Route path="/build/chatbots" element={<BuildChatbots />} />    
-.   <Route path="/build/voice" element={<BuildVoiceToText />} />
+    <Route path="/build/voice" element={<BuildVoiceToText />} />
     <Route path="/submit" element={<SubmitApi />} />    
     <Route path="/api/:id" element={<ApiDetails />} />    
     <Route path="/provider" element={<ProviderDashboard />} />    
