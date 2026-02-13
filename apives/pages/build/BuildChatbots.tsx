@@ -201,15 +201,19 @@ export default function BuildChatbots() {
   })();
 }, []);
 
-  const toggleApi = (id: string) => {
-    const updated = selectedIds.includes(id)
-      ? selectedIds.filter(x => x !== id)
-      : [...selectedIds, id];
+  
+const toggleApi = async (id: string) => {
+  const updated = selectedIds.includes(id)
+    ? selectedIds.filter(x => x !== id)
+    : [...selectedIds, id];
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setSelectedIds(updated);
-  };
+  setSelectedIds(updated);
 
+  await apiService.updateUsecase("chatbots", {
+    operationalInsight: noteDraft,
+    curatedApiIds: updated
+  });
+};
   
   // ✅ Public + admin both see curated APIs
   const visibleApis = allApis.filter(api =>
