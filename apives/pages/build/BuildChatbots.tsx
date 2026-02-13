@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
-import ApiCard from "../../components/ApiCard";
 import { ArrowLeft, ChevronDown, Check } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
