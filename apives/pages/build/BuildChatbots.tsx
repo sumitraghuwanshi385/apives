@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
+import ApiCard from "../../components/ApiCard";
 import { ArrowLeft, ChevronDown, Check } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
+const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
 
 const isAdmin = () => {
   try {
@@ -14,8 +16,6 @@ const isAdmin = () => {
     return false;
   }
 };
-
-const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
 
 export default function BuildChatbots() {
   const navigate = useNavigate();
@@ -27,13 +27,14 @@ export default function BuildChatbots() {
 
   useEffect(() => {
     apiService.getAllApis().then((res: any[]) => {
-      const db = res.map(a => ({ ...a, id: a._id }));
+      const db = (Array.isArray(res) ? res : res?.data || []).map(a => ({
+        ...a,
+        id: a._id
+      }));
       setAllApis(db);
     });
 
-    setSelectedIds(
-      JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")
-    );
+    setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
   }, []);
 
   const toggleApi = (id: string) => {
@@ -45,12 +46,10 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  const chatbotApis = allApis.filter(api =>
-    CHATBOT_KEYWORDS.some(k =>
-      api.name.toLowerCase().includes(k) ||
-      api.description?.toLowerCase().includes(k)
-    )
-  );
+  const chatbotApis = allApis.filter(api => {
+    const text = `${api.name} ${api.description || ""}`.toLowerCase();
+    return CHATBOT_KEYWORDS.some(k => text.includes(k));
+  });
 
   const visibleApis = admin
     ? chatbotApis.filter(api => selectedIds.includes(api.id))
@@ -68,24 +67,26 @@ export default function BuildChatbots() {
           <ArrowLeft size={16} /> Back
         </button>
 
-        {/* ADMIN DROPDOWN */}
         {admin && (
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(v => !v)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest"
+              className="flex items-center gap-2 px-4 py-2 rounded-full
+              bg-white/5 border border-white/10
+              text-xs font-black uppercase tracking-widest"
             >
               Select APIs <ChevronDown size={14} />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 max-h-80 overflow-y-auto bg-black border border-white/10 rounded-xl p-2 z-50">
+              <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto
+                bg-black border border-white/10 rounded-2xl p-2 z-50">
                 {chatbotApis.map(api => (
                   <button
                     key={api.id}
                     onClick={() => toggleApi(api.id)}
                     className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs ${
-                      selectedIds.includess.includes(api.id)
+                      selectedIds.includes(api.id)
                         ? "bg-mora-500 text-black"
                         : "text-slate-400 hover:bg-white/5"
                     }`}
@@ -106,7 +107,7 @@ export default function BuildChatbots() {
           Best APIs to Build AI Chatbots
         </h1>
         <p className="mt-4 text-slate-400 text-sm md:text-base">
-          Planning to build a SaaS, AI wrapper, or ChatGPT-style application?
+          Planning to build a SaaS, AI wrapper, or ChatGPT-style app?
           These APIs are trusted, scalable, and production-ready.
         </p>
       </div>
@@ -116,9 +117,9 @@ export default function BuildChatbots() {
         <h3 className="text-white font-bold mb-4">💡 Before You Choose an API</h3>
 
         <ul className="text-slate-300 text-sm space-y-2 mb-6">
-          <li>🔹 For MVPs → prioritize fast setup & clear docs</li>
-          <li>🔹 For scale → look at rate limits & pricing predictability</li>
-          <li>🔹 For production → stability & versioning matter most</li>
+          <li>🔹 MVP → fast setup & docs clarity</li>
+          <li>🔹 Scale → rate limits & pricing</li>
+          <li>🔹 Production → reliability & versioning</li>
         </ul>
 
         <div className="bg-black/40 border border-white/10 rounded-xl p-4">
@@ -126,12 +127,12 @@ export default function BuildChatbots() {
             Things to Compare
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
-            <span>• Pricing structure</span>
-            <span>• Response speed</span>
-            <span>• API documentation</span>
+            <span>• Pricing</span>
+            <span>• Speed</span>
+            <span>• Docs quality</span>
             <span>• Rate limits</span>
             <span>• Reliability</span>
-            <span>• Ease of integration</span>
+            <span>• Integration ease</span>
           </div>
         </div>
       </div>
