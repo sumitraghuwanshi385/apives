@@ -1,113 +1,89 @@
-import React from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
-import { CookieBanner } from "./components/CookieBanner";
-
-/* BUILD PAGES */
 import BuildChatbots from "./pages/build/BuildChatbots";
-import BuildVoiceToText from "./pages/build/BuildVoiceToText";
-import BuildPayments from "./pages/build/BuildPayments";
-import BuildAuthentication from "./pages/build/BuildAuthentication";
-import BuildAnalytics from "./pages/build/BuildAnalytics";
-
-/* CORE PAGES */
-import { LandingPage } from "./pages/LandingPage";
-import { BrowseApis } from "./pages/BrowseApis";
-import { ApiDetails } from "./pages/ApiDetails";
-import { ProviderDashboard } from "./pages/ProviderDashboard";
-import { AccessPage } from "./pages/AuthPages";
-import { SubmitApi } from "./pages/SubmitApi";
-import { FreshApis } from "./pages/FreshApis";
-import { PopularApis } from "./pages/PopularApis";
-import { OnboardingPage } from "./pages/Onboarding";
-
-/* ADMIN */
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 
-/* STATIC */
+import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
+import { CookieBanner } from "./components/CookieBanner";
+
+import { LandingPage } from './pages/LandingPage';
+import { BrowseApis } from './pages/BrowseApis';
+import { ApiDetails } from './pages/ApiDetails';
+import { ProviderDashboard } from './pages/ProviderDashboard';
+import { AccessPage } from './pages/AuthPages';
+import { SubmitApi } from './pages/SubmitApi';
+import { FreshApis } from './pages/FreshApis';
+import { PopularApis } from './pages/PopularApis';
+import { OnboardingPage } from './pages/Onboarding';
+
 import {
-  EnterprisePage,
-  DocumentationPage,
-  StatusPage,
-  CookiesPage,
-  PrivacyPage,
-  TermsPage,
-  SupportPage,
-  SponsorshipPage
-} from "./pages/StaticPages";
+EnterprisePage,
+DocumentationPage,
+StatusPage,
+CookiesPage,
+PrivacyPage,
+TermsPage,
+SupportPage,
+SponsorshipPage
+} from './pages/StaticPages';
 
-/* Scroll to top */
+/* 🔥 Scroll to top on route change */
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+const { pathname } = useLocation();
 
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+React.useEffect(() => {
+window.scrollTo(0, 0);
+}, [pathname]);
 
-  return null;
+return null;
 };
 
 function App() {
-  return (
-    <>
-      <CookieBanner />
-      <ScrollToTop />
+return (
+<>
+<CookieBanner />
+<ScrollToTop />
 
-      <div className="flex flex-col min-h-screen bg-black text-slate-50">
-        <Navbar />
+<div className="flex flex-col min-h-screen bg-black font-sans text-slate-50 selection:bg-mora-500 selection:text-black">    
+    <Navbar />    <main className="flex-grow">    
+  <Routes>    
+    <Route path="/" element={<LandingPage />} />    
+    <Route path="/browse" element={<BrowseApis />} />    
 
-        <main className="flex-grow">
-          <Routes>
-            {/* LANDING */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/browse" element={<BrowseApis />} />
+    {/* 🔥 BUILD */}    
+    <Route path="/build/chatbots" element={<BuildChatbots />} />    
 
-            {/* BUILD USE CASES */}
-            <Route path="/build/chatbots" element={<BuildChatbots />} />
-            <Route path="/build/voice" element={<BuildVoiceToText />} />
-            <Route path="/build/payments" element={<BuildPayments />} />
-            <Route path="/build/authentication" element={<BuildAuthentication />} />
-            <Route path="/build/analytics" element={<BuildAnalytics />} />
+    <Route path="/submit" element={<SubmitApi />} />    
+    <Route path="/api/:id" element={<ApiDetails />} />    
+    <Route path="/provider" element={<ProviderDashboard />} />    
+    <Route path="/access" element={<AccessPage />} />    
+    <Route path="/fresh" element={<FreshApis />} />    
+    <Route path="/popular" element={<PopularApis />} />    
+    <Route path="/onboarding" element={<OnboardingPage />} />    
 
-            {/* API */}
-            <Route path="/api/:id" element={<ApiDetails />} />
-            <Route path="/submit" element={<SubmitApi />} />
-            <Route path="/provider" element={<ProviderDashboard />} />
+    {/* Footer */}    
+    <Route path="/enterprise" element={<EnterprisePage />} />    
+    <Route path="/docs" element={<DocumentationPage />} />    
+    <Route path="/status" element={<StatusPage />} />    
+    <Route path="/cookies" element={<CookiesPage />} />    
+    <Route path="/privacy" element={<PrivacyPage />} />    
+    <Route path="/terms" element={<TermsPage />} />    
+    <Route path="/support" element={<SupportPage />} />    
+    <Route path="/sponsorship" element={<SponsorshipPage />} />    
 
-            {/* AUTH */}
-            <Route path="/access" element={<AccessPage />} />
+    {/* Admin */}    
+    <Route path="/admin/sponsors" element={<SponsorAnalytics />} />    
 
-            {/* LISTINGS */}
-            <Route path="/fresh" element={<FreshApis />} />
-            <Route path="/popular" element={<PopularApis />} />
+    <Route path="*" element={<Navigate to="/" replace />} />    
+  </Routes>    
+</main>    
 
-            {/* ONBOARDING */}
-            <Route path="/onboarding" element={<OnboardingPage />} />
+<Footer />
 
-            {/* STATIC */}
-            <Route path="/enterprise" element={<EnterprisePage />} />
-            <Route path="/docs" element={<DocumentationPage />} />
-            <Route path="/status" element={<StatusPage />} />
-            <Route path="/cookies" element={<CookiesPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/support" element={<SupportPage />} />
-            <Route path="/sponsorship" element={<SponsorshipPage />} />
-
-            {/* ADMIN */}
-            <Route path="/admin/sponsors" element={<SponsorAnalytics />} />
-
-            {/* FALLBACK */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-
-        <Footer />
-      </div>
-    </>
-  );
+  </div>    
+</>  );
 }
 
 export default App;
