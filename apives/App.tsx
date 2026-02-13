@@ -1,6 +1,10 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
+import BuildChatbots from "./pages/build/BuildChatbots";
+
+<Route path="/build/chatbots" element={<BuildChatbots />} />
+
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
