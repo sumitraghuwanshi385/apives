@@ -4,7 +4,7 @@ import { ArrowLeft, ChevronDown, Check } from "lucide-react";
 
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
-import { ApiCard } from "../../components/ApiCard";
+import ApiCard from "../../components/ApiCard";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
 const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
