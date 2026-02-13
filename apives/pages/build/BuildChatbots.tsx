@@ -178,31 +178,29 @@ export default function BuildChatbots() {
   useEffect(() => {
   (async () => {
     try {
+      // 1️⃣ Get all APIs
       const res = await apiService.getAllApis();
       const list = Array.isArray(res) ? res : res?.data || [];
       const db = list.map(a => ({ ...a, id: a._id }));
       setAllApis(db);
+
+      // 2️⃣ Get usecase data from MongoDB
+      const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
+
+      if (usecaseRes?.data) {
+        setNote(usecaseRes.data.operationalInsight || "");
+        setNoteDraft(usecaseRes.data.operationalInsight || "");
+        setSelectedIds(usecaseRes.data.curatedApiIds || []);
+      }
+
     } catch (e) {
-      console.error("Chatbot API fetch failed", e);
+      console.error("Chatbot fetch failed", e);
     } finally {
       setLoading(false);
     }
   })();
-
-  const saved = localStorage.getItem(NOTE_KEY);
-  if (!saved) return;
-
-  try {
-    const parsed: ChatbotNotePayload = JSON.parse(saved);
-    setNote(parsed.text || "");
-    setNoteDraft(parsed.text || "");
-    setSelectedIds(parsed.curatedIds || []);
-  } catch {
-    // backward compatibility
-    setNote(saved);
-    setNoteDraft(saved);
-  }
 }, []);
+
   const toggleApi = (id: string) => {
     const updated = selectedIds.includes(id)
       ? selectedIds.filter(x => x !== id)
