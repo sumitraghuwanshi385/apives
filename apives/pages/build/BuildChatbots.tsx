@@ -230,10 +230,6 @@ export default function BuildChatbots() {
             Choosing the right API determines scalability,
             reliability, and long-term system health.
           </p>
-          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            Weak foundations lead to silent failures and
-            expensive rewrites at scale.
-          </p>
         </div>
 
       </div>
