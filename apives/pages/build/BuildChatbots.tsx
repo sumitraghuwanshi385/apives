@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
-import { ApiCard } from "../../components/ApiCard";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
 
@@ -20,7 +19,7 @@ export default function BuildChatbots() {
 
   useEffect(() => {
     apiService.getAllApis().then((res: any[]) => {
-      const db = res.map(a => ({ ...a, id: a._id }));
+      const db = res.map((a: any) => ({ ...a, id: a._id }));
       setAllApis(db);
     });
 
@@ -52,14 +51,28 @@ export default function BuildChatbots() {
         APIs for chat, assistants, LLMs, moderation and conversations.
       </p>
 
-      {/* API CARDS */}
+      {/* ✅ API LIST */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
         {visibleApis.map(api => (
-          <ApiCard key={api.id} api={api} topIds={[]} />
+          <div
+            key={api.id}
+            className="rounded-2xl border border-white/10 bg-white/5 p-4 hover:border-mora-500/40 transition"
+          >
+            <h3 className="text-white font-bold text-lg mb-1">
+              {api.name}
+            </h3>
+            <p className="text-slate-400 text-sm line-clamp-3">
+              {api.description}
+            </p>
+
+            <div className="mt-3 text-xs text-mora-400 font-mono">
+              {api.provider}
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* ADMIN PANEL */}
+      {/* ✅ ADMIN PANEL */}
       {isAdmin() && (
         <div className="mt-16 border border-mora-500/30 rounded-2xl p-4 bg-black/70">
           <h4 className="text-mora-400 text-xs font-black uppercase tracking-widest mb-4">
@@ -71,11 +84,11 @@ export default function BuildChatbots() {
               <button
                 key={api.id}
                 onClick={() => toggleApi(api.id)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border
+                className={`px-3 py-2 rounded-xl text-xs font-bold border transition
                   ${
                     selectedIds.includes(api.id)
                       ? "bg-mora-500 text-black border-mora-500"
-                      : "bg-white/5 border-white/10 text-slate-400"
+                      : "bg-white/5 border-white/10 text-slate-400 hover:border-mora-500/40"
                   }`}
               >
                 {api.name}
