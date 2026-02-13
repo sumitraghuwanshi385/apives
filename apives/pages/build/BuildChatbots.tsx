@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiService } from "../../services/apiClient";
+import ApiCard from "../components/ApiCard";
 import { ApiListing } from "../../types";
 import { ArrowLeft, ChevronDown, Check } from "lucide-react";
 
