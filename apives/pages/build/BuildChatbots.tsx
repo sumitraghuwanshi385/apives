@@ -10,7 +10,8 @@ import {
   Brain,
   Zap,
   MessageSquare,
-  Layers
+  Layers,
+  Shield
 } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
@@ -27,21 +28,16 @@ const isAdmin = () => {
 };
 
 /* ===============================
-   UNIQUE LOADER
+   CLEANER LOADER (Reduced)
 ================================ */
 const ChatbotLoader = () => (
-  <div className="flex flex-col items-center justify-center mt-24 gap-6">
-    <div className="relative w-16 h-16">
-      <div className="absolute inset-0 rounded-full border-2 border-mora-500/30 animate-ping" />
-      <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin" />
+  <div className="flex flex-col items-center justify-center mt-24 gap-3">
+    <div className="relative w-10 h-10">
+      <div className="absolute inset-0 rounded-full border border-mora-500/30 animate-ping" />
+      <div className="absolute inset-0 rounded-full border border-mora-500 border-t-transparent animate-spin" />
     </div>
-
-    <p className="text-sm font-mono uppercase tracking-[0.3em] text-slate-400">
-      Initializing Chatbot API
-    </p>
-
-    <p className="text-xs text-slate-500 max-w-xs text-center">
-      Evaluating latency, context depth, and conversational stability
+    <p className="text-xs font-mono tracking-widest text-slate-400">
+      Loading Chatbots...
     </p>
   </div>
 );
@@ -57,7 +53,6 @@ export default function BuildChatbots() {
   const [note, setNote] = useState("");
   const [noteDraft, setNoteDraft] = useState("");
 
-  /* LOAD DATA */
   useEffect(() => {
     (async () => {
       try {
@@ -90,7 +85,6 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  // ✅ FIXED: GitHub red error
   const chatbotApis = allApis.filter(api => {
     const text = `${api.name} ${api.description || ""}`.toLowerCase();
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
@@ -108,11 +102,10 @@ export default function BuildChatbots() {
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-24 px-4 md:px-8">
 
-      {/* HEADER ROW */}
+      {/* HEADER */}
       <div className="max-w-7xl mx-auto mb-10 flex items-center justify-between">
         <BackButton />
 
-        {/* ✅ SELECT APIS PILL (TOP RIGHT) */}
         {admin && (
           <div className="relative">
             <button
@@ -148,88 +141,88 @@ export default function BuildChatbots() {
       </div>
 
       {/* HERO */}
-      <div className="max-w-4xl mx-auto text-center mb-16">
+      <div className="max-w-4xl mx-auto text-center mb-14">
         <h1 className="text-3xl md:text-6xl font-display font-bold text-white">
           AI Chatbots
         </h1>
         <p className="mt-4 text-slate-400 text-sm md:text-lg">
-          Discover APIs optimized for conversational flows, LLM reasoning,
-          and production-grade assistants.
+          Production-ready conversational APIs curated by Apives.
         </p>
       </div>
 
-      {/* BEFORE YOU CHOOSE */}
-      <div className="max-w-6xl mx-auto mb-16 grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-white font-bold mb-6 flex items-center gap-2">
-            <Sparkles size={16} className="text-mora-500" />
-            Evaluates Chatbot APIs
+      {/* MAIN GRID */}
+      <div className="max-w-6xl mx-auto mb-14 grid md:grid-cols-3 gap-5">
+
+        {/* EVALUATION BOX (Padding Reduced + Cleaner) */}
+        <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-4">
+          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+            <Sparkles size={14} className="text-mora-500" />
+            How Apives Evaluates Chatbot APIs
           </h3>
 
-          <div className="grid sm:grid-cols-3 gap-4 text-sm">
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Zap className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">MVP Stage</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Fast auth, clean docs, instant responses. Zero infra overhead.
+          <div className="grid sm:grid-cols-3 gap-3 text-xs">
+            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
+              <Zap className="text-mora-500 mb-1" size={14} />
+              <p className="font-bold text-white text-xs">MVP Ready</p>
+              <p className="text-slate-400 text-[11px]">
+                Instant auth, zero friction integration.
               </p>
             </div>
 
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Layers className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">Scaling Phase</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Streaming, rate limits, predictable token economics.
+            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
+              <Layers className="text-mora-500 mb-1" size={14} />
+              <p className="font-bold text-white text-xs">Scale Safe</p>
+              <p className="text-slate-400 text-[11px]">
+                Streaming stability & predictable scaling.
               </p>
             </div>
 
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Brain className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">Production</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Versioning, uptime history, long-context stability.
+            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
+              <Brain className="text-mora-500 mb-1" size={14} />
+              <p className="font-bold text-white text-xs">Production Grade</p>
+              <p className="text-slate-400 text-[11px]">
+                Uptime, versioning & long context handling.
               </p>
             </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
-            {[
-              "Token pricing model",
-              "Response latency",
-              "Context window depth",
-              "Streaming support",
-              "Rate-limit behavior",
-              "Integration friction"
-            ].map(item => (
-              <div
-                key={item}
-                className="bg-black/40 border border-white/10 rounded-lg px-3 py-2"
-              >
-                • {item}
-              </div>
-            ))}
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-6">
-          <MessageSquare className="text-mora-500 mb-3" size={18} />
-          <p className="text-white font-bold mb-2">
+        {/* BUILDING CHATBOTS BOX (Padding Reduced) */}
+        <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-4">
+          <MessageSquare className="text-mora-500 mb-2" size={16} />
+          <p className="text-white font-bold text-sm mb-1">
             Building Chatbots ≠ Just LLM Calls
           </p>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Real chatbots need memory, streaming UX, retries, cost control,
-            and predictable behavior under load. Apives surfaces APIs that
-            survive real usage — not demos.
+          <p className="text-[11px] text-slate-400 leading-relaxed">
+            Real bots need streaming UX, memory orchestration,
+            cost awareness & predictable output behavior.
           </p>
         </div>
       </div>
 
-      {/* GLOBAL NOTE */}
+      {/* NEW PREMIUM INTELLIGENCE BOX */}
+      <div className="max-w-5xl mx-auto mb-14">
+        <div className="relative bg-gradient-to-r from-mora-500/10 to-black border border-mora-500/20 rounded-2xl p-5 overflow-hidden">
+          <div className="absolute inset-0 bg-mora-500/5 blur-3xl opacity-30" />
+          <div className="relative z-10">
+            <p className="text-xs uppercase tracking-widest text-mora-400 mb-2">
+              Apives Intelligence Layer
+            </p>
+            <p className="text-sm text-slate-300">
+              APIs listed here pass conversational stress tests,
+              memory chaining checks, and real SaaS deployment simulations.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* NOTE BY APIVES (Renamed + Sexy UI) */}
       {(note || admin) && (
         <div className="max-w-5xl mx-auto mb-16">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
-              📌 Builder Note
+          <div className="bg-gradient-to-r from-white/5 to-white/10 border border-mora-500/20 rounded-2xl p-5 shadow-lg">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-mora-400 mb-3">
+              <Shield size={14} />
+              Note by Apives
             </p>
 
             {admin ? (
@@ -244,7 +237,7 @@ export default function BuildChatbots() {
                   onClick={saveNote}
                   className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
                 >
-                  Save Note
+                  Update Note
                 </button>
               </>
             ) : (
