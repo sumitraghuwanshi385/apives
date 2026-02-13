@@ -376,7 +376,7 @@ export default function BuildChatbots() {
 <div className="mt-12">
 
       {/* OPERATIONAL INSIGHT */}
-      (note && (
+      {note && (
         <div className="max-w-5xl mx-auto mb-14">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
             <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
