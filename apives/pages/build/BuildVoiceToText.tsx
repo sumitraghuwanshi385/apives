@@ -46,6 +46,111 @@ const VoiceLoader = () => (
   </div>
 );
 
+const YouTubePreview = ({ url }: { url: string }) => {
+  let videoId = "";
+
+  try {
+    if (url.includes("watch")) {
+      videoId = new URL(url).searchParams.get("v") || "";
+    } else {
+      const lastPart = url.split("/").pop() || "";
+      videoId = lastPart.split("?")[0];
+    }
+  } catch {
+    return null;
+  }
+
+  if (!videoId) return null;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center gap-3
+      bg-white/5 border border-white/10
+      rounded-xl p-2 hover:bg-white/10 transition"
+    >
+      <div className="relative shrink-0">
+        <img
+          src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+          className="w-32 h-20 object-cover rounded-lg"
+          loading="lazy"
+        />
+
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-8 h-8 bg-black/60 rounded-full flex items-center justify-center">
+            <span className="text-white text-sm ml-0.5">▶</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col">
+        <p className="text-sm text-white font-medium">
+          YouTube Video
+        </p>
+        <p className="text-xs text-slate-400">
+          Click to watch
+        </p>
+      </div>
+    </a>
+  );
+};
+
+const InsightRenderer = ({ text }: { text: string }) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const youtubeRegex =
+    /(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s]+)/;
+
+  const paragraphs = text.split("\n");
+
+  return (
+    <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+      {paragraphs.map((para, i) => {
+        if (!para.trim()) {
+          return <div key={i} className="h-4" />;
+        }
+
+        const urls = para.match(urlRegex);
+
+        if (!urls) {
+          return <p key={i}>{para}</p>;
+        }
+
+        return (
+          <div key={i} className="space-y-3">
+            <p>{para.replace(urlRegex, "").trim()}</p>
+
+            {urls.map((url, idx) => {
+              if (youtubeRegex.test(url)) {
+                return <YouTubePreview key={idx} url={url} />;
+              }
+
+              const domain = new URL(url).hostname.replace("www.", "");
+
+              return (
+                <a
+                  key={idx}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2
+                  px-4 py-2 rounded-full
+                  bg-white/10 border border-white/20
+                  backdrop-blur-md text-xs text-slate-200
+                  hover:bg-white/20 transition"
+                >
+                  {domain}
+                </a>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 export default function BuildVoiceToText() {
   const admin = isAdmin();
 
@@ -238,7 +343,7 @@ export default function BuildVoiceToText() {
                   </button>
                 </>
               ) : (
-                <p className="text-sm text-slate-300 leading-relaxed">
+                <InsightRenderer text={note} />
                   In production speech systems, monitoring latency spikes,
                   handling noisy input, and managing streaming timeouts
                   are critical for reliability and user trust.
