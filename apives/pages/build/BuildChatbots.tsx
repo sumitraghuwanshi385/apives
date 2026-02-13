@@ -274,16 +274,16 @@ export default function BuildChatbots() {
         </p>
       </div>
 
-     {/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
-<div className="max-w-6xl mx-auto mt-12 space-y-12 px-3">
+    {/* ===== PRODUCTION ARCHITECTURE SECTIONS (FINAL FIX) ===== */}
+<div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">
 
   {/* SECTION 1 — LEFT (GREEN) */}
   <div className="flex flex-col md:flex-row items-center">
     <div className="md:w-1/2 text-center md:text-left">
       <h2
         className="
-          text-[24px] sm:text-[26px] md:text-[32px]
-          font-extrabold tracking-tight leading-snug
+          text-[22px] sm:text-[24px] md:text-[28px]
+          font-bold tracking-tight leading-snug
           bg-gradient-to-r from-green-400 to-emerald-400
           bg-clip-text text-transparent
         "
@@ -293,10 +293,10 @@ export default function BuildChatbots() {
 
       <p
         className="
-          mt-2 text-slate-400
-          text-sm md:text-base
+          mt-1.5 text-slate-400
+          text-sm md:text-[15px]
           leading-relaxed
-          max-w-[560px]
+          max-w-[540px]
           mx-auto md:mx-0
         "
       >
@@ -312,8 +312,8 @@ export default function BuildChatbots() {
     <div className="md:w-1/2 text-center md:text-right">
       <h2
         className="
-          text-[24px] sm:text-[26px] md:text-[32px]
-          font-extrabold tracking-tight leading-snug
+          text-[22px] sm:text-[24px] md:text-[28px]
+          font-bold tracking-tight leading-snug
           bg-gradient-to-r from-purple-400 to-pink-400
           bg-clip-text text-transparent
         "
@@ -323,28 +323,28 @@ export default function BuildChatbots() {
 
       <p
         className="
-          mt-2 text-slate-400
-          text-sm md:text-base
+          mt-1.5 text-slate-400
+          text-sm md:text-[15px]
           leading-relaxed
-          max-w-[560px]
+          max-w-[540px]
           mx-auto md:ml-auto
         "
       >
-        Modern chatbots are infrastructure systems, not prompts.
-        They require memory orchestration, retries, fallback handling,
-        streaming UX, and disciplined cost controls to maintain
-        predictable latency and long-term profitability.
+        Modern chatbots are infrastructure systems, not prompts. They require
+        memory orchestration, retries, fallback handling, streaming UX,
+        and disciplined cost controls to maintain predictable latency
+        and long-term profitability.
       </p>
     </div>
   </div>
 
   {/* SECTION 3 — LEFT (BLUE) */}
-  <div className="flex flex-col md:flex-row items-center pb-4">
+  <div className="flex flex-col md:flex-row items-center">
     <div className="md:w-1/2 text-center md:text-left">
       <h2
         className="
-          text-[24px] sm:text-[26px] md:text-[32px]
-          font-extrabold tracking-tight leading-snug
+          text-[22px] sm:text-[24px] md:text-[28px]
+          font-bold tracking-tight leading-snug
           bg-gradient-to-r from-blue-400 to-cyan-400
           bg-clip-text text-transparent
         "
@@ -354,23 +354,23 @@ export default function BuildChatbots() {
 
       <p
         className="
-          mt-2 text-slate-400
-          text-sm md:text-base
+          mt-1.5 text-slate-400
+          text-sm md:text-[15px]
           leading-relaxed
-          max-w-[560px]
+          max-w-[540px]
           mx-auto md:mx-0
         "
       >
         Choosing the right AI API defines scalability, reliability,
-        and long-term system health. Poor decisions introduce
-        hidden costs, unstable latency, and fragile systems that
-        fail under real user load.
+        and long-term system health. Poor decisions introduce hidden
+        costs, unstable latency, and fragile systems that fail
+        under real user load.
       </p>
     </div>
   </div>
 
 </div>
-
+ 
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}
 <div className="mt-12">
 
