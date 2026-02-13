@@ -3,18 +3,14 @@ import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
 import ApiCard from "../../components/ApiCard";
 import { BackButton } from "../../components/BackButton";
-import {
-  ChevronDown,
-  Check,
-  Sparkles,
-  Brain,
-  Zap,
-  MessageSquare,
-  Layers
-} from "lucide-react";
+import { ChevronDown, Check } from "lucide-react";
+
+/* ===============================
+   CONFIG
+================================ */
 
 const STORAGE_KEY = "apives_usecase_chatbots";
-const NOTE_KEY = "apives_chatbot_global_note";
+const GLOBAL_NOTE_KEY = "apives_chatbot_global_note";
 const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
 
 const isAdmin = () => {
@@ -27,24 +23,29 @@ const isAdmin = () => {
 };
 
 /* ===============================
-   UNIQUE LOADER
+   LOADER
 ================================ */
+
 const ChatbotLoader = () => (
-  <div className="flex flex-col items-center justify-center mt-24 gap-6">
-    <div className="relative w-16 h-16">
-      <div className="absolute inset-0 rounded-full border-2 border-mora-500/30 animate-ping" />
-      <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin" />
+  <div className="flex flex-col items-center justify-center mt-28 gap-5">
+    <div className="relative w-14 h-14">
+      <div className="absolute inset-0 rounded-full border border-mora-500/30 animate-ping" />
+      <div className="absolute inset-0 rounded-full border border-mora-500 border-t-transparent animate-spin" />
     </div>
 
-    <p className="text-sm font-mono uppercase tracking-[0.3em] text-slate-400">
-      Initializing chatbot nodes
+    <p className="text-[11px] font-mono uppercase tracking-[0.35em] text-slate-400">
+      Loading Chatbot API
     </p>
 
     <p className="text-xs text-slate-500 max-w-xs text-center">
-      Evaluating latency, context depth, and conversational stability
+      Evaluating latency, context depth, streaming and production behavior
     </p>
   </div>
 );
+
+/* ===============================
+   PAGE
+================================ */
 
 export default function BuildChatbots() {
   const admin = isAdmin();
@@ -54,8 +55,8 @@ export default function BuildChatbots() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [note, setNote] = useState("");
-  const [noteDraft, setNoteDraft] = useState("");
+  const [globalNote, setGlobalNote] = useState("");
+  const [draftNote, setDraftNote] = useState("");
 
   /* LOAD DATA */
   useEffect(() => {
@@ -63,8 +64,7 @@ export default function BuildChatbots() {
       try {
         const res = await apiService.getAllApis();
         const list = Array.isArray(res) ? res : res?.data || [];
-        const db = list.map(a => ({ ...a, id: a._id }));
-        setAllApis(db);
+        setAllApis(list.map(a => ({ ...a, id: a._id })));
       } catch (e) {
         console.error("Chatbot API fetch failed", e);
       } finally {
@@ -74,22 +74,14 @@ export default function BuildChatbots() {
 
     setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
 
-    const savedNote = localStorage.getItem(NOTE_KEY);
+    const savedNote = localStorage.getItem(GLOBAL_NOTE_KEY);
     if (savedNote) {
-      setNote(savedNote);
-      setNoteDraft(savedNote);
+      setGlobalNote(savedNote);
+      setDraftNote(savedNote);
     }
   }, []);
 
-  const toggleApi = (id: string) => {
-    const updated = selectedIds.includes(id)
-      ? selectedIds.filter(x => x !== id)
-      : [...selectedIds, id];
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setSelectedIds(updated);
-  };
-
+  /* FILTER CHATBOT APIS */
   const chatbotApis = allApis.filter(api => {
     const text = `${api.name} ${api.description || ""}`.toLowerCase();
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
@@ -99,17 +91,88 @@ export default function BuildChatbots() {
     ? chatbotApis.filter(api => selectedIds.includes(api.id))
     : chatbotApis;
 
-  const saveNote = () => {
-    localStorage.setItem(NOTE_KEY, noteDraft);
-    setNote(noteDraft);
+  /* CURATION */
+  const toggleApi = (id: string) => {
+    const updated = selectedIds.includes(id)
+      ? selectedIds.filter(x => x !== id)
+      : [...selectedIds, id];
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setSelectedIds(updated);
+  };
+
+  const saveGlobalNote = () => {
+    localStorage.setItem(GLOBAL_NOTE_KEY, draftNote);
+    setGlobalNote(draftNote);
   };
 
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-24 px-4 md:px-8">
 
-      {/* BACK BUTTON — SAME AS OTHER PAGES */}
-      <div className="max-w-7xl mx-auto mb-10">
+      {/* HEADER */}
+      <div className="max-w-7xl mx-auto flex items-center justify-between mb-14">
         <BackButton />
+
+        <div className="flex items-center gap-3">
+
+          {/* 🔥 CURATED PILL */}
+          <span
+            className="
+              px-4 py-1.5
+              rounded-full
+              bg-white/5
+              border border-white/10
+              text-[10px]
+              font-mono
+              text-slate-300
+              tracking-wide
+              select-none
+            "
+          >
+            Curated by <span className="text-mora-400">Apives</span>
+          </span>
+
+          {/* ADMIN DROPDOWN */}
+          {admin && (
+            <div className="relative">
+              <button
+                onClick={() => setDropdownOpen(v => !v)}
+                className="
+                  flex items-center gap-2
+                  px-4 py-2
+                  rounded-full
+                  bg-mora-500
+                  text-black
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-widest
+                "
+              >
+                Curate APIs <ChevronDown size={14} />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto
+                  bg-black border border-white/10 rounded-2xl p-2 z-50">
+                  {chatbotApis.map(api => (
+                    <button
+                      key={api.id}
+                      onClick={() => toggleApi(api.id)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs
+                        ${selectedIds.includes(api.id)
+                          ? "bg-mora-500 text-black"
+                          : "text-slate-400 hover:bg-white/5"}`}
+                    >
+                      {api.name}
+                      {selectedIds.includes(api.id) && <Check size={14} />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* HERO */}
@@ -118,47 +181,27 @@ export default function BuildChatbots() {
           AI Chatbots
         </h1>
         <p className="mt-4 text-slate-400 text-sm md:text-lg">
-          Discover APIs optimized for conversational flows, LLM reasoning,
+          APIs optimized for conversational flows, LLM reasoning,
           and production-grade assistants.
         </p>
       </div>
 
       {/* BEFORE YOU CHOOSE */}
-      <div className="max-w-6xl mx-auto mb-16 grid md:grid-cols-3 gap-6">
+      <div className="max-w-6xl mx-auto mb-20 grid md:grid-cols-3 gap-6">
 
+        {/* MAIN */}
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-white font-bold mb-6 flex items-center gap-2">
-            <Sparkles size={16} className="text-mora-500" />
-            How Apives Evaluates Chatbot APIs
+          <h3 className="text-white font-bold mb-6">
+            Before you choose a Chatbot API
           </h3>
 
-          <div className="grid sm:grid-cols-3 gap-4 text-sm">
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Zap className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">MVP Stage</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Fast auth, clean docs, instant responses. Zero infra overhead.
-              </p>
-            </div>
-
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Layers className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">Scaling Phase</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Streaming, rate limits, predictable token economics.
-              </p>
-            </div>
-
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Brain className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">Production</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Versioning, uptime history, long-context stability.
-              </p>
-            </div>
+          <div className="space-y-3 text-sm text-slate-300">
+            <p>🚀 <b>MVP</b> → Fast setup, minimal auth, clean docs</p>
+            <p>📈 <b>Scale</b> → Streaming, predictable token pricing</p>
+            <p>🏭 <b>Production</b> → Reliability, versioning, uptime history</p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
+          <div className="mt-6 flex flex-wrap gap-2">
             {[
               "Token pricing model",
               "Response latency",
@@ -167,57 +210,64 @@ export default function BuildChatbots() {
               "Rate-limit behavior",
               "Integration friction"
             ].map(item => (
-              <div
+              <span
                 key={item}
-                className="bg-black/40 border border-white/10 rounded-lg px-3 py-2"
+                className="
+                  px-3 py-1.5
+                  rounded-full
+                  bg-black/40
+                  border border-white/10
+                  text-[10px]
+                  text-slate-300
+                  font-mono
+                "
               >
-                • {item}
-              </div>
+                {item}
+              </span>
             ))}
           </div>
         </div>
 
-        {/* HOW TO THINK */}
-        <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-6">
-          <MessageSquare className="text-mora-500 mb-3" size={18} />
+        {/* CHATBOT THINKING */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
           <p className="text-white font-bold mb-2">
             Building Chatbots ≠ Just LLM Calls
           </p>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Real chatbots need memory, streaming UX, retries, cost control,
-            and predictable behavior under load. Apives surfaces APIs that
-            survive real usage — not demos.
+            Real chatbots need memory, retries, streaming UX, cost control
+            and stable behavior under load. Apives surfaces APIs that survive
+            real production traffic — not demos.
           </p>
         </div>
       </div>
 
-      {/* GLOBAL NOTE (ADMIN → ALL USERS) */}
-      {(note || admin) && (
-        <div className="max-w-5xl mx-auto mb-16">
+      {/* GLOBAL NOTE */}
+      {(globalNote || admin) && (
+        <div className="max-w-5xl mx-auto mb-20">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
-              📌 Builder Note
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 mb-2">
+              Builder note
             </p>
 
             {admin ? (
               <>
                 <textarea
-                  value={noteDraft}
-                  onChange={e => setNoteDraft(e.target.value)}
-                  placeholder="Write a global note for all builders…"
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
+                  value={draftNote}
+                  onChange={e => setDraftNote(e.target.value)}
+                  placeholder="Write a note visible to all builders…"
                   rows={3}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
                 />
                 <button
-                  onClick={saveNote}
-                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
+                  onClick={saveGlobalNote}
+                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-[10px] font-black uppercase tracking-widest"
                 >
-                  Save Note
+                  Save note
                 </button>
               </>
             ) : (
               <p className="text-sm text-slate-300 whitespace-pre-line">
-                {note}
+                {globalNote}
               </p>
             )}
           </div>
@@ -236,7 +286,7 @@ export default function BuildChatbots() {
       )}
 
       {!loading && visibleApis.length === 0 && (
-        <p className="text-center text-slate-500 mt-16 text-sm">
+        <p className="text-center text-slate-500 mt-20 text-sm">
           No chatbot APIs selected yet.
         </p>
       )}
