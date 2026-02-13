@@ -52,19 +52,18 @@ const VoiceLoader = () => (
 const YouTubePreview = ({ url }: { url: string }) => {
   let videoId = "";
 
-  try {
-    if (url.includes("watch")) {
-      videoId = new URL(url).searchParams.get("v") || "";
-    } else {
-      const lastPart = url.split("/").pop() || "";
-      videoId = lastPart.split("?")[0];
-    }
-  } catch {
-    return null;
+try {
+  if (url.includes("watch")) {
+    videoId = new URL(url).searchParams.get("v") || "";
+  } else {
+    const lastPart = url.split("/").pop() || "";
+    videoId = lastPart.split("?")[0]; // 🔥 removes ?si= etc
   }
+} catch {
+  return null;
+}
 
-  if (!videoId) return null;
-
+if (!videoId) return null;
   return (
     <a
       href={url}
@@ -72,14 +71,18 @@ const YouTubePreview = ({ url }: { url: string }) => {
       rel="noopener noreferrer"
       className="group flex items-center gap-3
       bg-white/5 border border-white/10
-      rounded-xl p-2 hover:bg-white/10 transition"
+      rounded-xl p-2
+      hover:bg-white/10 transition"
     >
+      {/* Small Thumbnail */}
       <div className="relative shrink-0">
         <img
           src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
           className="w-32 h-20 object-cover rounded-lg"
           loading="lazy"
         />
+
+        {/* ▶ Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-8 h-8 bg-black/60 rounded-full flex items-center justify-center">
             <span className="text-white text-sm ml-0.5">▶</span>
@@ -87,6 +90,7 @@ const YouTubePreview = ({ url }: { url: string }) => {
         </div>
       </div>
 
+      {/* Right side text */}
       <div className="flex flex-col">
         <p className="text-sm text-white font-medium">
           YouTube Video
@@ -99,9 +103,6 @@ const YouTubePreview = ({ url }: { url: string }) => {
   );
 };
 
-/* ===============================
-   INSIGHT RENDERER (SAME AS CHATBOT)
-================================ */
 const InsightRenderer = ({ text }: { text: string }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const youtubeRegex =
@@ -118,15 +119,17 @@ const InsightRenderer = ({ text }: { text: string }) => {
 
         const urls = para.match(urlRegex);
 
+        // No URLs → normal paragraph
         if (!urls) {
           return <p key={i}>{para}</p>;
         }
 
         return (
           <div key={i} className="space-y-3">
+            {/* Text without URLs */}
             <p>{para.replace(urlRegex, "").trim()}</p>
 
-           {/* Render detected URLs */}
+            {/* Render detected URLs */}
             {urls.map((url, idx) => {
 
   // ✅ YouTube link → preview component
@@ -139,28 +142,35 @@ const InsightRenderer = ({ text }: { text: string }) => {
   const label = domain.includes("apives") ? "Apives" : domain;
 
   return (
-                <a
-                  key={idx}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2
-                  px-4 py-2 rounded-full
-                  bg-white/10 border border-white/20
-                  backdrop-blur-md text-xs text-slate-200
-                  hover:bg-white/20 transition"
-                >
-                  {domain}
-                </a>
-              );
-            })}
+    <a
+  key={idx}
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2
+  px-4 py-2 rounded-full
+  bg-white/10 border border-white/20
+  backdrop-blur-md text-xs text-slate-200
+  hover:bg-white/20 transition"
+>
+  {/* Website Logo */}
+  <img
+    src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+    alt=""
+    className="w-4 h-4 rounded-full bg-white"
+  />
+
+  {/* Label */}
+  <span>{label}</span>
+</a>
+  );
+})}
           </div>
         );
       })}
     </div>
   );
 };
-
 /* ===============================
    MAIN PAGE
 ================================ */
