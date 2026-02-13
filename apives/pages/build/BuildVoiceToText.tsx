@@ -1,0 +1,284 @@
+import React, { useEffect, useState } from "react";
+import { apiService } from "../../services/apiClient";
+import { ApiListing } from "../../types";
+import ApiCard from "../../components/ApiCard";
+import { BackButton } from "../../components/BackButton";
+import {
+  ChevronDown,
+  Check,
+  Mic,
+  Radio,
+  Layers
+} from "lucide-react";
+
+const STORAGE_KEY = "apives_usecase_voice";
+const NOTE_KEY = "apives_voice_global_note";
+const VOICE_KEYWORDS = [
+  "voice",
+  "speech",
+  "audio",
+  "transcription",
+  "speech-to-text",
+  "stt"
+];
+
+const isAdmin = () => {
+  try {
+    const u = JSON.parse(localStorage.getItem("mora_user") || "null");
+    return u?.email === "beatslevelone@gmail.com";
+  } catch {
+    return false;
+  }
+};
+
+/* ===============================
+   LOADER
+================================ */
+const VoiceLoader = () => (
+  <div className="flex flex-col items-center justify-center mt-24 mb-32 gap-3">
+    <div className="relative w-10 h-10">
+      <div className="absolute inset-0 rounded-full border border-mora-500/30 animate-ping" />
+      <div className="absolute inset-0 rounded-full border border-mora-500 border-t-transparent animate-spin" />
+    </div>
+    <p className="text-xs tracking-widest text-slate-400">
+      Loading speech APIs…
+    </p>
+  </div>
+);
+
+export default function BuildVoiceToText() {
+  const admin = isAdmin();
+
+  const [allApis, setAllApis] = useState<ApiListing[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [note, setNote] = useState("");
+  const [noteDraft, setNoteDraft] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await apiService.getAllApis();
+        const list = Array.isArray(res) ? res : res?.data || [];
+        const db = list.map(a => ({ ...a, id: a._id }));
+        setAllApis(db);
+      } catch (e) {
+        console.error("Voice API fetch failed", e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+
+    setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+
+    const savedNote = localStorage.getItem(NOTE_KEY);
+    if (savedNote) {
+      setNote(savedNote);
+      setNoteDraft(savedNote);
+    }
+  }, []);
+
+  const toggleApi = (id: string) => {
+    const updated = selectedIds.includes(id)
+      ? selectedIds.filter(x => x !== id)
+      : [...selectedIds, id];
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setSelectedIds(updated);
+  };
+
+  const voiceApis = allApis.filter(api => {
+    const text = `${api.name} ${api.description || ""}`.toLowerCase();
+    return VOICE_KEYWORDS.some(k => text.includes(k));
+  });
+
+  const visibleApis = voiceApis.filter(api =>
+    selectedIds.includes(api.id)
+  );
+
+  const saveNote = () => {
+    localStorage.setItem(NOTE_KEY, noteDraft);
+    setNote(noteDraft);
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-slate-100 pt-20 px-4 md:px-8">
+
+      {/* HEADER */}
+      <div className="max-w-7xl mx-auto mb-6 flex items-center justify-between">
+        <BackButton />
+
+        {admin && (
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(v => !v)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full
+              bg-white/5 border border-white/10
+              text-xs font-black uppercase tracking-widest"
+            >
+              Select APIs <ChevronDown size={14} />
+            </button>
+
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto
+                bg-black border border-white/10 rounded-2xl p-2 z-50">
+                {voiceApis.map(api => (
+                  <button
+                    key={api.id}
+                    onClick={() => toggleApi(api.id)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs ${
+                      selectedIds.includes(api.id)
+                        ? "bg-mora-500 text-black"
+                        : "text-slate-400 hover:bg-white/5"
+                    }`}
+                  >
+                    {api.name}
+                    {selectedIds.includes(api.id) && <Check size={14} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* HERO */}
+      <div className="max-w-4xl mx-auto text-center mb-8">
+        <h1 className="text-3xl md:text-6xl font-display font-bold text-white">
+          Voice to Text
+        </h1>
+        <p className="mt-3 text-slate-400 text-sm md:text-lg">
+          Production-ready speech recognition APIs built for real-time and batch workloads.
+        </p>
+      </div>
+
+      {/* ===== ARCHITECTURE SECTIONS ===== */}
+      <div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">
+
+        {/* SECTION 1 */}
+        <div className="flex flex-col md:flex-row items-center">
+          <div className="md:w-1/2 text-center md:text-left">
+            <h2 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-snug
+              bg-gradient-to-r from-green-400 to-emerald-400
+              bg-clip-text text-transparent">
+              Speech Architecture Essentials.
+            </h2>
+
+            <p className="mt-1.5 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">
+              Reliable speech systems must handle streaming ingestion,
+              real-time decoding, multilingual support, speaker separation,
+              and production-grade scaling before going live.
+            </p>
+          </div>
+        </div>
+
+        {/* SECTION 2 */}
+        <div className="flex flex-col md:flex-row-reverse items-center">
+          <div className="md:w-1/2 text-center md:text-right">
+            <h2 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-snug
+              bg-gradient-to-r from-purple-400 to-pink-400
+              bg-clip-text text-transparent">
+              Accuracy, Latency & Cost Intelligence.
+            </h2>
+
+            <p className="mt-1.5 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:ml-auto">
+              Speech APIs must balance word accuracy, low-latency streaming,
+              background noise handling, and predictable pricing models
+              for scalable production systems.
+            </p>
+          </div>
+        </div>
+
+        {/* SECTION 3 */}
+        <div className="flex flex-col md:flex-row items-center">
+          <div className="md:w-1/2 text-center md:text-left">
+            <h2 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-snug
+              bg-gradient-to-r from-blue-400 to-cyan-400
+              bg-clip-text text-transparent">
+              API Selection Defines Transcription Quality.
+            </h2>
+
+            <p className="mt-1.5 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">
+              The right speech API determines recognition precision,
+              language coverage, diarization support, and system stability.
+              Poor choices result in transcription errors and rising costs.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* SPACE */}
+      <div className="mt-12">
+
+        {/* OPERATIONAL INSIGHT */}
+        {(note || admin) && (
+          <div className="max-w-5xl mx-auto mb-14">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+              <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
+                <Radio size={14} className="text-mora-500" />
+                Operational Insight
+              </p>
+
+              {admin ? (
+                <>
+                  <textarea
+                    value={noteDraft}
+                    onChange={e => setNoteDraft(e.target.value)}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
+                    rows={3}
+                  />
+                  <button
+                    onClick={saveNote}
+                    className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
+                  >
+                    Update
+                  </button>
+                </>
+              ) : (
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  In production speech systems, monitoring latency spikes,
+                  handling noisy input, and managing streaming timeouts
+                  are critical for reliability and user trust.
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* CURATED HEADING */}
+      <div className="max-w-7xl mx-auto mb-6 px-1">
+        <div className="flex items-center gap-2 mb-1">
+          <Layers size={18} className="text-mora-500" />
+          <h3 className="text-white font-bold text-lg">
+            Curated Speech APIs
+          </h3>
+        </div>
+
+        <p className="text-xs text-slate-400 max-w-xl">
+          Production-ready APIs selected for building scalable voice recognition systems.
+        </p>
+      </div>
+
+      {/* API CARDS */}
+      {loading ? (
+        <VoiceLoader />
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24 pb-6">
+          {visibleApis.map(api => (
+            <ApiCard key={api.id} api={api} topIds={[]} />
+          ))}
+        </div>
+      )}
+
+      {!loading && visibleApis.length === 0 && (
+        <p className="text-center text-slate-500 mt-16 text-sm">
+          No speech APIs selected yet.
+        </p>
+      )}
+    </div>
+  );
+}
