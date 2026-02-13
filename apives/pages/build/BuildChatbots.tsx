@@ -64,19 +64,15 @@ export default function BuildChatbots() {
       }
     })();
 
-    // ✅ only load selectedIds if admin
-    if (admin) {
-      setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
-    } else {
-      setSelectedIds([]);
-    }
+    // ✅ FIX: ALWAYS load curated APIs (logout ke baad bhi)
+    setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
 
     const savedNote = localStorage.getItem(NOTE_KEY);
     if (savedNote) {
       setNote(savedNote);
       setNoteDraft(savedNote);
     }
-  }, [admin]);
+  }, []);
 
   const toggleApi = (id: string) => {
     const updated = selectedIds.includes(id)
@@ -92,9 +88,10 @@ export default function BuildChatbots() {
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
   });
 
+  // ✅ Public + admin both see curated APIs
   const visibleApis = chatbotApis.filter(api =>
-  selectedIds.includes(api.id)
-);
+    selectedIds.includes(api.id)
+  );
 
   const saveNote = () => {
     localStorage.setItem(NOTE_KEY, noteDraft);
@@ -163,26 +160,49 @@ export default function BuildChatbots() {
           </h3>
 
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
+
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
               <p className="font-bold text-green-400 mb-1">MVP Ready</p>
               <p className="text-slate-300">
-                Fast prototyping, low friction onboarding, instant value.
+                Fast prototyping, instant auth, minimal setup, and early traction readiness.
               </p>
             </div>
 
             <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3">
               <p className="font-bold text-purple-400 mb-1">Scale Safe</p>
               <p className="text-slate-300">
-                Stable concurrency, burst handling, predictable limits.
+                Designed for burst traffic, queue stability, and predictable rate limits.
               </p>
             </div>
 
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
               <p className="font-bold text-blue-400 mb-1">Production Grade</p>
               <p className="text-slate-300">
-                Long-context reliability and uptime guarantees.
+                SLA confidence, versioning discipline, and long-context reliability.
               </p>
             </div>
+
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
+              <p className="font-bold text-yellow-400 mb-1">Latency Stable</p>
+              <p className="text-slate-300">
+                Predictable response times across regions and concurrent workloads.
+              </p>
+            </div>
+
+            <div className="bg-pink-500/10 border border-pink-500/30 rounded-xl p-3">
+              <p className="font-bold text-pink-400 mb-1">Cost Predictable</p>
+              <p className="text-slate-300">
+                Transparent pricing models with controllable token economics.
+              </p>
+            </div>
+
+            <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-3">
+              <p className="font-bold text-cyan-400 mb-1">Dev Friendly</p>
+              <p className="text-slate-300">
+                Clean docs, SDKs, error clarity, and fast debugging loops.
+              </p>
+            </div>
+
           </div>
         </div>
 
@@ -196,14 +216,29 @@ export default function BuildChatbots() {
           </div>
 
           <p className="text-[12px] text-slate-400 leading-relaxed">
-            Memory orchestration, fallback logic, retries, cost control,
-            and UX-safe streaming define real chatbot systems.
+            Modern chatbots are systems, not prompts.
+          </p>
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            They require memory orchestration, retry strategies,
+            and fallback logic for unpredictable user behavior.
+          </p>
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            Cost controls, latency guarantees, and streaming UX
+            directly impact retention and trust.
+          </p>
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            Choosing the right API determines scalability,
+            reliability, and long-term system health.
+          </p>
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            Weak foundations lead to silent failures and
+            expensive rewrites at scale.
           </p>
         </div>
 
       </div>
 
-      {/* OPERATIONAL INSIGHT (RESTORED) */}
+      {/* OPERATIONAL INSIGHT */}
       {(note || admin) && (
         <div className="max-w-5xl mx-auto mb-14">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
