@@ -275,19 +275,19 @@ export default function BuildChatbots() {
       </div>
 
      {/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
-<div className="max-w-6xl mx-auto mt-14 space-y-16 px-2">
+<div className="max-w-6xl mx-auto mt-14 space-y-14 px-2">
 
   {/* SECTION 1 — LEFT (GREEN) */}
   <div className="flex flex-col md:flex-row items-center">
     <div className="md:w-1/2 text-center md:text-left">
-      <h2 className="text-3xl md:text-[40px] font-extrabold leading-tight tracking-tight
+      <h2 className="text-3xl md:text-[42px] font-extrabold leading-tight tracking-tight
         bg-gradient-to-r from-green-400 to-emerald-400
-        bg-clip-text text-transparent">
+        bg-clip-text text-transparent whitespace-nowrap">
         Production Architecture Essentials.
       </h2>
 
       <p className="mt-3 text-slate-400 text-sm md:text-base leading-snug
-        max-w-[520px] mx-auto md:mx-0">
+        max-w-[560px] mx-auto md:mx-0">
         Every serious AI chatbot must handle MVP readiness, scale safety,
         production reliability, stable latency, predictable token economics,
         and developer-friendly tooling before going live.
@@ -298,41 +298,43 @@ export default function BuildChatbots() {
   {/* SECTION 2 — RIGHT (PURPLE) */}
   <div className="flex flex-col md:flex-row-reverse items-center">
     <div className="md:w-1/2 text-center md:text-right">
-      <h2 className="text-3xl md:text-[40px] font-extrabold leading-tight tracking-tight
+      <h2 className="text-3xl md:text-[42px] font-extrabold leading-tight tracking-tight
         bg-gradient-to-r from-purple-400 to-pink-400
-        bg-clip-text text-transparent">
+        bg-clip-text text-transparent whitespace-nowrap">
         Performance & Cost Intelligence.
       </h2>
 
       <p className="mt-3 text-slate-400 text-sm md:text-base leading-snug
-        max-w-[520px] mx-auto md:ml-auto">
+        max-w-[560px] mx-auto md:ml-auto">
         Modern chatbots are infrastructure systems, not prompts. They require
-        memory orchestration, retry strategies, fallback handling, streaming UX,
-        and disciplined cost controls to maintain predictable latency and
-        long-term profitability.
+        memory orchestration, retries, fallback handling, streaming UX,
+        and disciplined cost controls for predictable latency and profitability.
       </p>
     </div>
   </div>
 
   {/* SECTION 3 — LEFT (BLUE) */}
-  <div className="flex flex-col md:flex-row items-center">
+  <div className="flex flex-col md:flex-row items-center pb-8">
     <div className="md:w-1/2 text-center md:text-left">
-      <h2 className="text-3xl md:text-[40px] font-extrabold leading-tight tracking-tight
+      <h2 className="text-3xl md:text-[42px] font-extrabold leading-tight tracking-tight
         bg-gradient-to-r from-blue-400 to-cyan-400
-        bg-clip-text text-transparent">
+        bg-clip-text text-transparent whitespace-nowrap">
         API Selection Defines Success.
       </h2>
 
       <p className="mt-3 text-slate-400 text-sm md:text-base leading-snug
-        max-w-[520px] mx-auto md:mx-0">
-        Choosing the right AI API determines scalability, reliability, and
-        long-term system health. Poor API decisions introduce hidden costs,
-        unstable latency, and fragile systems that fail under real user load.
+        max-w-[560px] mx-auto md:mx-0">
+        Choosing the right AI API defines scalability, reliability,
+        and long-term system health. Poor choices introduce hidden costs,
+        unstable latency, and fragile systems under real user load.
       </p>
     </div>
   </div>
 
 </div>
+
+{/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}
+<div className="mt-16">
 
       {/* OPERATIONAL INSIGHT */}
       {(note || admin) && (
