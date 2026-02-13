@@ -12,18 +12,6 @@ import { ApiListing } from "../types";
 import { apiService } from "../services/apiClient";
 
 /* ===============================
-   ADMIN CHECK (CRASH FIX)
-================================ */
-const isAdmin = () => {
-  try {
-    const u = JSON.parse(localStorage.getItem("mora_user") || "null");
-    return u?.email === "beatslevelone@gmail.com";
-  } catch {
-    return false;
-  }
-};
-
-/* ===============================
    HELPERS (SAME AS LANDING)
 ================================ */
 
@@ -174,32 +162,6 @@ const ApiCard: React.FC<Props> = ({
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
 
-      {/* API NOTE */}
-      {(() => {
-        const key = `apives_api_note_${api.id}`;
-        const savedNote = localStorage.getItem(key);
-
-        if (!savedNote && !isAdmin()) return null;
-
-        return (
-          <div className="mb-3 bg-mora-500/10 border border-mora-500/30 rounded-xl px-3 py-2">
-            {isAdmin() ? (
-              <textarea
-                defaultValue={savedNote || ""}
-                onBlur={e => localStorage.setItem(key, e.target.value)}
-                placeholder="Add internal note for this API"
-                className="w-full bg-transparent text-xs text-white outline-none resize-none"
-                rows={2}
-              />
-            ) : (
-              <p className="text-xs text-slate-300 whitespace-pre-line">
-                {savedNote}
-              </p>
-            )}
-          </div>
-        );
-      })()}
-
       {/* HEADER */}
       <div className="flex justify-between items-center mb-3 relative z-20">
         <div className="flex items-center gap-1.5 md:gap-2">
@@ -304,6 +266,40 @@ const ApiCard: React.FC<Props> = ({
               </div>
             ))}
           </div>
+
+          {showArrows && galleryIndex > 0 && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                document
+                  .getElementById(`card-gallery-${api.id}`)
+                  ?.scrollBy({ left: -200, behavior: "smooth" });
+              }}
+              className="absolute left-2 top-1/2 -translate-y-1/2
+              h-8 w-8 rounded-full bg-black/60 border border-white/20
+              text-white flex items-center justify-center backdrop-blur-sm"
+            >
+              ‹
+            </button>
+          )}
+
+          {showArrows && galleryIndex < api.gallery.length - 1 && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                document
+                  .getElementById(`card-gallery-${api.id}`)
+                  ?.scrollBy({ left: 200, behavior: "smooth" });
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2
+              h-8 w-8 rounded-full bg-black/60 border border-white/20
+              text-white flex items-center justify-center backdrop-blur-sm"
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
 
