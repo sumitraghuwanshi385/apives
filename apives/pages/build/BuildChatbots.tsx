@@ -41,26 +41,67 @@ const ChatbotLoader = () => (
 
 
 const YouTubePreview = ({ url }: { url: string }) => {
-  const [meta, setMeta] = useState<any>(null);
+  let videoId = "";
 
-  useEffect(() => {
-    fetch(
-      `https://www.youtube.com/oembed?url=${encodeURIComponent(
-        url
-      )}&format=json`
-    )
-      .then(res => res.json())
-      .then(data => setMeta(data))
-      .catch(() => {});
-  }, [url]);
-
-  if (!meta) {
-    return (
-      <div className="p-4 text-slate-400 text-sm bg-white/5 border border-white/10 rounded-2xl">
-        Loading preview...
-      </div>
-    );
+  try {
+    videoId = url.includes("watch")
+      ? new URL(url).searchParams.get("v") || ""
+      : url.split("/").pop() || "";
+  } catch {
+    return null;
   }
+
+  if (!videoId) return null;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-2xl overflow-hidden
+      bg-black/40 border border-white/10
+      hover:border-red-500/40 hover:bg-red-500/5
+      transition-all duration-300"
+    >
+      <div className="relative">
+        {/* Thumbnail */}
+        <img
+          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          className="w-full h-44 object-cover"
+          loading="lazy"
+        />
+
+        {/* ▶️ Play Button */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className="w-14 h-14 rounded-full
+            bg-black/60 border border-white/30
+            flex items-center justify-center
+            group-hover:scale-110 transition"
+          >
+            <span className="text-white text-xl ml-1">▶</span>
+          </div>
+        </div>
+
+        {/* ⏱️ Duration badge (UI only) */}
+        <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md
+          bg-black/70 text-[10px] text-white tracking-wide">
+          VIDEO
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-3">
+        <p className="text-sm font-semibold text-white line-clamp-2">
+          Watch on YouTube
+        </p>
+        <p className="text-xs text-slate-400 mt-1">
+          Click to open full video
+        </p>
+      </div>
+    </a>
+  );
+};
 
   return (
     <a
