@@ -63,8 +63,8 @@ const YouTubePreview = ({ url }: { url: string }) => {
       hover:border-red-500/40 hover:bg-red-500/5
       transition-all duration-300"
     >
+      {/* Thumbnail */}
       <div className="relative">
-        {/* Thumbnail */}
         <img
           src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
           className="w-full h-44 object-cover"
@@ -83,7 +83,13 @@ const YouTubePreview = ({ url }: { url: string }) => {
           </div>
         </div>
 
-        {/* ⏱️ Duration badge (UI only) */}
+        {/* YouTube watermark */}
+        <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md
+          bg-red-600 text-white text-[10px] font-bold tracking-wide">
+          YouTube
+        </div>
+
+        {/* Duration badge (UI only) */}
         <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md
           bg-black/70 text-[10px] text-white tracking-wide">
           VIDEO
@@ -102,7 +108,6 @@ const YouTubePreview = ({ url }: { url: string }) => {
     </a>
   );
 };
-
 
 const InsightRenderer = ({ text }: { text: string }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
