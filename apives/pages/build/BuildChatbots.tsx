@@ -210,13 +210,9 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  const chatbotApis = allApis.filter(api => {
-    const text = `${api.name} ${api.description || ""}`.toLowerCase();
-    return CHATBOT_KEYWORDS.some(k => text.includes(k));
-  });
-
+  
   // ✅ Public + admin both see curated APIs
-  const visibleApis = chatbotApis.filter(api =>
+  const visibleApis = allApis.filter(api =>
   selectedIds.includes(api.id)
 );
 
