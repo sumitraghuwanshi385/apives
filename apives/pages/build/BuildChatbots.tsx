@@ -58,51 +58,34 @@ const YouTubePreview = ({ url }: { url: string }) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block rounded-2xl overflow-hidden
-      bg-black/40 border border-white/10
-      hover:border-red-500/40 hover:bg-red-500/5
-      transition-all duration-300"
+      className="group flex items-center gap-3
+      bg-white/5 border border-white/10
+      rounded-xl p-2
+      hover:bg-white/10 transition"
     >
-      {/* Thumbnail */}
-      <div className="relative">
+      {/* Small Thumbnail */}
+      <div className="relative shrink-0">
         <img
-          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-          className="w-full h-44 object-cover"
+          src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+          className="w-32 h-20 object-cover rounded-lg"
           loading="lazy"
         />
 
-        {/* ▶️ Play Button */}
+        {/* ▶ Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="w-14 h-14 rounded-full
-            bg-black/60 border border-white/30
-            flex items-center justify-center
-            group-hover:scale-110 transition"
-          >
-            <span className="text-white text-xl ml-1">▶</span>
+          <div className="w-8 h-8 bg-black/60 rounded-full flex items-center justify-center">
+            <span className="text-white text-sm ml-0.5">▶</span>
           </div>
-        </div>
-
-        {/* YouTube watermark */}
-        <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md
-          bg-red-600 text-white text-[10px] font-bold tracking-wide">
-          YouTube
-        </div>
-
-        {/* Duration badge (UI only) */}
-        <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md
-          bg-black/70 text-[10px] text-white tracking-wide">
-          VIDEO
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-3">
-        <p className="text-sm font-semibold text-white line-clamp-2">
-          Watch on YouTube
+      {/* Right side text */}
+      <div className="flex flex-col">
+        <p className="text-sm text-white font-medium">
+          YouTube Video
         </p>
-        <p className="text-xs text-slate-400 mt-1">
-          Click to open full video
+        <p className="text-xs text-slate-400">
+          Click to watch
         </p>
       </div>
     </a>
