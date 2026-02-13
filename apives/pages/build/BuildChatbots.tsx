@@ -279,15 +279,17 @@ export default function BuildChatbots() {
 
         {/* UNDERSTAND CHATBOT AI */}
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-4">
-          <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-            <h3 className="text-white font-bold mb-2 flex items-center gap-2">
-  <Zap size={16} className="text-mora-500" />
-  Production Architecture Essentials
-</h3>
+          <div className="mb-4">
+  <h3 className="text-white font-bold mb-2 flex items-center gap-2">
+    <Zap size={16} className="text-mora-500" />
+    Production Architecture Essentials
+  </h3>
 
-<p className="text-xs text-slate-400 mb-4">
-  Every serious AI chatbot must handle these six system layers before going live.
-</p>
+  <p className="text-xs text-slate-400">
+    Every serious AI chatbot must handle these six system layers before going live.
+  </p>
+</div>
+
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
 
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
