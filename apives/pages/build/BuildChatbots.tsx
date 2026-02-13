@@ -43,16 +43,18 @@ const ChatbotLoader = () => (
 const YouTubePreview = ({ url }: { url: string }) => {
   let videoId = "";
 
-  try {
-    videoId = url.includes("watch")
-      ? new URL(url).searchParams.get("v") || ""
-      : url.split("/").pop() || "";
-  } catch {
-    return null;
+try {
+  if (url.includes("watch")) {
+    videoId = new URL(url).searchParams.get("v") || "";
+  } else {
+    const lastPart = url.split("/").pop() || "";
+    videoId = lastPart.split("?")[0]; // 🔥 removes ?si= etc
   }
+} catch {
+  return null;
+}
 
-  if (!videoId) return null;
-
+if (!videoId) return null;
   return (
     <a
       href={url}
@@ -132,17 +134,26 @@ const InsightRenderer = ({ text }: { text: string }) => {
 
   return (
     <a
-      key={idx}
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-block px-5 py-2 rounded-full
-      bg-white/10 border border-white/20
-      backdrop-blur-md text-xs text-slate-200
-      hover:bg-white/20 transition"
-    >
-      {label}
-    </a>
+  key={idx}
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2
+  px-4 py-2 rounded-full
+  bg-white/10 border border-white/20
+  backdrop-blur-md text-xs text-slate-200
+  hover:bg-white/20 transition"
+>
+  {/* Website Logo */}
+  <img
+    src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+    alt=""
+    className="w-4 h-4 rounded-full bg-white"
+  />
+
+  {/* Label */}
+  <span>{label}</span>
+</a>
   );
 })}
           </div>
