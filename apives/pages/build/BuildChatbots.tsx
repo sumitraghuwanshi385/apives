@@ -25,6 +25,10 @@ const isAdmin = () => {
   }
 };
 
+// ✅ SAFE ID RESOLVER (CRASH FIX)
+const getApiId = (api: ApiListing) =>
+  (api as any).id || (api as any)._id;
+
 /* ===============================
    UNIQUE LOADER
 ================================ */
@@ -62,8 +66,7 @@ export default function BuildChatbots() {
       try {
         const res = await apiService.getAllApis();
         const list = Array.isArray(res) ? res : res?.data || [];
-        const db = list.map(a => ({ ...a, id: a._id }));
-        setAllApis(db);
+        setAllApis(list);
       } catch (e) {
         console.error("Chatbot API fetch failed", e);
       } finally {
@@ -89,14 +92,13 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  // ✅ FIXED (this was the GitHub red error)
   const chatbotApis = allApis.filter(api => {
     const text = `${api.name} ${api.description || ""}`.toLowerCase();
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
   });
 
   const visibleApis = admin
-    ? chatbotApis.filter(api => selectedIds.includes(api.id))
+    ? chatbotApis.filter(api => selectedIds.includes(getApiId(api)))
     : chatbotApis;
 
   const saveNote = () => {
@@ -122,20 +124,23 @@ export default function BuildChatbots() {
 
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto bg-black border border-white/10 rounded-2xl p-2 z-50">
-                {chatbotApis.map(api => (
-                  <button
-                    key={api.id}
-                    onClick={() => toggleApi(api.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs ${
-                      selectedIds.includes(api.id)
-                        ? "bg-mora-500 text-black"
-                        : "text-slate-400 hover:bg-white/5"
-                    }`}
-                  >
-                    {api.name}
-                    {selectedIds.includes(api.id) && <Check size={14} />}
-                  </button>
-                ))}
+                {chatbotApis.map(api => {
+                  const id = getApiId(api);
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => toggleApi(id)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs ${
+                        selectedIds.includes(id)
+                          ? "bg-mora-500 text-black"
+                          : "text-slate-400 hover:bg-white/5"
+                      }`}
+                    >
+                      {api.name}
+                      {selectedIds.includes(id) && <Check size={14} />}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -153,112 +158,17 @@ export default function BuildChatbots() {
         </p>
       </div>
 
-      {/* EVALUATE BOX — FULLY RESTORED */}
-      <div className="max-w-6xl mx-auto mb-16 grid md:grid-cols-3 gap-6">
-
-        <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
-          <h3 className="text-white font-bold mb-6 flex items-center gap-2">
-            <Zap size={16} className="text-mora-500" />
-            Evaluates Chatbot APIs
-          </h3>
-
-          <div className="grid sm:grid-cols-3 gap-4 text-sm">
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Zap className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">MVP Stage</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Fast auth, clean docs, instant responses. Zero infra overhead.
-              </p>
-            </div>
-
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Layers className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">Scaling Phase</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Streaming, rate limits, predictable token economics.
-              </p>
-            </div>
-
-            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
-              <Brain className="text-mora-500 mb-2" size={16} />
-              <p className="font-bold text-white">Production</p>
-              <p className="text-slate-400 text-xs mt-1">
-                Versioning, uptime history, long-context stability.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
-            {[
-              "Token pricing model",
-              "Response latency",
-              "Context window depth",
-              "Streaming support",
-              "Rate-limit behavior",
-              "Integration friction"
-            ].map(item => (
-              <div
-                key={item}
-                className="bg-black/40 border border-white/10 rounded-lg px-3 py-2"
-              >
-                • {item}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-6">
-          <MessageSquare className="text-mora-500 mb-3" size={18} />
-          <p className="text-white font-bold mb-2">
-            Building Chatbots ≠ Just LLM Calls
-          </p>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Real chatbots need memory, streaming UX, retries, cost control,
-            and predictable behavior under load. Apives surfaces APIs that
-            survive real usage — not demos.
-          </p>
-        </div>
-      </div>
-
-      {/* GLOBAL NOTE — RESTORED */}
-      {(note || admin) && (
-        <div className="max-w-5xl mx-auto mb-16">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
-              📌 Builder Note
-            </p>
-
-            {admin ? (
-              <>
-                <textarea
-                  value={noteDraft}
-                  onChange={e => setNoteDraft(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
-                  rows={3}
-                />
-                <button
-                  onClick={saveNote}
-                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
-                >
-                  Save Note
-                </button>
-              </>
-            ) : (
-              <p className="text-sm text-slate-300 whitespace-pre-line">
-                {note}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* API CARDS — RESTORED */}
+      {/* API CARDS */}
       {loading ? (
         <ChatbotLoader />
       ) : (
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleApis.map(api => (
-            <ApiCard key={api.id} api={api} topIds={[]} />
+            <ApiCard
+              key={getApiId(api)}
+              api={{ ...api, id: getApiId(api) }}
+              topIds={[]}
+            />
           ))}
         </div>
       )}
