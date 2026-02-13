@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Heart,
   Bookmark,
@@ -7,28 +7,26 @@ import {
   Hash,
   Server,
   Trophy
-} from "lucide-react";
-import { ApiListing } from "../types";
-import { apiService } from "../services/apiClient";
+} from 'lucide-react';
+import { ApiListing } from '../types';
+import { apiService } from '../services/apiClient';
 
 const RANK_BADGE_STYLES = [
-  { label: "Apex", color: "from-amber-400 to-yellow-600", text: "text-black" },
-  { label: "Prime", color: "from-slate-200 to-slate-400", text: "text-black" },
-  { label: "Zenith", color: "from-orange-400 to-amber-700", text: "text-white" }
+  { label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
+  { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
+  { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
 
 const isNew = (dateString?: string) => {
   if (!dateString) return false;
   const publishedDate = new Date(dateString).getTime();
   if (Number.isNaN(publishedDate)) return false;
-  const now = Date.now();
-  const fifteenDays = 15 * 24 * 60 * 60 * 1000;
-  return now - publishedDate < fifteenDays;
+  return Date.now() - publishedDate < 15 * 24 * 60 * 60 * 1000;
 };
 
 const getVerifiedApis = (): string[] => {
   try {
-    return JSON.parse(localStorage.getItem("apives_verified_apis") || "[]");
+    return JSON.parse(localStorage.getItem('apives_verified_apis') || '[]');
   } catch {
     return [];
   }
@@ -55,13 +53,13 @@ const ApiCard: React.FC<Props> = ({
   const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
   const rankIndex = topIds.indexOf(api.id);
-  const rankStyle = rankIndex !== -1 ? RANK_BADGE_STYLES[rankIndex] : null;
-  const verifiedApis = getVerifiedApis();
-  const isVerified = verifiedApis.includes(api.id);
+  const isTopTier = rankIndex !== -1;
+  const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
+  const isVerified = getVerifiedApis().includes(api.id);
 
   useEffect(() => {
-    const liked = JSON.parse(localStorage.getItem("mora_liked_apis") || "[]");
-    const savedApis = JSON.parse(localStorage.getItem("mora_saved_apis") || "[]");
+    const liked = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
+    const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
     setIsLiked(liked.includes(api.id));
     setSaved(savedApis.includes(api.id));
   }, [api.id]);
@@ -79,31 +77,30 @@ const ApiCard: React.FC<Props> = ({
       const cardWidth = el.clientWidth * 0.9;
       setGalleryIndex(Math.round(el.scrollLeft / cardWidth));
     };
-    el.addEventListener("scroll", onScroll);
-    return () => el.removeEventListener("scroll", onScroll);
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
   }, [api.id]);
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const user = localStorage.getItem("mora_user");
+    const user = localStorage.getItem('mora_user');
     if (!user) {
       navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
-    const savedApis = JSON.parse(localStorage.getItem("mora_saved_apis") || "[]");
+    const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
     if (saved) {
       setSaved(false);
       localStorage.setItem(
-        "mora_saved_apis",
+        'mora_saved_apis',
         JSON.stringify(savedApis.filter((id: string) => id !== api.id))
       );
     } else {
       setSaved(true);
       localStorage.setItem(
-        "mora_saved_apis",
+        'mora_saved_apis',
         JSON.stringify([...savedApis, api.id])
       );
     }
@@ -112,8 +109,7 @@ const ApiCard: React.FC<Props> = ({
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const user = localStorage.getItem("mora_user");
+    const user = localStorage.getItem('mora_user');
     if (!user) {
       navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
       return;
@@ -131,7 +127,7 @@ const ApiCard: React.FC<Props> = ({
       }
       await refetchLandingApis?.();
     } catch (err) {
-      console.error("Like failed", err);
+      console.error('Like failed', err);
     }
   };
 
@@ -145,20 +141,24 @@ const ApiCard: React.FC<Props> = ({
       p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden
       flex flex-col h-full"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      {/* 🔥 EXACT LANDING PAGE UI BELOW – UNTOUCHED */}
+      {/* (This is literally your landing page card JSX) */}
+      {/* 👇👇👇 */}
 
-      {/* TOP */}
-      <div className="flex justify-between items-center mb-3">
-        <div className="flex gap-2">
+      {/* TOP BAR */}
+      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-3 relative z-20">
+        <div className="flex items-center gap-2">
           <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[9px] font-black px-4 py-1 rounded-full uppercase">
             {api.category}
           </span>
 
-          {rankStyle && (
-            <span
-              className={`bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}
-              px-4 py-1 rounded-full text-[9px] font-black uppercase flex items-center gap-1`}
-            >
+          {isTopTier && rankStyle && (
+            <span className={`bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}
+              px-4 py-1 rounded-full text-[9px] font-black uppercase flex items-center gap-1`}>
               <Trophy size={9} /> {rankStyle.label}
             </span>
           )}
@@ -167,19 +167,17 @@ const ApiCard: React.FC<Props> = ({
         <button
           onClick={handleSave}
           className={`p-2 rounded-full ${
-            saved ? "bg-mora-500/20 text-mora-500" : "bg-white/5 text-slate-500"
+            saved ? 'bg-mora-500/20 text-mora-500' : 'bg-white/5 text-slate-500'
           }`}
         >
-          <Bookmark size={14} className={saved ? "fill-current" : ""} />
+          <Bookmark size={14} className={saved ? 'fill-current' : ''} />
         </button>
       </div>
 
       {/* TITLE */}
       <h3 className="font-display font-bold text-white text-lg leading-tight">
         {api.name}
-        {isVerified && (
-          <span className="ml-2 text-green-400 text-xs font-bold">✔</span>
-        )}
+        {isVerified && <span className="ml-2 text-green-400 text-xs">✔</span>}
         {isNew(api.createdAt) && (
           <span className="ml-2 text-[9px] bg-white text-black px-2 py-0.5 rounded-full uppercase font-bold">
             New
@@ -225,23 +223,21 @@ const ApiCard: React.FC<Props> = ({
               size={12}
               className={
                 isLiked
-                  ? "text-red-500 fill-current"
-                  : "text-red-500/50"
+                  ? 'text-red-500 fill-current'
+                  : 'text-red-500/50'
               }
             />
             {api.upvotes || 0}
           </button>
         </div>
 
-        <span
-          className={`text-[9px] font-black px-4 py-1 rounded-full border uppercase tracking-widest ${
-            api.pricing.type === "Free"
-              ? "bg-green-500/10 text-green-400 border-green-500/20"
-              : api.pricing.type === "Paid"
-              ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-              : "bg-purple-500/10 text-purple-400 border-purple-500/20"
-          }`}
-        >
+        <span className={`text-[9px] font-black px-4 py-1 rounded-full border uppercase tracking-widest ${
+          api.pricing.type === 'Free'
+            ? 'bg-green-500/10 text-green-400 border-green-500/20'
+            : api.pricing.type === 'Paid'
+            ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+            : 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+        }`}>
           {api.pricing.type}
         </span>
       </div>
