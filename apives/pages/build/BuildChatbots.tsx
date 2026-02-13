@@ -188,11 +188,12 @@ export default function BuildChatbots() {
       const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
 
       if (usecaseRes?.data) {
-        setNote(usecaseRes.data.operationalInsight || "");
-        setNoteDraft(usecaseRes.data.operationalInsight || "");
-        setSelectedIds(usecaseRes.data.curatedApiIds || []);
-      }
+  const uc = usecaseRes.data;
 
+  setNote(uc.operationalInsight || "");
+  setNoteDraft(uc.operationalInsight || "");
+  setSelectedIds(uc.curatedApiIds || []);
+}
     } catch (e) {
       console.error("Chatbot fetch failed", e);
     } finally {
@@ -202,25 +203,21 @@ export default function BuildChatbots() {
 }, []);
 
   
-const toggleApi = async (id: string) => {
-  const updated = selectedIds.includes(id)
-    ? selectedIds.filter(x => x !== id)
-    : [...selectedIds, id];
-
-  setSelectedIds(updated);
-
-  await apiService.updateUsecase("chatbots", {
-    operationalInsight: noteDraft,
-    curatedApiIds: updated
-  });
+const toggleApi = (id: string) => {
+  setSelectedIds(prev =>
+    prev.includes(id)
+      ? prev.filter(x => x !== id)
+      : [...prev, id]
+  );
 };
+
 const chatbotApis = allApis.filter(api => {
   const text = `${api.name} ${api.description || ""}`.toLowerCase();
   return CHATBOT_KEYWORDS.some(k => text.includes(k));
 });
   
   // ✅ Public + admin both see curated APIs
-  const visibleApis = allApis.filter(api =>
+  const visibleApis = chatbotApis.filter(api =>
   selectedIds.includes(api.id)
 );
 
@@ -231,9 +228,11 @@ const chatbotApis = allApis.filter(api => {
       curatedApiIds: selectedIds
     });
 
-    setNote(res.operationalInsight);
-    setNoteDraft(res.operationalInsight);
-    setSelectedIds(res.curatedApiIds);
+    const uc = res.data;
+
+    setNote(uc.operationalInsight || "");
+    setNoteDraft(uc.operationalInsight || "");
+    setSelectedIds(uc.curatedApiIds || []);
   } catch (e) {
     console.error("Failed to save operational insight", e);
   }
