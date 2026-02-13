@@ -39,6 +39,90 @@ const ChatbotLoader = () => (
   </div>
 );
 
+const InsightRenderer = ({ text }: { text: string }) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const youtubeRegex =
+    /(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s]+)/;
+
+  const paragraphs = text.split("\n");
+
+  return (
+    <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+      {paragraphs.map((para, i) => {
+        if (!para.trim()) {
+          return <div key={i} className="h-4" />;
+        }
+
+        const urls = para.match(urlRegex);
+
+        if (!urls) {
+          return <p key={i}>{para}</p>;
+        }
+
+        return (
+          <div key={i} className="space-y-3">
+            <p>{para.replace(urlRegex, "").trim()}</p>
+
+            {urls.map((url, idx) => {
+              if (youtubeRegex.test(url)) {
+                const videoId = url.includes("watch")
+                  ? new URL(url).searchParams.get("v")
+                  : url.split("/").pop();
+
+                return (
+                  <a
+                    key={idx}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-2xl overflow-hidden
+                    bg-white/5 border border-white/10 backdrop-blur-md
+                    hover:bg-white/10 transition"
+                  >
+                    <div className="flex">
+                      <img
+                        src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                        className="w-40 h-24 object-cover"
+                      />
+                      <div className="p-4 flex flex-col justify-center">
+                        <p className="text-white text-sm font-semibold">
+                          YouTube Resource
+                        </p>
+                        <p className="text-slate-400 text-xs mt-1">
+                          Click to open detailed walkthrough
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                );
+              }
+
+              const domain = new URL(url).hostname.replace("www.", "");
+              const label =
+                domain.includes("apives") ? "Apives" : domain;
+
+              return (
+                <a
+                  key={idx}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-5 py-2 rounded-full
+                  bg-white/10 border border-white/20
+                  backdrop-blur-md text-xs text-slate-200
+                  hover:bg-white/20 transition"
+                >
+                  {label}
+                </a>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 export default function BuildChatbots() {
   const admin = isAdmin();
 
@@ -259,9 +343,7 @@ export default function BuildChatbots() {
                 </button>
               </>
             ) : (
-              <p className="text-sm text-slate-300 whitespace-pre-line">
-                {note}
-              </p>
+              <InsightRenderer text={note} />
             )}
           </div>
         </div>
