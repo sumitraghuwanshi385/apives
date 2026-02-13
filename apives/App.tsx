@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
@@ -26,7 +26,7 @@ import { OnboardingPage } from "./pages/Onboarding";
 /* ADMIN */
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 
-/* STATIC PAGES */
+/* STATIC */
 import {
   EnterprisePage,
   DocumentationPage,
@@ -38,7 +38,7 @@ import {
   SponsorshipPage
 } from "./pages/StaticPages";
 
-/* 🔥 Scroll to top on route change */
+/* Scroll to top */
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -55,7 +55,7 @@ function App() {
       <CookieBanner />
       <ScrollToTop />
 
-      <div className="flex flex-col min-h-screen bg-black font-sans text-slate-50 selection:bg-mora-500 selection:text-black">
+      <div className="flex flex-col min-h-screen bg-black text-slate-50">
         <Navbar />
 
         <main className="flex-grow">
@@ -64,16 +64,16 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/browse" element={<BrowseApis />} />
 
-            {/* 🔥 BUILD USE-CASES */}
+            {/* BUILD USE CASES */}
             <Route path="/build/chatbots" element={<BuildChatbots />} />
             <Route path="/build/voice" element={<BuildVoiceToText />} />
             <Route path="/build/payments" element={<BuildPayments />} />
             <Route path="/build/authentication" element={<BuildAuthentication />} />
             <Route path="/build/analytics" element={<BuildAnalytics />} />
 
-            {/* API & PROVIDER */}
-            <Route path="/submit" element={<SubmitApi />} />
+            {/* API */}
             <Route path="/api/:id" element={<ApiDetails />} />
+            <Route path="/submit" element={<SubmitApi />} />
             <Route path="/provider" element={<ProviderDashboard />} />
 
             {/* AUTH */}
@@ -86,7 +86,7 @@ function App() {
             {/* ONBOARDING */}
             <Route path="/onboarding" element={<OnboardingPage />} />
 
-            {/* STATIC / FOOTER */}
+            {/* STATIC */}
             <Route path="/enterprise" element={<EnterprisePage />} />
             <Route path="/docs" element={<DocumentationPage />} />
             <Route path="/status" element={<StatusPage />} />
