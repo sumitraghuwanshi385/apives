@@ -8,7 +8,8 @@ import {
   Check,
   Bot,
   Zap,
-  Radio
+  Radio,
+  Layers
 } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
@@ -279,10 +280,14 @@ export default function BuildChatbots() {
         {/* UNDERSTAND CHATBOT AI */}
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-4">
           <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-            <Zap size={16} className="text-mora-500" />
-            Understand Chatbot AI
-          </h3>
+            <h3 className="text-white font-bold mb-2 flex items-center gap-2">
+  <Zap size={16} className="text-mora-500" />
+  Production Architecture Essentials
+</h3>
 
+<p className="text-xs text-slate-400 mb-4">
+  Every serious AI chatbot must handle these six system layers before going live.
+</p>
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
 
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
@@ -351,9 +356,14 @@ export default function BuildChatbots() {
             directly impact retention and trust.
           </p>
           <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
-            Choosing the right API determines scalability,
-            reliability, and long-term system health.
-          </p>
+  Choosing the right API determines scalability,
+  reliability, and long-term system health.
+</p>
+
+<p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+  Poor API choices often lead to hidden costs, unstable latency,
+  and brittle systems that fail under real user load.
+</p>
         </div>
 
       </div>
@@ -389,11 +399,25 @@ export default function BuildChatbots() {
         </div>
       )}
 
+{/* CURATED CHATBOT APIS HEADING */}
+<div className="max-w-7xl mx-auto mb-6 px-1">
+  <div className="flex items-center gap-2 mb-1">
+    <Layers size={18} className="text-mora-500" />
+    <h3 className="text-white font-bold text-lg">
+      Curated Chatbot APIs
+    </h3>
+  </div>
+
+  <p className="text-xs text-slate-400 max-w-xl">
+    Production-ready APIs selected for building scalable, reliable, real-world AI chatbots.
+  </p>
+</div>
+
       {/* API CARDS */}
       {loading ? (
         <ChatbotLoader />
       ) : (
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24 pb-6">
           {visibleApis.map(api => (
             <ApiCard key={api.id} api={api} topIds={[]} />
           ))}
