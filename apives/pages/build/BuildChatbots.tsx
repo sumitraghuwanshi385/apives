@@ -275,19 +275,26 @@ export default function BuildChatbots() {
       </div>
 
      {/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
-<div className="max-w-6xl mx-auto mt-14 space-y-14 px-2">
+<div className="max-w-6xl mx-auto mt-12 space-y-16 px-3">
 
   {/* SECTION 1 — LEFT (GREEN) */}
   <div className="flex flex-col md:flex-row items-center">
     <div className="md:w-1/2 text-center md:text-left">
-      <h2 className="text-3xl md:text-[42px] font-extrabold leading-tight tracking-tight
+      <h2
+        className="text-[28px] sm:text-[32px] md:text-[40px]
+        font-extrabold leading-tight tracking-tight
         bg-gradient-to-r from-green-400 to-emerald-400
-        bg-clip-text text-transparent whitespace-nowrap">
+        bg-clip-text text-transparent"
+      >
         Production Architecture Essentials.
       </h2>
 
-      <p className="mt-3 text-slate-400 text-sm md:text-base leading-snug
-        max-w-[560px] mx-auto md:mx-0">
+      <p
+        className="mt-3 text-slate-400 text-sm md:text-base
+        leading-snug max-w-[620px]
+        mx-auto md:mx-0
+        md:line-clamp-3"
+      >
         Every serious AI chatbot must handle MVP readiness, scale safety,
         production reliability, stable latency, predictable token economics,
         and developer-friendly tooling before going live.
@@ -298,35 +305,51 @@ export default function BuildChatbots() {
   {/* SECTION 2 — RIGHT (PURPLE) */}
   <div className="flex flex-col md:flex-row-reverse items-center">
     <div className="md:w-1/2 text-center md:text-right">
-      <h2 className="text-3xl md:text-[42px] font-extrabold leading-tight tracking-tight
+      <h2
+        className="text-[28px] sm:text-[32px] md:text-[40px]
+        font-extrabold leading-tight tracking-tight
         bg-gradient-to-r from-purple-400 to-pink-400
-        bg-clip-text text-transparent whitespace-nowrap">
+        bg-clip-text text-transparent"
+      >
         Performance & Cost Intelligence.
       </h2>
 
-      <p className="mt-3 text-slate-400 text-sm md:text-base leading-snug
-        max-w-[560px] mx-auto md:ml-auto">
-        Modern chatbots are infrastructure systems, not prompts. They require
-        memory orchestration, retries, fallback handling, streaming UX,
-        and disciplined cost controls for predictable latency and profitability.
+      <p
+        className="mt-3 text-slate-400 text-sm md:text-base
+        leading-snug max-w-[620px]
+        mx-auto md:ml-auto
+        md:line-clamp-3"
+      >
+        Modern chatbots are infrastructure systems, not prompts.
+        They require memory orchestration, retries, fallback handling,
+        streaming UX, and disciplined cost controls for predictable
+        latency and long-term profitability.
       </p>
     </div>
   </div>
 
   {/* SECTION 3 — LEFT (BLUE) */}
-  <div className="flex flex-col md:flex-row items-center pb-8">
+  <div className="flex flex-col md:flex-row items-center pb-6">
     <div className="md:w-1/2 text-center md:text-left">
-      <h2 className="text-3xl md:text-[42px] font-extrabold leading-tight tracking-tight
+      <h2
+        className="text-[28px] sm:text-[32px] md:text-[40px]
+        font-extrabold leading-tight tracking-tight
         bg-gradient-to-r from-blue-400 to-cyan-400
-        bg-clip-text text-transparent whitespace-nowrap">
+        bg-clip-text text-transparent"
+      >
         API Selection Defines Success.
       </h2>
 
-      <p className="mt-3 text-slate-400 text-sm md:text-base leading-snug
-        max-w-[560px] mx-auto md:mx-0">
+      <p
+        className="mt-3 text-slate-400 text-sm md:text-base
+        leading-snug max-w-[620px]
+        mx-auto md:mx-0
+        md:line-clamp-3"
+      >
         Choosing the right AI API defines scalability, reliability,
-        and long-term system health. Poor choices introduce hidden costs,
-        unstable latency, and fragile systems under real user load.
+        and long-term system health. Poor decisions introduce hidden
+        costs, unstable latency, and fragile systems under real
+        production user load.
       </p>
     </div>
   </div>
@@ -334,7 +357,7 @@ export default function BuildChatbots() {
 </div>
 
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}
-<div className="mt-16">
+<div className="mt-12">
 
       {/* OPERATIONAL INSIGHT */}
       {(note || admin) && (
