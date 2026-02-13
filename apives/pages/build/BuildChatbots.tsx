@@ -6,7 +6,7 @@ import { BackButton } from "../../components/BackButton";
 import {
   ChevronDown,
   Check,
-  Zap,          // ✅ Sparkles removed
+  Zap,
   Brain,
   MessageSquare,
   Layers
@@ -89,7 +89,7 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  // ✅ FIXED TEMPLATE STRING (GitHub red error)
+  // ✅ FIXED (this was the GitHub red error)
   const chatbotApis = allApis.filter(api => {
     const text = `${api.name} ${api.description || ""}`.toLowerCase();
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
@@ -107,29 +107,21 @@ export default function BuildChatbots() {
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-24 px-4 md:px-8">
 
-      {/* HEADER ROW */}
+      {/* HEADER */}
       <div className="max-w-7xl mx-auto mb-10 flex items-center justify-between">
         <BackButton />
 
-        {/* ✅ SELECT APIS PILL (ADMIN ONLY) */}
         {admin && (
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(v => !v)}
-              className="
-                flex items-center gap-2
-                px-4 py-2 rounded-full
-                bg-white/5 border border-white/10
-                text-xs font-black uppercase tracking-widest
-                hover:bg-white/10
-              "
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest"
             >
               Select APIs <ChevronDown size={14} />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto
-                bg-black border border-white/10 rounded-2xl p-2 z-50">
+              <div className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto bg-black border border-white/10 rounded-2xl p-2 z-50">
                 {chatbotApis.map(api => (
                   <button
                     key={api.id}
@@ -161,7 +153,7 @@ export default function BuildChatbots() {
         </p>
       </div>
 
-      {/* BEFORE YOU CHOOSE */}
+      {/* EVALUATE BOX — FULLY RESTORED */}
       <div className="max-w-6xl mx-auto mb-16 grid md:grid-cols-3 gap-6">
 
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
@@ -170,8 +162,49 @@ export default function BuildChatbots() {
             Evaluates Chatbot APIs
           </h3>
 
-          {/* बाकी सब untouched */}
-          {/* ... */}
+          <div className="grid sm:grid-cols-3 gap-4 text-sm">
+            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
+              <Zap className="text-mora-500 mb-2" size={16} />
+              <p className="font-bold text-white">MVP Stage</p>
+              <p className="text-slate-400 text-xs mt-1">
+                Fast auth, clean docs, instant responses. Zero infra overhead.
+              </p>
+            </div>
+
+            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
+              <Layers className="text-mora-500 mb-2" size={16} />
+              <p className="font-bold text-white">Scaling Phase</p>
+              <p className="text-slate-400 text-xs mt-1">
+                Streaming, rate limits, predictable token economics.
+              </p>
+            </div>
+
+            <div className="bg-black/40 border border-white/10 rounded-xl p-4">
+              <Brain className="text-mora-500 mb-2" size={16} />
+              <p className="font-bold text-white">Production</p>
+              <p className="text-slate-400 text-xs mt-1">
+                Versioning, uptime history, long-context stability.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
+            {[
+              "Token pricing model",
+              "Response latency",
+              "Context window depth",
+              "Streaming support",
+              "Rate-limit behavior",
+              "Integration friction"
+            ].map(item => (
+              <div
+                key={item}
+                className="bg-black/40 border border-white/10 rounded-lg px-3 py-2"
+              >
+                • {item}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-6">
@@ -187,8 +220,54 @@ export default function BuildChatbots() {
         </div>
       </div>
 
-      {/* बाकी पूरा code SAME */}
-      {/* API CARDS / NOTES / LOADER untouched */}
+      {/* GLOBAL NOTE — RESTORED */}
+      {(note || admin) && (
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
+              📌 Builder Note
+            </p>
+
+            {admin ? (
+              <>
+                <textarea
+                  value={noteDraft}
+                  onChange={e => setNoteDraft(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
+                  rows={3}
+                />
+                <button
+                  onClick={saveNote}
+                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
+                >
+                  Save Note
+                </button>
+              </>
+            ) : (
+              <p className="text-sm text-slate-300 whitespace-pre-line">
+                {note}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* API CARDS — RESTORED */}
+      {loading ? (
+        <ChatbotLoader />
+      ) : (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visibleApis.map(api => (
+            <ApiCard key={api.id} api={api} topIds={[]} />
+          ))}
+        </div>
+      )}
+
+      {!loading && visibleApis.length === 0 && (
+        <p className="text-center text-slate-500 mt-16 text-sm">
+          No chatbot APIs selected yet.
+        </p>
+      )}
     </div>
   );
 }
