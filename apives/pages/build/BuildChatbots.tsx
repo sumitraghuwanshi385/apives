@@ -39,6 +39,56 @@ const ChatbotLoader = () => (
   </div>
 );
 
+
+const YouTubePreview = ({ url }: { url: string }) => {
+  const [meta, setMeta] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(
+      `https://www.youtube.com/oembed?url=${encodeURIComponent(
+        url
+      )}&format=json`
+    )
+      .then(res => res.json())
+      .then(data => setMeta(data))
+      .catch(() => {});
+  }, [url]);
+
+  if (!meta) {
+    return (
+      <div className="p-4 text-slate-400 text-sm bg-white/5 border border-white/10 rounded-2xl">
+        Loading preview...
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block rounded-2xl overflow-hidden
+      bg-white/5 border border-white/10 backdrop-blur-md
+      hover:bg-white/10 transition"
+    >
+      <div className="flex">
+        <img
+          src={meta.thumbnail_url}
+          className="w-40 h-24 object-cover"
+        />
+        <div className="p-4 flex flex-col justify-center">
+          <p className="text-white text-sm font-semibold line-clamp-2">
+            {meta.title}
+          </p>
+          <p className="text-slate-400 text-xs mt-1">
+            {meta.author_name}
+          </p>
+        </div>
+      </div>
+    </a>
+  );
+};
+
 const InsightRenderer = ({ text }: { text: string }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const youtubeRegex =
@@ -55,51 +105,28 @@ const InsightRenderer = ({ text }: { text: string }) => {
 
         const urls = para.match(urlRegex);
 
+        // No URLs → normal paragraph
         if (!urls) {
           return <p key={i}>{para}</p>;
         }
 
         return (
           <div key={i} className="space-y-3">
+            {/* Text without URLs */}
             <p>{para.replace(urlRegex, "").trim()}</p>
 
+            {/* Render detected URLs */}
             {urls.map((url, idx) => {
+              // ✅ YouTube link → preview card
               if (youtubeRegex.test(url)) {
-                const videoId = url.includes("watch")
-                  ? new URL(url).searchParams.get("v")
-                  : url.split("/").pop();
-
-                return (
-                  <a
-                    key={idx}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block rounded-2xl overflow-hidden
-                    bg-white/5 border border-white/10 backdrop-blur-md
-                    hover:bg-white/10 transition"
-                  >
-                    <div className="flex">
-                      <img
-                        src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-                        className="w-40 h-24 object-cover"
-                      />
-                      <div className="p-4 flex flex-col justify-center">
-                        <p className="text-white text-sm font-semibold">
-                          YouTube Resource
-                        </p>
-                        <p className="text-slate-400 text-xs mt-1">
-                          Click to open detailed walkthrough
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                );
+                return <YouTubePreview key={idx} url={url} />;
               }
 
+              // ✅ Normal website → glass pill
               const domain = new URL(url).hostname.replace("www.", "");
-              const label =
-                domain.includes("apives") ? "Apives" : domain;
+              const label = domain.includes("apives")
+                ? "Apives"
+                : domain;
 
               return (
                 <a
