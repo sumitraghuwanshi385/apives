@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
+import { ArrowLeft, ChevronDown, Check } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
 
@@ -13,13 +15,19 @@ const isAdmin = () => {
   }
 };
 
+const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
+
 export default function BuildChatbots() {
+  const navigate = useNavigate();
+  const admin = isAdmin();
+
   const [allApis, setAllApis] = useState<ApiListing[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     apiService.getAllApis().then((res: any[]) => {
-      const db = res.map((a: any) => ({ ...a, id: a._id }));
+      const db = res.map(a => ({ ...a, id: a._id }));
       setAllApis(db);
     });
 
@@ -37,65 +45,108 @@ export default function BuildChatbots() {
     setSelectedIds(updated);
   };
 
-  const visibleApis = allApis.filter(api =>
-    selectedIds.includes(api.id)
+  const chatbotApis = allApis.filter(api =>
+    CHATBOT_KEYWORDS.some(k =>
+      api.name.toLowerCase().includes(k) ||
+      api.description?.toLowerCase().includes(k)
+    )
   );
 
+  const visibleApis = admin
+    ? chatbotApis.filter(api => selectedIds.includes(api.id))
+    : chatbotApis;
+
   return (
-    <div className="min-h-screen bg-black pt-28 px-4 md:px-8">
-      <h1 className="text-3xl md:text-5xl font-display font-bold text-white">
-        Build AI Chatbots
-      </h1>
+    <div className="min-h-screen bg-black text-slate-100 pt-24 px-4 md:px-8">
 
-      <p className="text-slate-400 mt-2 max-w-2xl">
-        APIs for chat, assistants, LLMs, moderation and conversations.
-      </p>
+      {/* HEADER */}
+      <div className="max-w-7xl mx-auto flex items-center justify-between mb-10">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm"
+        >
+          <ArrowLeft size={16} /> Back
+        </button>
 
-      {/* ✅ API LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-        {visibleApis.map(api => (
-          <div
-            key={api.id}
-            className="rounded-2xl border border-white/10 bg-white/5 p-4 hover:border-mora-500/40 transition"
-          >
-            <h3 className="text-white font-bold text-lg mb-1">
-              {api.name}
-            </h3>
-            <p className="text-slate-400 text-sm line-clamp-3">
-              {api.description}
-            </p>
+        {/* ADMIN DROPDOWN */}
+        {admin && (
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(v => !v)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest"
+            >
+              Select APIs <ChevronDown size={14} />
+            </button>
 
-            <div className="mt-3 text-xs text-mora-400 font-mono">
-              {api.provider}
-            </div>
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-64 max-h-80 overflow-y-auto bg-black border border-white/10 rounded-xl p-2 z-50">
+                {chatbotApis.map(api => (
+                  <button
+                    key={api.id}
+                    onClick={() => toggleApi(api.id)}
+                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs ${
+                      selectedIds.includess.includes(api.id)
+                        ? "bg-mora-500 text-black"
+                        : "text-slate-400 hover:bg-white/5"
+                    }`}
+                  >
+                    {api.name}
+                    {selectedIds.includes(api.id) && <Check size={14} />}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+        )}
+      </div>
+
+      {/* HERO */}
+      <div className="max-w-4xl mx-auto text-center mb-14">
+        <h1 className="text-3xl md:text-5xl font-display font-bold text-white">
+          Best APIs to Build AI Chatbots
+        </h1>
+        <p className="mt-4 text-slate-400 text-sm md:text-base">
+          Planning to build a SaaS, AI wrapper, or ChatGPT-style application?
+          These APIs are trusted, scalable, and production-ready.
+        </p>
+      </div>
+
+      {/* GUIDE */}
+      <div className="max-w-5xl mx-auto mb-16 bg-white/5 border border-white/10 rounded-2xl p-6 md:p-8">
+        <h3 className="text-white font-bold mb-4">💡 Before You Choose an API</h3>
+
+        <ul className="text-slate-300 text-sm space-y-2 mb-6">
+          <li>🔹 For MVPs → prioritize fast setup & clear docs</li>
+          <li>🔹 For scale → look at rate limits & pricing predictability</li>
+          <li>🔹 For production → stability & versioning matter most</li>
+        </ul>
+
+        <div className="bg-black/40 border border-white/10 rounded-xl p-4">
+          <p className="text-xs uppercase tracking-widest text-slate-400 mb-3">
+            Things to Compare
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs text-slate-300">
+            <span>• Pricing structure</span>
+            <span>• Response speed</span>
+            <span>• API documentation</span>
+            <span>• Rate limits</span>
+            <span>• Reliability</span>
+            <span>• Ease of integration</span>
+          </div>
+        </div>
+      </div>
+
+      {/* API CARDS */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {visibleApis.map(api => (
+          <ApiCard key={api.id} api={api} topIds={[]} />
         ))}
       </div>
 
-      {/* ✅ ADMIN PANEL */}
-      {isAdmin() && (
-        <div className="mt-16 border border-mora-500/30 rounded-2xl p-4 bg-black/70">
-          <h4 className="text-mora-400 text-xs font-black uppercase tracking-widest mb-4">
-            Admin • Select APIs
-          </h4>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[300px] overflow-y-auto">
-            {allApis.map(api => (
-              <button
-                key={api.id}
-                onClick={() => toggleApi(api.id)}
-                className={`px-3 py-2 rounded-xl text-xs font-bold border transition
-                  ${
-                    selectedIds.includes(api.id)
-                      ? "bg-mora-500 text-black border-mora-500"
-                      : "bg-white/5 border-white/10 text-slate-400 hover:border-mora-500/40"
-                  }`}
-              >
-                {api.name}
-              </button>
-            ))}
-          </div>
-        </div>
+      {visibleApis.length === 0 && (
+        <p className="text-center text-slate-500 mt-12 text-sm">
+          No APIs selected yet.
+        </p>
       )}
     </div>
   );
