@@ -222,9 +222,10 @@ export default function BuildVoiceToText() {
     return VOICE_KEYWORDS.some(k => text.includes(k));
   });
 
-  const visibleApis = voiceApis.filter(api =>
-    selectedIds.includes(api.id)
-  );
+  const visibleApis =
+  selectedIds.length > 0
+    ? voiceApis.filter(api => selectedIds.includes(api.id))
+    : voiceApis;
 
   const saveNote = () => {
     localStorage.setItem(NOTE_KEY, noteDraft);
@@ -336,7 +337,7 @@ export default function BuildVoiceToText() {
       </div>
 
       <div className="mt-12">
-        {(note || admin) && (
+        {note && (
           <div className="max-w-5xl mx-auto mb-14">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
               <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
