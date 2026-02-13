@@ -779,7 +779,7 @@ rounded-2xl bg-white/10 p-1"
           title: "AI Chatbots",
           desc: "LLMs, chat, assistants",
           icon: Zap,
-          link: "/browse?usecase=chatbots"
+          link: "/build/chatbots?usecase=chatbots"
         },
         {
           title: "Voice to Text",
