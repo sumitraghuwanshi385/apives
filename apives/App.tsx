@@ -1,5 +1,7 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+
+import BuildChatbots from "./pages/build/BuildChatbots";
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -51,6 +53,10 @@ return (
       <Routes>  
         <Route path="/" element={<LandingPage />} />  
         <Route path="/browse" element={<BrowseApis />} />  
+
+        {/* 🔥 BUILD PAGES */}  
+        <Route path="/build/chatbots" element={<BuildChatbots />} />  
+
         <Route path="/submit" element={<SubmitApi />} />  
         <Route path="/api/:id" element={<ApiDetails />} />  
         <Route path="/provider" element={<ProviderDashboard />} />  
