@@ -366,7 +366,7 @@ export default function BuildChatbots() {
           </div>
         </div>
       )}
-
+</div>
 {/* CURATED CHATBOT APIS HEADING */}
 <div className="max-w-7xl mx-auto mb-6 px-1">
   <div className="flex items-center gap-2 mb-1">
