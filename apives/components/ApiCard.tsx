@@ -25,8 +25,7 @@ const isNew = (dateString?: string) => {
   if (!dateString) return false;
   const publishedDate = new Date(dateString).getTime();
   if (Number.isNaN(publishedDate)) return false;
-  const fifteenDays = 15 * 24 * 60 * 60 * 1000;
-  return Date.now() - publishedDate < fifteenDays;
+  return Date.now() - publishedDate < 15 * 24 * 60 * 60 * 1000;
 };
 
 const getVerifiedApis = (): string[] => {
@@ -45,7 +44,7 @@ interface Props {
 }
 
 /* ===============================
-   API CARD (1:1 LANDING COPY)
+   API CARD — 1:1 LANDING COPY
 ================================ */
 
 const ApiCard: React.FC<Props> = ({
@@ -66,7 +65,7 @@ const ApiCard: React.FC<Props> = ({
   const rankStyle = rankIndex !== -1 ? RANK_BADGE_STYLES[rankIndex] : null;
   const isVerified = getVerifiedApis().includes(api.id);
 
-  /* sync liked / saved */
+  /* sync saved / liked */
   useEffect(() => {
     const liked = JSON.parse(localStorage.getItem("mora_liked_apis") || "[]");
     const savedApis = JSON.parse(localStorage.getItem("mora_saved_apis") || "[]");
@@ -81,20 +80,23 @@ const ApiCard: React.FC<Props> = ({
     return () => clearTimeout(t);
   }, [showArrows]);
 
-  /* gallery index */
+  /* gallery index tracker */
   useEffect(() => {
     const el = document.getElementById(`card-gallery-${api.id}`);
     if (!el) return;
+
     const onScroll = () => {
       const cardWidth = el.clientWidth * 0.9;
       setGalleryIndex(Math.round(el.scrollLeft / cardWidth));
     };
+
     el.addEventListener("scroll", onScroll);
     return () => el.removeEventListener("scroll", onScroll);
   }, [api.id]);
 
   const handleSave = (e: React.MouseEvent) => {
-    e.preventDefault(); e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
     const user = localStorage.getItem("mora_user");
     if (!user) {
@@ -120,7 +122,8 @@ const ApiCard: React.FC<Props> = ({
   };
 
   const handleLike = async (e: React.MouseEvent) => {
-    e.preventDefault(); e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
     const user = localStorage.getItem("mora_user");
     if (!user) {
@@ -149,14 +152,11 @@ const ApiCard: React.FC<Props> = ({
   return (
     <Link
       to={`/api/${api.id}`}
-      className="
-        group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
-        rounded-[1.5rem] md:rounded-[2rem]
-        border border-white/5 hover:border-mora-500/30
-        p-4 md:p-5
-        transition-all duration-500 hover:-translate-y-2
-        overflow-hidden flex flex-col h-full
-      "
+      className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
+      rounded-[1.5rem] md:rounded-[2rem]
+      border border-white/5 hover:border-mora-500/30
+      p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
+      overflow-hidden flex flex-col h-full"
     >
       {/* glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -164,16 +164,16 @@ const ApiCard: React.FC<Props> = ({
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-3 relative z-20">
-        <div className="flex items-center gap-2">
-          <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[8px] md:text-[9px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest h-5 md:h-6 flex items-center">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400
+            text-[8px] md:text-[9px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest h-5 md:h-6 flex items-center">
             {api.category}
           </span>
 
           {rankStyle && (
             <div className={`bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}
-              backdrop-blur-md border border-white/10
-              px-4 md:px-5 py-0.5 md:py-1 rounded-full
-              flex items-center gap-1 shadow-md h-5 md:h-6`}>
+              backdrop-blur-md border border-white/10 px-4 md:px-5 py-0.5 md:py-1
+              rounded-full flex items-center gap-1 shadow-md h-5 md:h-6`}>
               <Trophy size={8} className="md:w-2.5 md:h-2.5 fill-current" />
               <span className="text-[8px] md:text-[9px] font-black uppercase tracking-tighter">
                 {rankStyle.label}
@@ -200,20 +200,30 @@ const ApiCard: React.FC<Props> = ({
             <span className="relative">
               <button
                 onClick={(e) => {
-                  e.preventDefault(); e.stopPropagation();
+                  e.preventDefault();
+                  e.stopPropagation();
                   setShowVerifyInfo(v => !v);
                 }}
                 className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center"
               >
                 <svg viewBox="0 0 24 24" className="w-full h-full">
-                  <path fill="#22C55E" d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"/>
-                  <path d="M9.2 12.3l2 2.1 4.6-4.8" stroke="#000" strokeWidth="2" fill="none"/>
+                  <path
+                    fill="#22C55E"
+                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
+                  />
+                  <path
+                    d="M9.2 12.3l2 2.1 4.6-4.8"
+                    stroke="#000"
+                    strokeWidth="2"
+                    fill="none"
+                  />
                 </svg>
               </button>
 
               {showVerifyInfo && (
                 <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-[200] pointer-events-none">
-                  <div className="relative bg-green-600 border border-green-700 rounded-full px-3 py-1 text-[10px] text-white font-semibold shadow-xl whitespace-nowrap">
+                  <div className="relative bg-green-600 border border-green-700 rounded-full
+                    px-3 py-1 text-[10px] text-white font-medium shadow-xl whitespace-nowrap">
                     <span className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 bg-green-600 rotate-45 border-l border-t border-green-700" />
                     Manually verified by Apives
                   </div>
@@ -247,7 +257,11 @@ const ApiCard: React.FC<Props> = ({
             className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
           >
             {api.gallery.slice(0, 5).map((img, i) => (
-              <div key={i} className="flex-none w-[90%] aspect-[16/9] rounded-xl overflow-hidden border border-white/10 snap-center bg-black">
+              <div
+                key={i}
+                className="flex-none w-[90%] aspect-[16/9] rounded-xl overflow-hidden
+                border border-white/10 snap-center bg-black"
+              >
                 <img src={img} alt="" className="w-full h-full object-cover" />
               </div>
             ))}
@@ -256,21 +270,35 @@ const ApiCard: React.FC<Props> = ({
           {showArrows && galleryIndex > 0 && (
             <button
               onClick={(e) => {
-                e.preventDefault(); e.stopPropagation();
-                document.getElementById(`card-gallery-${api.id}`)?.scrollBy({ left: -200, behavior: "smooth" });
+                e.preventDefault();
+                e.stopPropagation();
+                document
+                  .getElementById(`card-gallery-${api.id}`)
+                  ?.scrollBy({ left: -200, behavior: "smooth" });
               }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center"
-            >‹</button>
+              className="absolute left-2 top-1/2 -translate-y-1/2
+              h-8 w-8 rounded-full bg-black/60 border border-white/20
+              text-white flex items-center justify-center backdrop-blur-sm"
+            >
+              ‹
+            </button>
           )}
 
           {showArrows && galleryIndex < api.gallery.length - 1 && (
             <button
               onClick={(e) => {
-                e.preventDefault(); e.stopPropagation();
-                document.getElementById(`card-gallery-${api.id}`)?.scrollBy({ left: 200, behavior: "smooth" });
+                e.preventDefault();
+                e.stopPropagation();
+                document
+                  .getElementById(`card-gallery-${api.id}`)
+                  ?.scrollBy({ left: 200, behavior: "smooth" });
               }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-black/60 border border-white/20 text-white flex items-center justify-center"
-            >›</button>
+              className="absolute right-2 top-1/2 -translate-y-1/2
+              h-8 w-8 rounded-full bg-black/60 border border-white/20
+              text-white flex items-center justify-center backdrop-blur-sm"
+            >
+              ›
+            </button>
           )}
         </div>
       )}
@@ -281,20 +309,28 @@ const ApiCard: React.FC<Props> = ({
 
       <div className="flex flex-wrap gap-2 mb-6 mt-auto">
         {tags.slice(0, 5).map(tag => (
-          <span key={tag} className="text-[9px] text-slate-500 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full flex items-center">
+          <span
+            key={tag}
+            className="text-[9px] md:text-[10px] text-slate-500 bg-white/5
+            border border-white/10 px-2 md:px-2.5 py-0.5 md:py-1
+            rounded-full flex items-center"
+          >
             <Hash size={8} className="mr-1 text-mora-500/50" /> {tag}
           </span>
         ))}
       </div>
 
       <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-        <div className="flex gap-4">
+        <div className="flex gap-4 md:gap-6">
           <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
             <Activity size={12} className="text-mora-500" />
             <span className="text-slate-300 font-mono">{api.latency}</span>
           </div>
 
-          <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like">
+          <button
+            onClick={handleLike}
+            className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like"
+          >
             <Heart
               size={12}
               className={`${isLiked
@@ -306,13 +342,16 @@ const ApiCard: React.FC<Props> = ({
           </button>
         </div>
 
-        <span className={`text-[8px] md:text-[10px] font-black px-4 py-1 rounded-full border uppercase tracking-[0.2em]
+        <span
+          className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1
+          rounded-full border uppercase tracking-[0.2em]
           ${api.pricing.type === "Free"
             ? "bg-green-500/10 text-green-400 border-green-500/20"
             : api.pricing.type === "Paid"
             ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
             : "bg-purple-500/10 text-purple-400 border-purple-500/20"
-          }`}>
+          }`}
+        >
           {api.pricing.type}
         </span>
       </div>
