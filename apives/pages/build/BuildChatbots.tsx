@@ -7,7 +7,7 @@ import {
   ChevronDown,
   Check,
   Bot,
-  Sparkles
+  Zap
 } from "lucide-react";
 
 const STORAGE_KEY = "apives_usecase_chatbots";
@@ -95,31 +95,6 @@ export default function BuildChatbots() {
     setNote(noteDraft);
   };
 
-  /* URL Detection Renderer */
-  const renderNoteWithLinks = (text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/g;
-
-    return text.split(urlRegex).map((part, index) => {
-      if (part.match(urlRegex)) {
-        const url = part.startsWith("http") ? part : `https://${part}`;
-        return (
-          <div key={index} className="mt-2">
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block bg-green-500/10 border border-green-500/30
-              text-green-400 px-3 py-2 rounded-lg text-xs break-all hover:bg-green-500/20 transition"
-            >
-              {part}
-            </a>
-          </div>
-        );
-      }
-      return <span key={index}>{part}</span>;
-    });
-  };
-
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-20 px-4 md:px-8">
 
@@ -177,38 +152,43 @@ export default function BuildChatbots() {
         {/* UNDERSTAND CHATBOT AI */}
         <div className="md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-4">
           <h3 className="text-white font-bold mb-4 flex items-center gap-2">
-            <Sparkles size={16} className="text-mora-500" />
+            <Zap size={16} className="text-mora-500" />
             Understand Chatbot AI
           </h3>
 
           <div className="grid sm:grid-cols-3 gap-3 text-xs">
-            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
-              <p className="font-bold text-white mb-1">MVP Ready</p>
-              <p className="text-slate-400 leading-relaxed">
+
+            {/* MVP GREEN */}
+            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
+              <p className="font-bold text-green-400 mb-1">MVP Ready</p>
+              <p className="text-slate-300 leading-relaxed">
                 Rapid integration APIs designed for immediate prototyping,
-                minimal authentication overhead, and consistent response behavior.
+                minimal authentication overhead, and predictable early-stage deployments.
               </p>
             </div>
 
-            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
-              <p className="font-bold text-white mb-1">Scale Safe</p>
-              <p className="text-slate-400 leading-relaxed">
-                Architected for concurrency, rate-limit clarity,
-                and stable streaming under heavy production traffic.
+            {/* SCALE PURPLE */}
+            <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3">
+              <p className="font-bold text-purple-400 mb-1">Scale Safe</p>
+              <p className="text-slate-300 leading-relaxed">
+                Architected for concurrency bursts, controlled rate limits,
+                stable streaming pipelines, and resilient backend orchestration.
               </p>
             </div>
 
-            <div className="bg-black/40 border border-white/10 rounded-xl p-3">
-              <p className="font-bold text-white mb-1">Production Grade</p>
-              <p className="text-slate-400 leading-relaxed">
-                Long-context stability, structured output control,
-                and operational reliability suitable for paying customers.
+            {/* PRODUCTION BLUE */}
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
+              <p className="font-bold text-blue-400 mb-1">Production Grade</p>
+              <p className="text-slate-300 leading-relaxed">
+                Long-context stability, structured output reliability,
+                versioning discipline, and uptime confidence for revenue-critical systems.
               </p>
             </div>
+
           </div>
         </div>
 
-        {/* SMART CHATBOT SYSTEMS BOX */}
+        {/* SMART CHATBOT SYSTEMS */}
         <div className="bg-gradient-to-br from-mora-500/10 to-transparent border border-white/10 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Bot size={16} className="text-mora-500" />
@@ -216,46 +196,29 @@ export default function BuildChatbots() {
               Smart Chatbot Systems
             </p>
           </div>
+
           <p className="text-[12px] text-slate-400 leading-relaxed">
             Modern chatbot systems require memory orchestration,
-            multi-step reasoning control, fallback logic,
-            cost monitoring, and UX-aware streaming delivery.
-            Choosing the right API defines long-term stability.
+            multi-step reasoning control, fallback logic, and intelligent retries.
+          </p>
+
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            They must handle token budgeting, streaming UX expectations,
+            structured outputs, and latency sensitivity under real users.
+          </p>
+
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            Selecting the right API determines not just performance —
+            but long-term system stability, cost efficiency, and scalability.
+          </p>
+
+          <p className="text-[12px] text-slate-400 leading-relaxed mt-2">
+            Strong architecture reduces silent failures, hallucination risks,
+            and operational surprises during growth phases.
           </p>
         </div>
+
       </div>
-
-      {/* OPERATIONAL INSIGHT */}
-      {(note || admin) && (
-        <div className="max-w-5xl mx-auto mb-14">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-            <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
-              Operational Insight
-            </p>
-
-            {admin ? (
-              <>
-                <textarea
-                  value={noteDraft}
-                  onChange={e => setNoteDraft(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-white mb-3"
-                  rows={3}
-                />
-                <button
-                  onClick={saveNote}
-                  className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-black uppercase tracking-widest"
-                >
-                  Update
-                </button>
-              </>
-            ) : (
-              <div className="text-sm text-slate-300 whitespace-pre-line">
-                {renderNoteWithLinks(note)}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* API CARDS */}
       {loading ? (
