@@ -176,35 +176,33 @@ export default function BuildChatbots() {
   const [noteDraft, setNoteDraft] = useState("");
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await apiService.getAllApis();
-        const list = Array.isArray(res) ? res : res?.data || [];
-        const db = list.map(a => ({ ...a, id: a._id }));
-        setAllApis(db);
-      } catch (e) {
-        console.error("Chatbot API fetch failed", e);
-      } finally {
-        setLoading(false);
-      }
-    })();
+  (async () => {
+    try {
+      const res = await apiService.getAllApis();
+      const list = Array.isArray(res) ? res : res?.data || [];
+      const db = list.map(a => ({ ...a, id: a._id }));
+      setAllApis(db);
+    } catch (e) {
+      console.error("Chatbot API fetch failed", e);
+    } finally {
+      setLoading(false);
+    }
+  })();
 
-    // ✅ FIX: ALWAYS load curated APIs (logout ke baad bhi)
-    setSelectedIds(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
+  const saved = localStorage.getItem(NOTE_KEY);
+  if (!saved) return;
 
-    const saved = localStorage.getItem(NOTE_KEY);
-if (saved) {
   try {
-    const parsed = JSON.parse(saved);
+    const parsed: ChatbotNotePayload = JSON.parse(saved);
     setNote(parsed.text || "");
     setNoteDraft(parsed.text || "");
     setSelectedIds(parsed.curatedIds || []);
   } catch {
+    // backward compatibility
     setNote(saved);
     setNoteDraft(saved);
   }
 }, []);
-
   const toggleApi = (id: string) => {
     const updated = selectedIds.includes(id)
       ? selectedIds.filter(x => x !== id)
@@ -225,9 +223,14 @@ if (saved) {
 );
 
   const saveNote = () => {
-    localStorage.setItem(NOTE_KEY, noteDraft);
-    setNote(noteDraft);
+  const payload: ChatbotNotePayload = {
+    text: noteDraft,
+    curatedIds: selectedIds
   };
+
+  localStorage.setItem(NOTE_KEY, JSON.stringify(payload));
+  setNote(noteDraft);
+};
 
   return (
     <div className="min-h-screen bg-black text-slate-100 pt-20 px-4 md:px-8">
@@ -381,7 +384,7 @@ if (saved) {
 <div className="mt-12">
 
       {/* OPERATIONAL INSIGHT */}
-      {note && (
+      {(note || admin) && (
         <div className="max-w-5xl mx-auto mb-14">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
             <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-slate-400 mb-2">
