@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 import BuildChatbots from "./pages/build/BuildChatbots";
-import BuildVoiceToText from "./pages/build/BuildVoiceToText";
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 
 import { Navbar } from './components/Navbar';
@@ -55,7 +54,6 @@ return (
 
     {/* 🔥 BUILD */}    
     <Route path="/build/chatbots" element={<BuildChatbots />} />    
-    <Route path="/build/voice" element={<BuildVoiceToText />} />
     <Route path="/submit" element={<SubmitApi />} />    
     <Route path="/api/:id" element={<ApiDetails />} />    
     <Route path="/provider" element={<ProviderDashboard />} />    
