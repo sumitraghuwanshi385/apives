@@ -149,6 +149,21 @@ return (
   <div className="relative">
 
     <Link
+{isAdminUser && (
+      <button
+        onClick={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          await apiService.toggleVerify(api.id);
+          window.location.reload();
+        }}
+        className="absolute top-3 right-3 z-[999] pointer-events-auto
+        bg-black px-3 py-1 rounded text-xs text-yellow-400"
+      >
+        {api.verified ? "Unverify" : "Verify"}
+      </button>
+    )}
+
       to={`/api/${api.id}`}
       className="group relative bg-dark-900/40 hover:bg-dark-900/80
       backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem]
@@ -358,21 +373,6 @@ return (
         </span>
       </div>
     </Link>
-{isAdminUser && (
-      <button
-        onClick={async (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          await apiService.toggleVerify(api.id);
-          window.location.reload();
-        }}
-        className="absolute top-3 right-3 z-[999] pointer-events-auto
-        bg-black px-3 py-1 rounded text-xs text-yellow-400"
-      >
-        {api.verified ? "Unverify" : "Verify"}
-      </button>
-    )}
-
  </div>
   );
 };
