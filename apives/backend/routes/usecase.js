@@ -1,5 +1,5 @@
-import express from "express";
-import Usecase from "../models/Usecase.js";
+const express = require("express");
+const Usecase = require("../models/Usecase");
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get("/:slug", async (req, res) => {
     const usecase = await Usecase.findOne({
       slug,
       published: true
-    }).populate("curatedApiIds"); // 🔥 VERY IMPORTANT
+    }).populate("curatedApiIds");
 
     if (!usecase) {
       return res.status(404).json({ message: "Usecase not found" });
@@ -27,8 +27,8 @@ router.get("/:slug", async (req, res) => {
 });
 
 /**
- * UPDATE usecase (Admin)
- * PUT /api/usecases/:slug
+ * PUT update usecase
+ * /api/usecases/:slug
  */
 router.put("/:slug", async (req, res) => {
   try {
@@ -37,10 +37,7 @@ router.put("/:slug", async (req, res) => {
 
     const updated = await Usecase.findOneAndUpdate(
       { slug },
-      {
-        operationalInsight,
-        curatedApiIds
-      },
+      { operationalInsight, curatedApiIds },
       { new: true }
     ).populate("curatedApiIds");
 
@@ -53,26 +50,5 @@ router.put("/:slug", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-// 🔥 ADD THIS PUT
-router.put("/:slug", async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const { operationalInsight, curatedApiIds } = req.body;
 
-    const updated = await Usecase.findOneAndUpdate(
-      { slug },
-      { operationalInsight, curatedApiIds },
-      { new: true }
-    );
-
-    if (!updated) {
-      return res.status(404).json({ message: "Usecase not found" });
-    }
-
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-export default router;
+module.exports = router;
