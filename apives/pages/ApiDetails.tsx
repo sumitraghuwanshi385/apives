@@ -78,11 +78,7 @@ useEffect(() => {
 
       const data = await apiService.getApiById(id);
 
-      setApi({
-  ...data,
-  id: data._id,
-  publishedAt: data.createdAt,
-});
+      setApi(data);
 
 setIsVerified(data.verified === true);
 
@@ -440,7 +436,7 @@ if (!api) {
   <button
     onClick={async () => {
   try {
-    const updated = await apiService.toggleVerify(api.id);
+    const updated = await apiService.toggleVerify(api._id);
     setIsVerified(updated.verified);
   } catch (err) {
     console.error("Verify failed", err);
