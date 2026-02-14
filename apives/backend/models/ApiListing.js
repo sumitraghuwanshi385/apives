@@ -34,6 +34,10 @@ const apiListingSchema = new mongoose.Schema({
   stability: String,
   accessType: String,
   status: { type: String, default: 'active' }
+verified: {
+    type: Boolean,
+    default: false
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('ApiListing', apiListingSchema);
