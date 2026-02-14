@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const usecaseSchema = new mongoose.Schema(
   {
@@ -31,4 +31,4 @@ const usecaseSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Usecase", usecaseSchema);
+module.exports = mongoose.model("Usecase", usecaseSchema);
