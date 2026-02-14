@@ -353,7 +353,7 @@ export default function BuildPayments() {
   </p>  
 </div>
 
-  </div>
+  </div></div>
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12">
 
       {(note || admin) && (
