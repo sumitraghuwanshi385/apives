@@ -149,7 +149,8 @@ const tags = Array.isArray(api.tags) ? api.tags : [];
 
 return (
 
-  <div className="relative">  {isAdminUser && (  
+  <div className="relative group">  {/* ✅ ADMIN VERIFY BUTTON (Link ke bahar) */}  
+{isAdminUser && (  
   <button  
     onClick={async (e) => {  
       e.preventDefault();  
@@ -157,8 +158,7 @@ return (
       await apiService.toggleVerify(api.id);  
       window.location.reload();  
     }}  
-    className="absolute top-3 right-3 z-[999] pointer-events-auto  
-    bg-black px-3 py-1 rounded text-xs text-yellow-400"  
+    className="absolute top-3 right-3 z-50 text-xs bg-black/70 px-2 py-1 rounded text-yellow-400 hover:text-yellow-300"  
   >  
     {api.verified ? "Unverify" : "Verify"}  
   </button>  
