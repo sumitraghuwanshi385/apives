@@ -33,8 +33,8 @@ const apiListingSchema = new mongoose.Schema({
   latency: String,
   stability: String,
   accessType: String,
-  status: { type: String, default: 'active' }
-verified: {
+  status: { type: String, default: 'active' },
+ verified: {
     type: Boolean,
     default: false
   },
