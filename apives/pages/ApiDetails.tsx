@@ -65,7 +65,7 @@ console.log('DETAILS PAGE ID 👉', id);
   const [upvotes, setUpvotes] = useState(0);
 const [showGalleryControls, setShowGalleryControls] = useState(true);
 const [galleryIndex, setGalleryIndex] = useState(0);
-
+const [isVerified, setIsVerified] = useState(false);
 const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
 useEffect(() => {
@@ -90,8 +90,6 @@ const isVerified =
       setIsLoading(true);
 
       const data = await apiService.getApiById(id);
-
-const [isVerified, setIsVerified] = useState(false);
 
       setApi({
   ...data,
