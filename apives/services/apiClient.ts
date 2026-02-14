@@ -118,11 +118,10 @@ updateApiStatus: async (id: string, status: 'active' | 'paused') => {
 
 // GET usecase by slug
 getUsecaseBySlug: async (slug: string) => {
-  const res = await axiosInstance.get(`/usecase/${slug}`);
+  const res = await axiosInstance.get(`/usecases/${slug}`);
   return res.data;
 },
 
-// UPDATE usecase (admin only)
 updateUsecase: async (
   slug: string,
   data: {
@@ -130,7 +129,7 @@ updateUsecase: async (
     curatedApiIds: string[];
   }
 ) => {
-  const res = await axiosInstance.put(`/usecase/${slug}`, data);
+  const res = await axiosInstance.put(`/usecases/${slug}`, data);
   return res.data;
 },
 };
