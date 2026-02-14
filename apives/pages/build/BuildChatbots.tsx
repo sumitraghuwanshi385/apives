@@ -68,7 +68,7 @@ hover:bg-white/10 transition"
 {/* Small Thumbnail */}
 <div className="relative shrink-0">
 <img
-src={https://img.youtube.com/vi/${videoId}/mqdefault.jpg}
+src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
 className="w-32 h-20 object-cover rounded-lg"
 loading="lazy"
 />
@@ -149,7 +149,7 @@ hover:bg-white/20 transition"
 
 {/* Website Logo */}
 <img
-src={https://www.google.com/s2/favicons?domain=${domain}&sz=64}
+src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
 alt=""
 className="w-4 h-4 rounded-full bg-white"
 />
