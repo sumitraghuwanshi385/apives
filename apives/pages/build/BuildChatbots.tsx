@@ -373,11 +373,6 @@ export default function BuildChatbots() {
           ))}
         </div>
       )}
-{!loading && visibleApis.length === 0 && (
-  <p className="text-center text-slate-500 mt-16 text-sm">
-    No chatbot APIs selected yet.
-  </p>
-)}
     </div>
   );
 }
