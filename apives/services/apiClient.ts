@@ -113,22 +113,10 @@ updateApiStatus: async (id: string, status: 'active' | 'paused') => {
     return res.data;
   },
 
+// ✅ ADMIN VERIFY / UNVERIFY
 toggleVerify: async (id: string) => {
-  const token = localStorage.getItem("mora_token");
-
-  const res = await fetch(`${BASE_URL}/api/${id}/verify`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error("Verification failed");
-  }
-
-  return res.json();
+  const res = await axiosInstance.patch(`/apis/${id}/verify`);
+  return res.data;
 },
 
 // ===============================
