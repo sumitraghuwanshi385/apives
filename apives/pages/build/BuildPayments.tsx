@@ -303,50 +303,57 @@ export default function BuildPayments() {
           Production-ready payment APIs for subscriptions, billing, and global transactions.
         </p>
       </div>
-{/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
+{/* ===== ARCHITECTURE SECTIONS ===== */}
 
-<div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">  {/* SECTION 1 */}
+<div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">  {/* SECTION 1 — LEFT */}
 
   <div className="flex flex-col md:flex-row items-center">  
     <div className="md:w-1/2 text-center md:text-left">  
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">  
-        Production Architecture Essentials.  
-      </h2>  
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">  
-        Every serious AI chatbot must handle MVP readiness, scale safety,  
-        production reliability, stable latency, predictable token economics,  
-        and developer-friendly tooling before going live.  
-      </p>  
-    </div>  
-  </div>  {/* SECTION 2 */}
+      <h2 className="text-[22px] md:text-[28px] font-bold  
+        bg-gradient-to-r from-green-400 to-emerald-400  
+        bg-clip-text text-transparent">  
+        Payment Infrastructure Essentials.  
+      </h2>  <p className="mt-1.5 text-slate-400 text-sm md:text-[15px]  
+    leading-relaxed max-w-[540px] mx-auto md:mx-0">  
+    Reliable payment systems require secure tokenization,  
+    PCI compliance, webhook handling, retries, idempotency,  
+    and subscription lifecycle management.  
+  </p>  
+</div>
+
+  </div>  {/* SECTION 2 — RIGHT */}
 
   <div className="flex flex-col md:flex-row-reverse items-center">  
     <div className="md:w-1/2 text-center md:text-right">  
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">  
-        Performance & Cost Intelligence.  
-      </h2>  
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:ml-auto">  
-        Modern chatbots are infrastructure systems, not prompts. They require  
-        memory orchestration, retries, fallback handling, streaming UX,  
-        and disciplined cost controls to maintain predictable latency  
-        and long-term profitability.  
-      </p>  
-    </div>  
-  </div>  {/* SECTION 3 */}
+      <h2 className="text-[22px] md:text-[28px] font-bold  
+        bg-gradient-to-r from-purple-400 to-pink-400  
+        bg-clip-text text-transparent">  
+        Reliability, Latency & Fraud Control.  
+      </h2>  <p className="mt-1.5 text-slate-400 text-sm md:text-[15px]  
+    leading-relaxed max-w-[540px] mx-auto md:ml-auto">  
+    Payment APIs must handle peak traffic, fraud detection,  
+    chargebacks, low-latency confirmations, and global  
+    multi-currency settlements at scale.  
+  </p>  
+</div>
+
+  </div>  {/* SECTION 3 — LEFT */}
 
   <div className="flex flex-col md:flex-row items-center">  
     <div className="md:w-1/2 text-center md:text-left">  
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">  
-        API Selection Defines Success.  
-      </h2>  
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">  
-        Choosing the right AI API defines scalability, reliability,  
-        and long-term system health. Poor decisions introduce hidden  
-        costs, unstable latency, and fragile systems that fail  
-        under real user load.  
-      </p>  
-    </div>  
-  </div>  </div>  
+      <h2 className="text-[22px] md:text-[28px] font-bold  
+        bg-gradient-to-r from-blue-400 to-cyan-400  
+        bg-clip-text text-transparent">  
+        API Choice Defines Revenue Stability.  
+      </h2>  <p className="mt-1.5 text-slate-400 text-sm md:text-[15px]  
+    leading-relaxed max-w-[540px] mx-auto md:mx-0">  
+    The right payment API impacts conversion rates,  
+    recurring revenue reliability, checkout speed,  
+    and long-term business scalability.  
+  </p>  
+</div>
+
+  </div>
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12">
 
       {(note || admin) && (
