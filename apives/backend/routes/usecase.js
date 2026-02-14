@@ -53,5 +53,26 @@ router.put("/:slug", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+// 🔥 ADD THIS PUT
+router.put("/:slug", async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const { operationalInsight, curatedApiIds } = req.body;
+
+    const updated = await Usecase.findOneAndUpdate(
+      { slug },
+      { operationalInsight, curatedApiIds },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Usecase not found" });
+    }
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 export default router;
