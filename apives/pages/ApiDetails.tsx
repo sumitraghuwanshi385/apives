@@ -25,14 +25,6 @@ const isAdminUser = () => {
   }
 };
 
-const getVerifiedApis = (): string[] => {
-  try {
-    return JSON.parse(localStorage.getItem("apives_verified_apis") || "[]");
-  } catch {
-    return [];
-  }
-};
-
 const syntaxHighlight = (json: string) => {
     if (!json) return '';
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -92,9 +84,7 @@ useEffect(() => {
   publishedAt: data.createdAt,
 });
 
-const verified = getVerifiedApis();
-const check = verified.includes(data._id);
-setIsVerified(check);
+setIsVerified(data.verified === true);
 
       const likedApis = JSON.parse(
   localStorage.getItem('mora_liked_apis') || '[]'
@@ -448,27 +438,14 @@ if (!api) {
 <div className="flex gap-2 mt-2">
   {isAdminUser() && (
   <button
-    onClick={() => {
-      const verified = getVerifiedApis();
-
-      if (isVerified) {
-        const updated = verified.filter(
-          v => v !== (api.id || api._id)
-        );
-        localStorage.setItem(
-          "apives_verified_apis",
-          JSON.stringify(updated)
-        );
-        setIsVerified(false);
-      } else {
-        const updated = [...verified, api.id || api._id];
-        localStorage.setItem(
-          "apives_verified_apis",
-          JSON.stringify(updated)
-        );
-        setIsVerified(true);
-      }
-    }}
+    onClick={async () => {
+  try {
+    const updated = await apiService.toggleVerify(api.id);
+    setIsVerified(updated.verified);
+  } catch (err) {
+    console.error("Verify failed", err);
+  }
+}}
     className="
       px-3 py-1
       rounded-full
