@@ -187,12 +187,10 @@ export default function BuildChatbots() {
       // 2️⃣ Get usecase data from MongoDB
       const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
 
-      if (usecaseRes?.data) {
-  const uc = usecaseRes.data;
-
-  setNote(uc.operationalInsight || "");
-  setNoteDraft(uc.operationalInsight || "");
-  setSelectedIds(uc.curatedApiIds || []);
+if (usecaseRes) {
+  setNote(usecaseRes.operationalInsight || "");
+  setNoteDraft(usecaseRes.operationalInsight || "");
+  setSelectedIds(usecaseRes.curatedApiIds || []);
 }
     } catch (e) {
       console.error("Chatbot fetch failed", e);
@@ -223,16 +221,14 @@ const chatbotApis = allApis.filter(api => {
 
   const saveNote = async () => {
   try {
-    const res = await apiService.updateUsecase("chatbots", {
-      operationalInsight: noteDraft,
-      curatedApiIds: selectedIds
-    });
+    const uc = await apiService.updateUsecase("chatbots", {
+  operationalInsight: noteDraft,
+  curatedApiIds: selectedIds
+});
 
-    const uc = res.data;
-
-    setNote(uc.operationalInsight || "");
-    setNoteDraft(uc.operationalInsight || "");
-    setSelectedIds(uc.curatedApiIds || []);
+setNote(uc.operationalInsight || "");
+setNoteDraft(uc.operationalInsight || "");
+setSelectedIds(uc.curatedApiIds || []);
   } catch (e) {
     console.error("Failed to save operational insight", e);
   }
