@@ -198,10 +198,61 @@ export default function BuildChatbots() {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white pt-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto mb-6 flex justify-between">
-        <BackButton />
-      </div>
+    <div className="max-w-7xl mx-auto mb-6 flex justify-between items-center">
+  <BackButton />
+
+  {admin && (
+    <div className="relative">
+      <button
+        onClick={() => setDropdownOpen(v => !v)}
+        className="px-4 py-2 bg-white/10 rounded-full text-xs uppercase"
+      >
+        Select APIs <ChevronDown size={14} />
+      </button>
+
+      {dropdownOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-black border border-white/10 rounded-xl p-3 z-50">
+
+          {chatbotApis.map(api => (
+            <button
+              key={api.id}
+              onClick={() =>
+                setSelectedIds(prev =>
+                  prev.includes(api.id)
+                    ? prev.filter(x => x !== api.id)
+                    : [...prev, api.id]
+                )
+              }
+              className={`w-full flex justify-between px-3 py-2 rounded-lg text-xs ${
+                selectedIds.includes(api.id)
+                  ? "bg-mora-500 text-black"
+                  : "hover:bg-white/5 text-gray-400"
+              }`}
+            >
+              {api.name}
+              {selectedIds.includes(api.id) && <Check size={14} />}
+            </button>
+          ))}
+
+          <button
+            onClick={async () => {
+              await apiService.updateUsecase("chatbots", {
+                operationalInsight: noteDraft,
+                curatedApiIds: selectedIds
+              });
+              setDropdownOpen(false);
+              alert("Selection Saved ✅");
+            }}
+            className="w-full mt-3 bg-mora-500 text-black py-2 rounded-full text-xs font-bold"
+          >
+            Save Selection
+          </button>
+
+        </div>
+      )}
+    </div>
+  )}
+</div>
 
       <div className="max-w-4xl mx-auto text-center mb-8">
         <h1 className="text-3xl md:text-6xl font-display font-bold">
@@ -272,14 +323,27 @@ export default function BuildChatbots() {
             </p>
 
             {admin ? (
-              <>
-                <textarea
-                  value={noteDraft}
-                  onChange={e => setNoteDraft(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm mb-3"
-                  rows={3}
-                />
-              </>
+  <>
+    <textarea
+      value={noteDraft}
+      onChange={e => setNoteDraft(e.target.value)}
+      className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm mb-3"
+      rows={3}
+    />
+
+    <button
+      onClick={async () => {
+        await apiService.updateUsecase("chatbots", {
+          operationalInsight: noteDraft,
+          curatedApiIds: selectedIds
+        });
+        alert("Operational Insight Updated ✅");
+      }}
+      className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-bold"
+    >
+      Update Insight
+    </button>
+  </>
             ) : (
               <InsightRenderer text={note} />
             )}
@@ -309,6 +373,11 @@ export default function BuildChatbots() {
           ))}
         </div>
       )}
+{!loading && visibleApis.length === 0 && (
+  <p className="text-center text-slate-500 mt-16 text-sm">
+    No chatbot APIs selected yet.
+  </p>
+)}
     </div>
   );
 }
