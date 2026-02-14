@@ -260,6 +260,9 @@ export default function BuildChatbots() {
   </div>
 
 </div>
+{/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}
+
+<div className="mt-12">
 
       {(note || admin) && (
         <div className="max-w-5xl mx-auto mb-14">
@@ -283,6 +286,19 @@ export default function BuildChatbots() {
           </div>
         </div>
       )}
+</div>  
+{/* CURATED CHATBOT APIS HEADING */}  
+<div className="max-w-7xl mx-auto mb-6 px-1">  
+  <div className="flex items-center gap-2 mb-1">  
+    <Layers size={18} className="text-mora-500" />  
+    <h3 className="text-white font-bold text-lg">  
+      Curated Chatbot APIs  
+    </h3>  
+  </div>   
+ <p className="text-xs text-slate-400 max-w-xl">  
+    Production-ready APIs selected for building scalable, reliable, real-world AI chatbots.  
+  </p>  
+</div>
 
       {loading ? (
         <ChatbotLoader />
