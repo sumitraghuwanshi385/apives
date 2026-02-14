@@ -145,14 +145,10 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
   const tags = Array.isArray(api.tags) ? api.tags : [];
 
-      {/* glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
-
 return (
   <div className="relative group">
 
-    {/* ✅ ADMIN VERIFY BUTTON (LINK KE BAHAR) */}
+    {/* ✅ ADMIN VERIFY BUTTON (Link ke bahar) */}
     {isAdminUser && (
       <button
         onClick={async (e) => {
@@ -169,12 +165,19 @@ return (
 
     <Link
       to={`/api/${api.id}`}
-      className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
-      rounded-[1.5rem] md:rounded-[2rem]
+      className="group relative bg-dark-900/40 hover:bg-dark-900/80
+      backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem]
       border border-white/5 hover:border-mora-500/30
-      p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
-      overflow-hidden flex flex-col h-full"
+      p-4 md:p-5 transition-all duration-500
+      hover:-translate-y-2 overflow-hidden
+      flex flex-col h-full"
     >
+
+      {/* ✅ GLOW YAHI HOGA (Link ke andar) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
+
+      {/* Rest of your card content yahin continue hoga */}
 
       {/* HEADER */}
       <div className="flex justify-between items-center mb-3 relative z-20">
