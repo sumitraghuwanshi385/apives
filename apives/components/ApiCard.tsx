@@ -149,6 +149,33 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
 
+return (
+  <div className="relative group">
+
+    {/* ✅ ADMIN VERIFY BUTTON (LINK KE BAHAR) */}
+    {isAdminUser && (
+      <button
+        onClick={async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          await apiService.toggleVerify(api.id);
+          window.location.reload();
+        }}
+        className="absolute top-3 right-3 z-50 text-xs bg-black/70 px-2 py-1 rounded text-yellow-400 hover:text-yellow-300"
+      >
+        {api.verified ? "Unverify" : "Verify"}
+      </button>
+    )}
+
+    <Link
+      to={`/api/${api.id}`}
+      className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
+      rounded-[1.5rem] md:rounded-[2rem]
+      border border-white/5 hover:border-mora-500/30
+      p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
+      overflow-hidden flex flex-col h-full"
+    >
+
       {/* HEADER */}
       <div className="flex justify-between items-center mb-3 relative z-20">
         <div className="flex items-center gap-1.5 md:gap-2">
@@ -219,22 +246,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             </span>
           )}
 
-return (
-  <div className="relative group">
-{isAdminUser && (
-  <button
-    onClick={async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      await apiService.toggleVerify(api.id);
-      window.location.reload();
-    }}
-    className="ml-2 text-xs text-yellow-400 hover:text-yellow-300"
-  >
-    {api.verified ? "Unverify" : "Verify"}
-  </button>
-)}
-<Link
+
       to={`/api/${api.id}`}
       className="relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
       rounded-[1.5rem] md:rounded-[2rem]
