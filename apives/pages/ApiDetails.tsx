@@ -91,11 +91,17 @@ const isVerified =
 
       const data = await apiService.getApiById(id);
 
+const [isVerified, setIsVerified] = useState(false);
+
       setApi({
-        ...data,
-        id: data._id,
-        publishedAt: data.createdAt,
-      });
+  ...data,
+  id: data._id,
+  publishedAt: data.createdAt,
+});
+
+const verified = getVerifiedApis();
+const check = verified.includes(data._id);
+setIsVerified(check);
 
       const likedApis = JSON.parse(
   localStorage.getItem('mora_liked_apis') || '[]'
@@ -447,59 +453,44 @@ if (!api) {
 </h1>
 
 <div className="flex gap-2 mt-2">
-  {isAdminUser() && !isVerified && (
-    <button
-      onClick={() => {
-        const updated = [...verifiedApis, api.id || api._id];
-        localStorage.setItem(
-          "apives_verified_apis",
-          JSON.stringify(updated)
-        );
-        window.location.reload();
-      }}
-      className="
-        px-3 py-1
-        rounded-full
-        bg-mora-500/20
-        text-mora-400
-        border border-mora-500/30
-        text-[10px]
-        font-black
-        uppercase
-        tracking-widest
-      "
-    >
-      Verify
-    </button>
-  )}
+  {isAdminUser() && (
+  <button
+    onClick={() => {
+      const verified = getVerifiedApis();
 
-  {isAdminUser() && isVerified && (
-    <button
-      onClick={() => {
-        const updated = verifiedApis.filter(
+      if (isVerified) {
+        const updated = verified.filter(
           v => v !== (api.id || api._id)
         );
         localStorage.setItem(
           "apives_verified_apis",
           JSON.stringify(updated)
         );
-        window.location.reload();
-      }}
-      className="
-        px-3 py-1
-        rounded-full
-        bg-red-500/10
-        text-red-400
-        border border-red-500/30
-        text-[10px]
-        font-black
-        uppercase
-        tracking-widest
-      "
-    >
-      Unverify
-    </button>
-  )}
+        setIsVerified(false);
+      } else {
+        const updated = [...verified, api.id || api._id];
+        localStorage.setItem(
+          "apives_verified_apis",
+          JSON.stringify(updated)
+        );
+        setIsVerified(true);
+      }
+    }}
+    className="
+      px-3 py-1
+      rounded-full
+      bg-mora-500/20
+      text-mora-400
+      border border-mora-500/30
+      text-[10px]
+      font-black
+      uppercase
+      tracking-widest
+    "
+  >
+    {isVerified ? "Unverify" : "Verify"}
+  </button>
+)}
 </div>
 
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
@@ -507,7 +498,7 @@ if (!api) {
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
                                 <span className="font-mono text-slate-500 text-[9px] md:text-sm">{new Date(api.publishedAt).toLocaleDateString()}</span>
                             </div>
-                        </div>
+                      </div>
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleLike} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isLiked ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Heart size={12} className={isLiked ? 'fill-current' : ''} /> <span className="ml-2">{upvotes}</span></button>
                             <button onClick={handleSaveToggle} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
