@@ -161,17 +161,20 @@ export default function BuildChatbots() {
   useEffect(() => {
     (async () => {
       try {
+        // 1️⃣ Load all APIs
         const res = await apiService.getAllApis();
         const list = Array.isArray(res) ? res : res?.data || [];
         const db = list.map(a => ({ ...a, id: a._id }));
         setAllApis(db);
 
+        // 2️⃣ Load usecase
         const uc = await apiService.getUsecaseBySlug("chatbots");
 
         if (uc) {
           setNote(uc.operationalInsight || "");
           setNoteDraft(uc.operationalInsight || "");
 
+          // 🔥 IMPORTANT FIX
           if (uc.curatedApiIds) {
             const ids = uc.curatedApiIds.map((api: any) =>
               typeof api === "string" ? api : api._id
@@ -188,6 +191,9 @@ export default function BuildChatbots() {
     })();
   }, []);
 
+  // ===============================
+  // FILTER CHATBOT APIs
+  // ===============================
   const chatbotApis = allApis.filter(api => {
     const text = `${api.name} ${api.description || ""}`.toLowerCase();
     return CHATBOT_KEYWORDS.some(k => text.includes(k));
@@ -197,9 +203,69 @@ export default function BuildChatbots() {
     selectedIds.includes(api.id)
   );
 
+  // ===============================
+  // TOGGLE (NO AUTO SAVE)
+  // ===============================
+  const toggleApi = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id)
+        ? prev.filter(x => x !== id)
+        : [...prev, id]
+    );
+  };
+
+  // ===============================
+  // SAVE SELECTION BUTTON
+  // ===============================
+  const saveSelection = async () => {
+    try {
+      const updated = await apiService.updateUsecase("chatbots", {
+        operationalInsight: noteDraft,
+        curatedApiIds: selectedIds
+      });
+
+      setNote(updated.operationalInsight || "");
+      setNoteDraft(updated.operationalInsight || "");
+
+      if (updated.curatedApiIds) {
+        const ids = updated.curatedApiIds.map((api: any) =>
+          typeof api === "string" ? api : api._id
+        );
+        setSelectedIds(ids);
+      }
+
+      alert("Selection Saved ✅");
+      setDropdownOpen(false);
+
+    } catch (err) {
+      console.error("Save failed", err);
+      alert("Save failed ❌");
+    }
+  };
+
+  // ===============================
+  // SAVE NOTE
+  // ===============================
+  const saveNote = async () => {
+    try {
+      const updated = await apiService.updateUsecase("chatbots", {
+        operationalInsight: noteDraft,
+        curatedApiIds: selectedIds
+      });
+
+      setNote(updated.operationalInsight || "");
+      alert("Operational Insight Updated ✅");
+
+    } catch (err) {
+      console.error("Note save failed", err);
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto mb-6 flex justify-between items-center">
-  <BackButton />
+    <div className="min-h-screen bg-black text-white pt-20 px-4 md:px-8">
+
+      <div className="max-w-7xl mx-auto mb-6 flex justify-between">
+        <BackButton />
 
   {admin && (
     <div className="relative">
@@ -373,6 +439,11 @@ export default function BuildChatbots() {
           ))}
         </div>
       )}
+{!loading && visibleApis.length === 0 && (
+  <p className="text-center text-slate-500 mt-16 text-sm">
+    No chatbot APIs selected yet.
+  </p>
+)}
     </div>
   );
 }
