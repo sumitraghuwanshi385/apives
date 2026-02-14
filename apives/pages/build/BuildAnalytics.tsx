@@ -347,7 +347,6 @@ export default function BuildAnalytics() {
     </div>  
 
   </div>
-</div>
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12">
 
       {(note || admin) && (
