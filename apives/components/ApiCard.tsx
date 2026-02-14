@@ -148,7 +148,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 return (
   <div className="relative">
 
-    <Link
 {isAdminUser && (
       <button
         onClick={async (e) => {
@@ -163,7 +162,7 @@ return (
         {api.verified ? "Unverify" : "Verify"}
       </button>
     )}
-
+<Link
       to={`/api/${api.id}`}
       className="group relative bg-dark-900/40 hover:bg-dark-900/80
       backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem]
