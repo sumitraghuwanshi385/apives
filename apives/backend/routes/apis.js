@@ -203,4 +203,35 @@ router.post('/:id/unlike', verify, async (req, res) => {
   }
 });
 
+// ✅ TOGGLE VERIFY (Admin Only)
+router.patch('/:id/verify', verify, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid API id' });
+    }
+
+    // 🔒 Only Admin Allowed
+    if (req.user.email !== "beatslevelone@gmail.com") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const api = await ApiListing.findById(id);
+
+    if (!api) {
+      return res.status(404).json({ message: 'API not found' });
+    }
+
+    api.verified = !api.verified;
+    await api.save();
+
+    return res.json(api);
+
+  } catch (err) {
+    console.error('❌ VERIFY API Error:', err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
