@@ -145,16 +145,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
   const tags = Array.isArray(api.tags) ? api.tags : [];
 
-  return (
-  <div className="relative">
-<Link
-      to={`/api/${api.id}`}
-      className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
-      rounded-[1.5rem] md:rounded-[2rem]
-      border border-white/5 hover:border-mora-500/30
-      p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
-      overflow-hidden flex flex-col h-full"
-    >
       {/* glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
@@ -229,6 +219,8 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             </span>
           )}
 
+return (
+  <div className="relative group">
 {isAdminUser && (
   <button
     onClick={async (e) => {
@@ -242,6 +234,14 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     {api.verified ? "Unverify" : "Verify"}
   </button>
 )}
+<Link
+      to={`/api/${api.id}`}
+      className="relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
+      rounded-[1.5rem] md:rounded-[2rem]
+      border border-white/5 hover:border-mora-500/30
+      p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
+      overflow-hidden flex flex-col h-full"
+    >
 
           {isNew(api.createdAt) && (
             <span className="ml-1 text-[8px] md:text-[9px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase">
