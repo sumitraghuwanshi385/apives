@@ -112,6 +112,25 @@ updateApiStatus: async (id: string, status: 'active' | 'paused') => {
     const res = await axiosInstance.delete(`/apis/${id}`);
     return res.data;
   },
+
+toggleVerify: async (id: string) => {
+  const token = localStorage.getItem("mora_token");
+
+  const res = await fetch(`${BASE_URL}/api/${id}/verify`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error("Verification failed");
+  }
+
+  return res.json();
+},
+
 // ===============================
 // 🔥 USECASE (Chatbots, Payments, etc.)
 // ===============================
