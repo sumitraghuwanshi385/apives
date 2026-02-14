@@ -317,7 +317,7 @@ export default function BuildImageGeneration() {
         style consistency, seed reproducibility, and GPU-efficient inference.  
       </p>  
     </div>  
-
+</div>
     <div className="md:w-1/2 text-center md:text-right ml-auto">  
       <h2 className="text-[22px] md:text-[28px] font-bold  
         bg-gradient-to-r from-purple-400 to-pink-400  
@@ -329,7 +329,7 @@ export default function BuildImageGeneration() {
         GPU cost efficiency, and predictable pricing at scale.  
       </p>  
     </div>  
-
+</div>
     <div className="md:w-1/2 text-center md:text-left">  
       <h2 className="text-[22px] md:text-[28px] font-bold  
         bg-gradient-to-r from-blue-400 to-cyan-400  
