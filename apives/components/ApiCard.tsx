@@ -249,15 +249,6 @@ return (
             </span>
           )}
 
-
-      to={`/api/${api.id}`}
-      className="relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
-      rounded-[1.5rem] md:rounded-[2rem]
-      border border-white/5 hover:border-mora-500/30
-      p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
-      overflow-hidden flex flex-col h-full"
-    >
-
           {isNew(api.createdAt) && (
             <span className="ml-1 text-[8px] md:text-[9px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase">
               New
@@ -386,4 +377,4 @@ return (
   );
 };
 
-export default ApiCard;
+export default ApiCard; 
