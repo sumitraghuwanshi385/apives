@@ -77,11 +77,6 @@ useEffect(() => {
   return () => document.removeEventListener("click", close);
 }, [showVerifyInfo]);
 
-const verifiedApis = getVerifiedApis();
-const isVerified =
-  !!api &&
-  verifiedApis.some(v => v === api.id || v === api._id);
-
    useEffect(() => {
   if (!id) return;
 
