@@ -28,13 +28,6 @@ const isNew = (dateString?: string) => {
   return Date.now() - publishedDate < 15 * 24 * 60 * 60 * 1000;
 };
 
-const getVerifiedApis = (): string[] => {
-  try {
-    return JSON.parse(localStorage.getItem("apives_verified_apis") || "[]");
-  } catch {
-    return [];
-  }
-};
 
 interface Props {
   api: ApiListing;
@@ -63,7 +56,10 @@ const ApiCard: React.FC<Props> = ({
 
   const rankIndex = topIds.indexOf(api.id);
   const rankStyle = rankIndex !== -1 ? RANK_BADGE_STYLES[rankIndex] : null;
-  const isVerified = getVerifiedApis().includes(api.id);
+  const isVerified = api.verified;
+const userStr = localStorage.getItem("mora_user");
+const user = userStr ? JSON.parse(userStr) : null;
+const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
   /* sync saved / liked */
   useEffect(() => {
@@ -231,6 +227,20 @@ const ApiCard: React.FC<Props> = ({
               )}
             </span>
           )}
+
+{isAdminUser && (
+  <button
+    onClick={async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await apiService.toggleVerify(api.id);
+      window.location.reload();
+    }}
+    className="ml-2 text-xs text-yellow-400 hover:text-yellow-300"
+  >
+    {api.verified ? "Unverify" : "Verify"}
+  </button>
+)}
 
           {isNew(api.createdAt) && (
             <span className="ml-1 text-[8px] md:text-[9px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase">
