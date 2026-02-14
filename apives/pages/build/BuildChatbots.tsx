@@ -201,14 +201,22 @@ if (usecaseRes) {
 }, []);
 
   
-const toggleApi = (id: string) => {
-  setSelectedIds(prev =>
-    prev.includes(id)
-      ? prev.filter(x => x !== id)
-      : [...prev, id]
-  );
-};
+const toggleApi = async (id: string) => {
+  const updated = selectedIds.includes(id)
+    ? selectedIds.filter(x => x !== id)
+    : [...selectedIds, id];
 
+  setSelectedIds(updated);
+
+  try {
+    await apiService.updateUsecase("chatbots", {
+      operationalInsight: noteDraft,
+      curatedApiIds: updated
+    });
+  } catch (err) {
+    console.error("Failed to auto-save curated APIs", err);
+  }
+};
 const chatbotApis = allApis.filter(api => {
   const text = `${api.name} ${api.description || ""}`.toLowerCase();
   return CHATBOT_KEYWORDS.some(k => text.includes(k));
