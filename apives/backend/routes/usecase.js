@@ -4,7 +4,7 @@ const Usecase = require("../models/Usecase");
 const router = express.Router();
 
 /**
- * GET usecase by slug
+ * ✅ GET usecase by slug
  * /api/usecases/:slug
  */
 router.get("/:slug", async (req, res) => {
@@ -27,7 +27,7 @@ router.get("/:slug", async (req, res) => {
 });
 
 /**
- * PUT update usecase
+ * ✅ PUT update OR create usecase
  * /api/usecases/:slug
  */
 router.put("/:slug", async (req, res) => {
@@ -37,13 +37,17 @@ router.put("/:slug", async (req, res) => {
 
     const updated = await Usecase.findOneAndUpdate(
       { slug },
-      { operationalInsight, curatedApiIds },
-      { new: true }
+      {
+        slug,
+        operationalInsight,
+        curatedApiIds,
+        published: true
+      },
+      {
+        new: true,
+        upsert: true
+      }
     ).populate("curatedApiIds");
-
-    if (!updated) {
-      return res.status(404).json({ message: "Usecase not found" });
-    }
 
     res.json(updated);
   } catch (err) {
