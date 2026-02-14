@@ -28,6 +28,14 @@ if (Number.isNaN(publishedDate)) return false;
 return Date.now() - publishedDate < 15 * 24 * 60 * 60 * 1000;
 };
 
+const getVerifiedApis = (): string[] => {
+try {
+return JSON.parse(localStorage.getItem("apives_verified_apis") || "[]");
+} catch {
+return [];
+}
+};
+
 interface Props {
 api: ApiListing;
 topIds: string[];
@@ -55,10 +63,7 @@ const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
 const rankIndex = topIds.indexOf(api.id);
 const rankStyle = rankIndex !== -1 ? RANK_BADGE_STYLES[rankIndex] : null;
-const isVerified = api.verified;
-const userStr = localStorage.getItem("mora_user");
-const user = userStr ? JSON.parse(userStr) : null;
-const isAdminUser = user?.email === "beatslevelone@gmail.com";
+const isVerified = getVerifiedApis().includes(api.id);
 
 /* sync saved / liked */
 useEffect(() => {
@@ -148,39 +153,19 @@ try {
 const tags = Array.isArray(api.tags) ? api.tags : [];
 
 return (
+<Link
+to={/api/${api.id}}
+className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
+rounded-[1.5rem] md:rounded-[2rem]
+border border-white/5 hover:border-mora-500/30
+p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
+overflow-hidden flex flex-col h-full"
+>
+{/* glow */}
+<div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+<div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />
 
-  <div className="relative group">  {/* ✅ ADMIN VERIFY BUTTON (Link ke bahar) */}  
-{isAdminUser && (  
-  <button  
-    onClick={async (e) => {  
-      e.preventDefault();  
-      e.stopPropagation();  
-      await apiService.toggleVerify(api.id);  
-      window.location.reload();  
-    }}  
-    className="absolute top-3 right-3 z-50 text-xs bg-black/70 px-2 py-1 rounded text-yellow-400 hover:text-yellow-300"  
-  >  
-    {api.verified ? "Unverify" : "Verify"}  
-  </button>  
-)}  
-
-<Link  
-  to={`/api/${api.id}`}  
-  className="group relative bg-dark-900/40 hover:bg-dark-900/80  
-  backdrop-blur-sm rounded-[1.5rem] md:rounded-[2rem]  
-  border border-white/5 hover:border-mora-500/30  
-  p-4 md:p-5 transition-all duration-500  
-  hover:-translate-y-2 overflow-hidden  
-  flex flex-col h-full"  
->  
-
-  {/* ✅ GLOW YAHI HOGA (Link ke andar) */}  
-  <div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />  
-  <div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70" />  
-
-  {/* Rest of your card content yahin continue hoga */}  
-
-  {/* HEADER */}  
+{/* HEADER */}  
   <div className="flex justify-between items-center mb-3 relative z-20">  
     <div className="flex items-center gap-1.5 md:gap-2">  
       <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400  
@@ -375,6 +360,7 @@ return (
   </div>  
 </Link>
 
- </div>  
-  );  
-};  export default ApiCard;
+);
+};
+
+export default ApiCard;
