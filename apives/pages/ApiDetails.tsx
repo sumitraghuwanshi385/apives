@@ -78,7 +78,10 @@ useEffect(() => {
 
       const data = await apiService.getApiById(id);
 
-      setApi(data);
+      setApi({
+  ...data,
+  publishedAt: data.createdAt
+});
 
 setIsVerified(data.verified === true);
 
@@ -285,7 +288,7 @@ if (!api) {
   </div>
 </div>
     <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-[1000]">
 
            
                 <div className="animate-slide-up relative">
