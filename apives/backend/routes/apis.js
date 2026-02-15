@@ -204,11 +204,10 @@ router.post('/:id/unlike', verify, async (req, res) => {
 });
 
 // ✅ TOGGLE VERIFY (Admin Only)
-router.patch('/:id/verify', async (req, res) => {
-  console.log("VERIFY ROUTE HIT");
-  console.log("REQ.USER:", req.user);
-
+router.patch('/:id/verify', verify, async (req, res) => {
   try {
+    console.log("REQ.USER:", req.user);
+
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
