@@ -105,7 +105,7 @@ export const PopularApis: React.FC = () => {
         (a, b) => (b.upvotes || 0) - (a.upvotes || 0)
       );
 
-      setTopIds(sorted.slice(0, 3).map(a => a._id));
+      setTopIds(sorted.slice(0, 3).map(a => a.id));
 
       const filtered = sorted.filter(api => {
 
@@ -216,7 +216,7 @@ export const PopularApis: React.FC = () => {
             ))
           ) : filteredApis.length > 0 ? (
             filteredApis.slice(0, visibleCount).map(api => (
-              <ApiCard key={api._id} api={api} topIds={topIds} />
+              <ApiCard key={api.id} api={api} topIds={topIds} />
             ))
           ) : (
             <div className="col-span-full text-center py-20 px-6">
