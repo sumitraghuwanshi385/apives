@@ -115,8 +115,13 @@ updateApiStatus: async (id: string, status: 'active' | 'paused') => {
 
 // ✅ ADMIN VERIFY / UNVERIFY
 toggleVerify: async (id: string) => {
-  const res = await axiosInstance.patch(`/apis/${id}/verify`);
-  return res.data;
+  try {
+    const res = await axiosInstance.patch(`/apis/${id}/verify`);
+    return res.data;
+  } catch (err: any) {
+    alert(err?.response?.data?.message || "Unknown error");
+    throw err;
+  }
 },
 
 // ===============================
