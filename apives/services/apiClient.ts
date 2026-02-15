@@ -8,22 +8,29 @@ const axiosInstance = axios.create({
 });
 
 // 🔐 Attach token
+
+// 🔐 Attach token
 axiosInstance.interceptors.request.use(
   (config) => {
     const userStr = localStorage.getItem('mora_user');
+
     if (userStr) {
       const user = JSON.parse(userStr);
-      if (user?.token) {
-        if (config.headers?.set) {
-          config.headers.set('Authorization', `Bearer ${user.token}`);
-        } else {
-          (config.headers as any) = {
-            ...(config.headers as any),
-            Authorization: `Bearer ${user.token}`,
-          };
-        }
+
+      const token =
+        user?.token ||
+        user?.accessToken ||
+        user?.jwt ||
+        null;
+
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        };
       }
     }
+
     return config;
   },
   (error) => Promise.reject(error)
