@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
+import { ApiCard } from '../components/ApiCard';
 
 const CATEGORIES = [
   { name: 'All', icon: LayoutGrid },
