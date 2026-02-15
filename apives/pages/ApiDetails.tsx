@@ -317,7 +317,7 @@ if (!api) {
 </span>
                    </div>
                
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8 relative z-10">
                         <div>
 <h1
   className="
@@ -435,17 +435,22 @@ if (!api) {
   </span>
 </h1>
 
-<button
-  onClick={() => {
-    alert(`
-id: ${api?.id}
-_id: ${api?._id}
-    `);
-  }}
-  className="bg-red-600 px-6 py-3 text-white"
->
-  DEBUG
-</button>
+{isAdminUser() && (
+  <button
+    type="button"
+    onClick={async () => {
+      try {
+        const updated = await apiService.toggleVerify(api.id);
+        setIsVerified(updated.verified);
+      } catch (err) {
+        alert("Verify failed");
+      }
+    }}
+    className="h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+  >
+    {isVerified ? "Unverify" : "Verify"}
+  </button>
+)}
 
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
