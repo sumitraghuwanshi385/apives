@@ -434,41 +434,12 @@ if (!api) {
   </span>
 </h1>
 
-<div className="flex gap-2 mt-2">
-  {isAdminUser() && (
- <button
-  type="button"
-  onClick={async (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log("VERIFY CLICKED");
-    try {
-      const updated = await apiService.toggleVerify(api._id);
-      setIsVerified(updated.verified);
-    } catch (err) {
-      console.error("Verify failed", err);
-    }
-  }}
-  className="
-    relative
-    z-[9999]
-    pointer-events-auto
-    px-3 py-1
-    rounded-full
-    bg-mora-500/20
-    text-mora-400
-    border border-mora-500/30
-    text-[10px]
-    font-black
-    uppercase
-    tracking-widest
-  "
+<button
+  onClick={() => alert("clicked")}
+  className="bg-red-600 px-6 py-3 text-white"
 >
-    {isVerified ? "Unverify" : "Verify"}
-  </button>
-)}
-</div>
-
+  TEST
+</button>
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
