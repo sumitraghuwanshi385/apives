@@ -284,7 +284,7 @@ if (!api) {
     <BackButton />
   </div>
 </div>
-    <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6 overflow-hidden">
+    <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
            
@@ -433,27 +433,34 @@ if (!api) {
 
 <div className="flex gap-2 mt-2">
   {isAdminUser() && (
-  <button
-    onClick={async () => {
-  try {
-    const updated = await apiService.toggleVerify(api._id);
-    setIsVerified(updated.verified);
-  } catch (err) {
-    console.error("Verify failed", err);
-  }
-}}
-    className="
-      px-3 py-1
-      rounded-full
-      bg-mora-500/20
-      text-mora-400
-      border border-mora-500/30
-      text-[10px]
-      font-black
-      uppercase
-      tracking-widest
-    "
-  >
+ <button
+  type="button"
+  onClick={async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    console.log("VERIFY CLICKED");
+    try {
+      const updated = await apiService.toggleVerify(api._id);
+      setIsVerified(updated.verified);
+    } catch (err) {
+      console.error("Verify failed", err);
+    }
+  }}
+  className="
+    relative
+    z-[9999]
+    pointer-events-auto
+    px-3 py-1
+    rounded-full
+    bg-mora-500/20
+    text-mora-400
+    border border-mora-500/30
+    text-[10px]
+    font-black
+    uppercase
+    tracking-widest
+  "
+>
     {isVerified ? "Unverify" : "Verify"}
   </button>
 )}
