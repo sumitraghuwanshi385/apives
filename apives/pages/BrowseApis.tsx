@@ -14,7 +14,7 @@ import { apiService } from '../services/apiClient';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
-
+import ApiCard from '../components/ApiCard';
 let API_CACHE: ApiListing[] | null = null;
 
 const shuffleArray = <T,>(arr: T[]): T[] => {
