@@ -229,20 +229,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             </span>
           )}
 
-{isAdminUser && (
-  <button
-    onClick={async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      await apiService.toggleVerify(api.id);
-      window.location.reload();
-    }}
-    className="ml-2 text-xs text-yellow-400 hover:text-yellow-300"
-  >
-    {api.verified ? "Unverify" : "Verify"}
-  </button>
-)}
-
           {isNew(api.createdAt) && (
             <span className="ml-1 text-[8px] md:text-[9px] bg-white text-black px-2 py-0.5 rounded-full font-bold uppercase">
               New
