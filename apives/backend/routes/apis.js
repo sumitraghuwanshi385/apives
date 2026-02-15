@@ -204,7 +204,7 @@ router.post('/:id/unlike', verify, async (req, res) => {
 });
 
 // ✅ TOGGLE VERIFY (Admin Only)
-router.patch('/:id/verify', verify, async (req, res) => {
+router.patch('/:id/verify', async (req, res) => {
   try {
     const { id } = req.params;
 
