@@ -14,7 +14,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
-import { ApiCard } from '../components/ApiCard';
+import ApiCard from '../components/ApiCard';
 let API_CACHE: ApiListing[] | null = null;
 
 const CATEGORIES = [
