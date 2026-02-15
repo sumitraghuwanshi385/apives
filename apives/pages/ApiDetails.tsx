@@ -436,23 +436,13 @@ if (!api) {
 </h1>
 
 <button
-  type="button"
   onClick={async () => {
-    try {
-      console.log("Sending ID:", api.id);
-
-      const updated = await apiService.toggleVerify(api.id);
-
-      console.log("Response:", updated);
-
-      setIsVerified(updated.verified);
-    } catch (err) {
-      console.error("Verify failed", err);
-    }
+    console.log("api object:", api);
+    console.log("api.id:", api?.id);
+    console.log("api._id:", api?._id);
   }}
-  className="px-3 py-1 rounded-full bg-mora-500/20 text-mora-400 border border-mora-500/30 text-[10px] font-black uppercase tracking-widest"
 >
-  {isVerified ? "Unverify" : "Verify"}
+  DEBUG
 </button>
 
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
