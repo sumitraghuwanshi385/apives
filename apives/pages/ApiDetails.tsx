@@ -436,11 +436,13 @@ if (!api) {
 </h1>
 
 <button
-  onClick={async () => {
-    console.log("api object:", api);
-    console.log("api.id:", api?.id);
-    console.log("api._id:", api?._id);
+  onClick={() => {
+    alert(`
+id: ${api?.id}
+_id: ${api?._id}
+    `);
   }}
+  className="bg-red-600 px-6 py-3 text-white"
 >
   DEBUG
 </button>
