@@ -80,6 +80,7 @@ useEffect(() => {
 
       setApi({
   ...data,
+  id: data._id,          // 👈 IMPORTANT
   publishedAt: data.createdAt
 });
 
@@ -435,11 +436,25 @@ if (!api) {
 </h1>
 
 <button
-  onClick={() => alert("clicked")}
-  className="bg-red-600 px-6 py-3 text-white"
+  type="button"
+  onClick={async () => {
+    try {
+      console.log("Sending ID:", api.id);
+
+      const updated = await apiService.toggleVerify(api.id);
+
+      console.log("Response:", updated);
+
+      setIsVerified(updated.verified);
+    } catch (err) {
+      console.error("Verify failed", err);
+    }
+  }}
+  className="px-3 py-1 rounded-full bg-mora-500/20 text-mora-400 border border-mora-500/30 text-[10px] font-black uppercase tracking-widest"
 >
-  TEST
+  {isVerified ? "Unverify" : "Verify"}
 </button>
+
                       <div className="text-slate-400 text-[11px] md:text-lg flex items-center gap-2 font-light">
                                 <span>By <span className="text-white font-medium">{api.provider}</span></span>
                                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
