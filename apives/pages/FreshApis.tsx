@@ -96,10 +96,7 @@ const [selectedPricing, setSelectedPricing] = useState<string>('All');
       allApis = API_CACHE;
     } else {
       const raw = await apiService.getAllApis();
-      allApis = raw.map((a: any) => ({
-        ...a,
-        id: a._id
-      }));
+      allApis = raw;
       API_CACHE = allApis;
     }
 
