@@ -145,7 +145,7 @@ return;
     [...db]  
       .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
       .slice(0, 3)  
-      .map(a => a._id)  
+      .map(a => a.id)  
   ); 
 setIsLoading(false);  
 } catch (e) {  
@@ -186,7 +186,7 @@ setTop3Ids(
   [...db]  
     .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
     .slice(0, 3)  
-    .map(a => a._id)  
+    .map(a => a.id)  
 );
 
 } catch (e) {
@@ -476,7 +476,7 @@ rounded-2xl bg-white/10 p-1"
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {featuredApis.map((api, idx) => (
       <ApiCard
-        key={`${api._id}-${idx}`}
+        key={`${api.id}-${idx}`}
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
@@ -506,7 +506,7 @@ rounded-2xl bg-white/10 p-1"
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {freshApis.map((api, idx) => (
       <ApiCard
-        key={`new-${idx}`}
+        key={`new-${api.id}`}
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
@@ -536,7 +536,7 @@ rounded-2xl bg-white/10 p-1"
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityLoved.map((api, idx) => (
       <ApiCard
-        key={`loved-${idx}`}
+        key={`loved-${api.id}`}
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
