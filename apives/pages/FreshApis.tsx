@@ -107,7 +107,7 @@ const [selectedPricing, setSelectedPricing] = useState<string>('All');
       [...allApis]
         .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
         .slice(0, 3)
-        .map(a => a.id)
+        .map(a => a._id)
     );
 
     const fifteenDaysAgo = new Date();
@@ -218,7 +218,7 @@ setFilteredApis(filtered);
                 {isLoading ? (
                   [1,2,3].map(i => <Skeleton key={i} className="h-48 md:h-64 rounded-[1.5rem] md:rounded-[2rem]" />)
                 ) : filteredApis.length > 0 ? (
-                  filteredApis.slice(0, visibleCount).map(api => <ApiCard key={api.id} api={api} topIds={topIds} />)
+                  filteredApis.slice(0, visibleCount).map(api => <ApiCard key={api._id} api={api} topIds={topIds} />)
                 ) : (
                   <div className="col-span-full text-center py-20 px-6 animate-fade-in">
                       <Radar size={40} className="text-mora-500 mx-auto mb-4 opacity-50" />
