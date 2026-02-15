@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/apiClient';
 import { BackButton } from '../components/BackButton';
-let API_CACHE: ApiListing[] | null = null;
-
 import { 
   Zap, Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database, 
   MessageSquare, SlidersHorizontal, ShoppingCart, Cloud, Globe, X, 
@@ -17,6 +15,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import { ApiCard } from '../components/ApiCard';
+let API_CACHE: ApiListing[] | null = null;
 
 const CATEGORIES = [
   { name: 'All', icon: LayoutGrid },
