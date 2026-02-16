@@ -201,22 +201,22 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
 
     {/* VISIT WEBSITE BUTTON */}
-    {api.website && (
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          window.open(api.website, "_blank", "noopener,noreferrer");
-        }}
-        className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
-          bg-white/5 border border-white/10 text-slate-400
-          hover:text-mora-400 hover:border-mora-500/40
-          hover:bg-mora-500/10
-          transition-all active:scale-90"
-        title="Visit Website"
-      >
-        <Globe size={14} />
-      </button>
+    {(api.website || api.url) && (
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(api.website || api.url, "_blank", "noopener,noreferrer");
+    }}
+    className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
+      bg-white/5 border border-white/10 text-slate-400
+      hover:text-mora-400 hover:border-mora-500/40
+      hover:bg-mora-500/10
+      transition-all active:scale-90"
+    title="Visit Website"
+  >
+    <Globe size={14} />
+  </button>
     )}
 
   </div>
