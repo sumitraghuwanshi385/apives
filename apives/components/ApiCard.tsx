@@ -165,9 +165,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         <div className="flex items-center gap-1.5 md:gap-2">
           <span
   className="
-    bg-gradient-to-r from-amber-500/20 to-yellow-500/20
-    border border-amber-500/30
-    text-amber-400
     text-[8px] md:text-[10px]
     font-black
     px-4 md:px-5
@@ -175,6 +172,11 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     rounded-full
     uppercase
     tracking-[0.2em]
+
+    bg-white/5
+    backdrop-blur-md
+    border border-white/15
+    text-slate-300
   "
 >
   {api.category}
