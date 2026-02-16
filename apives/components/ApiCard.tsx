@@ -354,10 +354,11 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
      <div className="relative pt-4 flex items-center justify-between">
 
-  {/* Animated Divider */}
-  <div className="absolute top-0 left-0 w-full h-[1px] bg-white/5 overflow-hidden">
-    <div className="h-full w-1/3 bg-gradient-to-r from-transparent via-green-500 to-transparent animate-pulse" />
-  </div>
+  {/* Clean Green Divider */}
+<div className="absolute top-0 left-0 w-full h-[1.5px] 
+  bg-green-500/70 
+  shadow-[0_0_8px_rgba(34,197,94,0.6)]">
+</div>
 
   <div className="flex gap-4 md:gap-6">
     <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
