@@ -361,18 +361,16 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             <span className="text-slate-300 font-mono">{api.upvotes || 0}</span>
           </button>
         </div>
-{/* VISIT WEBSITE BUTTON */}
-  {api.externalUrl && (
+</Link>
+
+{api.externalUrl && (
   <button
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
-    }}
+    onClick={() => window.open(api.externalUrl, "_blank", "noopener,noreferrer")}
     className="
-inline-flex items-center justify-center gap-1.5
-h-7 px-3.5
-rounded-full
+      absolute bottom-4 right-4
+      inline-flex items-center gap-1.5
+      h-7 px-3.5
+      rounded-full
       bg-green-600
       border border-green-700
       text-white
@@ -381,16 +379,14 @@ rounded-full
       transition-all duration-200
       hover:bg-green-500
       active:scale-95
-      active:bg-green-700
-"
-    title="Visit Website"
+    "
   >
     <Globe size={13} />
-<span>Visit</span>
+    <span>Visit</span>
   </button>
-)}      
-      </div>
-    </Link>
+)}
+
+</div>
  </div>
   );
 };
