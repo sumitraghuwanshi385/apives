@@ -361,6 +361,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             <span className="text-slate-300 font-mono">{api.upvotes || 0}</span>
           </button>
         </div>
+</div>
 </Link>
 
 {api.externalUrl && (
