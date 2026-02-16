@@ -354,8 +354,13 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
      <div className="relative pt-4 flex items-center justify-between">
 
-  {/* Clean Divider */}
-<div className="absolute top-0 left-0 w-full h-[1.5px] 
+  <div className="absolute top-0 left-0 w-full h-[2px] 
+  bg-gradient-to-r 
+  from-emerald-500/20 
+  via-emerald-400/80 
+  to-emerald-500/20 
+  blur-[0.3px]
+  shadow-[0_0_14px_rgba(16,185,129,0.5)]">
 </div>
 
   <div className="flex gap-4 md:gap-6">
