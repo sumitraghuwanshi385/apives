@@ -163,8 +163,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       {/* HEADER */}
       <div className="flex justify-between items-center mb-3 relative z-20">
         <div className="flex items-center gap-1.5 md:gap-2">
-          <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400
-            text-[8px] md:text-[9px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest h-5 md:h-6 flex items-center">
+          <span className="bg-gradient-to-r from-slate-200/20 to-slate-400/20
+  border border-slate-300/30
+  text-slate-200 font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest h-5 md:h-6 flex items-center">
             {api.category}
           </span>
 
