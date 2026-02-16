@@ -201,12 +201,12 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
 
     {/* VISIT WEBSITE BUTTON */}
-    {(api.website || api.url) && (
+  {api.externalUrl && (
   <button
     onClick={(e) => {
       e.preventDefault();
       e.stopPropagation();
-      window.open(api.website || api.url, "_blank", "noopener,noreferrer");
+      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
     }}
     className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
       bg-white/5 border border-white/10 text-slate-400
@@ -217,11 +217,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
   >
     <Globe size={14} />
   </button>
-    )}
-
-  </div>
-</div>
-
+)}
       {/* TITLE */}
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
         <span className="inline-flex items-center flex-wrap gap-0.5">
