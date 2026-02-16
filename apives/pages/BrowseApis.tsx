@@ -112,49 +112,62 @@ export const BrowseApis: React.FC = () => {
 
       const lowerTerm = searchTerm.trim().toLowerCase();
 
-const scored = allApis
-  .map(api => {
-    let score = 0;
+let result: ApiListing[];
 
-    const name = api.name?.toLowerCase() || '';
-    const desc = api.description?.toLowerCase() || '';
-    const provider = api.provider?.toLowerCase() || '';
-    const tags = Array.isArray(api.tags)
-      ? api.tags.join(' ').toLowerCase()
-      : '';
-
-    // 🎯 STRONG WEIGHT SYSTEM
-    if (name.includes(lowerTerm)) score += 100;
-    if (provider.includes(lowerTerm)) score += 70;
-    if (tags.includes(lowerTerm)) score += 60;
-    if (desc.includes(lowerTerm)) score += 30;
-
-    // partial fuzzy match
-    if (lowerTerm && name.startsWith(lowerTerm)) score += 120;
-
-    return { api, score };
-  })
-  .filter(item => {
+if (!lowerTerm) {
+  // 🔀 No search → shuffle normally
+  result = allApis.filter(api => {
     const categoryMatch =
       selectedCategory === 'All' ||
-      item.api.category === selectedCategory;
+      api.category === selectedCategory;
 
     const pricingMatch =
       selectedPricing === 'All' ||
-      item.api.pricing?.type === selectedPricing;
+      api.pricing?.type === selectedPricing;
 
-    if (!lowerTerm) return categoryMatch && pricingMatch;
+    return categoryMatch && pricingMatch;
+  });
 
-    return (
-      categoryMatch &&
-      pricingMatch &&
-      item.score > 0
-    );
-  })
-  .sort((a, b) => b.score - a.score) // 🔥 IMPORTANT
-  .map(item => item.api);
+  result = shuffleArray(result);
 
-setFilteredApis(scored);
+} else {
+  // 🔥 Search mode → ranked (NO shuffle)
+  result = allApis
+    .map(api => {
+      let score = 0;
+
+      const name = api.name?.toLowerCase() || '';
+      const desc = api.description?.toLowerCase() || '';
+      const provider = api.provider?.toLowerCase() || '';
+      const tags = Array.isArray(api.tags)
+        ? api.tags.join(' ').toLowerCase()
+        : '';
+
+      if (name.includes(lowerTerm)) score += 100;
+      if (provider.includes(lowerTerm)) score += 70;
+      if (tags.includes(lowerTerm)) score += 60;
+      if (desc.includes(lowerTerm)) score += 30;
+
+      if (name.startsWith(lowerTerm)) score += 120;
+
+      return { api, score };
+    })
+    .filter(item => {
+      const categoryMatch =
+        selectedCategory === 'All' ||
+        item.api.category === selectedCategory;
+
+      const pricingMatch =
+        selectedPricing === 'All' ||
+        item.api.pricing?.type === selectedPricing;
+
+      return categoryMatch && pricingMatch && item.score > 0;
+    })
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.api);
+}
+
+setFilteredApis(result);
       setIsLoading(false);
     };
 
