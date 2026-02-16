@@ -356,21 +356,17 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
      <div className="relative pt-4 flex items-center justify-between">
 
-<div
-  className="
-    absolute top-0 left-1/2 -translate-x-1/2
-    w-[96%] h-[1px]
-
-    bg-gradient-to-r
-    from-transparent
-    via-white/20
-    to-transparent
-
-    transition-all duration-500
-
-    group-hover:via-mora-400
-    group-hover:shadow-[0_0_16px_rgba(16,185,129,0.6)]
-  "
+<div  
+  className="  
+    absolute top-0 left-0 w-full h-[1.5px]  
+    bg-white/10  
+    transition-all duration-500  
+    group-hover:bg-gradient-to-r  
+    group-hover:from-transparent  
+    group-hover:via-mora-400  
+    group-hover:to-transparent  
+    group-hover:shadow-[0_0_20px_rgba(16,185,129,0.7)]  
+  "  
 ></div>
 
   <div className="flex gap-4 md:gap-6">
