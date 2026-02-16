@@ -180,8 +180,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-
+      
   {/* SAVE BUTTON */}
   <button
     onClick={handleSave}
