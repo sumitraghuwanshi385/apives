@@ -177,7 +177,7 @@ export default function BuildChatbots() {
           // 🔥 IMPORTANT FIX
           if (uc.curatedApiIds) {
             const ids = uc.curatedApiIds.map((api: any) =>
-              typeof api === "string" ? api : api.id
+              typeof api === "string" ? api : api._id
             );
             setSelectedIds(ids);
           }
@@ -229,7 +229,7 @@ export default function BuildChatbots() {
 
       if (updated.curatedApiIds) {
         const ids = updated.curatedApiIds.map((api: any) =>
-          typeof api === "string" ? api : api.id
+          typeof api === "string" ? api : api._id
         );
         setSelectedIds(ids);
       }
