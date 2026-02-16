@@ -288,16 +288,12 @@ if (!api) {
   </div>
 </div>
     <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-[10]">
-
+        <div className="max-w-7xl mx-auto px-2 md:px-6 lg:px-8 relative z-[10]">
            
                 <div className="animate-slide-up relative">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                         <span
   className="
-    bg-gradient-to-r from-amber-500/20 to-yellow-500/20
-    border border-amber-500/30
-    text-amber-400
     text-[8px] md:text-[10px]
     font-black
     px-4 md:px-5
@@ -305,6 +301,11 @@ if (!api) {
     rounded-full
     uppercase
     tracking-[0.2em]
+
+    bg-white/5
+    backdrop-blur-md
+    border border-white/15
+    text-slate-300
   "
 >
   {api.category}
