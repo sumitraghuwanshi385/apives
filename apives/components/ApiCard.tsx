@@ -378,31 +378,33 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 </Link> 
 
   {api.externalUrl && (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        window.open(api.externalUrl, "_blank", "noopener,noreferrer");
-      }}
-      className="
-        inline-flex items-center gap-1.5
-        h-7 px-3.5
-        rounded-full
-        bg-green-600
-        border border-green-700
-        text-white
-        text-[10px]
-        font-black uppercase tracking-[0.18em]
-        transition-all duration-200
-        hover:bg-green-500
-        active:scale-95
-      "
-    >
-      <Globe size={13} />
-      <span>Visit</span>
-    </button>
-  )}
- </div>
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
+    }}
+    className="
+      absolute bottom-5 right-5
+      z-30
+      inline-flex items-center gap-1.5
+      h-7 px-3.5
+      rounded-full
+      bg-green-600
+      border border-green-700
+      text-white
+      text-[10px]
+      font-black uppercase tracking-[0.18em]
+      transition-all duration-200
+      hover:bg-green-500
+      active:scale-95
+      shadow-lg shadow-green-600/30
+    "
+  >
+    <Globe size={13} />
+    <span>Visit</span>
+  </button>
+)}
   );
 };
 
