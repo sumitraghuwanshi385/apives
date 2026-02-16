@@ -405,6 +405,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     <span>Visit</span>
   </button>
 )}
+</div>
   );
 };
 
