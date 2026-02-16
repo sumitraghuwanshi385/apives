@@ -385,7 +385,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       window.open(api.externalUrl, "_blank", "noopener,noreferrer");
     }}
     className="
-      absolute bottom-5 right-5
+      absolute right-5 top-1/2 -translate-y-1/2
       z-30
       inline-flex items-center gap-1.5
       h-7 px-3.5
