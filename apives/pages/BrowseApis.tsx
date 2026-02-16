@@ -110,28 +110,51 @@ export const BrowseApis: React.FC = () => {
           .map(a => a.id)
       );
 
-      const lowerTerm = searchTerm.toLowerCase();
+      const lowerTerm = searchTerm.trim().toLowerCase();
 
-      const filtered = allApis.filter(api => {
-        const categoryMatch =
-          selectedCategory === 'All' || api.category === selectedCategory;
+const scored = allApis
+  .map(api => {
+    let score = 0;
 
-        const pricingMatch =
-          selectedPricing === 'All' || api.pricing?.type === selectedPricing;
+    const name = api.name?.toLowerCase() || '';
+    const desc = api.description?.toLowerCase() || '';
+    const provider = api.provider?.toLowerCase() || '';
+    const tags = Array.isArray(api.tags)
+      ? api.tags.join(' ').toLowerCase()
+      : '';
 
-        const searchMatch =
-          api.name.toLowerCase().includes(lowerTerm) ||
-          api.description.toLowerCase().includes(lowerTerm) ||
-          api.provider.toLowerCase().includes(lowerTerm) ||
-          (Array.isArray(api.tags) &&
-            api.tags.some(tag =>
-              tag.toLowerCase().includes(lowerTerm)
-            ));
+    // 🎯 STRONG WEIGHT SYSTEM
+    if (name.includes(lowerTerm)) score += 100;
+    if (provider.includes(lowerTerm)) score += 70;
+    if (tags.includes(lowerTerm)) score += 60;
+    if (desc.includes(lowerTerm)) score += 30;
 
-        return categoryMatch && pricingMatch && searchMatch;
-      });
+    // partial fuzzy match
+    if (lowerTerm && name.startsWith(lowerTerm)) score += 120;
 
-      setFilteredApis(shuffleArray(filtered));
+    return { api, score };
+  })
+  .filter(item => {
+    const categoryMatch =
+      selectedCategory === 'All' ||
+      item.api.category === selectedCategory;
+
+    const pricingMatch =
+      selectedPricing === 'All' ||
+      item.api.pricing?.type === selectedPricing;
+
+    if (!lowerTerm) return categoryMatch && pricingMatch;
+
+    return (
+      categoryMatch &&
+      pricingMatch &&
+      item.score > 0
+    );
+  })
+  .sort((a, b) => b.score - a.score) // 🔥 IMPORTANT
+  .map(item => item.api);
+
+setFilteredApis(scored);
       setIsLoading(false);
     };
 
