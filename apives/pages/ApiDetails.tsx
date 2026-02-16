@@ -280,8 +280,7 @@ if (!api) {
 }
 
   return (
-    <div className="min-h-screen bg-dark-950 pt-20 relative selection:bg-mora-500/30">
-
+   <div className="relative z-0 min-h-screen bg-black text-white pt-20 px-4 md:px-8">
 
       <div className="absolute top-16 md:top-24 left-4 lg:left-8 z-30">
   <div className="mb-4 md:mb-6">
