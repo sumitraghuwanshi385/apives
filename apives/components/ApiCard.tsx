@@ -371,17 +371,19 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       e.stopPropagation();
       window.open(api.externalUrl, "_blank", "noopener,noreferrer");
     }}
-    className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
-      bg-white/5 border border-white/10 text-slate-400
-      hover:text-mora-400 hover:border-mora-500/40
-      hover:bg-mora-500/10
-      transition-all active:scale-90"
-    title="Visit Website"
+    className="flex items-center gap-2
+      text-[9px] md:text-[10px] font-black
+      px-4 md:px-5 py-1
+      rounded-full border uppercase tracking-[0.2em]
+      bg-mora-500/10 text-mora-400 border-mora-500/30
+      hover:bg-mora-500/20 hover:text-mora-300
+      transition-all active:scale-95"
   >
-    <Globe size={14} />
+    <Globe size={12} />
+    <span>Visit</span>
   </button>
 )}
-      </div>
+    </div>
     </Link>
  </div>
   );
