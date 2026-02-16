@@ -475,8 +475,15 @@ if (!api) {
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleLike} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isLiked ? 'bg-red-500/10 text-red-500 border-red-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Heart size={12} className={isLiked ? 'fill-current' : ''} /> <span className="ml-2">{upvotes}</span></button>
                             <button onClick={handleSaveToggle} className={`h-8 md:h-10 px-4 md:px-6 rounded-full font-black border transition-all flex items-center text-[10px] md:text-xs uppercase tracking-widest active:scale-95 ${isSaved ? 'bg-mora-500/10 text-mora-500 border-mora-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}><Bookmark size={12} className={isSaved ? 'fill-current' : ''} /> <span className="ml-2">{isSaved ? 'Saved' : 'Save'}</span></button>
-                            <a href={api.externalUrl} target="_blank" className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center active:scale-95"> <Globe size={12} Visit className="ml-2" />
-</a>                       
+                            <a
+  href={api.externalUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="h-8 md:h-10 px-5 md:px-8 bg-mora-600 hover:bg-mora-500 text-white rounded-full font-black shadow-lg shadow-mora-500/20 transition-all text-[10px] md:text-xs uppercase tracking-widest flex items-center gap-2 active:scale-95"
+>
+  <Globe size={12} />
+  Visit
+</a>
 <button
   onClick={handleShare}
   className="
