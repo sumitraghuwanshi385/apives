@@ -6,7 +6,8 @@ import {
   Activity,
   Hash,
   Server,
-  Trophy
+  Trophy,
+  Globe
 } from "lucide-react";
 import { ApiListing } from "../types";
 import { apiService } from "../services/apiClient";
@@ -179,14 +180,44 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
           )}
         </div>
 
-        <button
-          onClick={handleSave}
-          className={`p-1.5 md:p-2 rounded-full transition-all active:scale-75
-            ${saved ? "bg-mora-500/20 text-mora-500" : "bg-white/5 text-slate-500 hover:text-white"}`}
-        >
-          <Bookmark size={14} className={`${saved ? "fill-current scale-110" : ""}`} />
-        </button>
-      </div>
+        <div className="flex items-center gap-2">
+
+  {/* SAVE BUTTON */}
+  <button
+    onClick={handleSave}
+    className={`p-2.5 md:p-3 rounded-full transition-all active:scale-90
+      backdrop-blur-sm border border-white/10
+      ${saved
+        ? "bg-mora-500/20 text-mora-500 shadow-[0_0_12px_rgba(34,197,94,0.6)]"
+        : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+      }`}
+  >
+    <Bookmark
+      size={16}
+      className={`${saved ? "fill-current scale-110" : ""}`}
+    />
+  </button>
+
+  {/* VISIT WEBSITE BUTTON */}
+  {api.website && (
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(api.website, "_blank", "noopener,noreferrer");
+      }}
+      className="p-2.5 md:p-3 rounded-full backdrop-blur-sm
+        bg-white/5 border border-white/10 text-slate-400
+        hover:text-mora-400 hover:border-mora-500/40
+        hover:bg-mora-500/10
+        transition-all active:scale-90
+        shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+    >
+      <Globe size={16} />
+    </button>
+  )}
+
+</div>
 
       {/* TITLE */}
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
