@@ -351,10 +351,11 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
           </span>
         ))}
       </div>
-
-       <div className="pt-4 border-t border-white/5 flex items-center justify-between">  
+<div className="pt-4 border-t border-white/5 flex items-center justify-between">
   
-  <div className="flex gap-4 md:gap-6">
+  {/* Left Side */}
+  <div className="flex items-center gap-5">
+    
     <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
       <Activity size={12} className="text-mora-500" />
       <span className="text-slate-300 font-mono">{api.latency}</span>
@@ -374,37 +375,35 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       <span className="text-slate-300 font-mono">{api.upvotes || 0}</span>
     </button>
   </div>
-</div>
-</Link> 
 
+  {/* Right Side Visit */}
   {api.externalUrl && (
-  <button
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
-    }}
-    className="
-      absolute right-5 bottom-1/2 -translate-y-1/2
-      z-30
-      inline-flex items-center gap-1.5
-      h-7 px-3.5
-      rounded-full
-      bg-green-600
-      border border-green-700
-      text-white
-      text-[10px]
-      font-black uppercase tracking-[0.18em]
-      transition-all duration-200
-      hover:bg-green-500
-      active:scale-95
-      shadow-lg shadow-green-600/30
-    "
-  >
-    <Globe size={13} />
-    <span>Visit</span>
-  </button>
-)}
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(api.externalUrl, "_blank", "noopener,noreferrer");
+      }}
+      className="
+        inline-flex items-center gap-1.5
+        h-8 px-4
+        rounded-full
+        bg-green-600
+        border border-green-700
+        text-white
+        text-[10px]
+        font-black uppercase tracking-[0.18em]
+        transition-all duration-200
+        hover:bg-green-500
+        active:scale-95
+        shadow-lg shadow-green-600/20
+      "
+    >
+      <Globe size={13} />
+      <span>Visit</span>
+    </button>
+  )}
+
 </div>
   );
 };
