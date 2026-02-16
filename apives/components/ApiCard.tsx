@@ -148,8 +148,8 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
   return (
   <div className="relative">
-<Link
-      to={`/api/${api.id}`}
+<div
+  onClick={() => navigate(`/api/${api.id}`)}
       className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
       rounded-[1.5rem] md:rounded-[2rem]
       border border-white/5 hover:border-mora-500/30
@@ -365,32 +365,32 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
        {/* VISIT WEBSITE BUTTON */}
   {api.externalUrl && (
-    <a
-      href={api.externalUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => e.stopPropagation()}
-      className="
-        inline-flex items-center justify-center gap-1.5
-        h-8 px-4
-        rounded-full
-        border border-white/10
-        bg-white/5
-        text-slate-300
-        text-[10px]
-        font-black uppercase tracking-[0.18em]
-        transition-all duration-200
-        hover:bg-white/10 hover:text-white
-        active:bg-mora-500/20 active:text-mora-400
-        active:scale-95
-      "
-    >
-      <Globe size={13} />
-      <span>Visit</span>
-    </a>
-  )}
+  <a
+    href={api.externalUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    onClick={(e) => e.stopPropagation()}
+    className="
+      inline-flex items-center justify-center gap-1.5
+      h-8 px-4
+      rounded-full
+      bg-green-600
+      border border-green-700
+      text-white
+      text-[10px]
+      font-black uppercase tracking-[0.18em]
+      transition-all duration-200
+      hover:bg-green-500
+      active:scale-95
+      active:bg-green-700
+    "
+  >
+    <Globe size={13} />
+    <span>Visit</span>
+  </a>
+)}
+</div>
     </div>
-    </Link>
  </div>
   );
 };
