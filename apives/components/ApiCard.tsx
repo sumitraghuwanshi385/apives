@@ -371,13 +371,10 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       e.stopPropagation();
       window.open(api.externalUrl, "_blank", "noopener,noreferrer");
     }}
-    className="flex items-center gap-2
-      text-[9px] md:text-[10px] font-black
-      px-4 md:px-5 py-1
-      rounded-full border uppercase tracking-[0.2em]
+    className="flex items-center gap-2 text-[9px] md:text-[10px] font-black
+      px-4 md:px-5 py-1 rounded-full border uppercase tracking-[0.2em]
       bg-mora-500/10 text-mora-400 border-mora-500/30
-      hover:bg-mora-500/20 hover:text-mora-300
-      transition-all active:scale-95"
+      hover:bg-mora-500/20 transition-all active:scale-95"
   >
     <Globe size={12} />
     <span>Visit</span>
