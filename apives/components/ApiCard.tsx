@@ -352,52 +352,62 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         ))}
       </div>
 
-      <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-        <div className="flex gap-4 md:gap-6">
-          <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
-            <Activity size={12} className="text-mora-500" />
-            <span className="text-slate-300 font-mono">{api.latency}</span>
-          </div>
+     <div className="relative pt-4 flex items-center justify-between">
 
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like"
-          >
-            <Heart
-              size={12}
-              className={`${isLiked
-                ? "text-red-500 fill-current drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]"
-                : "text-red-500/50 group-hover/like:text-red-500"
-              } transition-all`}
-            />
-            <span className="text-slate-300 font-mono">{api.upvotes || 0}</span>
-          </button>
-        </div>
+  {/* Animated Divider */}
+  <div className="absolute top-0 left-0 w-full h-[1px] bg-white/5 overflow-hidden">
+    <div className="h-full w-1/3 bg-gradient-to-r from-transparent via-green-500 to-transparent animate-pulse" />
+  </div>
+
+  <div className="flex gap-4 md:gap-6">
+    <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
+      <Activity size={12} className="text-mora-500" />
+      <span className="text-slate-300 font-mono">{api.latency}</span>
+    </div>
+
+    <button
+      onClick={handleLike}
+      className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like"
+    >
+      <Heart
+        size={12}
+        className={`${isLiked
+          ? "text-red-500 fill-current drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]"
+          : "text-red-500/50 group-hover/like:text-red-500"
+        } transition-all`}
+      />
+      <span className="text-slate-300 font-mono">{api.upvotes || 0}</span>
+    </button>
+  </div>
+
+  {api.externalUrl && (
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(api.externalUrl, "_blank", "noopener,noreferrer");
+      }}
+      className="
+        inline-flex items-center gap-1.5
+        h-8 px-4
+        rounded-full
+        bg-green-600
+        border border-green-700
+        text-white
+        text-[10px]
+        font-black uppercase tracking-[0.18em]
+        transition-all duration-200
+        hover:bg-green-500
+        active:scale-95
+      "
+    >
+      <Globe size={13} />
+      <span>Visit</span>
+    </button>
+  )}
+
 </div>
 </Link>
-
-{api.externalUrl && (
-  <button
-    onClick={() => window.open(api.externalUrl, "_blank", "noopener,noreferrer")}
-    className="
-      absolute bottom-4 right-4
-      inline-flex items-center gap-1.5
-      h-7 px-3.5
-      rounded-full
-      bg-green-600
-      border border-green-700
-      text-white
-      text-[10px]
-      font-black uppercase tracking-[0.18em]
-      transition-all duration-200
-      hover:bg-green-500
-      active:scale-95
-    "
-  >
-    <Globe size={13} />
-    <span>Visit</span>
-  </button>
-)}
  </div>
   );
 };
