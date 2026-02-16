@@ -356,15 +356,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
      <div className="relative pt-4 flex items-center justify-between">
 
-  <div className="absolute top-0 left-0 w-full h-[2px] 
-  bg-gradient-to-r 
-  from-mora-500/20 
-  via-mora-400/80 
-  to-mora-500/20 
-  blur-[0.3px]
-  shadow-[0_0_14px_rgba(16,185,129,0.5)]">
-</div>
-
+  
   <div className="flex gap-4 md:gap-6">
     <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
       <Activity size={12} className="text-mora-500" />
