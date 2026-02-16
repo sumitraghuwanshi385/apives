@@ -354,11 +354,19 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
      <div className="relative pt-4 flex items-center justify-between">
 
-  {/* Animated Divider */}
+  {/* Animated Glow Divider */}
 <div className="absolute top-0 left-0 w-full h-[1px] bg-white/5 overflow-hidden">
-  <div className="absolute left-1/2 -translate-x-1/2 h-full w-1/3 
-      bg-gradient-to-r from-transparent via-green-500 to-transparent 
+
+  {/* Glow Blur Layer */}
+  <div className="absolute left-1/2 -translate-x-1/2 h-full w-1/3
+      bg-gradient-to-r from-transparent via-green-400 to-transparent
+      blur-sm opacity-70 animate-sweep" />
+
+  {/* Sharp Core Line */}
+  <div className="absolute left-1/2 -translate-x-1/2 h-full w-1/4
+      bg-gradient-to-r from-transparent via-green-500 to-transparent
       animate-sweep" />
+
 </div>
 
   <div className="flex gap-4 md:gap-6">
@@ -391,7 +399,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       }}
       className="
         inline-flex items-center gap-1.5
-        h-6.5 px-3.5
+        h-7 px-3.5
         rounded-full
         bg-green-600
         border border-green-700
