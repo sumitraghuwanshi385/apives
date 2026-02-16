@@ -381,7 +381,7 @@ export default function BuildChatbots() {
 <div className="mt-12">
 
       {(note || admin) && (
-        <div className="max-w-6xl lg:max-w-7xl mx-auto mb-14 px-4">
+        <div className="max-w-7xl mx-auto mb-14 md:px-4">
           <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-4">
             <p className="text-xs uppercase text-green-400 mb-2 flex items-center gap-2">
   <Radio size={14} className="text-green-400" />
