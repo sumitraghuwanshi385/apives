@@ -352,23 +352,8 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         ))}
       </div>
 
-     <div className="relative pt-4 flex items-center justify-between">
-
-  {/* Animated Glow Divider */}
-<div className="absolute top-0 left-0 w-full h-[1px] bg-white/5 overflow-hidden">
-
-  {/* Glow Blur Layer */}
-  <div className="absolute left-1/2 -translate-x-1/2 h-full w-1/3
-      bg-gradient-to-r from-transparent via-green-400 to-transparent
-      blur-sm opacity-70 animate-sweep" />
-
-  {/* Sharp Core Line */}
-  <div className="absolute left-1/2 -translate-x-1/2 h-full w-1/4
-      bg-gradient-to-r from-transparent via-green-500 to-transparent
-      animate-sweep" />
-
-</div>
-
+       <div className="pt-4 border-t border-white/5 flex items-center justify-between">  
+  
   <div className="flex gap-4 md:gap-6">
     <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">
       <Activity size={12} className="text-mora-500" />
