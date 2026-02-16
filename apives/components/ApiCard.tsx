@@ -359,7 +359,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 <div
   className="
     absolute top-0 left-1/2 -translate-x-1/2
-    w-[92%] h-[1px]
+    w-[96%] h-[1px]
 
     bg-gradient-to-r
     from-transparent
