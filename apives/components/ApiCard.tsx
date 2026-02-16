@@ -371,20 +371,24 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       e.stopPropagation();
       window.open(api.externalUrl, "_blank", "noopener,noreferrer");
     }}
-    className="flex items-center gap-2
-      text-[10px] md:text-[11px] font-black
-      px-4.5 md:px-5.5 py-1.5
-      rounded-full border uppercase tracking-[0.2em]
-      backdrop-blur-sm
-      bg-white/5 text-slate-400 border-white/10
+    className="
+      inline-flex items-center justify-center gap-2
+      h-8 md:h-9
+      px-5
+      rounded-full
+      border border-white/10
+      bg-white/5
+      text-slate-300
+      text-[10px] md:text-[11px]
+      font-black uppercase tracking-[0.2em]
       transition-all duration-200
       hover:bg-white/10 hover:text-white
       active:bg-mora-500/20 active:text-mora-400
-      active:shadow-[0_0_10px_rgba(34,197,94,0.6)]
-      active:scale-95"
+      active:scale-95
+    "
   >
-    <Globe size={13} />
-    <span>Visit</span>
+    <Globe size={14} />
+    <span className="leading-none">Visit</span>
   </button>
 )}
     </div>
