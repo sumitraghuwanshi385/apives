@@ -186,19 +186,19 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
     {/* SAVE BUTTON */}
     <button
-      onClick={handleSave}
-      className={`p-2 md:p-2.5 rounded-full transition-all active:scale-90
-        backdrop-blur-sm border border-white/10
-        ${saved
-          ? "bg-mora-500/20 text-mora-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
-          : "bg-white/5 text-slate-400"
-        }`}
-    >
-      <Bookmark
-        size={14}
-        className={`${saved ? "fill-current scale-110" : ""}`}
-      />
-    </button>
+  onClick={handleSave}
+  className={`p-2 md:p-2.5 rounded-full transition-all active:scale-90
+    backdrop-blur-sm border border-white/10
+    ${saved
+      ? "bg-mora-500/20 text-mora-500"
+      : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+    }`}
+>
+  <Bookmark
+    size={14}
+    className={`${saved ? "fill-current scale-110" : ""}`}
+  />
+</button>
 
     {/* VISIT WEBSITE BUTTON */}
   {api.externalUrl && (
