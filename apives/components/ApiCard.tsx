@@ -369,11 +369,20 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       e.stopPropagation();
       window.open(api.externalUrl, "_blank", "noopener,noreferrer");
     }}
-    className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
-      bg-white/5 border border-white/10 text-slate-400
-      hover:text-mora-400 hover:border-mora-500/40
-      hover:bg-mora-500/10
-      transition-all active:scale-90"
+    className="
+inline-flex items-center justify-center gap-1.5
+h-6 px-3
+rounded-full
+border border-white/10
+bg-white/5
+text-slate-300
+text-[10px]
+font-black uppercase tracking-[0.18em]
+transition-all duration-200
+hover:bg-white/10 hover:text-white
+active:bg-mora-500/20 active:text-mora-400
+active:scale-95
+"
     title="Visit Website"
   >
     <Globe size={14} />
