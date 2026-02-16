@@ -284,7 +284,7 @@ opacity-60
         </p>
 
         {/* COUNT */}
-        <p className="text-4xl md:text-5xl font-display font-black text-white">
+        <p className="text-3xl md:text-5xl font-display font-black text-white">
   {isLoading ? "Counting..." : allApis.length}
 </p>
 
@@ -292,10 +292,6 @@ opacity-60
   {isLoading ? "It takes a few seconds" : "Live on Apives"}
 </p>
 
-        {/* SUBTEXT */}
-        <p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
-          Live on Apives
-        </p>
       </div>
     </div>
   </div>
