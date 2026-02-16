@@ -181,41 +181,45 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         </div>
 
       
-  {/* SAVE BUTTON */}
-  <button
-    onClick={handleSave}
-    className={`p-2.5 md:p-3 rounded-full transition-all active:scale-90
-      backdrop-blur-sm border border-white/10
-      ${saved
-        ? "bg-mora-500/20 text-mora-500 shadow-[0_0_12px_rgba(34,197,94,0.6)]"
-        : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
-      }`}
-  >
-    <Bookmark
-      size={16}
-      className={`${saved ? "fill-current scale-110" : ""}`}
-    />
-  </button>
+  {/* RIGHT SIDE BUTTONS */}
+  <div className="flex items-center gap-2">
 
-  {/* VISIT WEBSITE BUTTON */}
-  {api.website && (
+    {/* SAVE BUTTON */}
     <button
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        window.open(api.website, "_blank", "noopener,noreferrer");
-      }}
-      className="p-2.5 md:p-3 rounded-full backdrop-blur-sm
-        bg-white/5 border border-white/10 text-slate-400
-        hover:text-mora-400 hover:border-mora-500/40
-        hover:bg-mora-500/10
-        transition-all active:scale-90
-        shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+      onClick={handleSave}
+      className={`p-2 md:p-2.5 rounded-full transition-all active:scale-90
+        backdrop-blur-sm border border-white/10
+        ${saved
+          ? "bg-mora-500/20 text-mora-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+          : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+        }`}
     >
-      <Globe size={16} />
+      <Bookmark
+        size={14}
+        className={`${saved ? "fill-current scale-110" : ""}`}
+      />
     </button>
-  )}
 
+    {/* VISIT WEBSITE BUTTON */}
+    {api.website && (
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(api.website, "_blank", "noopener,noreferrer");
+        }}
+        className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
+          bg-white/5 border border-white/10 text-slate-400
+          hover:text-mora-400 hover:border-mora-500/40
+          hover:bg-mora-500/10
+          transition-all active:scale-90"
+        title="Visit Website"
+      >
+        <Globe size={14} />
+      </button>
+    )}
+
+  </div>
 </div>
 
       {/* TITLE */}
