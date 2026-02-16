@@ -164,9 +164,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       <div className="flex justify-between items-center mb-3 relative z-20">
         <div className="flex items-center gap-1.5 md:gap-2">
           <span className="
-  bg-gradient-to-r from-slate-200/20 to-slate-400/20
-  border border-slate-300/30
-  text-slate-200
+  bg-gradient-to-r from-amber-400/20 via-yellow-500/20 to-amber-600/20
+  border border-amber-400/40
+  text-amber-300
   text-[8px] md:text-[9px]
   font-black
   px-4 md:px-5 py-1
