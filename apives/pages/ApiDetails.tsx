@@ -288,7 +288,7 @@ if (!api) {
   </div>
 </div>
     <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6">
-        <div className="max-w-7xl mx-auto px-2 md:px-6 lg:px-8 relative z-[10]">
+        <div className="max-w-6xl px-4 md:px-8 lg:px-12 relative z-[10]">
            
                 <div className="animate-slide-up relative">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
