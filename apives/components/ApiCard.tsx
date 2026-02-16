@@ -148,8 +148,8 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
   return (
   <div className="relative">
-<div
-  onClick={() => navigate(`/api/${api.id}`)}
+<Link
+      to={`/api/${api.id}`}
       className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
       rounded-[1.5rem] md:rounded-[2rem]
       border border-white/5 hover:border-mora-500/30
@@ -168,20 +168,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             {api.category}
           </span>
 
-{/* PRICING PILL MOVED HERE */}
-  <span
-    className={`text-[8px] md:text-[9px] font-black px-4 md:px-5 py-1
-    rounded-full border uppercase tracking-[0.2em]
-    ${api.pricing?.type === "Free"
-      ? "bg-green-500/10 text-green-400 border-green-500/20"
-      : api.pricing?.type === "Paid"
-      ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-      : "bg-purple-500/10 text-purple-400 border-purple-500/20"
-    }`}
-  >
-    {api.pricing?.type || "Unknown"}
-  </span>
-
           {rankStyle && (
             <div className={`bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}
               backdrop-blur-md border border-white/10 px-4 md:px-5 py-0.5 md:py-1
@@ -195,6 +181,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         </div>
 
       
+  {/* RIGHT SIDE BUTTONS */}
+  <div className="flex items-center gap-2">
+
     {/* SAVE BUTTON */}
     <button
   onClick={handleSave}
@@ -210,6 +199,26 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     className={`${saved ? "fill-current scale-110" : ""}`}
   />
 </button>
+
+    {/* VISIT WEBSITE BUTTON */}
+  {api.externalUrl && (
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
+    }}
+    className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
+      bg-white/5 border border-white/10 text-slate-400
+      hover:text-mora-400 hover:border-mora-500/40
+      hover:bg-mora-500/10
+      transition-all active:scale-90"
+    title="Visit Website"
+  >
+    <Globe size={14} />
+  </button>
+)}
+</div>
  </div>
 
       {/* TITLE */}
@@ -363,34 +372,20 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
           </button>
         </div>
 
-       {/* VISIT WEBSITE BUTTON */}
-  {api.externalUrl && (
-  <a
-    href={api.externalUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    onClick={(e) => e.stopPropagation()}
-    className="
-      inline-flex items-center justify-center gap-1.5
-      h-8 px-4
-      rounded-full
-      bg-green-600
-      border border-green-700
-      text-white
-      text-[10px]
-      font-black uppercase tracking-[0.18em]
-      transition-all duration-200
-      hover:bg-green-500
-      active:scale-95
-      active:bg-green-700
-    "
-  >
-    <Globe size={13} />
-    <span>Visit</span>
-  </a>
-)}
-</div>
-    </div>
+        <span
+          className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1
+          rounded-full border uppercase tracking-[0.2em]
+          ${api.pricing?.type === "Free"
+            ? "bg-green-500/10 text-green-400 border-green-500/20"
+            : api.pricing?.type === "Paid"
+            ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            : "bg-purple-500/10 text-purple-400 border-purple-500/20"
+          }`}
+        >
+          {api.pricing?.type || "Unknown"}
+        </span>
+      </div>
+    </Link>
  </div>
   );
 };
