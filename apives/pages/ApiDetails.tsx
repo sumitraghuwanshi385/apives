@@ -293,7 +293,22 @@ if (!api) {
            
                 <div className="animate-slide-up relative">
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest">{api.category}</span>
+                        <span
+  className="
+    bg-gradient-to-r from-amber-500/20 to-yellow-500/20
+    border border-amber-500/30
+    text-amber-400
+    text-[8px] md:text-[10px]
+    font-black
+    px-4 md:px-5
+    py-1
+    rounded-full
+    uppercase
+    tracking-[0.2em]
+  "
+>
+  {api.category}
+</span>
                         
 {rank && (
   <div
