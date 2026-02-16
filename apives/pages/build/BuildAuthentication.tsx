@@ -247,7 +247,7 @@ export default function BuildAuthentication() {
   return (
     <div className="relative z-0 min-h-screen bg-black text-white pt-20 px-4 md:px-8">
 
-      <div className="max-w-7xl mx-auto mt-6 mb-6 flex justify-between">>
+      <div className="max-w-7xl mx-auto mt-6 mb-6 flex justify-between">
         <BackButton />
 
         {admin && (
