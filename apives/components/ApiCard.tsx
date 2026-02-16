@@ -389,7 +389,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       }}
       className="
         inline-flex items-center gap-1.5
-        h-7.5 px-3
+        h-7 px-3.5
         rounded-full
         bg-green-600
         border border-green-700
