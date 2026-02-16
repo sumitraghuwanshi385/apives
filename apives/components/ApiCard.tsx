@@ -365,32 +365,30 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
 
        {/* VISIT WEBSITE BUTTON */}
   {api.externalUrl && (
-  <button
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
-    }}
-    className="
-      inline-flex items-center justify-center gap-2
-      h-8 md:h-9
-      px-5
-      rounded-full
-      border border-white/10
-      bg-white/5
-      text-slate-300
-      text-[10px] md:text-[11px]
-      font-black uppercase tracking-[0.2em]
-      transition-all duration-200
-      hover:bg-white/10 hover:text-white
-      active:bg-mora-500/20 active:text-mora-400
-      active:scale-95
-    "
-  >
-    <Globe size={14} />
-    <span className="leading-none">Visit</span>
-  </button>
-)}
+    <a
+      href={api.externalUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(e) => e.stopPropagation()}
+      className="
+        inline-flex items-center justify-center gap-1.5
+        h-8 px-4
+        rounded-full
+        border border-white/10
+        bg-white/5
+        text-slate-300
+        text-[10px]
+        font-black uppercase tracking-[0.18em]
+        transition-all duration-200
+        hover:bg-white/10 hover:text-white
+        active:bg-mora-500/20 active:text-mora-400
+        active:scale-95
+      "
+    >
+      <Globe size={13} />
+      <span>Visit</span>
+    </a>
+  )}
     </div>
     </Link>
  </div>
