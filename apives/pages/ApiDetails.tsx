@@ -288,7 +288,7 @@ if (!api) {
   </div>
 </div>
     <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-[1000]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-[10]">
 
            
                 <div className="animate-slide-up relative">
@@ -331,7 +331,7 @@ if (!api) {
 </span>
                    </div>
                
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8 relative z-10">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 md:gap-8">
                         <div>
 <h1
   className="
