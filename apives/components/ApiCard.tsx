@@ -191,7 +191,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         backdrop-blur-sm border border-white/10
         ${saved
           ? "bg-mora-500/20 text-mora-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
-          : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+          : "bg-white/5 text-slate-400"
         }`}
     >
       <Bookmark
