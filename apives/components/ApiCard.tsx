@@ -168,6 +168,19 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             {api.category}
           </span>
 
+<span
+          className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1
+          rounded-full border uppercase tracking-[0.2em]
+          ${api.pricing?.type === "Free"
+            ? "bg-green-500/10 text-green-400 border-green-500/20"
+            : api.pricing?.type === "Paid"
+            ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            : "bg-purple-500/10 text-purple-400 border-purple-500/20"
+          }`}
+        >
+          {api.pricing?.type || "Unknown"}
+        </span>
+
           {rankStyle && (
             <div className={`bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}
               backdrop-blur-md border border-white/10 px-4 md:px-5 py-0.5 md:py-1
@@ -181,9 +194,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         </div>
 
       
-  {/* RIGHT SIDE BUTTONS */}
-  <div className="flex items-center gap-2">
-
     {/* SAVE BUTTON */}
     <button
   onClick={handleSave}
@@ -199,26 +209,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     className={`${saved ? "fill-current scale-110" : ""}`}
   />
 </button>
-
-    {/* VISIT WEBSITE BUTTON */}
-  {api.externalUrl && (
-  <button
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
-    }}
-    className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
-      bg-white/5 border border-white/10 text-slate-400
-      hover:text-mora-400 hover:border-mora-500/40
-      hover:bg-mora-500/10
-      transition-all active:scale-90"
-    title="Visit Website"
-  >
-    <Globe size={14} />
-  </button>
-)}
-</div>
  </div>
 
       {/* TITLE */}
@@ -371,19 +361,27 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             <span className="text-slate-300 font-mono">{api.upvotes || 0}</span>
           </button>
         </div>
+{/* VISIT WEBSITE BUTTON */}
+  {api.externalUrl && (
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(api.externalUrl, "_blank", "noopener,noreferrer");
+    }}
+    className="p-2 md:p-2.5 rounded-full backdrop-blur-sm
+      bg-white/5 border border-white/10 text-slate-400
+      hover:text-mora-400 hover:border-mora-500/40
+      hover:bg-mora-500/10
+      transition-all active:scale-90"
+    title="Visit Website"
+  >
+    <Globe size={14} />
+<span>Visit</span>
+  </button>
+)}
 
-        <span
-          className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1
-          rounded-full border uppercase tracking-[0.2em]
-          ${api.pricing?.type === "Free"
-            ? "bg-green-500/10 text-green-400 border-green-500/20"
-            : api.pricing?.type === "Paid"
-            ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
-            : "bg-purple-500/10 text-purple-400 border-purple-500/20"
-          }`}
-        >
-          {api.pricing?.type || "Unknown"}
-        </span>
+        
       </div>
     </Link>
  </div>
