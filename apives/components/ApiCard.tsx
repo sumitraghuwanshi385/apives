@@ -361,11 +361,8 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     absolute top-0 left-0 w-full h-[2px]
     bg-white/10
     transition-all duration-500
-    group-hover:bg-gradient-to-r
-    group-hover:from-transparent
-    group-hover:via-mora-400
-    group-hover:to-transparent
-    group-hover:shadow-[0_0_20px_rgba(16,185,129,0.7)]
+    group-hover:bg-mora-500
+    group-hover:shadow-[0_0_18px_rgba(16,185,129,0.6)]
   "
 ></div>
   
