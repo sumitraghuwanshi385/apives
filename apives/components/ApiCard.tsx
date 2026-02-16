@@ -218,6 +218,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     <Globe size={14} />
   </button>
 )}
+</div>
+ </div>
+
       {/* TITLE */}
       <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
         <span className="inline-flex items-center flex-wrap gap-0.5">
