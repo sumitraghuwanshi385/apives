@@ -245,9 +245,9 @@ export default function BuildAnalytics() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white pt-20 px-4 md:px-8">
+    <div className="relative z-0 min-h-screen bg-black text-white pt-20 px-4 md:px-8">
 
-      <div className="max-w-7xl mx-auto mb-6 flex justify-between">
+      <div className="max-w-7xl mx-auto mt-6 mb-6 flex justify-between">
         <BackButton />
 
         {admin && (
@@ -350,7 +350,7 @@ export default function BuildAnalytics() {
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12">
 
       {(note || admin) && (
-        <div className="max-w-5xl mx-auto mb-14">
+        <div className="max-w-7xl mx-auto mb-14 md:px-4">
           <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-4">
             <p className="text-xs uppercase text-green-400 mb-2 flex items-center gap-2">
               <Radio size={14} className="text-green-400" />
