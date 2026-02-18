@@ -199,7 +199,7 @@ console.error('Refetch failed', e);
 const itemsToShow = 6;
 
 const featuredApis = useMemo(() => {
-  return shuffleArray(allApis).slice(0, itemsToShow);
+  return allApis.slice(0, itemsToShow);
 }, [allApis]);
 
 const freshApis = useMemo(() => {
