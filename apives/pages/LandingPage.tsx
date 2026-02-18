@@ -167,8 +167,8 @@ return;
 }
 
 // 🌐 STEP 2: API call (sirf first time)  
-  const res = await apiService.getAllApis();  
-  const list = Array.isArray(res) ? res : res?.data || [];  
+  const res = await apiService.getAllApis();
+const list = (Array.isArray(res) ? res : res?.data || []).slice(0, 9);
 
   const db: ApiListing[] = list.map((a: any) => ({  
     ...a,  
@@ -241,17 +241,8 @@ const featuredApis = useMemo(() => {
   return allApis.slice(0, itemsToShow);
 }, [allApis]);
 
-const freshApis = useMemo(() => {
-  return allApis
-    .filter(api => isNew(api.publishedAt))
-    .slice(0, itemsToShow);
-}, [allApis]);
-
-const communityLoved = useMemo(() => {
-  return [...allApis]
-    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-    .slice(0, itemsToShow);
-}, [allApis]);
+const freshApis = featuredApis;
+const communityLoved = featuredApis;
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
