@@ -77,9 +77,6 @@ const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
 return (now - publishedDate) < fifteenDaysInMs;
 };
 
-const featuredApis = useMemo(() => {
-  return allApis.slice(0, itemsToShow);
-}, [allApis]);
 
 const RANK_BADGE_STYLES = [
 { label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
