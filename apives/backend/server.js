@@ -56,7 +56,17 @@ if (!DB_URI) {
 }
 
 mongoose.connect(DB_URI)
-  .then(() => console.log("✅ MongoDB Connected"))
+  .then(async () => {
+    console.log("✅ MongoDB Connected");
+
+    // 🔥 Indexes for faster queries
+    const Api = require('./models/api'); // make sure path correct
+
+    await Api.collection.createIndex({ upvotes: -1 });
+    await Api.collection.createIndex({ createdAt: -1 });
+
+    console.log("🚀 Indexes ensured");
+  })
   .catch((err) => console.log("❌ MongoDB Error:", err));
 
 const PORT = process.env.PORT || 5000;
