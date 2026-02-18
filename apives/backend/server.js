@@ -24,8 +24,8 @@ app.get("/api/landing", async (req, res) => {
   try {
     const apis = await Api.find({})
       .sort({ upvotes: -1 })
-      .limit(18)
-      .select("name category pricing provider upvotes latency gallery verified createdAt");
+      .limit(9) // 👈 18 se 9
+      .select("name category pricing provider upvotes latency gallery verified createdAt externalUrl");
 
     res.json(apis);
   } catch (err) {
