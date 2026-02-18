@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -55,10 +55,8 @@ const ApiCard: React.FC<Props> = ({
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
-  const rankStyle = React.useMemo(() => {
-  const index = topIds.indexOf(api.id);
-  return index !== -1 ? RANK_BADGE_STYLES[index] : null;
-}, [topIds, api.id]);
+  const rankIndex = topIds.indexOf(api.id);
+  const rankStyle = rankIndex !== -1 ? RANK_BADGE_STYLES[rankIndex] : null;
   const isVerified = api.verified;
 const userStr = localStorage.getItem("mora_user");
 const user = userStr ? JSON.parse(userStr) : null;
@@ -289,14 +287,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
           onTouchStart={() => setShowArrows(true)}
         >
           <div
-  ref={galleryRef}
-  className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
-  onScroll={(e) => {
-    const el = e.currentTarget;
-    const cardWidth = el.clientWidth * 0.9;
-    setGalleryIndex(Math.round(el.scrollLeft / cardWidth));
-  }}
->
+            id={`card-gallery-${api.id}`}
+            className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
+          >
             {api.gallery.slice(0, 5).map((img, i) => (
               <div
                 key={i}
@@ -319,7 +312,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                galleryRef.current?.scrollBy({ left: -200, behavior: "smooth" });
+                document
+                  .getElementById(`card-gallery-${api.id}`)
+                  ?.scrollBy({ left: -200, behavior: "smooth" });
               }}
               className="absolute left-2 top-1/2 -translate-y-1/2
               h-8 w-8 rounded-full bg-black/60 border border-white/20
@@ -334,7 +329,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                galleryRef.current?.scrollBy({ left: 200, behavior: "smooth" });
+                document
+                  .getElementById(`card-gallery-${api.id}`)
+                  ?.scrollBy({ left: 200, behavior: "smooth" });
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2
               h-8 w-8 rounded-full bg-black/60 border border-white/20
