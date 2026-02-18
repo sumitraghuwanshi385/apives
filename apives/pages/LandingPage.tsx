@@ -14,7 +14,6 @@ Image
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
-import LandingApiCard from '../components/LandingApiCard';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
@@ -83,6 +82,49 @@ const RANK_BADGE_STYLES = [
 { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
+
+const LocalApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
+  const firstImage =
+    Array.isArray(api.gallery) && api.gallery.length > 0
+      ? api.gallery[0]
+      : null;
+
+  return (
+    <Link
+      to={`/api/${api.id}`}
+      className="group bg-dark-900/40 hover:bg-dark-900/70
+      rounded-2xl border border-white/10
+      p-4 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+    >
+      {firstImage && (
+        <div className="w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 border border-white/10 bg-black">
+          <img
+            src={firstImage}
+            alt={api.name}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
+      <span className="text-[9px] px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 uppercase tracking-wider mb-2 w-fit">
+        {api.category}
+      </span>
+
+      <h3 className="text-white font-bold text-base group-hover:text-mora-400 transition-colors">
+        {api.name}
+      </h3>
+
+      <p className="text-[11px] text-slate-500 mt-1">
+        {api.provider}
+      </p>
+
+      <p className="text-sm text-slate-400 mt-3 line-clamp-3">
+        {api.description}
+      </p>
+    </Link>
+  );
+};
 
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -193,7 +235,7 @@ console.error('Refetch failed', e);
 }
 };
 
-const itemsToShow = 6;
+const itemsToShow = 3;
 
 const featuredApis = useMemo(() => {
   return allApis.slice(0, itemsToShow);
@@ -487,7 +529,7 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {featuredApis.map((api, idx) => (
-      <LandingApiCard
+      <LocalApiCard
   key={api.id}
   api={api}
 />
@@ -515,7 +557,7 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {freshApis.map((api, idx) => (
-      <LandingApiCard
+      <LocalApiCard
   key={api.id}
   api={api}
 />
@@ -542,7 +584,7 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityLoved.map((api, idx) => (
-      <LandingApiCard
+      <LocalApiCard
   key={api.id}
   api={api}
 />
