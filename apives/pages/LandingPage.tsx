@@ -177,7 +177,7 @@ const refetchLandingApis = async () => {
     const res = await fetch("https://apives.onrender.com/api/landing");
     const list = await res.json();
 
-    const db = list.map((a: any) => ({
+    const db: ApiListing[] = list.map((a: any) => ({
       ...a,
       id: a._id,
       publishedAt: a.createdAt,
@@ -187,21 +187,18 @@ const refetchLandingApis = async () => {
 
     LANDING_API_CACHE = db;
     setAllApis(db);
+
+    // update top 3 safely
+    setTop3Ids(
+      [...db]
+        .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+        .slice(0, 3)
+        .map(a => a.id)
+    );
+
   } catch (e) {
     console.error("Refetch failed", e);
   }
-};
-
-setTop3Ids(  
-  [...db]  
-    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
-    .slice(0, 3)  
-    .map(a => a.id)  
-);
-
-} catch (e) {
-console.error('Refetch failed', e);
-}
 };
 
 // 9 APIs total
