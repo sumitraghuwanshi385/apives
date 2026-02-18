@@ -275,19 +275,6 @@ return (
           href="https://buymeacoffee.com/apives"
           target="_blank"
           rel="noopener noreferrer"
-          className="
-            inline-flex items-center gap-3
-            px-5 py-2.5
-            rounded-full
-            bg-[#FFDD00]
-            hover:bg-[#ffcc00]
-            text-black
-            font-bold
-            text-xs md:text-sm
-            shadow-lg
-            transition-all
-            active:scale-95
-          "
         >
     
     <img
