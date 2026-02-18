@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
 TrendingUp,
@@ -195,9 +195,22 @@ console.error('Refetch failed', e);
 };
 
 const itemsToShow = 6;
-const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
-const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
-const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
+
+const featuredApis = useMemo(() => {
+  return shuffleArray(allApis).slice(0, itemsToShow);
+}, [allApis]);
+
+const freshApis = useMemo(() => {
+  return allApis
+    .filter(api => isNew(api.publishedAt))
+    .slice(0, itemsToShow);
+}, [allApis]);
+
+const communityLoved = useMemo(() => {
+  return [...allApis]
+    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+    .slice(0, itemsToShow);
+}, [allApis]);
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
