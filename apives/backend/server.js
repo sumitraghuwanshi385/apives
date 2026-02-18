@@ -19,7 +19,7 @@ console.log(
 );
 
 // ================= MODELS =================
-const Api = require("./models/api");
+const Api = require("../models/api");
 
 // ================= BASIC ROUTES =================
 
