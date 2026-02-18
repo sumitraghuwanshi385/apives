@@ -296,7 +296,13 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
                 className="flex-none w-[90%] aspect-[16/9] rounded-xl overflow-hidden
                 border border-white/10 snap-center bg-black"
               >
-                <img src={img} alt="" className="w-full h-full object-cover" />
+                <img
+  src={img}
+  alt=""
+  loading="lazy"
+  decoding="async"
+  className="w-full h-full object-cover"
+/>
               </div>
             ))}
           </div>
@@ -422,4 +428,4 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
   );
 };
 
-export default ApiCard;
+export default React.memo(ApiCard);
