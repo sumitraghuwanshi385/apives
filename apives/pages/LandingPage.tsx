@@ -78,11 +78,12 @@ return (now - publishedDate) < fifteenDaysInMs;
 };
 
 const lightShuffle = <T,>(arr: T[]): T[] => {
-  return arr
-    .map(a => ({ sort: Math.random(), value: a }))
-    .sort((a, b) => a.sort - b.sort)
-    .slice(0, 6)
-    .map(a => a.value);
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
 };
 
 const RANK_BADGE_STYLES = [
@@ -172,20 +173,24 @@ api.id === apiId
 );
 };
 const refetchLandingApis = async () => {
-try {
-const res = await apiService.getAllApis();
-const list = Array.isArray(res) ? res : res?.data || [];
+  try {
+    const res = await fetch("https://apives.onrender.com/api/landing");
+    const list = await res.json();
 
-const db: ApiListing[] = list.map((a: any) => ({  
-  ...a,  
-  id: a._id,  
-  publishedAt: a.createdAt,  
-  tags: Array.isArray(a.tags) ? a.tags : [],  
-  features: Array.isArray(a.features) ? a.features : [],  
-}));  
+    const db = list.map((a: any) => ({
+      ...a,
+      id: a._id,
+      publishedAt: a.createdAt,
+      tags: Array.isArray(a.tags) ? a.tags : [],
+      features: Array.isArray(a.features) ? a.features : [],
+    }));
 
-LANDING_API_CACHE = db; // ✅ sync cache  
-setAllApis(db);  
+    LANDING_API_CACHE = db;
+    setAllApis(db);
+  } catch (e) {
+    console.error("Refetch failed", e);
+  }
+};
 
 setTop3Ids(  
   [...db]  
@@ -199,10 +204,16 @@ console.error('Refetch failed', e);
 }
 };
 
-const itemsToShow = 6;
-const featuredApis = lightShuffle(allApis);
-const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
-const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
+// 9 APIs total
+
+// Universal (only shuffle)
+const featuredApis = lightShuffle(allApis).slice(0, 3);
+
+// Fresh (NO heavy filter)
+const freshApis = allApis.slice(3, 6);
+
+// Community (NO sort)
+const communityLoved = allApis.slice(6, 9);
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
