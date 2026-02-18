@@ -14,7 +14,7 @@ Image
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
-import ApiCard from '../components/ApiCard';
+import LandingApiCard from '../components/LandingApiCard';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
@@ -487,11 +487,10 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {featuredApis.map((api, idx) => (
-      <ApiCard
-        key={`${api._id}-${idx}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
+      <LandingApiCard
+  key={api.id}
+  api={api}
+/>
         refetchLandingApis={refetchLandingApis}
       />
     ))}
@@ -517,12 +516,11 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {freshApis.map((api, idx) => (
-      <ApiCard
-        key={`new-${api._id}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
+      <LandingApiCard
+  key={api.id}
+  api={api}
+/>
+ refetchLandingApis={refetchLandingApis}
       />
     ))}
   </div>
@@ -547,12 +545,11 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityLoved.map((api, idx) => (
-      <ApiCard
-        key={`loved-${api.id}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
+      <LandingApiCard
+  key={api.id}
+  api={api}
+/>
+ refetchLandingApis={refetchLandingApis}
       />
     ))}
   </div>
