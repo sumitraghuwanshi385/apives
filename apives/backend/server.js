@@ -3,6 +3,21 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path'); // Ye line add ki hai
+const Api = require('./models/api');
+// 🔥 Lightweight Landing APIs (only 18)
+app.get("/api/landing", async (req, res) => {
+  try {
+    const apis = await Api.find({})
+      .sort({ upvotes: -1 })
+      .limit(18)
+      .select("name category pricing provider upvotes latency gallery verified createdAt");
+
+    res.json(apis);
+  } catch (err) {
+    console.error("Landing fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch landing APIs" });
+  }
+});
 
 // 1. Force dotenv to look in the current folder
 dotenv.config({ path: path.resolve(__dirname, '.env') });
