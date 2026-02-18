@@ -396,6 +396,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
   </div>
 
+  <div className="flex items-center gap-2">
+
+  {/* 🌍 Icon-only Visit (Circle) */}
   {api.externalUrl && (
     <button
       onClick={(e) => {
@@ -404,24 +407,46 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         window.open(api.externalUrl, "_blank", "noopener,noreferrer");
       }}
       className="
-        inline-flex items-center gap-1.5
-        h-7 px-3.5
+        h-8 w-8
+        flex items-center justify-center
         rounded-full
-        bg-green-600
-        border border-green-700
-        text-white
-        text-[10px]
-        font-black uppercase tracking-[0.18em]
+        backdrop-blur-sm
+        border border-white/10
+        bg-white/5
+        text-slate-400
         transition-all duration-200
-        hover:bg-green-500
-        active:scale-95
+        hover:bg-mora-500 hover:text-black
+        active:scale-90
       "
     >
-      <Globe size={13} />
-      <span>Visit</span>
+      <Globe size={14} />
     </button>
   )}
 
+  {/* 👁 View Details Pill */}
+  <span
+    className="
+      text-[9px] md:text-[10px]
+      font-black
+      px-4 md:px-5
+      py-1
+      rounded-full
+      uppercase
+      tracking-[0.2em]
+
+      bg-white/5
+      backdrop-blur-md
+      border border-white/15
+      text-slate-300
+      group-hover:border-mora-500/40
+      group-hover:text-white
+      transition-all
+    "
+  >
+    View Details
+  </span>
+
+</div>
 </div>
 </Link>
  </div>
