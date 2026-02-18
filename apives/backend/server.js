@@ -28,6 +28,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/apis', apiRoutes);
 app.use('/api/sponsor', sponsorRoutes);
 app.use('/api/usecases', usecaseRoutes);
+// 🔥 Ping route (server wake check)
+app.get("/ping", (req, res) => {
+  res.status(200).send("OK");
+});
 // Database Connection
 const DB_URI = process.env.MONGO_URI;
 
