@@ -423,20 +423,12 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
   )}
 
-  {/* 👁 View Details Pill */}
-  <span
-    className="
-      text-[9px] md:text-[10px]
-      font-black
-      px-4 md:px-5
-      py-1
-      rounded-full
-      uppercase
-      tracking-[0.2em]
-
+        {/* VIEW DETAILS BUTTON */}
+      <div className="mt-4">
+        <span className="inline-block text-[10px] px-4 py-2 rounded-full
       bg-white/5
       backdrop-blur-md
-      border border-white/15
+      border border-white/10
       text-slate-300
       group-hover:border-mora-500/40
       group-hover:text-white
