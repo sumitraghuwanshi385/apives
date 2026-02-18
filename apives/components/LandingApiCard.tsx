@@ -29,6 +29,8 @@ const isNew = (dateString?: string) => {
 
 const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
   const [saved, setSaved] = useState(false);
+const [showVerifyInfo, setShowVerifyInfo] = useState(false);
+const isVerified = api.verified;
 
   const firstImage =
     Array.isArray(api.gallery) && api.gallery.length > 0
@@ -160,11 +162,13 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
                     <span className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 bg-green-600 rotate-45 border-l border-t border-green-700" />
                     Manually verified by Apives
                   </div>
-                </div>
-              )}
-            </span>
-          )}
+          </div>
+        )}
+      </span>
+    )}
+  </span>
 </h3>
+
       <p className="text-[11px] text-slate-500 mt-1">
         {api.provider}
       </p>
