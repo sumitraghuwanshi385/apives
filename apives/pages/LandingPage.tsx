@@ -14,7 +14,7 @@ Image
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
-import ApiCard from '../components/ApiCard';
+import LandingApiCard from '../components/LandingApiCard';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
@@ -251,117 +251,6 @@ return (
 
 <section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
 
-{/* ⚠️ PERFORMANCE NOTICE */}
-<div className="w-full max-w-4xl mx-auto px-4 md:px-8 mb-6">
-  <div
-    className="
-      relative
-      rounded-2xl
-      p-5 md:p-6
-      bg-gradient-to-br from-white/[0.04] to-white/[0.02]
-      border border-mora-500/30
-      shadow-[0_0_40px_rgba(34,197,94,0.08)]
-      backdrop-blur-sm
-    "
-  >
-    {/* soft glow */}
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none" />
-
-    <div className="relative z-10 text-center">
-
-      <p className="text-[11px] md:text-xs uppercase tracking-[0.35em] text-mora-400 mb-3">
-        Performance Notice
-      </p>
-
-      <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-        Sorry, initial API load may take around <span className="text-white font-semibold">50–55 seconds</span>.  
-        The backend enters an idle state during inactivity and needs a few moments to wake up.
-      </p>
-
-      <p className="text-xs md:text-sm text-slate-400 mt-3">
-        I'm actively working to improve this. If you'd like to support infrastructure upgrades:
-      </p>
-
-      {/* Buy Me a Coffee Button */}
-      <div className="mt-4 flex justify-center">
-        <a
-          href="https://buymeacoffee.com/apives"
-          target="_blank"
-          rel="noopener noreferrer"
-    className="transition-transform hover:scale-105 active:scale-95"
-        >
-    
-    <img
-      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
-      alt="Buy me a coffee"
-      className="h-12 md:h-14 object-contain"
-    />
-</a> 
-</div>
-    </div>
-  </div>
-</div>
-
-
-{/* 🔥 TOTAL APIs STAT */}
-<div className="py-4 md:py-6 bg-black">
-  <div className="w-full max-w-none mx-auto px-4 md:px-10 lg:px-20">
-<div
-  className="
-    relative
-    rounded-xl md:rounded-2xl
-    px-5 py-5 md:px-8 md:py-6
-    bg-white/[0.03]
-    border border-mora-500/30
-shadow-[0_0_30px_rgba(34,197,94,0.15)]
-    text-center
-    overflow-hidden
-  "
->
-{/* animated green sweep */}
-<div className="
-  absolute -inset-[40%]
-  bg-gradient-to-r from-transparent via-mora-500/15 to-transparent
-  rotate-12
-  animate-[spin_18s_linear_infinite]
-  opacity-60
-"></div>
-
-{/* glow vignette */}
-<div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30 pointer-events-none"></div>
-
-{/* soft animated green background */}
-<div className="
-  absolute inset-0
-  bg-[radial-gradient(circle_at_25%_20%,rgba(34,197,94,0.18),transparent_55%),
-      radial-gradient(circle_at_75%_80%,rgba(34,197,94,0.12),transparent_60%)]
-  animate-[pulse_8s_ease-in-out_infinite]
-opacity-60
-"></div>
-
-      {/* subtle accent line */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-mora-500 rounded-full opacity-80"></div>
-
-      <div className="relative z-10">
-        {/* TITLE */}
-        <p className="text-[10px] md:text-xs uppercase tracking-[0.35em] text-slate-400 mb-3">
-          Total APIs Listed
-        </p>
-
-        {/* COUNT */}
-        <p className="text-4xl md:text-5xl font-display font-black text-white">
-  {isLoading ? "Counting..." : allApis.length}
-</p>
-
-        {/* SUBTEXT */}
-        <p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
-          Live on Apives
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
 {/* Community Sponsor */}
 
   <div className="pb-6 md:pb-8">  
@@ -539,7 +428,7 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {featuredApis.map((api, idx) => (
-      <ApiCard
+      <LandingApiCard
         key={`${api.id}-${idx}`}
         api={api}
         topIds={top3Ids}
@@ -569,7 +458,7 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {freshApis.map((api, idx) => (
-      <ApiCard
+      <LandingApiCard
         key={`new-${api.id}`}
         api={api}
         topIds={top3Ids}
@@ -599,7 +488,7 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityLoved.map((api, idx) => (
-      <ApiCard
+      <LandingApiCard
         key={`loved-${api.id}`}
         api={api}
         topIds={top3Ids}
