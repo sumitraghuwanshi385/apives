@@ -261,7 +261,7 @@ return (
       </p>
 
       <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-        Sorry — initial API load may take around <span className="text-white font-semibold">50–55 seconds</span>.  
+        Sorry, initial API load may take around <span className="text-white font-semibold">50–55 seconds</span>.  
         The backend enters an idle state during inactivity and needs a few moments to wake up.
       </p>
 
@@ -272,7 +272,7 @@ return (
       {/* Buy Me a Coffee Button */}
       <div className="mt-4 flex justify-center">
         <a
-          href="https://buymeacoffee.com/apives.com"
+          href="https://buymeacoffee.com/apives"
           target="_blank"
           rel="noopener noreferrer"
           className="
@@ -289,15 +289,14 @@ return (
             active:scale-95
           "
         >
-          <img
-            src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
-            alt="Buy Me a Coffee"
-            className="h-5 w-5"
-          />
-          Buy Me a Coffee
-        </a>
-      </div>
-
+    
+    <img
+      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
+      alt="Buy me a coffee"
+      className="h-12 md:h-14 object-contain"
+    />
+</div>  
+</a>
     </div>
   </div>
 </div>
