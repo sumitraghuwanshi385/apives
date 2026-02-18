@@ -424,20 +424,28 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
   )}
 
         {/* VIEW DETAILS BUTTON */}
-      <div className="mt-4">
-        <span className="inline-block text-[10px] px-4 py-2 rounded-full
+<div className="mt-4">
+  <span
+    className="
+      inline-block
+      text-[10px] md:text-xs
+      px-5 py-2
+      rounded-full
+      font-black
+      uppercase tracking-[0.2em]
+
       bg-white/5
-      backdrop-blur-md
       border border-white/10
       text-slate-300
+
+      transition-all duration-300
+      group-hover:bg-mora-500/10
       group-hover:border-mora-500/40
-      group-hover:text-white
-      transition-all
+      group-hover:text-mora-400
     "
   >
     View Details
   </span>
-
 </div>
 </div>
 </Link>
