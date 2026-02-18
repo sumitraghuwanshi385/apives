@@ -77,9 +77,9 @@ const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
 return (now - publishedDate) < fifteenDaysInMs;
 };
 
-const shuffleArray = <T,>(arr: T[]): T[] => {
-return [...arr].sort(() => Math.random() - 0.5);
-};
+const featuredApis = useMemo(() => {
+  return allApis.slice(0, itemsToShow);
+}, [allApis]);
 
 const RANK_BADGE_STYLES = [
 { label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
@@ -99,8 +99,10 @@ const [isMobile, setIsMobile] = useState(
 
 useEffect(() => {
 // 🔥 Sponsor impressions
+  setTimeout(() => {
   trackSponsor("serpapi", "impression");
   trackSponsor("scoutpanels", "impression");
+}, 1000);
 const handleResize = () => setIsMobile(window.innerWidth < 768);
 window.addEventListener('resize', handleResize);
 
