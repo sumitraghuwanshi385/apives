@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
 TrendingUp,
@@ -9,10 +9,12 @@ Zap,
 Hash,
 Server,
 Trophy,
-LayoutGrid
+LayoutGrid,
+Image
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
+import ApiCard from '../components/ApiCard';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
@@ -84,415 +86,6 @@ const RANK_BADGE_STYLES = [
 { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
-
-const ApiCard: React.FC<{
-api: ApiListing;
-topIds: string[];
-onLikeChange?: (id: string, delta: number) => void;
-refetchLandingApis?: () => Promise<void>;
-}> = ({ api, topIds, onLikeChange, refetchLandingApis }) => {
-const navigate = useNavigate();
-const [saved, setSaved] = useState(false);
-const [isLiked, setIsLiked] = useState(false);
-const [showArrows, setShowArrows] = useState(false);
-const [galleryIndex, setGalleryIndex] = useState(0);
-const [showVerifyInfo, setShowVerifyInfo] = useState(false);
-
-const ADMIN_EMAIL = "beatslevelone@gmail.com";
-
-const isAdminUser = () => {
-  try {
-    const user = JSON.parse(localStorage.getItem("mora_user") || "null");
-    return user?.email === ADMIN_EMAIL;
-  } catch {
-    return false;
-  }
-};
-
-// 🔥 STEP 4 — auto hide arrows after 3 sec
-useEffect(() => {
-  if (!showArrows) return;
-
-  const timer = setTimeout(() => {
-    setShowArrows(false);
-  }, 3000);
-
-  return () => clearTimeout(timer);
-}, [showArrows]);
-
-const rankIndex = topIds.indexOf(api.id);
-const isTopTier = rankIndex !== -1;
-const rankStyle = isTopTier ? RANK_BADGE_STYLES[rankIndex] : null;
-
-const getVerifiedApis = (): string[] => {
-  try {
-    return JSON.parse(
-      localStorage.getItem("apives_verified_apis") || "[]"
-    );
-  } catch {
-    return [];
-  }
-};
-
-const verifiedApis = getVerifiedApis();
-
-const isVerified = verifiedApis.includes(api.id);
-
-useEffect(() => {
-
-const likedApis = JSON.parse(
-localStorage.getItem('mora_liked_apis') || '[]'
-);
-setIsLiked(likedApis.includes(api.id));
-
-const savedApis = JSON.parse(
-localStorage.getItem('mora_saved_apis') || '[]'
-);
-setSaved(savedApis.includes(api.id));
-}, [api.id]);
-
-const displayUpvotes = api.upvotes || 0;
-
-// 🔥 STEP 2 – gallery scroll index tracker
-useEffect(() => {
-  const el = document.getElementById(`card-gallery-${api.id}`);
-  if (!el) return;
-
-  const onScroll = () => {
-    const cardWidth = el.clientWidth * 0.9; // w-[90%]
-    const index = Math.round(el.scrollLeft / cardWidth);
-    setGalleryIndex(index);
-  };
-
-  el.addEventListener('scroll', onScroll);
-  return () => el.removeEventListener('scroll', onScroll);
-}, [api.id]);
-
-const handleSave = (e: React.MouseEvent) => {
-  e.preventDefault(); e.stopPropagation();
-  const userStr = localStorage.getItem('mora_user');
-  if (!userStr) {
-    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
-    return;
-  }
-
-const savedApis = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');  
-if (saved) {  
-  setSaved(false);  
-  localStorage.setItem('mora_saved_apis', JSON.stringify(savedApis.filter((aid: string) => aid !== api.id)));  
-} else {  
-  setSaved(true);  
-  localStorage.setItem('mora_saved_apis', JSON.stringify([...savedApis, api.id]));  
-}
-
-};
-
-const handleLike = async (e: React.MouseEvent) => {
-e.preventDefault();
-e.stopPropagation();
-
-const userStr = localStorage.getItem('mora_user');
-  if (!userStr) {
-    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname)}`);
-    return;
-  }
-
-const likedApis = JSON.parse(localStorage.getItem('mora_liked_apis') || '[]');
-
-try {
-if (isLiked) {
-await apiService.unlikeApi(api.id);
-
-setIsLiked(false);
-
-await refetchLandingApis?.();
-localStorage.setItem(
-'mora_liked_apis',
-JSON.stringify(likedApis.filter((id: string) => id !== api.id))
-);
-} else {
-await apiService.likeApi(api.id);
-
-setIsLiked(true);
-
-await refetchLandingApis?.();
-localStorage.setItem(
-'mora_liked_apis',
-JSON.stringify([...likedApis, api.id])
-);
-}
-
-} catch (err) {
-console.error('Like failed', err);
-}
-};
-
-const tags = Array.isArray(api.tags) ? api.tags : [];
-
-return (
-<Link
-to={`/api/${api.id}`}
-className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
-rounded-[1.5rem] md:rounded-[2rem] border border-white/5 hover:border-mora-500/30
-p-4 md:p-5 transition-all duration-500 hover:-translate-y-2 overflow-hidden
-flex flex-col h-full"
->
-<div className="absolute inset-0 bg-gradient-to-br from-mora-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-<div className="absolute top-0 left-0 w-full h-0.5 md:h-1 bg-gradient-to-r from-mora-500/50 to-transparent opacity-70"></div>
-
-<div className="flex justify-between items-center mb-3 relative z-20">  
-    <div className="flex items-center gap-1.5 md:gap-2">  
-      <span className="bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[8px] md:text-[9px] font-black px-4 md:px-5 py-1 rounded-full uppercase tracking-widest h-5 md:h-6 flex items-center">  
-        {api.category}  
-      </span>  
-
-      {isTopTier && rankStyle && (  
-        <div className={`bg-gradient-to-r ${rankStyle.color} ${rankStyle.text} backdrop-blur-md border border-white/10 px-4 md:px-5 py-0.5 md:py-1 rounded-full flex items-center gap-1 shadow-md h-5 md:h-6`}>  
-          <Trophy size={8} className="md:w-2.5 md:h-2.5 fill-current" />  
-          <span className="text-[8px] md:text-[9px] font-black uppercase tracking-tighter">{rankStyle.label}</span>  
-        </div>  
-      )}  
-    </div>  
-
-    <button  
-      onClick={handleSave}  
-      className={`p-1.5 md:p-2 rounded-full transition-all duration-300 active:scale-75 ${saved ? 'bg-mora-500/20 text-mora-500' : 'bg-white/5 text-slate-500 hover:text-white'}`}  
-    >  
-      <Bookmark size={14} className={`md:w-4 md:h-4 transition-transform duration-300 ${saved ? 'fill-current scale-110' : 'scale-100'}`} />  
-    </button>  
-  </div>  
-
-  <div className="relative z-10 flex flex-col h-full">  
-    <div className="mb-2">  
-      <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
- <span className="inline-flex items-center flex-wrap gap-0.5 leading-none">
-   <span className="break-words leading-tight">
-  {api.name}
-</span>
-    {isVerified && (
-     <span className="inline-flex items-center shrink-0 relative">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setShowVerifyInfo(v => !v);
-          }}
-          title="Verified by Apives"
-          className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center shrink-0"
-        >
-          <svg viewBox="0 0 24 24" className="w-full h-full">
-            <path
-              fill="#22C55E"
-              d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
-            />
-            <path
-              d="M9.2 12.3l2 2.1 4.6-4.8"
-              stroke="#000"
-              strokeWidth="2"
-              fill="none"
-            />
-          </svg>
-        </button>
-
-        {showVerifyInfo && (
-  <div
-    className="
-      absolute
-      left-1/2
-      -translate-x-1/2
-      top-full
-      mt-2
-      z-[200]
-      pointer-events-none
-    "
-  >
-    <div
-      className="
-        relative
-        bg-green-600
-        border border-green-700
-        rounded-full
-        px-3 py-1
-        text-[10px]
-        text-white
-        font-semibold
-        whitespace-nowrap
-        shadow-xl
-      "
-    >
-      {/* 🔺 ARROW — PILL SE HI NIKLA */}
-      <span
-        className="
-          absolute
-          left-1/2
-          -translate-x-1/2
-          -top-1
-          w-2 h-2
-          bg-green-600
-          rotate-45
-          border-l border-t border-green-700
-        "
-      />
-
-      Manually verified by Apives
-    </div>
-  </div>
-)}
-      </span>
-    )}
-
-   {/* ✅ NEW BADGE — BASELINE ALIGNED (NICHE NAHI) */}
-    {isNew(api.createdAt) && (
-      <span className="
-        ml-1
-        inline-flex
-        items-center
-        text-[8px] md:text-[9px]
-        bg-white
-        text-black
-        px-2
-        py-0.5
-        rounded-full
-        font-bold
-        uppercase
-        tracking-wide
-        leading-none
-      ">
-        New
-      </span>
-    )}
-
-  </span>
-</h3>
-
-      <div className="flex items-center gap-2 mt-1">  
-        <p className="text-[10px] text-slate-500 font-mono flex items-center gap-1 uppercase tracking-tighter">  
-          <Server size={10} className="text-mora-500/50" /> {api.provider}  
-        </p>  
-      </div>  
-    </div>  
-
-{/* 🔥 API CARD IMAGE GALLERY */}
-{api.gallery && api.gallery.length > 0 && (
-  <div
-    className="relative mb-3"
-    onMouseEnter={() => setShowArrows(true)}
-    onMouseLeave={() => setShowArrows(false)}
-    onTouchStart={() => setShowArrows(true)}
-  >
-    {/* IMAGE STRIP */}
-    <div
-      id={`card-gallery-${api.id}`}
-      className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
-    >
-      {api.gallery.slice(0, 5).map((img: string, i: number) => (
-        <div
-          key={i}
-          className="
-  flex-none
-  w-[90%]
-  aspect-[16/9]
-  md:aspect-[16/9]
-  rounded-xl
-  overflow-hidden
-          border border-white/10 snap-center bg-black"
-        >
-          <img
-            src={img}
-            alt={`${api.name}-${i}`}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      ))}
-    </div>
-
-    {/* LEFT ARROW */}
-{showArrows && galleryIndex > 0 && (
-  <button
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const el = document.getElementById(`card-gallery-${api.id}`);
-      if (!el) return;
-      el.scrollBy({ left: -200, behavior: 'smooth' });
-    }}
-    className="absolute left-2 top-1/2 -translate-y-1/2
-      h-8 w-8 rounded-full bg-black/60 border border-white/20
-      text-white text-lg flex items-center justify-center backdrop-blur-sm"
-  >
-    ‹
-  </button>
-)}
-
-{/* RIGHT ARROW */}
-{showArrows && galleryIndex < api.gallery.length - 1 && (
-  <button
-    onClick={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const el = document.getElementById(`card-gallery-${api.id}`);
-      if (!el) return;
-      el.scrollBy({ left: 200, behavior: 'smooth' });
-    }}
-    className="absolute right-2 top-1/2 -translate-y-1/2
-      h-8 w-8 rounded-full bg-black/60 border border-white/20
-      text-white text-lg flex items-center justify-center backdrop-blur-sm"
-  >
-    ›
-  </button>
-)}
-  </div>
-)}
-    <p className="text-[13px] md:text-sm text-slate-400 mb-4 md:mb-6 line-clamp-4 leading-relaxed font-light">  
-      {api.description}  
-    </p>  
-
-    <div className="flex flex-wrap gap-2 mb-6 md:mb-8 mt-auto">  
-      {tags.slice(0, 5).map((tag: string) => (  
-        <span  
-          key={tag}  
-          className="text-[9px] md:text-[10px] text-slate-500 bg-white/5 border border-white/10 px-2 md:px-2.5 py-0.5 md:py-1 rounded-full flex items-center"  
-        >  
-          <Hash size={8} className="mr-1 text-mora-500/50" /> {tag}  
-        </span>  
-      ))}  
-    </div>  
-
-    <div className="pt-4 md:pt-6 border-t border-white/5 flex items-center justify-between">  
-      <div className="flex gap-4 md:gap-6">  
-        <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold">  
-          <Activity size={12} className="text-mora-500" />  
-          <span className="text-slate-300 font-mono">{api.latency}</span>  
-        </div>  
-
-        <button onClick={handleLike} className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold group/like">  
-       <Heart
-  size={12}
-  className={`${isLiked
-    ? 'text-red-500 fill-current drop-shadow-[0_0_6px_rgba(239,68,68,0.9)]'
-    : 'text-red-500/50 group-hover/like:text-red-500'
-  } transition-all`}
-/>
-          <span className="text-slate-300 font-mono">{displayUpvotes}</span>  
-        </button>  
-      </div>  
-
-      <span className={`text-[8px] md:text-[10px] font-black px-4 md:px-5 py-1 rounded-full border ${  
-        api.pricing.type === 'Free'  
-          ? 'bg-green-500/10 text-green-400 border-green-500/20'  
-          : api.pricing.type === 'Paid'  
-            ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'  
-            : 'bg-purple-500/10 text-purple-400 border-purple-500/20'  
-      } uppercase tracking-[0.2em]`}>  
-        {api.pricing.type}  
-      </span>  
-    </div>  
-  </div>  
-</Link>
-
-);
-};
 
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -602,9 +195,22 @@ console.error('Refetch failed', e);
 };
 
 const itemsToShow = 6;
-const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
-const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
-const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
+
+const featuredApis = useMemo(() => {
+  return shuffleArray(allApis).slice(0, itemsToShow);
+}, [allApis]);
+
+const freshApis = useMemo(() => {
+  return allApis
+    .filter(api => isNew(api.publishedAt))
+    .slice(0, itemsToShow);
+}, [allApis]);
+
+const communityLoved = useMemo(() => {
+  return [...allApis]
+    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+    .slice(0, itemsToShow);
+}, [allApis]);
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
@@ -691,14 +297,14 @@ opacity-60
         </p>
 
         {/* COUNT */}
-        <p className="text-4xl md:text-5xl font-display font-black text-white">
-          {allApis.length}
-        </p>
+        <p className="text-3xl md:text-5xl font-display font-black text-white">
+  {isLoading ? "Counting..." : allApis.length}
+</p>
 
-        {/* SUBTEXT */}
-        <p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
-          Live on Apives
-        </p>
+<p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
+  {isLoading ? "It takes a few seconds" : "Live on Apives"}
+</p>
+
       </div>
     </div>
   </div>
@@ -775,42 +381,42 @@ rounded-2xl bg-white/10 p-1"
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
 
       {[
-        {
-          title: "AI Chatbots",
-          desc: "LLMs, chat, assistants",
-          icon: Zap,
-          link: "/build/chatbots?usecase=chatbots"
-        },
-        {
-          title: "Voice to Text",
-          desc: "Speech recognition APIs",
-          icon: Activity,
-          link: "/browse?usecase=voice"
-        },
-        {
-          title: "Image Generation",
-          desc: "Text → Image models",
-          icon: LayoutGrid,
-          link: "/browse?usecase=image"
-        },
-        {
-          title: "Payments",
-          desc: "Billing & subscriptions",
-          icon: Server,
-          link: "/browse?usecase=payments"
-        },
-        {
-          title: "Authentication",
-          desc: "Login, OTP, identity",
-          icon: Hash,
-          link: "/browse?usecase=auth"
-        },
-        {
-          title: "Analytics",
-          desc: "Tracking & insights",
-          icon: TrendingUp,
-          link: "/browse?usecase=analytics"
-        }
+  {
+    title: "AI Chatbots",
+    desc: "LLMs, chat, assistants",
+    icon: Zap,
+    link: "/build/chatbots"
+  },
+  {
+    title: "Voice to Text",
+    desc: "Speech recognition APIs",
+    icon: Activity,
+    link: "/build/voice"
+  },
+  {
+    title: "Image Generation",
+    desc: "Text → Image models",
+    icon: Image,
+    link: "/build/image-generation"
+  },
+  {
+    title: "Payments",
+    desc: "Billing & subscriptions",
+    icon: Server,
+    link: "/build/payments"
+  },
+  {
+    title: "Authentication",
+    desc: "Login, OTP, identity",
+    icon: Hash,
+    link: "/build/authentication"
+  },
+  {
+    title: "Analytics",
+    desc: "Tracking & insights",
+    icon: TrendingUp,
+    link: "/build/analytics"
+  }
       ].map((item, i) => (
         <Link
           key={i}
@@ -913,7 +519,7 @@ rounded-2xl bg-white/10 p-1"
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {freshApis.map((api, idx) => (
       <ApiCard
-        key={`new-${idx}`}
+        key={`new-${api.id}`}
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
@@ -943,7 +549,7 @@ rounded-2xl bg-white/10 p-1"
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityLoved.map((api, idx) => (
       <ApiCard
-        key={`loved-${idx}`}
+        key={`loved-${api.id}`}
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
