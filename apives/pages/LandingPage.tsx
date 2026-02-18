@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
 TrendingUp,
@@ -14,7 +14,6 @@ Image
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
-import ApiCard from '../components/ApiCard';
 let LANDING_API_CACHE: ApiListing[] | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
@@ -77,15 +76,55 @@ const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
 return (now - publishedDate) < fifteenDaysInMs;
 };
 
-const shuffleArray = <T,>(arr: T[]): T[] => {
-return [...arr].sort(() => Math.random() - 0.5);
-};
 
 const RANK_BADGE_STYLES = [
 { label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
 { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
+
+const LocalApiCard: React.FC<{ api: ApiListing }> = ({ api }) => {
+  const firstImage =
+    Array.isArray(api.gallery) && api.gallery.length > 0
+      ? api.gallery[0]
+      : null;
+
+  return (
+    <Link
+      to={`/api/${api.id}`}
+      className="group bg-dark-900/40 hover:bg-dark-900/70
+      rounded-2xl border border-white/10
+      p-4 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+    >
+      {firstImage && (
+        <div className="w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 border border-white/10 bg-black">
+          <img
+            src={firstImage}
+            alt={api.name}
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
+      <span className="text-[9px] px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 uppercase tracking-wider mb-2 w-fit">
+        {api.category}
+      </span>
+
+      <h3 className="text-white font-bold text-base group-hover:text-mora-400 transition-colors">
+        {api.name}
+      </h3>
+
+      <p className="text-[11px] text-slate-500 mt-1">
+        {api.provider}
+      </p>
+
+      <p className="text-sm text-slate-400 mt-3 line-clamp-3">
+        {api.description}
+      </p>
+    </Link>
+  );
+};
 
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -99,8 +138,10 @@ const [isMobile, setIsMobile] = useState(
 
 useEffect(() => {
 // 🔥 Sponsor impressions
+  setTimeout(() => {
   trackSponsor("serpapi", "impression");
   trackSponsor("scoutpanels", "impression");
+}, 1000);
 const handleResize = () => setIsMobile(window.innerWidth < 768);
 window.addEventListener('resize', handleResize);
 
@@ -145,7 +186,7 @@ return;
     [...db]  
       .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
       .slice(0, 3)  
-      .map(a => a.id)  
+      .map(a => a._id)  
   ); 
 setIsLoading(false);  
 } catch (e) {  
@@ -186,7 +227,7 @@ setTop3Ids(
   [...db]  
     .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
     .slice(0, 3)  
-    .map(a => a.id)  
+    .map(a => a._id)  
 );
 
 } catch (e) {
@@ -194,10 +235,23 @@ console.error('Refetch failed', e);
 }
 };
 
-const itemsToShow = 6;
-const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
-const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
-const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
+const itemsToShow = 3;
+
+const featuredApis = useMemo(() => {
+  return allApis.slice(0, itemsToShow);
+}, [allApis]);
+
+const freshApis = useMemo(() => {
+  return allApis
+    .filter(api => isNew(api.publishedAt))
+    .slice(0, itemsToShow);
+}, [allApis]);
+
+const communityLoved = useMemo(() => {
+  return [...allApis]
+    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+    .slice(0, itemsToShow);
+}, [allApis]);
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
@@ -284,14 +338,14 @@ opacity-60
         </p>
 
         {/* COUNT */}
-        <p className="text-4xl md:text-5xl font-display font-black text-white">
-          {allApis.length}
-        </p>
+        <p className="text-3xl md:text-5xl font-display font-black text-white">
+  {isLoading ? "Counting..." : allApis.length}
+</p>
 
-        {/* SUBTEXT */}
-        <p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
-          Live on Apives
-        </p>
+<p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
+  {isLoading ? "It takes a few seconds" : "Live on Apives"}
+</p>
+
       </div>
     </div>
   </div>
@@ -366,6 +420,7 @@ rounded-2xl bg-white/10 p-1"
 
     {/* Grid */}
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+
       {[
   {
     title: "AI Chatbots",
@@ -474,13 +529,11 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {featuredApis.map((api, idx) => (
-      <ApiCard
-        key={`${api.id}-${idx}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
-      />
+      <LocalApiCard
+  key={api.id}
+  api={api}
+/>
+     
     ))}
   </div>
 )}
@@ -504,13 +557,10 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {freshApis.map((api, idx) => (
-      <ApiCard
-        key={`new-${api.id}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
-      />
+      <LocalApiCard
+  key={api.id}
+  api={api}
+/>
     ))}
   </div>
 )}
@@ -534,13 +584,10 @@ rounded-2xl bg-white/10 p-1"
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityLoved.map((api, idx) => (
-      <ApiCard
-        key={`loved-${api.id}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
-      />
+      <LocalApiCard
+  key={api.id}
+  api={api}
+/>
     ))}
   </div>
 )}
