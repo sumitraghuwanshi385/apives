@@ -125,6 +125,9 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
           </span>
         )}
       </div>
+      <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
+        <span className="inline-flex items-center flex-wrap gap-0.5">
+          {api.name}
 
                 {isVerified && (
             <span className="relative">
@@ -161,7 +164,7 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
               )}
             </span>
           )}
-
+</h3>
       <p className="text-[11px] text-slate-500 mt-1">
         {api.provider}
       </p>
