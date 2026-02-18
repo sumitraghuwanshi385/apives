@@ -491,8 +491,7 @@ rounded-2xl bg-white/10 p-1"
   key={api.id}
   api={api}
 />
-        refetchLandingApis={refetchLandingApis}
-      />
+     
     ))}
   </div>
 )}
@@ -520,8 +519,6 @@ rounded-2xl bg-white/10 p-1"
   key={api.id}
   api={api}
 />
- refetchLandingApis={refetchLandingApis}
-      />
     ))}
   </div>
 )}
@@ -549,8 +546,6 @@ rounded-2xl bg-white/10 p-1"
   key={api.id}
   api={api}
 />
- refetchLandingApis={refetchLandingApis}
-      />
     ))}
   </div>
 )}
