@@ -296,6 +296,7 @@ return (
       className="h-12 md:h-14 object-contain"
     />
 </a> 
+</div>
     </div>
   </div>
 </div>
