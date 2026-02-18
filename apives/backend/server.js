@@ -35,7 +35,7 @@ app.get("/api/landing", async (req, res) => {
       .sort({ upvotes: -1 })
       .limit(9)
       .select(
-        "name category pricing provider upvotes latency gallery verified createdAt externalUrl"
+        "name category pricing provider upvotes latency gallery verified createdAt externalUrl description"
       );
 
     res.json(apis);
