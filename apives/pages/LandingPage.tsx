@@ -77,8 +77,12 @@ const fifteenDaysInMs = 15 * 24 * 60 * 60 * 1000;
 return (now - publishedDate) < fifteenDaysInMs;
 };
 
-const shuffleArray = <T,>(arr: T[]): T[] => {
-return [...arr].sort(() => Math.random() - 0.5);
+const lightShuffle = <T,>(arr: T[]): T[] => {
+  return arr
+    .map(a => ({ sort: Math.random(), value: a }))
+    .sort((a, b) => a.sort - b.sort)
+    .slice(0, 6)
+    .map(a => a.value);
 };
 
 const RANK_BADGE_STYLES = [
@@ -126,8 +130,9 @@ return;
 }
 
 // 🌐 STEP 2: API call (sirf first time)  
-  const res = await apiService.getAllApis();  
-  const list = Array.isArray(res) ? res : res?.data || [];  
+  // NEW (lightweight)
+const res = await fetch("https://apives.onrender.com/api/landing");
+const list = await res.json();
 
   const db: ApiListing[] = list.map((a: any) => ({  
     ...a,  
@@ -195,7 +200,7 @@ console.error('Refetch failed', e);
 };
 
 const itemsToShow = 6;
-const featuredApis = shuffleArray(allApis).slice(0, itemsToShow);
+const featuredApis = lightShuffle(allApis);
 const freshApis = allApis.filter(api => isNew(api.publishedAt)).slice(0, itemsToShow);
 const communityLoved = [...allApis].sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0)).slice(0, itemsToShow);
 
