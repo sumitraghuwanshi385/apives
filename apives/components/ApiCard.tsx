@@ -396,9 +396,9 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
   </div>
 
-  <div className="flex items-center gap-2">
+<div className="flex items-center gap-2">
 
-  {/* 🌍 Icon-only Visit (Circle) */}
+  {/* 🌍 Icon-only Visit */}
   {api.externalUrl && (
     <button
       onClick={(e) => {
@@ -423,16 +423,15 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
   )}
 
-        {/* VIEW DETAILS BUTTON */}
-<div className="mt-4">
+  {/* 🔘 View Details */}
   <span
     className="
-      inline-block
-      text-[10px] md:text-xs
-      px-5 py-2
+      h-8
+      px-4
+      flex items-center justify-center
       rounded-full
-      font-black
-      uppercase tracking-[0.2em]
+      text-[10px]
+      font-black uppercase tracking-[0.2em]
 
       bg-white/5
       border border-white/10
@@ -446,6 +445,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
   >
     View Details
   </span>
+
 </div>
 </div>
 </Link>
