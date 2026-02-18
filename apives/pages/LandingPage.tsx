@@ -295,8 +295,7 @@ return (
       alt="Buy me a coffee"
       className="h-12 md:h-14 object-contain"
     />
-</div>  
-</a>
+</a> 
     </div>
   </div>
 </div>
