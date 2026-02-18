@@ -276,10 +276,6 @@ return (
           target="_blank"
           rel="noopener noreferrer"
     className="transition-transform hover:scale-105 active:scale-95"
-  >
-    <img
-      src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
-      alt="Buy me a coffee"
         >
     
     <img
