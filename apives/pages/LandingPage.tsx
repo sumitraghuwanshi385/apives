@@ -238,6 +238,71 @@ return (
 
 <section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
 
+{/* ⚠️ PERFORMANCE NOTICE */}
+<div className="w-full max-w-4xl mx-auto px-4 md:px-8 mb-6">
+  <div
+    className="
+      relative
+      rounded-2xl
+      p-5 md:p-6
+      bg-gradient-to-br from-white/[0.04] to-white/[0.02]
+      border border-mora-500/30
+      shadow-[0_0_40px_rgba(34,197,94,0.08)]
+      backdrop-blur-sm
+    "
+  >
+    {/* soft glow */}
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none" />
+
+    <div className="relative z-10 text-center">
+
+      <p className="text-[11px] md:text-xs uppercase tracking-[0.35em] text-mora-400 mb-3">
+        Performance Notice
+      </p>
+
+      <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+        Sorry — initial API load may take around <span className="text-white font-semibold">50–55 seconds</span>.  
+        The backend enters an idle state during inactivity and needs a few moments to wake up.
+      </p>
+
+      <p className="text-xs md:text-sm text-slate-400 mt-3">
+        I'm actively working to improve this. If you'd like to support infrastructure upgrades:
+      </p>
+
+      {/* Buy Me a Coffee Button */}
+      <div className="mt-4 flex justify-center">
+        <a
+          href="https://buymeacoffee.com/apives.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            inline-flex items-center gap-3
+            px-5 py-2.5
+            rounded-full
+            bg-[#FFDD00]
+            hover:bg-[#ffcc00]
+            text-black
+            font-bold
+            text-xs md:text-sm
+            shadow-lg
+            transition-all
+            active:scale-95
+          "
+        >
+          <img
+            src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
+            alt="Buy Me a Coffee"
+            className="h-5 w-5"
+          />
+          Buy Me a Coffee
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
 {/* 🔥 TOTAL APIs STAT */}
 <div className="py-4 md:py-6 bg-black">
   <div className="w-full max-w-none mx-auto px-4 md:px-10 lg:px-20">
@@ -285,8 +350,8 @@ opacity-60
 
         {/* COUNT */}
         <p className="text-4xl md:text-5xl font-display font-black text-white">
-          {allApis.length}
-        </p>
+  {isLoading ? "Counting..." : allApis.length}
+</p>
 
         {/* SUBTEXT */}
         <p className="mt-2 text-[11px] md:text-xs text-mora-400 tracking-wide">
@@ -550,70 +615,6 @@ rounded-2xl bg-white/10 p-1"
           View Top APIs  
         </Link>  
       </div>
-
-{/* ⚠️ PERFORMANCE NOTICE */}
-<div className="w-full max-w-4xl mx-auto px-4 md:px-8 mb-6">
-  <div
-    className="
-      relative
-      rounded-2xl
-      p-5 md:p-6
-      bg-gradient-to-br from-white/[0.04] to-white/[0.02]
-      border border-mora-500/30
-      shadow-[0_0_40px_rgba(34,197,94,0.08)]
-      backdrop-blur-sm
-    "
-  >
-    {/* soft glow */}
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none" />
-
-    <div className="relative z-10 text-center">
-
-      <p className="text-[11px] md:text-xs uppercase tracking-[0.35em] text-mora-400 mb-3">
-        Performance Notice
-      </p>
-
-      <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-        Sorry — initial API load may take around <span className="text-white font-semibold">50–55 seconds</span>.  
-        The backend enters an idle state during inactivity and needs a few moments to wake up.
-      </p>
-
-      <p className="text-xs md:text-sm text-slate-400 mt-3">
-        I'm actively working to improve this. If you'd like to support infrastructure upgrades:
-      </p>
-
-      {/* Buy Me a Coffee Button */}
-      <div className="mt-4 flex justify-center">
-        <a
-          href="https://buymeacoffee.com/apives.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-            inline-flex items-center gap-3
-            px-5 py-2.5
-            rounded-full
-            bg-[#FFDD00]
-            hover:bg-[#ffcc00]
-            text-black
-            font-bold
-            text-xs md:text-sm
-            shadow-lg
-            transition-all
-            active:scale-95
-          "
-        >
-          <img
-            src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
-            alt="Buy Me a Coffee"
-            className="h-5 w-5"
-          />
-          Buy Me a Coffee
-        </a>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 
 {/* PRIME SPONSOR */}
