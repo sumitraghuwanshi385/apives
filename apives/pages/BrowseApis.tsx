@@ -5,22 +5,68 @@ import ApiCard from "../components/ApiCard";
 import { Skeleton } from "../components/Skeleton";
 import { BackButton } from "../components/BackButton";
 
+import {
+Search, Server, Activity, Heart, Bookmark, Hash, LayoutGrid, Shield,
+CreditCard, Cpu, Database, MessageSquare, SlidersHorizontal, X, Cloud,
+Globe, GraduationCap, Bitcoin, ShoppingCart, Plane, Stethoscope, Radar,
+ArrowDown, Calendar, Trophy, Lock, BarChart3, Music, Video, Smartphone,
+Map, Home, Utensils, Trophy as SportsIcon, Newspaper, Briefcase,
+Languages, Users, Stethoscope as Steth, Scale, Settings, Wrench, Gavel, BarChart4, TrendingUp,
+Sprout, FlaskConical, Dumbbell, Wallet, Umbrella, Building, Zap, Truck,
+Landmark, Gamepad2
+} from 'lucide-react';
+
 const CATEGORIES = [
-  "All",
-  "AI",
-  "Payments",
-  "Crypto",
-  "Data",
-  "Finance",
-  "Security",
-  "Analytics",
-  "Sports",
-  "News",
-  "Health",
-  "DevOps",
-  "Education",
-  "Travel",
-  "Gaming",
+{ name: 'All', icon: LayoutGrid },
+{ name: 'AI', icon: Cpu },
+{ name: 'Payments', icon: CreditCard },
+{ name: 'Crypto', icon: Bitcoin },
+{ name: 'Identity', icon: Shield },
+{ name: 'Data', icon: Database },
+{ name: 'Infrastructure', icon: Cloud },
+{ name: 'eCommerce', icon: ShoppingCart },
+{ name: 'Messaging', icon: MessageSquare },
+{ name: 'Finance', icon: Wallet },
+{ name: 'Logistics', icon: Truck },
+{ name: 'Security', icon: Lock },
+{ name: 'Analytics', icon: BarChart3 },
+{ name: 'Audio', icon: Music },
+{ name: 'Video', icon: Video },
+{ name: 'Mobile', icon: Smartphone },
+{ name: 'Maps', icon: Map },
+{ name: 'Weather', icon: Cloud },
+{ name: 'Real Estate', icon: Home },
+{ name: 'Food', icon: Utensils },
+{ name: 'Sports', icon: SportsIcon },
+{ name: 'News', icon: Newspaper },
+{ name: 'Jobs', icon: Briefcase },
+{ name: 'Translation', icon: Languages },
+{ name: 'Social', icon: Users },
+{ name: 'Health', icon: Steth },
+{ name: 'Legal', icon: Scale },
+{ name: 'DevOps', icon: Settings },
+{ name: 'Search', icon: Search },
+{ name: 'Tools', icon: Wrench },
+{ name: 'Government', icon: Gavel },
+{ name: 'Utilities', icon: Zap },
+{ name: 'Stocks', icon: BarChart4 },
+{ name: 'Banking', icon: Landmark },
+{ name: 'Insurance', icon: Umbrella },
+{ name: 'Agriculture', icon: Sprout },
+{ name: 'Science', icon: FlaskConical },
+{ name: 'Education', icon: GraduationCap },
+{ name: 'Travel', icon: Plane },
+{ name: 'Gaming', icon: Gamepad2 },
+{ name: 'Fitness', icon: Dumbbell },
+{ name: 'IoT', icon: Radar },
+{ name: 'ERP', icon: Database },
+{ name: 'CRM', icon: Users },
+{ name: 'HR', icon: Briefcase },
+{ name: 'Marketing', icon: TrendingUp },
+{ name: 'Storage', icon: Database },
+{ name: 'Web3', icon: Globe },
+{ name: 'Automation', icon: Zap },
+{ name: 'Enterprise', icon: Building }
 ];
 
 export const BrowseApis: React.FC = () => {
@@ -134,19 +180,17 @@ const [showCategories, setShowCategories] = useState(false);
         </div>
 
         {/* SEARCH BAR */}
-        {/* SEARCH BAR */}
 <div className="max-w-3xl mx-auto mb-8 relative">
   <div className="flex items-center bg-black/40 border border-white/10 rounded-full px-4 py-3">
-    <Search className="text-slate-500 mr-3" size={18} />
-
-    <input
-      type="text"
-      placeholder="Search APIs..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-sm"
-    />
-
+    <Search className="ml-3 md:ml-5 text-slate-500 group-focus-within:text-mora-500 transition-colors" size={16} md:size={20} />    
+                <input     
+                    type="text"     
+                    placeholder="Find APIs..."     
+                    value={searchTerm}    
+                    onChange={(e) => setSearchTerm(e.target.value)}    
+                    className="flex-1 bg-transparent px-3 md:px-4 py-2 md:py-3.5 text-white placeholder-slate-600 outline-none font-sans text-[13px] md:text-sm"    
+                />  
+ 
     <button
       onClick={() => setShowCategories(!showCategories)}
       className="ml-3 px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
