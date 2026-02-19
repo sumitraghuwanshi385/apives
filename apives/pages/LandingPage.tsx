@@ -176,25 +176,17 @@ useEffect(() => {
 }, []);
 
 const updateLandingUpvotes = (apiId: string, delta: number) => {
-setAllApis(prev =>
-prev.map(api =>
-api.id === apiId
-? { ...api, upvotes: Math.max((api.upvotes || 0) + delta, 0) }
-: api
-)
-);
+  const update = (list: ApiListing[]) =>
+    list.map(api =>
+      api.id === apiId
+        ? { ...api, upvotes: Math.max((api.upvotes || 0) + delta, 0) }
+        : api
+    );
+
+  setUniversalApis(prev => update(prev));
+  setFreshApis(prev => update(prev));
+  setCommunityApis(prev => update(prev));
 };
-
-// 12 APIs total
-
-// Universal (only shuffle)
-const featuredApis = lightShuffle(allApis).slice(0, 6);
-
-// Fresh (NO heavy filter)
-const freshApis = allApis.slice(6, 9);
-
-// Community (NO sort)
-const communityLoved = allApis.slice(9, 12);
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
