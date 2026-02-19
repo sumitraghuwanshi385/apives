@@ -251,7 +251,6 @@ if (pageNumber === 1) {
       Filters
     </button>
   </div>
-</div>
 
 
   {/* FILTER PANEL */}
