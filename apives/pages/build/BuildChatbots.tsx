@@ -115,8 +115,7 @@ useEffect(() => {
   (async () => {
     try {
       const res = await apiService.getAllApis();
-      const list = Array.isArray(res) ? res : res?.data || [];
-
+const list = res?.apis || [];
       const normalized = list.map((a: any) => ({
         ...a,
         id: a._id
