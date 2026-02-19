@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { apiService } from '../services/apiClient';
 import { BackButton } from '../components/BackButton';
 import {
-Zap, Heart, Bookmark, LayoutGrid, Shield, CreditCard, Cpu, Database,
+Zap, LayoutGrid, Shield, CreditCard, Cpu, Database,
 MessageSquare, SlidersHorizontal, ShoppingCart, Cloud, Globe, X,
-ArrowDown, Activity, Radar, Bitcoin, Wallet, Truck, BarChart3, Music,
+Radar, Bitcoin, Wallet, Truck, BarChart3, Music,
 Video, Smartphone, Map, Home, Utensils, Trophy as SportsIcon, Newspaper,
 Briefcase, Languages, Users, Stethoscope, Scale, Settings, Search,
 Wrench, Gavel, BarChart4, Landmark, Umbrella, Sprout, FlaskConical,
-GraduationCap, Plane, Gamepad2, Dumbbell, TrendingUp, Building, Lock,
-Hash, Server, Calendar, Trophy
+GraduationCap, Plane, Gamepad2, Dumbbell, TrendingUp, Building, Lock
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
 import { ApiListing } from '../types';
 import { Skeleton } from '../components/Skeleton';
 import ApiCard from '../components/ApiCard';
-let API_CACHE: ApiListing[] | null = null;
 
 const CATEGORIES = [
 { name: 'All', icon: LayoutGrid },
@@ -70,172 +66,137 @@ const CATEGORIES = [
 { name: 'Enterprise', icon: Building }
 ];
 
-const RANK_BADGE_STYLES = [
-{ label: 'Apex', color: 'from-amber-400 to-yellow-600', text: 'text-black' },
-{ label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
-{ label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
-];
-
 export const FreshApis: React.FC = () => {
+
 const [selectedPricing, setSelectedPricing] = useState<string>('All');
 const [selectedCategory, setSelectedCategory] = useState<string>('All');
 const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
-const [visibleCount, setVisibleCount] = useState(6);
 const [isLoading, setIsLoading] = useState(true);
 const [showFilters, setShowFilters] = useState(false);
+const [page, setPage] = useState(1);
+const [hasMore, setHasMore] = useState(true);
 const [topIds, setTopIds] = useState<string[]>([]);
 
 useEffect(() => {
-const loadFreshApis = async () => {
-setIsLoading(true);
+  const loadFreshApis = async () => {
+    setIsLoading(true);
 
-let allApis: ApiListing[];  
+    try {
+      const query = new URLSearchParams({
+        page: "1",
+        limit: "6",
+        category: selectedCategory,
+        pricing: selectedPricing
+      });
 
-if (API_CACHE) {  
-  allApis = API_CACHE;  
-} else {  
-  const raw = await apiService.getAllApis();  
-  allApis = raw.map((a: any) => ({  
-    ...a,  
-    id: a._id  
-  }));  
-  API_CACHE = allApis;  
-}  
+      const res = await fetch(
+        `https://apives.onrender.com/api/fresh?${query.toString()}`
+      );
 
-setTopIds(  
-  [...allApis]  
-    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
-    .slice(0, 3)  
-    .map(a => a.id)  
-);  
+      const data = await res.json();
 
-const fifteenDaysAgo = new Date();  
-fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);  
+      const normalized = data.apis.map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
 
-const freshApis = allApis.filter(api =>  
-  new Date(api.createdAt || api.publishedAt) > fifteenDaysAgo  
-);  
+      setFilteredApis(normalized);
+      setPage(1);
+      setHasMore(data.page < data.totalPages);
 
-const filtered = freshApis.filter(api => {
+      setTopIds(
+        [...normalized]
+          .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+          .slice(0, 3)
+          .map(a => a.id)
+      );
 
-const categoryMatch =
-selectedCategory === 'All' || api.category === selectedCategory;
+    } catch (err) {
+      console.error("Fresh load failed", err);
+    }
 
-const pricingMatch =
-selectedPricing === 'All' || api.pricing?.type === selectedPricing;
+    setIsLoading(false);
+  };
 
-return categoryMatch && pricingMatch;
-});
+  loadFreshApis();
 
-setVisibleCount(6);
-setFilteredApis(filtered);
-setIsLoading(false);
-};
-
-loadFreshApis();
 }, [selectedCategory, selectedPricing]);
 
+const loadMore = async () => {
+  const nextPage = page + 1;
+
+  const query = new URLSearchParams({
+    page: String(nextPage),
+    limit: "6",
+    category: selectedCategory,
+    pricing: selectedPricing
+  });
+
+  const res = await fetch(
+    `https://apives.onrender.com/api/fresh?${query.toString()}`
+  );
+
+  const data = await res.json();
+
+  const normalized = data.apis.map((a: any) => ({
+    ...a,
+    id: a._id
+  }));
+
+  setFilteredApis(prev => [...prev, ...normalized]);
+  setPage(nextPage);
+  setHasMore(data.page < data.totalPages);
+};
+
 return (
-<div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-12 md:pb-20 relative selection:bg-mora-500/30">
+<div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-20 selection:bg-mora-500/30">
+
 <div className="absolute top-24 left-4 lg:left-8 z-30">
 <BackButton />
 </div>
-<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-<div className="text-center mb-8 md:mb-12">
-<div className="inline-flex items-center justify-center p-2.5 md:p-3 bg-white/10 rounded-2xl mb-4"><Zap className="text-white" size={24} md:size={32} /></div>
-<h1 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight">Fresh APIs</h1>
-<p className="text-slate-400 mt-2 text-sm md:text-base font-light">Recently Added APIs.</p>
+
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+<div className="text-center mb-12">
+<div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-4">
+<Zap className="text-white" size={32} />
+</div>
+<h1 className="text-4xl font-display font-bold text-white">Fresh APIs</h1>
+<p className="text-slate-400 mt-2">Recently Added APIs.</p>
 </div>
 
-<div className="max-w-xs mx-auto mb-10 md:mb-16 relative">    
-            <button     
-                onClick={() => setShowFilters(!showFilters)}     
-                className={`w-full flex items-center justify-center gap-2 md:gap-3 px-6 md:px-8 py-2 md:py-3 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all border ${    
-                    showFilters ? 'bg-mora-500 text-black border-mora-500 shadow-lg' : 'bg-white/5 border-white/10 text-slate-300'    
-                }`}    
-            >    
-                <SlidersHorizontal size={14} md:size={16} />    
-                Filter Nodes    
-            </button>    
-            {showFilters && (    
-                <div className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl mt-4 px-4 z-[60]">    
-                     <div className="bg-black/95 border border-mora-500/30 rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-2xl animate-slide-up backdrop-blur-xl">  {/* PRICING FILTER */}
+{/* GRID */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
 
-<div className="mb-6">    
-  <h4 className="text-[10px] md:text-xs font-black text-mora-400 uppercase tracking-[0.4em] mb-3">    
-    Pricing    
-  </h4>    <div className="flex flex-wrap gap-2">    
-    {['All', 'Free', 'Freemium', 'Paid'].map(price => (    
-      <button    
-        key={price}    
-        onClick={() => setSelectedPricing(price)}    
-        className={`    
-          px-4 py-2    
-          rounded-full    
-          text-[9px] md:text-[11px]    
-          font-bold uppercase    
-          border transition-all    
-          ${    
-            selectedPricing === price    
-              ? 'bg-mora-500 text-black border-mora-500 shadow-md'    
-              : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'    
-          }    
-        `}    
-      >    
-        {price}    
-      </button>    
-    ))}    
-  </div>    
-</div>  <div className="flex items-center justify-between mb-6 md:mb-8">    
-                            <h4 className="text-[10px] md:text-xs font-black text-mora-400 uppercase tracking-[0.4em]">Category</h4>    
-                            <button onClick={() => setShowFilters(false)} className="p-2 text-slate-500 hover:text-white transition-colors">    
-                                <X size={18} />    
-                            </button>    
-                        </div>    
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 max-h-[350px] md:max-h-[400px] overflow-y-auto custom-scrollbar pr-2">    
-                            {CATEGORIES.map((cat) => (    
-                                <button     
-                                    key={cat.name}     
-                                    onClick={() => { setSelectedCategory(cat.name); setShowFilters(false); }}     
-                                    className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-full border text-[9px] md:text-[11px] font-bold uppercase transition-all ${    
-                                        selectedCategory === cat.name     
-                                        ? 'bg-mora-500 text-black border-mora-500 shadow-md'     
-                                        : 'bg-white/[0.03] border-white/10 text-slate-400 hover:text-white'    
-                                    }`}    
-                                >    
-                                    <cat.icon size={14} md:size={16} className={selectedCategory === cat.name ? 'text-black' : 'text-mora-500/60'} />    
-                                    <span className="whitespace-nowrap">{cat.name}</span>    
-                                </button>    
-                            ))}    
-                        </div>    
-                     </div>    
-                </div>    
-            )}    
-        </div>  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12">  
-            {isLoading ? (  
-              [1,2,3].map(i => <Skeleton key={i} className="h-48 md:h-64 rounded-[1.5rem] md:rounded-[2rem]" />)  
-            ) : filteredApis.length > 0 ? (  
-              filteredApis.slice(0, visibleCount).map(api => <ApiCard key={api.id} api={api} topIds={topIds} />)  
-            ) : (  
-              <div className="col-span-full text-center py-20 px-6 animate-fade-in">  
-                  <Radar size={40} className="text-mora-500 mx-auto mb-4 opacity-50" />  
-                  <h3 className="text-2xl font-display font-bold text-white mb-2">No Nodes</h3>  
-                  <p className="text-slate-400 text-sm max-w-md mx-auto mb-8 font-light">No new protocols in this category.</p>  
-                  <button   
-                      onClick={() => setSelectedCategory('All')}  
-                      className="px-8 py-3 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-full"  
-                  >  
-                      Reset Scanning  
-                  </button>  
-              </div>  
-            )}  
-        </div>
-
-{visibleCount < filteredApis.length && filteredApis.length > 0 && (
-<div className="flex justify-center">
-<button onClick={() => setVisibleCount(v => v + 6)} className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 transition-all">Load More APIs</button>
+{isLoading ? (
+[1,2,3].map(i => (
+<Skeleton key={i} className="h-64 rounded-[2rem]" />
+))
+) : filteredApis.length > 0 ? (
+filteredApis.map(api => (
+<ApiCard key={api.id} api={api} topIds={topIds} />
+))
+) : (
+<div className="col-span-full text-center py-20">
+<Radar size={40} className="text-mora-500 mx-auto mb-4 opacity-50" />
+<h3 className="text-2xl font-bold text-white mb-2">No Nodes</h3>
+<p className="text-slate-400">No new protocols in this category.</p>
 </div>
 )}
+
+</div>
+
+{hasMore && filteredApis.length > 0 && (
+<div className="flex justify-center">
+<button
+onClick={loadMore}
+className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-xs uppercase tracking-widest transition-all active:scale-95"
+>
+Load More APIs
+</button>
+</div>
+)}
+
 </div>
 </div>
 );
