@@ -57,15 +57,34 @@ router.get('/mine', verify, async (req, res) => {
   }
 });
 
-// ✅ GET ALL APIS (Public)
+// ✅ GET ALL APIS (Public) — PAGINATED
 router.get('/', async (req, res) => {
   try {
     const includePaused = req.query.includePaused === 'true';
     const filter = includePaused ? {} : { status: 'active' };
 
-    const apis = await ApiListing.find(filter).sort({ createdAt: -1 });
-    return res.json(apis);
+    // 👇 pagination params
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+
+    const apis = await ApiListing.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .select("name category pricing provider upvotes latency gallery verified createdAt externalUrl description");
+
+    const total = await ApiListing.countDocuments(filter);
+
+    return res.json({
+      apis,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+
   } catch (err) {
+    console.error("❌ GET ALL PAGINATED Error:", err);
     return res.status(500).json({ message: err.message });
   }
 });
