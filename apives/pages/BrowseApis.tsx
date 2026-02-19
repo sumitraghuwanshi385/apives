@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Search } from "lucide-react";
 import { ApiListing } from "../types";
 import ApiCard from "../components/ApiCard";
 import { Skeleton } from "../components/Skeleton";
@@ -75,9 +74,10 @@ export const BrowseApis: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [topIds, setTopIds] = useState<string[]>([]);
-const [showCategories, setShowCategories] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+const [selectedPricing, setSelectedPricing] = useState("All");
+const [showFilters, setShowFilters] = useState(false);
 
   // 🚀 LOAD FUNCTION
  const loadApis = async (pageNumber: number, reset = false) => {
@@ -140,21 +140,25 @@ const [showCategories, setShowCategories] = useState(false);
 
   // 🔥 LIGHT FRONTEND FILTER (FAST)
   const filteredApis = useMemo(() => {
-    return apis.filter((api) => {
-      const matchesCategory =
-        selectedCategory === "All" ||
-        api.category === selectedCategory;
+  return apis.filter((api) => {
+    const categoryMatch =
+      selectedCategory === "All" ||
+      api.category === selectedCategory;
 
-      const lowerSearch = searchTerm.toLowerCase();
+    const pricingMatch =
+      selectedPricing === "All" ||
+      api.pricing?.type === selectedPricing;
 
-      const matchesSearch =
-        api.name?.toLowerCase().includes(lowerSearch) ||
-        api.description?.toLowerCase().includes(lowerSearch) ||
-        api.provider?.toLowerCase().includes(lowerSearch);
+    const lowerSearch = searchTerm.toLowerCase();
 
-      return matchesCategory && matchesSearch;
-    });
-  }, [apis, searchTerm, selectedCategory]);
+    const matchesSearch =
+      api.name?.toLowerCase().includes(lowerSearch) ||
+      api.description?.toLowerCase().includes(lowerSearch) ||
+      api.provider?.toLowerCase().includes(lowerSearch);
+
+    return categoryMatch && pricingMatch && matchesSearch;
+  });
+}, [apis, searchTerm, selectedCategory, selectedPricing]);
 
   return (
     <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-20 relative">
@@ -179,52 +183,102 @@ const [showCategories, setShowCategories] = useState(false);
           </p>
         </div>
 
-        {/* SEARCH BAR */}
-<div className="max-w-3xl mx-auto mb-8 relative">
-  <div className="flex items-center bg-black/40 border border-white/10 rounded-full px-4 py-3">
-    <Search className="ml-3 md:ml-5 text-slate-500 group-focus-within:text-mora-500 transition-colors" size={16} md:size={20} />    
-                <input     
-                    type="text"     
-                    placeholder="Find APIs..."     
-                    value={searchTerm}    
-                    onChange={(e) => setSearchTerm(e.target.value)}    
-                    className="flex-1 bg-transparent px-3 md:px-4 py-2 md:py-3.5 text-white placeholder-slate-600 outline-none font-sans text-[13px] md:text-sm"    
-                />  
- 
+        {/* SEARCH + FILTER UI */}
+<div className="max-w-3xl mx-auto mb-12 relative">
+  <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full p-1.5 focus-within:border-mora-500/50 transition-all shadow-2xl group">
+
+    <Search
+      className="ml-5 text-slate-500 group-focus-within:text-mora-500 transition-colors"
+      size={18}
+    />
+
+    <input
+      type="text"
+      placeholder="Find APIs..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="flex-1 bg-transparent px-4 py-3 text-white placeholder-slate-600 outline-none text-sm"
+    />
+
     <button
-      onClick={() => setShowCategories(!showCategories)}
-      className="ml-3 px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+      onClick={() => setShowFilters(!showFilters)}
+      className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${
+        showFilters
+          ? "bg-mora-500 text-black border-mora-500"
+          : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+      }`}
     >
-      Category
+      <SlidersHorizontal size={14} />
+      Filters
     </button>
   </div>
 
-  {/* CATEGORY DROPDOWN */}
-  {showCategories && (
-    <div className="absolute top-full left-0 w-full mt-4 bg-black border border-white/10 rounded-2xl p-4 shadow-xl z-50">
-      <div className="flex flex-wrap gap-2">
-        {CATEGORIES.map((cat) => (
+  {/* FILTER PANEL */}
+  {showFilters && (
+    <div className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl mt-6 px-4 z-[60]">
+      <div className="bg-black/95 border border-mora-500/30 rounded-[2rem] p-10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] backdrop-blur-[50px] ring-1 ring-white/10">
+
+        {/* PRICING */}
+        <div className="mb-8">
+          <h4 className="text-xs font-black text-mora-400 uppercase tracking-[0.4em] mb-4">
+            Pricing
+          </h4>
+
+          <div className="flex flex-wrap gap-3">
+            {["All", "Free", "Freemium", "Paid"].map((price) => (
+              <button
+                key={price}
+                onClick={() => setSelectedPricing(price)}
+                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase border transition-all ${
+                  selectedPricing === price
+                    ? "bg-mora-500 text-black border-mora-500"
+                    : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+                }`}
+              >
+                {price}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* CATEGORY */}
+        <div className="flex items-center justify-between mb-6">
+          <h4 className="text-xs font-black text-mora-400 uppercase tracking-[0.4em]">
+            Category
+          </h4>
+
           <button
-            key={cat}
-            onClick={() => {
-              setSelectedCategory(cat);
-              setShowCategories(false);
-            }}
-            className={`px-4 py-2 rounded-full text-xs font-bold uppercase border transition-all
-              ${
-                selectedCategory === cat
-                  ? "bg-mora-500 text-black border-mora-500"
-                  : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
-              }`}
+            onClick={() => setShowFilters(false)}
+            className="p-2 text-slate-500 hover:text-white"
           >
-            {cat}
+            <X size={18} />
           </button>
-        ))}
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[450px] overflow-y-auto pr-3">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.name}
+              onClick={() => {
+                setSelectedCategory(cat.name);
+                setShowFilters(false);
+              }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all ${
+                selectedCategory === cat.name
+                  ? "bg-mora-500 text-black border-mora-500"
+                  : "bg-white/[0.03] border-white/10 text-slate-400 hover:text-white"
+              }`}
+            >
+              <cat.icon size={16} />
+              <span>{cat.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )}
 </div>
-        {/* GRID */}
+ {/* GRID */}
         {apis.length === 0 && isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -234,7 +288,7 @@ const [showCategories, setShowCategories] = useState(false);
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-              {apis.map((api) => (
+              {filteredApis.map((api) => (
                 <ApiCard
                   key={api.id}
                   api={api}
