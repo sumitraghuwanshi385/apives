@@ -118,8 +118,12 @@ useEffect(() => {
 
   (async () => {
     try {
-      const res = await apiService.getAllApis();
-const list = res?.apis || [];
+      const res = await fetch(
+        "https://apives.onrender.com/api/apis?page=1&limit=500&includePaused=true"
+      ).then(r => r.json());
+
+      const list = res?.apis || [];
+
       const normalized = list.map((a: any) => ({
         ...a,
         id: a._id
