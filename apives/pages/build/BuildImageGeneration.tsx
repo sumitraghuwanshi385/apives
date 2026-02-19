@@ -285,7 +285,7 @@ export default function BuildImageGeneration() {
 {/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12"> 
 
       {/* OPERATIONAL INSIGHT */}
-      <div className="max-w-6xl mx-auto mb-20">
+      <div className="max-w-6xl mx-auto mb-10">
         <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-6 backdrop-blur-xl">
 
           <p className="text-xs uppercase text-green-400 mb-8 flex items-center gap-2 tracking-widest">
