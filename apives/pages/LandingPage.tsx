@@ -415,7 +415,6 @@ rounded-2xl bg-white/10 p-1"
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
       />
     ))}
   </div>
@@ -445,7 +444,6 @@ rounded-2xl bg-white/10 p-1"
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
       />
     ))}
   </div>
@@ -475,7 +473,6 @@ rounded-2xl bg-white/10 p-1"
         api={api}
         topIds={top3Ids}
         onLikeChange={updateLandingUpvotes}
-        refetchLandingApis={refetchLandingApis}
       />
     ))}
   </div>
