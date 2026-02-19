@@ -68,65 +68,24 @@ const CATEGORIES = [
 
 export const FreshApis: React.FC = () => {
 
-const [selectedPricing, setSelectedPricing] = useState<string>('All');
-const [selectedCategory, setSelectedCategory] = useState<string>('All');
-const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
+const [selectedPricing, setSelectedPricing] = useState('All');
+const [selectedCategory, setSelectedCategory] = useState('All');
+const [apis, setApis] = useState<ApiListing[]>([]);
 const [isLoading, setIsLoading] = useState(true);
-const [showFilters, setShowFilters] = useState(false);
 const [page, setPage] = useState(1);
 const [hasMore, setHasMore] = useState(true);
 const [topIds, setTopIds] = useState<string[]>([]);
+const [showFilters, setShowFilters] = useState(false);
 
 useEffect(() => {
-  const loadFreshApis = async () => {
-    setIsLoading(true);
-
-    try {
-      const query = new URLSearchParams({
-        page: "1",
-        limit: "6",
-        category: selectedCategory,
-        pricing: selectedPricing
-      });
-
-      const res = await fetch(
-        `https://apives.onrender.com/api/fresh?${query.toString()}`
-      );
-
-      const data = await res.json();
-
-      const normalized = data.apis.map((a: any) => ({
-        ...a,
-        id: a._id
-      }));
-
-      setFilteredApis(normalized);
-      setPage(1);
-      setHasMore(data.page < data.totalPages);
-
-      setTopIds(
-        [...normalized]
-          .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-          .slice(0, 3)
-          .map(a => a.id)
-      );
-
-    } catch (err) {
-      console.error("Fresh load failed", err);
-    }
-
-    setIsLoading(false);
-  };
-
-  loadFreshApis();
-
+  loadFresh(1);
 }, [selectedCategory, selectedPricing]);
 
-const loadMore = async () => {
-  const nextPage = page + 1;
+const loadFresh = async (pageNumber: number) => {
+  setIsLoading(true);
 
   const query = new URLSearchParams({
-    page: String(nextPage),
+    page: String(pageNumber),
     limit: "6",
     category: selectedCategory,
     pricing: selectedPricing
@@ -143,9 +102,23 @@ const loadMore = async () => {
     id: a._id
   }));
 
-  setFilteredApis(prev => [...prev, ...normalized]);
-  setPage(nextPage);
+  if (pageNumber === 1) {
+    setApis(normalized);
+  } else {
+    setApis(prev => [...prev, ...normalized]);
+  }
+
+  setPage(pageNumber);
   setHasMore(data.page < data.totalPages);
+  setIsLoading(false);
+
+  // REAL ranking (global top 3)
+  const rankRes = await fetch(
+    "https://apives.onrender.com/api/community?page=1&limit=3"
+  );
+  const rankData = await rankRes.json();
+
+  setTopIds(rankData.apis.map((a: any) => a._id));
 };
 
 return (
@@ -157,12 +130,79 @@ return (
 
 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-<div className="text-center mb-12">
-<div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-4">
-<Zap className="text-white" size={32} />
+<div className="text-center mb-8 md:mb-12">
+<div className="inline-flex items-center justify-center p-2.5 md:p-3 bg-white/10 rounded-2xl mb-4">
+<Zap className="text-white" size={24} />
 </div>
-<h1 className="text-4xl font-display font-bold text-white">Fresh APIs</h1>
-<p className="text-slate-400 mt-2">Recently Added APIs.</p>
+<h1 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight">
+Fresh APIs
+</h1>
+<p className="text-slate-400 mt-2 text-sm md:text-base font-light">
+Recently Added APIs.
+</p>
+</div>
+
+{/* FILTER BUTTON */}
+<div className="max-w-xs mx-auto mb-10 md:mb-16 relative">
+<button
+onClick={() => setShowFilters(!showFilters)}
+className={`w-full flex items-center justify-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${
+showFilters ? 'bg-mora-500 text-black border-mora-500' : 'bg-white/5 border-white/10 text-slate-300'
+}`}
+>
+<SlidersHorizontal size={14} />
+Filter Nodes
+</button>
+
+{showFilters && (
+<div className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl mt-4 px-4 z-[60]">
+<div className="bg-black border border-mora-500/30 rounded-2xl p-6 shadow-xl backdrop-blur-xl">
+
+<div className="mb-6">
+<h4 className="text-xs font-black text-mora-400 uppercase tracking-widest mb-3">
+Pricing
+</h4>
+<div className="flex flex-wrap gap-2">
+{['All','Free','Freemium','Paid'].map(price => (
+<button
+key={price}
+onClick={() => setSelectedPricing(price)}
+className={`px-4 py-2 rounded-full text-xs font-bold border ${
+selectedPricing === price
+? 'bg-mora-500 text-black border-mora-500'
+: 'bg-white/5 border-white/10 text-slate-400'
+}`}
+>
+{price}
+</button>
+))}
+</div>
+</div>
+
+<h4 className="text-xs font-black text-mora-400 uppercase tracking-widest mb-4">
+Category
+</h4>
+
+<div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[350px] overflow-y-auto">
+{CATEGORIES.map(cat => (
+<button
+key={cat.name}
+onClick={() => { setSelectedCategory(cat.name); setShowFilters(false); }}
+className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold uppercase ${
+selectedCategory === cat.name
+? 'bg-mora-500 text-black border-mora-500'
+: 'bg-white/5 border-white/10 text-slate-400'
+}`}
+>
+<cat.icon size={14} />
+<span>{cat.name}</span>
+</button>
+))}
+</div>
+
+</div>
+</div>
+)}
 </div>
 
 {/* GRID */}
@@ -170,10 +210,10 @@ return (
 
 {isLoading ? (
 [1,2,3].map(i => (
-<Skeleton key={i} className="h-64 rounded-[2rem]" />
+<Skeleton key={i} className="h-64 rounded-2xl" />
 ))
-) : filteredApis.length > 0 ? (
-filteredApis.map(api => (
+) : apis.length > 0 ? (
+apis.map(api => (
 <ApiCard key={api.id} api={api} topIds={topIds} />
 ))
 ) : (
@@ -186,11 +226,11 @@ filteredApis.map(api => (
 
 </div>
 
-{hasMore && filteredApis.length > 0 && (
+{hasMore && (
 <div className="flex justify-center">
 <button
-onClick={loadMore}
-className="px-10 py-3.5 bg-white/5 border border-white/10 rounded-full text-white font-black text-xs uppercase tracking-widest transition-all active:scale-95"
+onClick={() => loadFresh(page + 1)}
+className="px-10 py-3 bg-white/5 border border-white/10 rounded-full text-white font-black text-xs uppercase tracking-widest"
 >
 Load More APIs
 </button>
