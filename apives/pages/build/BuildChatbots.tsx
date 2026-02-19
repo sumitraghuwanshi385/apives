@@ -81,28 +81,26 @@ const [loading, setLoading] = useState(true);
     try {
       const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
 
-      if (!usecaseRes?.curatedApiIds?.length) {
-        setLoading(false);
-        return;
-      }
+      const ids = usecaseRes?.curatedApiIds?.map((a: any) =>
+  typeof a === "string" ? a : a._id
+) || [];
 
-      const ids = usecaseRes.curatedApiIds.map((a: any) =>
-        typeof a === "string" ? a : a._id
-      );
+setSelectedIds(ids);
 
-      setSelectedIds(ids);
+if (ids.length > 0) {
+  const res = await fetch(
+    `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+  ).then(r => r.json());
 
-      const res = await fetch(
-        `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
-      ).then(r => r.json());
+  const normalized = res.apis.map((a: any) => ({
+    ...a,
+    id: a._id
+  }));
 
-      const normalized = res.apis.map((a: any) => ({
-        ...a,
-        id: a._id
-      }));
-
-      setCuratedApis(normalized);
-
+  setCuratedApis(normalized);
+} else {
+  setCuratedApis([]); // important
+}
     } catch (err) {
       console.error("Chatbot load failed", err);
     } finally {
