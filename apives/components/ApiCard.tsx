@@ -150,7 +150,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
   <div className="relative">
 <Link
       to={`/api/${api.id}`}
-      className="group relative bg-dark-900/40 hover:bg-dark-900/80 backdrop-blur-sm
+      className="group relative bg-dark-900/60 hover:bg-dark-900/80
       rounded-[1.5rem] md:rounded-[2rem]
       border border-white/5 hover:border-mora-500/30
       p-4 md:p-5 transition-all duration-500 hover:-translate-y-2
@@ -318,7 +318,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
               }}
               className="absolute left-2 top-1/2 -translate-y-1/2
               h-8 w-8 rounded-full bg-black/60 border border-white/20
-              text-white flex items-center justify-center backdrop-blur-sm"
+              text-white flex items-center justify-center"
             >
               ‹
             </button>
@@ -335,7 +335,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2
               h-8 w-8 rounded-full bg-black/60 border border-white/20
-              text-white flex items-center justify-center backdrop-blur-sm"
+              text-white flex items-center justify-center"
             >
               ›
             </button>
@@ -354,11 +354,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     absolute top-0 left-0 w-full h-[1.5px]  
     bg-white/10  
     transition-all duration-500  
-    group-hover:bg-gradient-to-r  
-    group-hover:from-transparent  
-    group-hover:via-mora-400  
-    group-hover:to-transparent  
-    group-hover:shadow-[0_0_20px_rgba(16,185,129,0.7)]  
+    group-hover:bg-mora-500/40
   "  
 ></div>
 
@@ -383,7 +379,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
   </div>
 
-<div className="flex items-center gap-4">
+<div className="flex items-center gap-2">
 
   {/* 🌍 Icon-only Visit */}
   {api.externalUrl && (
