@@ -105,64 +105,74 @@ const [isMobile, setIsMobile] = useState(
 );
 
 useEffect(() => {
-// 🔥 Sponsor impressions
   trackSponsor("serpapi", "impression");
   trackSponsor("scoutpanels", "impression");
-const handleResize = () => setIsMobile(window.innerWidth < 768);
-window.addEventListener('resize', handleResize);
 
-const user = localStorage.getItem('mora_user');
-if (user) {
-setIsAuthenticated(true);
-setUserName(JSON.parse(user).name || 'Builder');
-}
+  const handleResize = () => setIsMobile(window.innerWidth < 768);
+  window.addEventListener("resize", handleResize);
 
-(async () => {
-try {
-// 🚀 STEP 1: cache se turant dikhao
-if (LANDING_API_CACHE) {
-setAllApis(LANDING_API_CACHE);
-setTop3Ids(
-[...LANDING_API_CACHE]
-.sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-.slice(0, 3)
-.map(a => a.id)
-);
-setIsLoading(false);
-return;
-}
+  const user = localStorage.getItem("mora_user");
+  if (user) {
+    setIsAuthenticated(true);
+    setUserName(JSON.parse(user).name || "Builder");
+  }
 
-// 🌐 STEP 2: API call (sirf first time)  
-  // NEW (lightweight)
-const res = await fetch("https://apives.onrender.com/api/landing");
-const list = await res.json();
+  (async () => {
+    try {
 
-  const db: ApiListing[] = list.map((a: any) => ({  
-    ...a,  
-    id: a._id,  
-    publishedAt: a.createdAt,  
-    tags: Array.isArray(a.tags) ? a.tags : [],  
-    features: Array.isArray(a.features) ? a.features : [],  
-  }));  
+      // ✅ CACHE FIRST
+      if (LANDING_API_CACHE) {
+        setUniversalApis(LANDING_API_CACHE.universal);
+        setFreshApis(LANDING_API_CACHE.fresh);
+        setCommunityApis(LANDING_API_CACHE.community);
+        setIsLoading(false);
+        return;
+      }
 
-  // ✅ STEP 3: cache me store  
-  LANDING_API_CACHE = db;  
+      // ✅ FETCH
+      const res = await fetch("https://apives.onrender.com/api/landing");
+      const data = await res.json();
 
-  setAllApis(db);  
-  setTop3Ids(  
-    [...db]  
-      .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))  
-      .slice(0, 3)  
-      .map(a => a.id)  
-  ); 
-setIsLoading(false);  
-} catch (e) {  
-  console.error('LandingPage fetch failed', e);  
-}
+      const normalize = (arr: any[]) =>
+        arr.map((a: any) => ({
+          ...a,
+          id: a._id,
+          publishedAt: a.createdAt,
+          tags: Array.isArray(a.tags) ? a.tags : [],
+          features: Array.isArray(a.features) ? a.features : [],
+        }));
 
-})();
+      const universal = normalize(data.universal || []);
+      const fresh = normalize(data.fresh || []);
+      const community = normalize(data.community || []);
 
-return () => window.removeEventListener('resize', handleResize);
+      LANDING_API_CACHE = {
+        universal,
+        fresh,
+        community
+      };
+
+      setUniversalApis(universal);
+      setFreshApis(fresh);
+      setCommunityApis(community);
+
+      setTop3Ids(
+        [...community]
+          .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+          .slice(0, 3)
+          .map(a => a.id)
+      );
+
+      setIsLoading(false);
+
+    } catch (e) {
+      console.error("LandingPage fetch failed", e);
+      setIsLoading(false);
+    }
+  })();
+
+  return () => window.removeEventListener("resize", handleResize);
+
 }, []);
 
 const updateLandingUpvotes = (apiId: string, delta: number) => {
