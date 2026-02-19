@@ -61,7 +61,16 @@ router.get('/mine', verify, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const includePaused = req.query.includePaused === 'true';
-    const filter = includePaused ? {} : { status: 'active' };
+
+    // 🔥 FIXED FILTER
+    const filter = includePaused
+      ? {}
+      : {
+          $or: [
+            { status: 'active' },
+            { status: { $exists: false } }
+          ]
+        };
 
     // 👇 pagination params
     const page = parseInt(req.query.page) || 1;
