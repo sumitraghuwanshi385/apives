@@ -34,19 +34,18 @@ app.get("/api/landing", async (req, res) => {
 
     const [universal, fresh, community] = await Promise.all([
 
-      // 🔥 Universal (6 random active APIs)
+      // 🔥 Universal (6 random)
       Api.aggregate([
-        { $match: { status: { $ne: "paused" } } },
         { $sample: { size: 6 } }
       ]),
 
       // 🔥 Fresh (latest 3)
-      Api.find({ status: { $ne: "paused" } })
+      Api.find({})
         .sort({ createdAt: -1 })
         .limit(3),
 
       // 🔥 Community (most liked 3)
-      Api.find({ status: { $ne: "paused" } })
+      Api.find({})
         .sort({ upvotes: -1 })
         .limit(3)
     ]);
@@ -62,7 +61,6 @@ app.get("/api/landing", async (req, res) => {
     res.status(500).json({ error: "Landing fetch failed" });
   }
 });
-
 // ================= OTHER ROUTES =================
 const authRoutes = require("./routes/auth");
 const apiRoutes = require("./routes/apis");
