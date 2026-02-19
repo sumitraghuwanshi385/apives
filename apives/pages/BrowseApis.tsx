@@ -121,6 +121,16 @@ if (reset) {
     setHasMore(pageNumber < data.totalPages);
     setPage(pageNumber);
 
+// 🔥 Fetch real top 3 most liked APIs (only first page)
+if (pageNumber === 1) {
+  const rankRes = await fetch(
+    "https://apives.onrender.com/api/community?page=1&limit=3"
+  );
+  const rankData = await rankRes.json();
+
+  setTopIds(rankData.apis.map((a: any) => a._id));
+}
+
     setIsLoading(false);
 
   } catch (err) {
@@ -198,7 +208,21 @@ if (reset) {
 
         {/* SEARCH + FILTER UI */}
 <div className="max-w-2xl mx-auto mb-8 relative px-2">
-  <div className="flex items-center bg-black/50 border border-white/10 rounded-full px-3 py-2 shadow-xl">
+
+  <div className="
+    relative
+    flex items-center
+    bg-black/50
+    border border-white/10
+    rounded-full
+    px-4 md:px-6
+    py-2 md:py-3
+    shadow-xl
+  ">
+
+    {/* Side Accent Lines (Desktop Only) */}
+    <div className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 h-6 w-[1px] bg-mora-500/30" />
+    <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 h-6 w-[1px] bg-mora-500/30" />
 
     {/* SEARCH ICON */}
     <Search
@@ -212,7 +236,7 @@ if (reset) {
       placeholder="Find APIs..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
-      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-xs"
+      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-xs md:text-sm"
     />
 
     {/* FILTER BUTTON */}
@@ -227,6 +251,8 @@ if (reset) {
       Filters
     </button>
   </div>
+</div>
+
 
   {/* FILTER PANEL */}
   {showFilters && (
@@ -308,18 +334,19 @@ if (reset) {
               ))}
             </div>
 
-            {isLoading && (
-  <div className="flex flex-col items-center justify-center py-10 gap-3">
+           {/* GLOBAL LOADER */}
+{isLoading && (
+  <div className="w-full flex justify-center py-12">
+    <div className="flex flex-col items-center gap-3">
+      <div className="relative w-10 h-10">
+        <div className="absolute inset-0 rounded-full border border-mora-500/20 animate-ping"></div>
+        <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin"></div>
+      </div>
 
-    <div className="relative w-8 h-8">
-      <div className="absolute inset-0 rounded-full border border-mora-500/20 animate-ping"></div>
-      <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin"></div>
+      <p className="text-mora-400 text-[10px] uppercase tracking-[0.3em]">
+        Syncing APIs
+      </p>
     </div>
-
-    <p className="text-mora-400 text-[10px] uppercase tracking-[0.3em]">
-      Syncing Nodes
-    </p>
-
   </div>
 )}
 
