@@ -78,17 +78,26 @@ export default function BuildChatbots() {
   useEffect(() => {
   (async () => {
     try {
-      // ❌ removed setLoading(true)
+      // 1️⃣ Get usecase first
+      const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
 
-      const [apisRes, usecaseRes] = await Promise.all([
-      fetch("https://apives.onrender.com/api/apis?page=1&limit=20")
-          .then(r => r.json()),
-        apiService.getUsecaseBySlug("chatbots")
-      ]);
+      if (!usecaseRes?.curatedApiIds?.length) {
+        setLoading(false);
+        return;
+      }
 
-      const list = Array.isArray(apisRes.apis)
-        ? apisRes.apis
-        : [];
+      const ids = usecaseRes.curatedApiIds.map((a: any) =>
+        typeof a === "string" ? a : a._id
+      );
+
+      setSelectedIds(ids);
+
+      // 2️⃣ Fetch ONLY required APIs
+      const res = await fetch(
+        `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+      ).then(r => r.json());
+
+      const list = Array.isArray(res.apis) ? res.apis : [];
 
       const normalized = list.map((a: any) => ({
         ...a,
@@ -96,13 +105,6 @@ export default function BuildChatbots() {
       }));
 
       setAllApis(normalized);
-
-      if (usecaseRes?.curatedApiIds) {
-        const ids = usecaseRes.curatedApiIds.map((a: any) =>
-          typeof a === "string" ? a : a._id
-        );
-        setSelectedIds(ids);
-      }
 
     } catch (err) {
       console.error("Chatbot load failed", err);
