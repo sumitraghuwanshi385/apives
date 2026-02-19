@@ -18,12 +18,13 @@ const isAdmin = () => {
 };
 
 /* ===============================
-   STATIC OPERATIONAL INSIGHT
+   STATIC DATA
 ================================ */
 
 const INSIGHT_DATA = [
   {
-    title: "Microsoft Azure OpenAI - Reliability, Quotas & Production Limits",
+    title:
+      "Microsoft Azure OpenAI - Reliability, Quotas & Production Limits",
     url: "https://learn.microsoft.com/en-us/azure/ai-services/openai/overview",
     description:
       "Explains quotas, throttling, retries, monitoring and enterprise-grade usage for real production environments."
@@ -46,20 +47,20 @@ const YOUTUBE_DATA = [
   {
     title: "How ChatGPT Works & What is RAG",
     url: "https://youtu.be/hYZKrPOyEYk",
-description:
-      "Explains how modern chatbots combine LLMs with external data sources, why pure prompting is not enough, and how RAG improves accuracy in production systems."
+    description:
+      "Explains how modern chatbots combine LLMs with external data sources and why RAG improves production accuracy."
   },
   {
     title: "Building a Production Chatbot with RAG",
     url: "https://youtu.be/XctooiH0moI",
-description:
-      "Walks through a real chatbot architecture including embeddings, vector search, context limits, retries, and response validation. Focuses on engineering decisions, not demos."
+    description:
+      "Walkthrough of embeddings, vector search, context limits, retries, and validation."
   },
   {
     title: "Building Reliable AI Systems",
     url: "https://www.youtube.com/watch?v=9vM4p9NN0Ts",
-description:
-      "A deep dive into why AI systems fail in production and how monitoring, fallback logic, and system design matter more than model quality."
+    description:
+      "Deep dive into monitoring, fallback logic, and production reliability."
   }
 ];
 
@@ -68,54 +69,52 @@ export default function BuildChatbots() {
 
   const [allApis, setAllApis] = useState<ApiListing[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [visibleCount, setVisibleCount] = useState(3);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   /* ===============================
-     LOAD APIs + USECASE
+     FAST LOAD (Parallel)
   ============================== */
   useEffect(() => {
-  (async () => {
-    try {
-      setLoading(true);
+    (async () => {
+      try {
+        setLoading(true);
 
-      // 🔥 Force load first 100 APIs (admin dropdown ke liye enough)
-      const res = await fetch(
-        "https://apives.onrender.com/api/apis?page=1&limit=100&includePaused=true"
-      );
+        const [apisRes, usecaseRes] = await Promise.all([
+          fetch(
+            "https://apives.onrender.com/api/apis?page=1&limit=100&includePaused=true"
+          ).then(r => r.json()),
+          apiService.getUsecaseBySlug("chatbots")
+        ]);
 
-      const data = await res.json();
+        const list = Array.isArray(apisRes.apis)
+          ? apisRes.apis
+          : [];
 
-      const list = Array.isArray(data.apis) ? data.apis : [];
+        const normalized = list.map((a: any) => ({
+          ...a,
+          id: a._id
+        }));
 
-      const normalized = list.map((a: any) => ({
-        ...a,
-        id: a._id
-      }));
+        setAllApis(normalized);
 
-      setAllApis(normalized);
+        if (usecaseRes?.curatedApiIds) {
+          const ids = usecaseRes.curatedApiIds.map((a: any) =>
+            typeof a === "string" ? a : a._id
+          );
+          setSelectedIds(ids);
+        }
 
-      // Load curated
-      const uc = await apiService.getUsecaseBySlug("chatbots");
-
-      if (uc?.curatedApiIds) {
-        const ids = uc.curatedApiIds.map((a: any) =>
-          typeof a === "string" ? a : a._id
-        );
-        setSelectedIds(ids);
+      } catch (err) {
+        console.error("Chatbot load failed", err);
+      } finally {
+        setLoading(false);
       }
-
-    } catch (err) {
-      console.error("Chatbot load failed", err);
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, []);
+    })();
+  }, []);
 
   /* ===============================
-     SAVE SELECTION
+     SAVE CURATED
   ============================== */
   const saveSelection = async () => {
     try {
@@ -124,7 +123,7 @@ export default function BuildChatbots() {
       });
       alert("Selection Saved ✅");
       setDropdownOpen(false);
-    } catch (err) {
+    } catch {
       alert("Save Failed ❌");
     }
   };
@@ -134,9 +133,17 @@ export default function BuildChatbots() {
   );
 
   /* ===============================
-     YOUTUBE PREVIEW FIX
+     YOUTUBE PREVIEW
   ============================== */
-  const YouTubePreview = ({ url, title }: { url: string; title: string }) => {
+  const YouTubePreview = ({
+    url,
+    title,
+    description
+  }: {
+    url: string;
+    title: string;
+    description: string;
+  }) => {
     let videoId = "";
 
     try {
@@ -156,18 +163,16 @@ export default function BuildChatbots() {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-4 bg-green-500/5 border border-green-500/30 rounded-xl p-3 hover:bg-green-500/10 transition"
+        className="flex flex-col bg-green-500/5 border border-green-500/30 rounded-xl p-4 hover:bg-green-500/10 transition"
       >
         <img
           src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-          alt=""
-          className="w-40 h-24 rounded-lg object-cover"
+          className="w-full h-40 object-cover rounded-lg mb-3"
           loading="lazy"
+          alt=""
         />
-        <div>
-          <p className="text-sm font-medium text-white">{title}</p>
-          <p className="text-xs text-green-300 mt-1">YouTube Video</p>
-        </div>
+        <p className="text-white font-semibold text-sm">{title}</p>
+        <p className="text-xs text-slate-400 mt-1">{description}</p>
       </a>
     );
   };
@@ -235,89 +240,91 @@ export default function BuildChatbots() {
       </div>
 {/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
 
-<div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">  {/* SECTION 1 */}
-
-  <div className="flex flex-col md:flex-row items-center">  
-    <div className="md:w-1/2 text-center md:text-left">  
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">  
-        Production Architecture Essentials.  
-      </h2>  
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">  
-        Every serious AI chatbot must handle MVP readiness, scale safety,  
-        production reliability, stable latency, predictable token economics,  
-        and developer-friendly tooling before going live.  
-      </p>  
-    </div>  
-  </div>  {/* SECTION 2 */}
-
-  <div className="flex flex-col md:flex-row-reverse items-center">  
-    <div className="md:w-1/2 text-center md:text-right">  
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">  
-        Performance & Cost Intelligence.  
-      </h2>  
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:ml-auto">  
-        Modern chatbots are infrastructure systems, not prompts. They require  
-        memory orchestration, retries, fallback handling, streaming UX,  
-        and disciplined cost controls to maintain predictable latency  
-        and long-term profitability.  
-      </p>  
-    </div>  
-  </div>  {/* SECTION 3 */}
-
-  <div className="flex flex-col md:flex-row items-center">  
-    <div className="md:w-1/2 text-center md:text-left">  
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">  
-        API Selection Defines Success.  
-      </h2>  
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">  
-        Choosing the right AI API defines scalability, reliability,  
-        and long-term system health. Poor decisions introduce hidden  
-        costs, unstable latency, and fragile systems that fail  
-        under real user load.  
-      </p>  
-    </div>  
-  </div> 
- </div>  
-{/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12"> 
+<div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">  {/* SECTION 1 */}    <div className="flex flex-col md:flex-row items-center">    
+    <div className="md:w-1/2 text-center md:text-left">    
+      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">    
+        Production Architecture Essentials.    
+      </h2>    
+      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">    
+        Every serious AI chatbot must handle MVP readiness, scale safety,    
+        production reliability, stable latency, predictable token economics,    
+        and developer-friendly tooling before going live.    
+      </p>    
+    </div>    
+  </div>  {/* SECTION 2 */}    <div className="flex flex-col md:flex-row-reverse items-center">    
+    <div className="md:w-1/2 text-center md:text-right">    
+      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">    
+        Performance & Cost Intelligence.    
+      </h2>    
+      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:ml-auto">    
+        Modern chatbots are infrastructure systems, not prompts. They require    
+        memory orchestration, retries, fallback handling, streaming UX,    
+        and disciplined cost controls to maintain predictable latency    
+        and long-term profitability.    
+      </p>    
+    </div>    
+  </div>  {/* SECTION 3 */}    <div className="flex flex-col md:flex-row items-center">    
+    <div className="md:w-1/2 text-center md:text-left">    
+      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">    
+        API Selection Defines Success.    
+      </h2>    
+      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">    
+        Choosing the right AI API defines scalability, reliability,    
+        and long-term system health. Poor decisions introduce hidden    
+        costs, unstable latency, and fragile systems that fail    
+        under real user load.    
+      </p>    
+    </div>    
+  </div>   
+ </div>    
+{/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12">   {/*
 
       {/* OPERATIONAL INSIGHT */}
       <div className="max-w-6xl mx-auto mb-20">
         <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-6 backdrop-blur-xl">
 
-          <p className="text-xs uppercase text-green-400 mb-6 flex items-center gap-2 tracking-widest">
+          <p className="text-xs uppercase text-green-400 mb-8 flex items-center gap-2 tracking-widest">
             <Radio size={14} /> Operational Insight
           </p>
 
-          {INSIGHT_DATA.map((item, i) => {
-            const domain = new URL(item.url).hostname;
-            return (
-              <div key={i} className="mb-6">
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-xs text-green-300 hover:bg-green-500/20 transition"
-                >
-                  <img
-                    src={`https://www.google.com/s2/favicons?sz=64&domain_url=${item.url}`}
-                    className="w-4 h-4 rounded-full bg-white"
-                    alt=""
-                  />
-                  {domain}
-                </a>
-                <p className="text-sm text-slate-300 mt-2">{item.description}</p>
-              </div>
-            );
-          })}
+          {INSIGHT_DATA.map((item, i) => (
+            <div key={i} className="mb-8">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-green-300 font-semibold hover:underline"
+              >
+                {item.title}
+              </a>
+              <p className="text-sm text-slate-400 mt-2">
+                {item.description}
+              </p>
+            </div>
+          ))}
 
-          <div className="space-y-4 mt-10">
+          <div className="grid md:grid-cols-3 gap-6 mt-10">
             {YOUTUBE_DATA.map((vid, i) => (
-              <YouTubePreview key={i} url={vid.url} title={vid.title} />
+              <YouTubePreview
+                key={i}
+                url={vid.url}
+                title={vid.title}
+                description={vid.description}
+              />
             ))}
           </div>
 
-          <div className="mt-10 text-sm text-slate-400">
-Building a chatbot that works in production is less about choosing the “best model” and more about operational discipline. Real failures come from silent API errors, runaway token costs, missing retries, and lack of observability. Teams that treat chatbots as infrastructure systems rather than demos are the ones that ship reliable AI products.
+          <div className="mt-12 border-t border-green-500/20 pt-6">
+            <h4 className="text-green-400 font-semibold mb-3">
+              Why This Matters
+            </h4>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Building a chatbot that works in production is less about choosing the “best model”
+              and more about operational discipline. Real failures come from silent API errors,
+              runaway token costs, missing retries, and lack of observability.
+              Teams that treat chatbots as infrastructure systems rather than demos
+              are the ones that ship reliable AI products.
+            </p>
           </div>
         </div>
       </div>
@@ -338,24 +345,11 @@ Building a chatbot that works in production is less about choosing the “best m
           Loading chatbots...
         </div>
       ) : (
-        <>
-          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {curatedApis.slice(0, visibleCount).map(api => (
-              <ApiCard key={api.id} api={api} topIds={[]} />
-            ))}
-          </div>
-
-          {visibleCount < curatedApis.length && (
-            <div className="flex justify-center mb-24">
-              <button
-                onClick={() => setVisibleCount(prev => prev + 3)}
-                className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
-              >
-                Load More
-              </button>
-            </div>
-          )}
-        </>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+          {curatedApis.map(api => (
+            <ApiCard key={api.id} api={api} topIds={[]} />
+          ))}
+        </div>
       )}
     </div>
   );
