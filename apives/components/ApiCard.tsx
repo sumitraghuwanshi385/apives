@@ -343,11 +343,11 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         </div>
       )}
 
-      <p className="text-[13px] md:text-sm text-slate-400 mb-6 line-clamp-4 font-light">
+      <p className="text-[13px] md:text-sm text-slate-400 mb-2 line-clamp-4 font-light">
         {api.description}
       </p>
 
-     <div className="relative pt-2 flex items-center justify-between">
+     <div className="relative pt-1 flex items-center justify-between">
 
 <div  
   className="  
@@ -383,7 +383,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
     </button>
   </div>
 
-<div className="flex items-center gap-2">
+<div className="flex items-center gap-4">
 
   {/* 🌍 Icon-only Visit */}
   {api.externalUrl && (
