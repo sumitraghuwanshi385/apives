@@ -57,10 +57,10 @@ const YOUTUBE_DATA = [
       "Walkthrough of embeddings, vector search, context limits, retries, and validation."
   },
   {
-    title: "Building Reliable AI Systems",
-    url: "https://www.youtube.com/watch?v=9vM4p9NN0Ts",
+    title: "Build and Deploy an Al Chatbot Using LLMs, Python, RunPod, Hugging Face, and React Native",
+    url: "https://youtu.be/KyQKTJhSIak?si=fUIjyc3jAn88G3yZ",
     description:
-      "Deep dive into monitoring, fallback logic, and production reliability."
+      "Learn how to deploy Large Language Models (LLMs) and custom APIs using RunPod, and build a full React Native app that connects to Firebase and the RunPod endpoints. By the end, you’ll have a fully functional chatbot app and level up your AI, development, and deployment skills."
   }
 ];
 
