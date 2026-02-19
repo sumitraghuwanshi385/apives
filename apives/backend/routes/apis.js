@@ -60,21 +60,27 @@ router.get('/mine', verify, async (req, res) => {
 // ✅ GET ALL APIS (Public) — PAGINATED
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 12, includePaused, ids } = req.query;
 
-    // 🔥 1️⃣ IF IDS PROVIDED → RETURN ONLY THOSE
-    if (ids) {
-      const idArray = ids.split(',');
+    // ✅ IDS SUPPORT
+    if (req.query.ids) {
+      const ids = req.query.ids.split(',');
+
+      const objectIds = ids
+        .filter(id => mongoose.Types.ObjectId.isValid(id))
+        .map(id => new mongoose.Types.ObjectId(id));
 
       const apis = await ApiListing.find({
-        _id: { $in: idArray }
-      })
-      .select("name category pricing provider upvotes latency gallery verified createdAt externalUrl description");
+        _id: { $in: objectIds }
+      }).select(
+        "name category pricing provider upvotes latency gallery verified createdAt externalUrl description"
+      );
 
       return res.json({ apis });
     }
 
-    // 🔥 2️⃣ NORMAL PAGINATION (BROWSE PAGE SAFE)
+    // 🔥 NORMAL PAGINATION (Browse Page Safe)
+
+    const { page = 1, limit = 12, includePaused } = req.query;
 
     const filter = includePaused === 'true'
       ? {}
@@ -93,7 +99,9 @@ router.get('/', async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limitNumber)
-      .select("name category pricing provider upvotes latency gallery verified createdAt externalUrl description");
+      .select(
+        "name category pricing provider upvotes latency gallery verified createdAt externalUrl description"
+      );
 
     const total = await ApiListing.countDocuments(filter);
 
@@ -105,10 +113,11 @@ router.get('/', async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ GET ALL PAGINATED Error:", err);
+    console.error("❌ GET ALL Error:", err);
     return res.status(500).json({ message: err.message });
   }
 });
+
 // ✅ DELETE API (Protected)  ← FIXED
 router.delete('/:id', verify, async (req, res) => {
   try {
