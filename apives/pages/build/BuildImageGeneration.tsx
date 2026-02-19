@@ -83,50 +83,78 @@ const YOUTUBE_DATA = [
 export default function BuildImageGeneration() {
   const admin = isAdmin();
 
-  const [allApis, setAllApis] = useState<ApiListing[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [curatedApis, setCuratedApis] = useState<ApiListing[]>([]);
+const [allApis, setAllApis] = useState<ApiListing[]>([]);
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
+const [dropdownOpen, setDropdownOpen] = useState(false);
+const [loading, setLoading] = useState(true);
 
   /* ===============================
-     FAST LOAD (IDS BASED)
+     FAST LOAD (Parallel)
   ============================== */
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
+  (async () => {
+    try {
+      const usecaseRes = await apiService.getUsecaseBySlug("image-generation");
 
-        const uc = await apiService.getUsecaseBySlug("image-generation");
+      const ids =
+        usecaseRes?.curatedApiIds?.map((a: any) =>
+          typeof a === "string" ? a : a._id
+        ) || [];
 
-        if (uc?.curatedApiIds?.length) {
-          const ids = uc.curatedApiIds.map((a: any) =>
-            typeof a === "string" ? a : a._id
-          );
+      setSelectedIds(ids);
 
-          setSelectedIds(ids);
+      if (ids.length > 0) {
+        const res = await fetch(
+          `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+        ).then(r => r.json());
 
-          const res = await fetch(
-            `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
-          ).then(r => r.json());
+        const list = res?.apis || [];
 
-          const normalized = res.apis.map((a: any) => ({
-            ...a,
-            id: a._id
-          }));
+        const normalized = list.map((a: any) => ({
+          ...a,
+          id: a._id
+        }));
 
-          setAllApis(normalized);
-        }
-
-      } catch (err) {
-        console.error("Image page load failed", err);
-      } finally {
-        setLoading(false);
+        setCuratedApis(normalized);
+      } else {
+        setCuratedApis([]);
       }
-    })();
-  }, []);
+
+    } catch (err) {
+      console.error("Image-Generation load failed", err);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
+
+useEffect(() => {
+  if (!dropdownOpen || !admin) return;
+
+  (async () => {
+    try {
+      const res = await fetch(
+        "https://apives.onrender.com/api/apis?page=1&limit=500&includePaused=true"
+      ).then(r => r.json());
+
+      const list = res?.apis || [];
+
+      const normalized = list.map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
+
+      setAllApis(normalized);
+
+    } catch (err) {
+      console.error("Admin full fetch failed", err);
+    }
+  })();
+}, [dropdownOpen, admin]);
 
   /* ===============================
-     SAVE SELECTION
+     SAVE CURATED
   ============================== */
   const saveSelection = async () => {
     try {
@@ -139,7 +167,6 @@ export default function BuildImageGeneration() {
       alert("Save Failed ❌");
     }
   };
-
   /* ===============================
      YOUTUBE PREVIEW
   ============================== */
