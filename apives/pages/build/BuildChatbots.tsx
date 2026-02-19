@@ -1,188 +1,68 @@
+
 import React, { useEffect, useState } from "react";
 import { apiService } from "../../services/apiClient";
 import { ApiListing } from "../../types";
 import ApiCard from "../../components/ApiCard";
 import { BackButton } from "../../components/BackButton";
-import { ChevronDown, Check, Radio, Layers } from "lucide-react";
+import { Layers, Radio } from "lucide-react";
 
-const CHATBOT_KEYWORDS = ["chat", "llm", "assistant", "ai", "conversation"];
+/* ===============================
+   STATIC OPERATIONAL INSIGHT
+================================ */
 
-const isAdmin = () => {
-  try {
-    const u = JSON.parse(localStorage.getItem("mora_user") || "null");
-    return u?.email === "beatslevelone@gmail.com";
-  } catch {
-    return false;
-  }
-};
+const INSIGHT_CONTENT = `
+Official Documentation & Engineering Guides:-
+
+• Microsoft Azure OpenAI - Reliability, Quotas & Production Limits
+https://learn.microsoft.com/en-us/azure/ai-services/openai/overview
+
+This documentation explains how large language models are deployed in real production environments with quotas, throttling, retries, and monitoring.
+
+• Anthropic — Prompt Engineering & Safety Guardrails
+https://docs.anthropic.com/claude/docs/prompt-engineering
+
+Covers structured prompting, output constraints, and guardrail techniques to reduce hallucinations.
+
+• LangSmith — LLM Observability & Tracing
+https://docs.smith.langchain.com/
+
+Shows how real chatbot systems are monitored in production.
+
+Video References (Real Chatbot Architecture):-
+
+• How ChatGPT Works & What is RAG
+https://youtu.be/hYZKrPOyEYk
+
+• Building a Production Chatbot with RAG
+https://youtu.be/XctooiH0moI
+
+• Building Reliable AI Systems
+https://www.youtube.com/watch?v=9vM4p9NN0Ts
+
+Why This Matters:-
+
+Building a chatbot that works in production is less about choosing the best model and more about operational discipline.
+`;
+
+/* ===============================
+   PAGE
+================================ */
 
 export default function BuildChatbots() {
-  const admin = isAdmin();
-
   const [allApis, setAllApis] = useState<ApiListing[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [note, setNote] = useState("");
-  const [noteDraft, setNoteDraft] = useState("");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3);
   const [loading, setLoading] = useState(true);
 
   /* ===============================
-     LOADER
-  ============================== */
-  const ChatbotLoader = () => (
-    <div className="flex flex-col items-center justify-center mt-24 mb-32 gap-3">
-      <div className="relative w-10 h-10">
-        <div className="absolute inset-0 rounded-full border border-mora-500/30 animate-ping" />
-        <div className="absolute inset-0 rounded-full border border-mora-500 border-t-transparent animate-spin" />
-      </div>
-      <p className="text-xs tracking-widest text-slate-400">
-        Loading chatbots…
-      </p>
-    </div>
-  );
-
-  /* ===============================
-     YOUTUBE PREVIEW
-  ============================== */
-  const YouTubePreview = ({ url }: { url: string }) => {
-    let videoId = "";
-
-    try {
-      if (url.includes("watch")) {
-        videoId = new URL(url).searchParams.get("v") || "";
-      } else {
-        const lastPart = url.split("/").pop() || "";
-        videoId = lastPart.split("?")[0];
-      }
-    } catch {
-      return null;
-    }
-
-    if (!videoId) return null;
-
-    return (
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group flex items-center gap-3 bg-green-500/5 border border-green-500/30 rounded-xl p-2 hover:bg-green-500/10 transition"
-      >
-        <div className="relative shrink-0">
-          <img
-            src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
-            className="w-32 h-20 object-cover rounded-lg"
-            loading="lazy"
-            alt="YouTube preview"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <p className="text-sm text-white font-medium">
-            YouTube Video
-          </p>
-          <p className="text-xs text-slate-400">
-            Click to watch
-          </p>
-        </div>
-      </a>
-    );
-  };
-
-  /* ===============================
-     INSIGHT RENDERER
-  ============================== */
-  const InsightRenderer = ({ text }: { text: string }) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const youtubeRegex =
-      /(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s]+)/;
-
-    const paragraphs = text.split("\n");
-
-    return (
-      <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
-        {paragraphs.map((para, i) => {
-          if (!para.trim()) {
-            return <div key={i} className="h-4" />;
-          }
-
-          const urls = para.match(urlRegex);
-
-          if (!urls) {
-            return <p key={i}>{para}</p>;
-          }
-
-          return (
-            <div key={i} className="space-y-3">
-              <p>{para.replace(urlRegex, "").trim()}</p>
-
-              {urls.map((url, idx) => {
-                if (youtubeRegex.test(url)) {
-                  return <YouTubePreview key={idx} url={url} />;
-                }
-
-                let domain = "";
-                try {
-                  domain = new URL(url).hostname.replace("www.", "");
-                } catch {
-                  return null;
-                }
-
-                const label = domain.includes("apives")
-                  ? "Apives"
-                  : domain;
-
-                return (
-                  <a
-                    key={idx}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-xs text-green-300 hover:bg-green-500/20 transition"
-                  >
-                    <img
-                      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
-                      alt=""
-                      className="w-4 h-4 rounded-full bg-white"
-                    />
-                    <span>{label}</span>
-                  </a>
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
-  /* ===============================
-     INITIAL LOAD
+     LOAD ALL APIS
   ============================== */
   useEffect(() => {
     (async () => {
       try {
-        // 1️⃣ Load all APIs
         const res = await apiService.getAllApis();
         const list = Array.isArray(res) ? res : res?.data || [];
-        const db = list.map(a => ({ ...a, id: a._id }));
+        const db = list.map((a: any) => ({ ...a, id: a._id }));
         setAllApis(db);
-
-        // 2️⃣ Load usecase
-        const uc = await apiService.getUsecaseBySlug("chatbots");
-
-        if (uc) {
-          setNote(uc.operationalInsight || "");
-          setNoteDraft(uc.operationalInsight || "");
-
-          // 🔥 IMPORTANT FIX
-          if (uc.curatedApiIds) {
-            const ids = uc.curatedApiIds.map((api: any) =>
-              typeof api === "string" ? api : api._id
-            );
-            setSelectedIds(ids);
-          }
-        }
-
       } catch (err) {
         console.error("Chatbot load failed", err);
       } finally {
@@ -191,259 +71,117 @@ export default function BuildChatbots() {
     })();
   }, []);
 
-  // ===============================
-  // FILTER CHATBOT APIs
-  // ===============================
+  /* ===============================
+     FILTER CHATBOT APIS
+  ============================== */
   const chatbotApis = allApis.filter(api => {
     const text = `${api.name} ${api.description || ""}`.toLowerCase();
-    return CHATBOT_KEYWORDS.some(k => text.includes(k));
+    return (
+      text.includes("chat") ||
+      text.includes("llm") ||
+      text.includes("assistant") ||
+      text.includes("ai")
+    );
   });
 
-  const visibleApis = chatbotApis.filter(api =>
-    selectedIds.includes(api.id)
-  );
+  const visibleApis = chatbotApis.slice(0, visibleCount);
 
-  // ===============================
-  // TOGGLE (NO AUTO SAVE)
-  // ===============================
-  const toggleApi = (id: string) => {
-    setSelectedIds(prev =>
-      prev.includes(id)
-        ? prev.filter(x => x !== id)
-        : [...prev, id]
+  /* ===============================
+     SIMPLE LINK PARSER
+  ============================== */
+  const renderInsight = () => {
+    const lines = INSIGHT_CONTENT.split("\n");
+
+    return (
+      <div className="space-y-4 text-sm text-slate-300 leading-relaxed">
+        {lines.map((line, i) => {
+          if (line.startsWith("http")) {
+            const domain = new URL(line).hostname.replace("www.", "");
+            return (
+              <a
+                key={i}
+                href={line}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/30 text-xs text-green-300 hover:bg-green-500/20 transition"
+              >
+                {domain}
+              </a>
+            );
+          }
+
+          return <p key={i}>{line}</p>;
+        })}
+      </div>
     );
   };
 
-  // ===============================
-  // SAVE SELECTION BUTTON
-  // ===============================
-  const saveSelection = async () => {
-    try {
-      const updated = await apiService.updateUsecase("chatbots", {
-        operationalInsight: noteDraft,
-        curatedApiIds: selectedIds
-      });
-
-      setNote(updated.operationalInsight || "");
-      setNoteDraft(updated.operationalInsight || "");
-
-      if (updated.curatedApiIds) {
-        const ids = updated.curatedApiIds.map((api: any) =>
-          typeof api === "string" ? api : api._id
-        );
-        setSelectedIds(ids);
-      }
-
-      alert("Selection Saved ✅");
-      setDropdownOpen(false);
-
-    } catch (err) {
-      console.error("Save failed", err);
-      alert("Save failed ❌");
-    }
-  };
-
-  // ===============================
-  // SAVE NOTE
-  // ===============================
-  const saveNote = async () => {
-    try {
-      const updated = await apiService.updateUsecase("chatbots", {
-        operationalInsight: noteDraft,
-        curatedApiIds: selectedIds
-      });
-
-      setNote(updated.operationalInsight || "");
-      alert("Operational Insight Updated ✅");
-
-    } catch (err) {
-      console.error("Note save failed", err);
-    }
-  };
-
   return (
-    <div className="relative z-0 min-h-screen bg-black text-white pt-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto mt-6 mb-6 flex justify-between">
+    <div className="min-h-screen bg-black text-white pt-20 px-4 md:px-8">
+      <div className="max-w-7xl mx-auto mb-6">
         <BackButton />
+      </div>
 
-  {admin && (
-    <div className="relative">
-      <button
-        onClick={() => setDropdownOpen(v => !v)}
-        className="px-4 py-2 bg-white/10 rounded-full text-xs uppercase"
-      >
-        Select APIs <ChevronDown size={14} />
-      </button>
-
-      {dropdownOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-black border border-white/10 rounded-xl p-3 z-50">
-
-          {chatbotApis.map(api => (
-            <button
-              key={api.id}
-              onClick={() =>
-                setSelectedIds(prev =>
-                  prev.includes(api.id)
-                    ? prev.filter(x => x !== api.id)
-                    : [...prev, api.id]
-                )
-              }
-              className={`w-full flex justify-between px-3 py-2 rounded-lg text-xs ${
-                selectedIds.includes(api.id)
-                  ? "bg-mora-500 text-black"
-                  : "hover:bg-white/5 text-gray-400"
-              }`}
-            >
-              {api.name}
-              {selectedIds.includes(api.id) && <Check size={14} />}
-            </button>
-          ))}
-
-          <button
-            onClick={async () => {
-              await apiService.updateUsecase("chatbots", {
-                operationalInsight: noteDraft,
-                curatedApiIds: selectedIds
-              });
-              setDropdownOpen(false);
-              alert("Selection Saved ✅");
-            }}
-            className="w-full mt-3 bg-mora-500 text-black py-2 rounded-full text-xs font-bold"
-          >
-            Save Selection
-          </button>
-
-        </div>
-      )}
-    </div>
-  )}
-</div>
-
-      <div className="max-w-4xl mx-auto text-center mb-8">
+      {/* HEADER */}
+      <div className="max-w-4xl mx-auto text-center mb-12">
         <h1 className="text-3xl md:text-6xl font-display font-bold">
           AI Chatbots
         </h1>
-<p className="mt-3 text-slate-400 text-sm md:text-lg">  
-      Production-ready conversational AI systems built for real SaaS environments.  
-    </p>
+        <p className="mt-3 text-slate-400 text-sm md:text-lg">
+          Production-ready conversational AI systems built for real SaaS environments.
+        </p>
       </div>
 
-{/* ===== PRODUCTION ARCHITECTURE SECTIONS ===== */}
-<div className="max-w-6xl mx-auto mt-10 space-y-10 px-3">
+      {/* OPERATIONAL INSIGHT */}
+      <div className="max-w-6xl mx-auto mb-20">
+        <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-6 backdrop-blur-xl">
+          <p className="text-xs uppercase text-green-400 mb-4 flex items-center gap-2 tracking-widest">
+            <Radio size={14} /> Operational Insight
+          </p>
 
-  {/* SECTION 1 */}
-  <div className="flex flex-col md:flex-row items-center">
-    <div className="md:w-1/2 text-center md:text-left">
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-        Production Architecture Essentials.
-      </h2>
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">
-        Every serious AI chatbot must handle MVP readiness, scale safety,
-        production reliability, stable latency, predictable token economics,
-        and developer-friendly tooling before going live.
-      </p>
-    </div>
-  </div>
-
-  {/* SECTION 2 */}
-  <div className="flex flex-col md:flex-row-reverse items-center">
-    <div className="md:w-1/2 text-center md:text-right">
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-        Performance & Cost Intelligence.
-      </h2>
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:ml-auto">
-        Modern chatbots are infrastructure systems, not prompts. They require
-        memory orchestration, retries, fallback handling, streaming UX,
-        and disciplined cost controls to maintain predictable latency
-        and long-term profitability.
-      </p>
-    </div>
-  </div>
-
-  {/* SECTION 3 */}
-  <div className="flex flex-col md:flex-row items-center">
-    <div className="md:w-1/2 text-center md:text-left">
-      <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-tight leading-snug bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-        API Selection Defines Success.
-      </h2>
-      <p className="mt-2 text-slate-400 text-sm md:text-[15px] leading-relaxed max-w-[540px] mx-auto md:mx-0">
-        Choosing the right AI API defines scalability, reliability,
-        and long-term system health. Poor decisions introduce hidden
-        costs, unstable latency, and fragile systems that fail
-        under real user load.
-      </p>
-    </div>
-  </div>
-
-</div>
-{/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}
-
-<div className="mt-12">
-
-      {(note || admin) && (
-        <div className="max-w-7xl mx-auto mb-14 md:px-4">
-          <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-4">
-            <p className="text-xs uppercase text-green-400 mb-2 flex items-center gap-2">
-  <Radio size={14} className="text-green-400" />
-  Operational Insight
-            </p>
-
-            {admin ? (
-  <>
-    <textarea
-      value={noteDraft}
-      onChange={e => setNoteDraft(e.target.value)}
-      className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm mb-3"
-      rows={3}
-    />
-
-    <button
-      onClick={async () => {
-        await apiService.updateUsecase("chatbots", {
-          operationalInsight: noteDraft,
-          curatedApiIds: selectedIds
-        });
-        alert("Operational Insight Updated ✅");
-      }}
-      className="px-4 py-2 rounded-full bg-mora-500 text-black text-xs font-bold"
-    >
-      Update Insight
-    </button>
-  </>
-            ) : (
-              <InsightRenderer text={note} />
-            )}
-          </div>
+          {renderInsight()}
         </div>
-      )}
-</div>  
-{/* CURATED CHATBOT APIS HEADING */}  
-<div className="max-w-7xl mx-auto mb-6 px-1">  
-  <div className="flex items-center gap-2 mb-1">  
-    <Layers size={18} className="text-mora-500" />  
-    <h3 className="text-white font-bold text-lg">  
-      Curated Chatbot APIs  
-    </h3>  
-  </div>   
- <p className="text-xs text-slate-400 max-w-xl">  
-    Production-ready APIs selected for building scalable, reliable, real-world AI chatbots.  
-  </p>  
-</div>
+      </div>
+
+      {/* CURATED APIs */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Layers size={18} className="text-mora-500" />
+          <h3 className="text-white font-bold text-lg">
+            Curated Chatbot APIs
+          </h3>
+        </div>
+
+        <p className="text-xs text-slate-400 max-w-xl">
+          Production-ready APIs selected for building scalable, reliable AI chatbots.
+        </p>
+      </div>
 
       {loading ? (
-        <ChatbotLoader />
-      ) : (
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
-          {visibleApis.map(api => (
-            <ApiCard key={api._id} api={api} topIds={[]} />
-          ))}
+        <div className="flex justify-center py-20 text-slate-500">
+          Loading chatbots...
         </div>
+      ) : (
+        <>
+          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {visibleApis.map(api => (
+              <ApiCard key={api.id} api={api} topIds={[]} />
+            ))}
+          </div>
+
+          {/* LOAD MORE BUTTON */}
+          {visibleCount < chatbotApis.length && (
+            <div className="flex justify-center mb-24">
+              <button
+                onClick={() => setVisibleCount(prev => prev + 3)}
+                className="px-8 py-3 rounded-full bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95"
+              >
+                Load More
+              </button>
+            </div>
+          )}
+        </>
       )}
-{!loading && visibleApis.length === 0 && (
-  <p className="text-center text-slate-500 mt-16 text-sm">
-    No chatbot APIs selected yet.
-  </p>
-)}
     </div>
   );
 }
