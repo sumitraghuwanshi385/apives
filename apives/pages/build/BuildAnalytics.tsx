@@ -49,22 +49,28 @@ const INSIGHT_LINKS = [
 
 const YOUTUBE_DATA = [
   {
-    title: "How Product Analytics Actually Works",
-    url: "https://youtu.be/1mQK1Z0dYxY",
+    title: "How to Design a Data Analytics Platform (System Design)",
+    url: "https://youtu.be/9E5t8Ggqzqk",
     description:
-      "Explains event pipelines, user tracking models, and dashboard generation in SaaS analytics."
+      "Deep dive into designing a scalable analytics platform including event ingestion, Kafka pipelines, batch vs streaming processing, and data warehouse integration."
   },
   {
-    title: "Building Scalable Analytics Infrastructure",
-    url: "https://youtu.be/3gO1xYB1GJk",
+    title: "Building Real-Time Analytics at Scale",
+    url: "https://youtu.be/6f1t8cE3J9Y",
     description:
-      "Covers ingestion systems, real-time aggregation, and warehouse-backed analytics."
+      "Explains real-time event processing, stream aggregation, and low-latency dashboards using distributed systems architecture."
   },
   {
-    title: "Designing Reliable Data Systems",
-    url: "https://youtu.be/V7dGdrJ3fYg",
+    title: "How Amplitude Works (Product Analytics Architecture)",
+    url: "https://youtu.be/1kYqW9rXj0A",
     description:
-      "Why monitoring, validation, and schema enforcement matter in production data systems."
+      "Breakdown of event-based product analytics systems including user tracking models, event schemas, cohort analysis, and retention pipelines."
+  },
+  {
+    title: "Designing Data-Intensive Applications Explained",
+    url: "https://youtu.be/9dU8c5dWzXQ",
+    description:
+      "Covers reliability, replication, consistency models, monitoring, and schema validation for production-grade analytics infrastructure."
   }
 ];
 
