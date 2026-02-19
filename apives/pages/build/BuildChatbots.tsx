@@ -46,14 +46,20 @@ const YOUTUBE_DATA = [
   {
     title: "How ChatGPT Works & What is RAG",
     url: "https://youtu.be/hYZKrPOyEYk"
+description:
+      "Explains how modern chatbots combine LLMs with external data sources, why pure prompting is not enough, and how RAG improves accuracy in production systems."
   },
   {
     title: "Building a Production Chatbot with RAG",
     url: "https://youtu.be/XctooiH0moI"
+description:
+      "Walks through a real chatbot architecture including embeddings, vector search, context limits, retries, and response validation. Focuses on engineering decisions, not demos."
   },
   {
     title: "Building Reliable AI Systems",
     url: "https://www.youtube.com/watch?v=9vM4p9NN0Ts"
+description:
+      "A deep dive into why AI systems fail in production and how monitoring, fallback logic, and system design matter more than model quality."
   }
 ];
 
@@ -70,28 +76,43 @@ export default function BuildChatbots() {
      LOAD APIs + USECASE
   ============================== */
   useEffect(() => {
-    (async () => {
-      try {
-        const all = await apiService.getAllApis();
-        const list = Array.isArray(all) ? all : all?.data || [];
-        const normalized = list.map((a: any) => ({ ...a, id: a._id }));
-        setAllApis(normalized);
+  (async () => {
+    try {
+      setLoading(true);
 
-        const uc = await apiService.getUsecaseBySlug("chatbots");
+      // 🔥 Force load first 100 APIs (admin dropdown ke liye enough)
+      const res = await fetch(
+        "https://apives.onrender.com/api/apis?page=1&limit=100&includePaused=true"
+      );
 
-        if (uc?.curatedApiIds) {
-          const ids = uc.curatedApiIds.map((a: any) =>
-            typeof a === "string" ? a : a._id
-          );
-          setSelectedIds(ids);
-        }
-      } catch (err) {
-        console.error("Chatbot load failed", err);
-      } finally {
-        setLoading(false);
+      const data = await res.json();
+
+      const list = Array.isArray(data.apis) ? data.apis : [];
+
+      const normalized = list.map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
+
+      setAllApis(normalized);
+
+      // Load curated
+      const uc = await apiService.getUsecaseBySlug("chatbots");
+
+      if (uc?.curatedApiIds) {
+        const ids = uc.curatedApiIds.map((a: any) =>
+          typeof a === "string" ? a : a._id
+        );
+        setSelectedIds(ids);
       }
-    })();
-  }, []);
+
+    } catch (err) {
+      console.error("Chatbot load failed", err);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
 
   /* ===============================
      SAVE SELECTION
@@ -296,8 +317,7 @@ export default function BuildChatbots() {
           </div>
 
           <div className="mt-10 text-sm text-slate-400">
-            Building a chatbot that works in production requires operational discipline —
-            monitoring, retries, fallback logic, and cost control.
+Building a chatbot that works in production is less about choosing the “best model” and more about operational discipline. Real failures come from silent API errors, runaway token costs, missing retries, and lack of observability. Teams that treat chatbots as infrastructure systems rather than demos are the ones that ship reliable AI products.
           </div>
         </div>
       </div>
