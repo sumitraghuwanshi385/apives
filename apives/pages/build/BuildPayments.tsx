@@ -83,7 +83,7 @@ const [loading, setLoading] = useState(true);
   useEffect(() => {
   (async () => {
     try {
-      const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
+      const usecaseRes = await apiService.getUsecaseBySlug("payments");
 
       const ids =
         usecaseRes?.curatedApiIds?.map((a: any) =>
@@ -110,7 +110,7 @@ const [loading, setLoading] = useState(true);
       }
 
     } catch (err) {
-      console.error("Chatbot load failed", err);
+      console.error("Payments load failed", err);
     } finally {
       setLoading(false);
     }
@@ -146,7 +146,7 @@ useEffect(() => {
   ============================== */
   const saveSelection = async () => {
     try {
-      await apiService.updateUsecase("chatbots", {
+      await apiService.updateUsecase("payments", {
         curatedApiIds: selectedIds
       });
       alert("Selection Saved ✅");
