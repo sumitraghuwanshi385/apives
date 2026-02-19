@@ -76,42 +76,41 @@ export default function BuildChatbots() {
      FAST LOAD (Parallel)
   ============================== */
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
+  (async () => {
+    try {
+      // ❌ removed setLoading(true)
 
-        const [apisRes, usecaseRes] = await Promise.all([
-          fetch(
-            "https://apives.onrender.com/api/apis?page=1&limit=100&includePaused=true"
-          ).then(r => r.json()),
-          apiService.getUsecaseBySlug("chatbots")
-        ]);
+      const [apisRes, usecaseRes] = await Promise.all([
+        fetch("https://apives.onrender.com/api/apis?page=1&limit=100&includePaused=true")
+          .then(r => r.json()),
+        apiService.getUsecaseBySlug("chatbots")
+      ]);
 
-        const list = Array.isArray(apisRes.apis)
-          ? apisRes.apis
-          : [];
+      const list = Array.isArray(apisRes.apis)
+        ? apisRes.apis
+        : [];
 
-        const normalized = list.map((a: any) => ({
-          ...a,
-          id: a._id
-        }));
+      const normalized = list.map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
 
-        setAllApis(normalized);
+      setAllApis(normalized);
 
-        if (usecaseRes?.curatedApiIds) {
-          const ids = usecaseRes.curatedApiIds.map((a: any) =>
-            typeof a === "string" ? a : a._id
-          );
-          setSelectedIds(ids);
-        }
-
-      } catch (err) {
-        console.error("Chatbot load failed", err);
-      } finally {
-        setLoading(false);
+      if (usecaseRes?.curatedApiIds) {
+        const ids = usecaseRes.curatedApiIds.map((a: any) =>
+          typeof a === "string" ? a : a._id
+        );
+        setSelectedIds(ids);
       }
-    })();
-  }, []);
+
+    } catch (err) {
+      console.error("Chatbot load failed", err);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
 
   /* ===============================
      SAVE CURATED
@@ -287,21 +286,46 @@ export default function BuildChatbots() {
             <Radio size={14} /> Operational Insight
           </p>
 
-          {INSIGHT_DATA.map((item, i) => (
-            <div key={i} className="mb-8">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-green-300 font-semibold hover:underline"
-              >
-                {item.title}
-              </a>
-              <p className="text-sm text-slate-400 mt-2">
-                {item.description}
-              </p>
-            </div>
-          ))}
+         {INSIGHT_DATA.map((item, i) => {
+  const domain = new URL(item.url).hostname;
+
+  return (
+    <div key={i} className="mb-8">
+
+      <h4 className="text-white font-semibold text-sm mb-3">
+        {item.title}
+      </h4>
+
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="
+          inline-flex items-center gap-2
+          px-4 py-2
+          rounded-full
+          bg-green-500/10
+          border border-green-500/30
+          text-xs text-green-300
+          hover:bg-green-500/20
+          transition
+        "
+      >
+        <img
+          src={`https://www.google.com/s2/favicons?sz=64&domain_url=${item.url}`}
+          className="w-4 h-4 rounded-full bg-white"
+          alt=""
+        />
+        {domain}
+      </a>
+
+      <p className="text-sm text-slate-400 mt-3">
+        {item.description}
+      </p>
+
+    </div>
+  );
+})}
 
           <div className="grid md:grid-cols-3 gap-6 mt-10">
             {YOUTUBE_DATA.map((vid, i) => (
@@ -318,13 +342,23 @@ export default function BuildChatbots() {
             <h4 className="text-green-400 font-semibold mb-3">
               Why This Matters
             </h4>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Building a chatbot that works in production is less about choosing the “best model”
-              and more about operational discipline. Real failures come from silent API errors,
-              runaway token costs, missing retries, and lack of observability.
-              Teams that treat chatbots as infrastructure systems rather than demos
-              are the ones that ship reliable AI products.
-            </p>
+            <p className="text-sm text-slate-400 leading-relaxed space-y-3">
+  Building a chatbot that works in production is less about choosing the “best model”
+  and more about operational discipline.
+
+  <br /><br />
+
+  Real failures come from silent API errors, runaway token costs,
+  missing retries, and lack of observability. These problems don’t
+  show up in demos — they show up under real user traffic.
+
+  <br /><br />
+
+  Production-grade AI systems require monitoring, fallback strategies,
+  cost forecasting, rate limit management, and infrastructure-level thinking.
+  Teams that treat chatbots as infrastructure systems rather than demos
+  are the ones that ship reliable AI products.
+</p>
           </div>
         </div>
       </div>
@@ -341,10 +375,15 @@ export default function BuildChatbots() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20 text-slate-500">
-          Loading chatbots...
-        </div>
-      ) : (
+  <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
+    {Array.from({ length: 3 }).map((_, i) => (
+      <div
+        key={i}
+        className="h-64 rounded-2xl bg-white/5 animate-pulse"
+      />
+    ))}
+  </div>
+) : (
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
           {curatedApis.map(api => (
             <ApiCard key={api.id} api={api} topIds={[]} />
