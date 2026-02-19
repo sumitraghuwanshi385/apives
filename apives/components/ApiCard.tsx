@@ -347,20 +347,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
         {api.description}
       </p>
 
-      <div className="flex flex-wrap gap-2 mb-6 mt-auto">
-        {tags.slice(0, 5).map(tag => (
-          <span
-            key={tag}
-            className="text-[9px] md:text-[10px] text-slate-500 bg-white/5
-            border border-white/10 px-2 md:px-2.5 py-0.5 md:py-1
-            rounded-full flex items-center"
-          >
-            <Hash size={8} className="mr-1 text-mora-500/50" /> {tag}
-          </span>
-        ))}
-      </div>
-
-     <div className="relative pt-4 flex items-center justify-between">
+     <div className="relative pt-2 flex items-center justify-between">
 
 <div  
   className="  
@@ -438,9 +425,6 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
       text-slate-300
 
       transition-all duration-300
-      group-hover:bg-mora-500/10
-      group-hover:border-mora-500/40
-      group-hover:text-mora-400
     "
   >
     View Details
