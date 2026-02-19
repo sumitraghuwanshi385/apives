@@ -89,7 +89,7 @@ setSelectedIds(ids);
 
 if (ids.length > 0) {
   const res = await fetch(
-    `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+    `https://apives.onrender.com/api/apis?page=1&limit=200`
   ).then(r => r.json());
 
   const normalized = res.apis.map((a: any) => ({
