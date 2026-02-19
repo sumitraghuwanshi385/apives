@@ -44,13 +44,7 @@ const [showCategories, setShowCategories] = useState(false);
 
     const data = await res.json();
 
-    console.log("API RESPONSE:", data);
-
-    const list = Array.isArray(data)
-      ? data
-      : Array.isArray(data.data)
-      ? data.data
-      : [];
+    const list = Array.isArray(data) ? data : [];
 
     const normalized = list.map((a: any) => ({
       ...a,
@@ -63,13 +57,10 @@ const [showCategories, setShowCategories] = useState(false);
       setApis((prev) => [...prev, ...normalized]);
     }
 
-    setHasMore(
-      data.totalPages ? pageNumber < data.totalPages : false
-    );
-
+    setHasMore(list.length === 12);
     setPage(pageNumber);
-    setIsLoading(false);
 
+    setIsLoading(false);
   } catch (err) {
     console.error("Pagination Load Error", err);
     setIsLoading(false);
@@ -196,7 +187,7 @@ const [showCategories, setShowCategories] = useState(false);
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-              {filteredApis.map((api) => (
+              {apis.map((api) => (
                 <ApiCard
                   key={api.id}
                   api={api}
