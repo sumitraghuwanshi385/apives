@@ -44,7 +44,9 @@ const [showCategories, setShowCategories] = useState(false);
 
     const data = await res.json();
 
-    const list = Array.isArray(data) ? data : [];
+    console.log("API RESPONSE:", data);
+
+    const list = Array.isArray(data.apis) ? data.apis : [];
 
     const normalized = list.map((a: any) => ({
       ...a,
@@ -57,10 +59,11 @@ const [showCategories, setShowCategories] = useState(false);
       setApis((prev) => [...prev, ...normalized]);
     }
 
-    setHasMore(list.length === 12);
+    setHasMore(pageNumber < data.totalPages);
     setPage(pageNumber);
 
     setIsLoading(false);
+
   } catch (err) {
     console.error("Pagination Load Error", err);
     setIsLoading(false);
