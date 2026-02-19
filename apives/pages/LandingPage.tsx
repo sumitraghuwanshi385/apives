@@ -184,38 +184,6 @@ api.id === apiId
 )
 );
 };
-const res = await fetch("https://apives.onrender.com/api/landing");
-const data = await res.json();
-
-const normalize = (arr: any[]) =>
-  arr.map((a: any) => ({
-    ...a,
-    id: a._id,
-    publishedAt: a.createdAt,
-    tags: Array.isArray(a.tags) ? a.tags : [],
-    features: Array.isArray(a.features) ? a.features : [],
-  }));
-
-const universal = normalize(data.universal || []);
-const fresh = normalize(data.fresh || []);
-const community = normalize(data.community || []);
-
-LANDING_API_CACHE = {
-  universal,
-  fresh,
-  community
-};
-
-setUniversalApis(universal);
-setFreshApis(fresh);
-setCommunityApis(community);
-
-setTop3Ids(
-  [...community]
-    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-    .slice(0, 3)
-    .map(a => a.id)
-);
 
 // 12 APIs total
 
