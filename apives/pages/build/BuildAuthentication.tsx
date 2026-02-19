@@ -77,47 +77,75 @@ const YOUTUBE_DATA = [
 export default function BuildAuthentication() {
   const admin = isAdmin();
 
-  const [allApis, setAllApis] = useState<ApiListing[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [curatedApis, setCuratedApis] = useState<ApiListing[]>([]);
+const [allApis, setAllApis] = useState<ApiListing[]>([]);
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
+const [dropdownOpen, setDropdownOpen] = useState(false);
+const [loading, setLoading] = useState(true);
 
   /* ===============================
-     FAST IDS-BASED LOAD
+     FAST LOAD (Parallel)
   ============================== */
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
+  (async () => {
+    try {
+      const usecaseRes = await apiService.getUsecaseBySlug("authentication");
 
-        const uc = await apiService.getUsecaseBySlug("authentication");
+      const ids =
+        usecaseRes?.curatedApiIds?.map((a: any) =>
+          typeof a === "string" ? a : a._id
+        ) || [];
 
-        if (uc?.curatedApiIds?.length) {
-          const ids = uc.curatedApiIds.map((a: any) =>
-            typeof a === "string" ? a : a._id
-          );
+      setSelectedIds(ids);
 
-          setSelectedIds(ids);
+      if (ids.length > 0) {
+        const res = await fetch(
+          `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+        ).then(r => r.json());
 
-          const res = await fetch(
-            `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
-          ).then(r => r.json());
+        const list = res?.apis || [];
 
-          const normalized = res.apis.map((a: any) => ({
-            ...a,
-            id: a._id
-          }));
+        const normalized = list.map((a: any) => ({
+          ...a,
+          id: a._id
+        }));
 
-          setAllApis(normalized);
-        }
-
-      } catch (err) {
-        console.error("Auth page load failed", err);
-      } finally {
-        setLoading(false);
+        setCuratedApis(normalized);
+      } else {
+        setCuratedApis([]);
       }
-    })();
-  }, []);
+
+    } catch (err) {
+      console.error("Authentication load failed", err);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
+
+useEffect(() => {
+  if (!dropdownOpen || !admin) return;
+
+  (async () => {
+    try {
+      const res = await fetch(
+        "https://apives.onrender.com/api/apis?page=1&limit=500&includePaused=true"
+      ).then(r => r.json());
+
+      const list = res?.apis || [];
+
+      const normalized = list.map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
+
+      setAllApis(normalized);
+
+    } catch (err) {
+      console.error("Admin full fetch failed", err);
+    }
+  })();
+}, [dropdownOpen, admin]);
 
   /* ===============================
      SAVE CURATED
@@ -133,7 +161,6 @@ export default function BuildAuthentication() {
       alert("Save Failed ❌");
     }
   };
-
   /* ===============================
      YOUTUBE PREVIEW
   ============================== */
@@ -374,7 +401,7 @@ export default function BuildAuthentication() {
         </div>
       ) : (
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
-          {allApis.map(api => (
+          {curatedApis.map(api => (
             <ApiCard key={api.id} api={api} topIds={[]} />
           ))}
         </div>
