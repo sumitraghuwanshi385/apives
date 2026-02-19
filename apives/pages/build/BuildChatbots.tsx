@@ -45,19 +45,19 @@ const INSIGHT_DATA = [
 const YOUTUBE_DATA = [
   {
     title: "How ChatGPT Works & What is RAG",
-    url: "https://youtu.be/hYZKrPOyEYk"
+    url: "https://youtu.be/hYZKrPOyEYk",
 description:
       "Explains how modern chatbots combine LLMs with external data sources, why pure prompting is not enough, and how RAG improves accuracy in production systems."
   },
   {
     title: "Building a Production Chatbot with RAG",
-    url: "https://youtu.be/XctooiH0moI"
+    url: "https://youtu.be/XctooiH0moI",
 description:
       "Walks through a real chatbot architecture including embeddings, vector search, context limits, retries, and response validation. Focuses on engineering decisions, not demos."
   },
   {
     title: "Building Reliable AI Systems",
-    url: "https://www.youtube.com/watch?v=9vM4p9NN0Ts"
+    url: "https://www.youtube.com/watch?v=9vM4p9NN0Ts",
 description:
       "A deep dive into why AI systems fail in production and how monitoring, fallback logic, and system design matter more than model quality."
   }
