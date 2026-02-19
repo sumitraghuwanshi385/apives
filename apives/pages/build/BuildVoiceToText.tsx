@@ -378,7 +378,7 @@ useEffect(() => {
               Why This Matters
             </h4>
             <p className="text-sm text-slate-400 leading-relaxed space-y-3">
-              Speech-to-Text systems are real-time infrastructure — not simple file converters.
+              Speech-to-Text systems are real-time infrastructure, not simple file converters.
 
               <br /><br />
 
@@ -389,8 +389,8 @@ useEffect(() => {
 
               Most failures happen due to latency spikes, noisy audio environments
               or improper streaming handling. Teams that treat speech systems
-              as distributed real-time pipelines — with monitoring, retries
-              and cost controls — build scalable voice products that actually work.
+              as distributed real-time pipelines with monitoring, retries
+              and cost controls that build scalable voice products that actually work.
             </p>
           </div>
 
