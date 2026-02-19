@@ -336,7 +336,7 @@ export default function BuildAuthentication() {
               Why This Matters
             </h4>
             <p className="text-sm text-slate-400 leading-relaxed space-y-3">
-              Authentication is foundational infrastructure — not just login forms.
+              Authentication is foundational infrastructure, not just login forms.
 
               <br /><br />
 
@@ -347,7 +347,7 @@ export default function BuildAuthentication() {
 
               Most failures occur due to improper token validation,
               insecure storage, missing refresh handling or lack of monitoring.
-              Teams that treat authentication as a security system — not a feature —
+              Teams that treat authentication as a security system, not a feature,
               build trusted platforms that scale safely.
             </p>
           </div>
