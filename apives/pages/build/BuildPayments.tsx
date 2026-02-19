@@ -71,7 +71,7 @@ const YOUTUBE_DATA = [
 export default function BuildPayments() {
   const admin = isAdmin();
 
-  const [curatedApis, setCuratedApis] = useState<ApiListing[]>([]);
+ const [curatedApis, setCuratedApis] = useState<ApiListing[]>([]);
 const [allApis, setAllApis] = useState<ApiListing[]>([]);
 const [selectedIds, setSelectedIds] = useState<string[]>([]);
 const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -83,10 +83,7 @@ const [loading, setLoading] = useState(true);
   useEffect(() => {
   (async () => {
     try {
-
-      const usecasePromise = apiService.getUsecaseBySlug("payments");
-
-      const usecaseRes = await usecasePromise;
+      const usecaseRes = await apiService.getUsecaseBySlug("payments");
 
       const ids =
         usecaseRes?.curatedApiIds?.map((a: any) =>
@@ -95,23 +92,22 @@ const [loading, setLoading] = useState(true);
 
       setSelectedIds(ids);
 
-      if (ids.length === 0) {
+      if (ids.length > 0) {
+        const res = await fetch(
+          `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+        ).then(r => r.json());
+
+        const list = res?.apis || [];
+
+        const normalized = list.map((a: any) => ({
+          ...a,
+          id: a._id
+        }));
+
+        setCuratedApis(normalized);
+      } else {
         setCuratedApis([]);
-        setLoading(false);
-        return;
       }
-
-      // 🔥 No waiting gap
-      const apiRes = await fetch(
-        `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
-      ).then(r => r.json());
-
-      const normalized = (apiRes?.apis || []).map((a: any) => ({
-        ...a,
-        id: a._id
-      }));
-
-      setCuratedApis(normalized);
 
     } catch (err) {
       console.error("Payments load failed", err);
@@ -399,7 +395,7 @@ useEffect(() => {
         </div>
       ) : (
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-24">
-          {curatedApis.map(api => (
+                {curatedApis.map(api => (  
             <ApiCard key={api.id} api={api} topIds={[]} />
           ))}
         </div>
