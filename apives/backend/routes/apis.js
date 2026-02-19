@@ -63,20 +63,20 @@ router.get('/', async (req, res) => {
 
     // ✅ IDS SUPPORT
     if (req.query.ids) {
-      const ids = req.query.ids.split(',');
+  const ids = req.query.ids.split(',');
 
-      const objectIds = ids
-        .filter(id => mongoose.Types.ObjectId.isValid(id))
-        .map(id => new mongoose.Types.ObjectId(id));
+  const objectIds = ids
+    .filter(id => mongoose.Types.ObjectId.isValid(id))
+    .map(id => new mongoose.Types.ObjectId(id));
 
-      const apis = await ApiListing.find({
-        _id: { $in: objectIds }
-      }).select(
-        "name category pricing provider upvotes latency gallery verified createdAt externalUrl description"
-      );
+  const apis = await ApiListing.find({
+    _id: { $in: objectIds }
+  }).select(
+    "name category pricing provider upvotes latency gallery verified createdAt externalUrl description"
+  );
 
-      return res.json({ apis });
-    }
+  return res.json({ apis });
+}
 
     // 🔥 NORMAL PAGINATION (Browse Page Safe)
 
