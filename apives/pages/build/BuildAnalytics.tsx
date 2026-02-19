@@ -49,28 +49,22 @@ const INSIGHT_LINKS = [
 
 const YOUTUBE_DATA = [
   {
-    title: "How to Design a Data Analytics Platform (System Design)",
-    url: "https://youtu.be/9E5t8Ggqzqk",
+    title: "FastAPI Python Tutorial: Build an Analytics API from Scratch",
+    url: "https://youtu.be/tiBeLLv5GJo",
     description:
-      "Deep dive into designing a scalable analytics platform including event ingestion, Kafka pipelines, batch vs streaming processing, and data warehouse integration."
+      "A complete hands-on tutorial on building an analytics API using Python FastAPI, PostgreSQL and time-series techniques — including Docker deployment and real data ingestion patterns." // based on LinkedIn summary & video topic
   },
   {
-    title: "Building Real-Time Analytics at Scale",
-    url: "https://youtu.be/6f1t8cE3J9Y",
+    title: "Build and Deploy Full Stack Project Management App (React + PERN)",
+    url: "https://youtu.be/50NN3d-Ne1U",
     description:
-      "Explains real-time event processing, stream aggregation, and low-latency dashboards using distributed systems architecture."
+      "Shows how to build a real-world project management app using React, Express, PostgreSQL and Node, covering full stack routing, databases, auth and deployment." // based on video subject classification
   },
   {
-    title: "How Amplitude Works (Product Analytics Architecture)",
-    url: "https://youtu.be/1kYqW9rXj0A",
+    title: "Conversational Analytics Agent Part 1 — Conversational Analytics API",
+    url: "https://youtu.be/0cdVlGJk2NQ",
     description:
-      "Breakdown of event-based product analytics systems including user tracking models, event schemas, cohort analysis, and retention pipelines."
-  },
-  {
-    title: "Designing Data-Intensive Applications Explained",
-    url: "https://youtu.be/9dU8c5dWzXQ",
-    description:
-      "Covers reliability, replication, consistency models, monitoring, and schema validation for production-grade analytics infrastructure."
+      "Introduces building a conversational analytics agent that can query data using natural language and analytics APIs, turning insight requests into real SQL/data retrieval workflows." // based on context about conversational analytics APIs
   }
 ];
 
