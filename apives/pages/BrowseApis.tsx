@@ -184,55 +184,57 @@ const [showFilters, setShowFilters] = useState(false);
         </div>
 
         {/* SEARCH + FILTER UI */}
-<div className="max-w-3xl mx-auto mb-12 relative">
-  <div className="relative flex items-center bg-black/40 backdrop-blur-xl border border-white/10 rounded-full p-1.5 focus-within:border-mora-500/50 transition-all shadow-2xl group">
+<div className="max-w-2xl mx-auto mb-8 relative px-2">
+  <div className="flex items-center bg-black/50 border border-white/10 rounded-full px-3 py-2 shadow-xl">
 
+    {/* SEARCH ICON */}
     <Search
-      className="ml-5 text-slate-500 group-focus-within:text-mora-500 transition-colors"
-      size={18}
+      className="text-slate-400 mr-2 flex-shrink-0"
+      size={16}
     />
 
+    {/* INPUT */}
     <input
       type="text"
       placeholder="Find APIs..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
-      className="flex-1 bg-transparent px-4 py-3 text-white placeholder-slate-600 outline-none text-sm"
+      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-xs"
     />
 
+    {/* FILTER BUTTON */}
     <button
       onClick={() => setShowFilters(!showFilters)}
-      className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${
+      className={`ml-2 px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase transition-all ${
         showFilters
-          ? "bg-mora-500 text-black border-mora-500"
-          : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+          ? "bg-mora-500 text-black"
+          : "bg-white/10 text-slate-300"
       }`}
     >
-      <SlidersHorizontal size={14} />
       Filters
     </button>
   </div>
 
   {/* FILTER PANEL */}
   {showFilters && (
-    <div className="absolute top-full left-1/2 -translate-x-1/2 w-screen max-w-4xl mt-6 px-4 z-[60]">
-      <div className="bg-black/95 border border-mora-500/30 rounded-[2rem] p-10 shadow-[0_30px_100px_rgba(0,0,0,0.8)] backdrop-blur-[50px] ring-1 ring-white/10">
+    <div className="absolute top-full left-0 w-full mt-3 z-50">
+      <div className="bg-black border border-mora-500/30 rounded-2xl p-5 shadow-2xl">
 
         {/* PRICING */}
-        <div className="mb-8">
-          <h4 className="text-xs font-black text-mora-400 uppercase tracking-[0.4em] mb-4">
+        <div className="mb-6">
+          <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest mb-3">
             Pricing
           </h4>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {["All", "Free", "Freemium", "Paid"].map((price) => (
               <button
                 key={price}
                 onClick={() => setSelectedPricing(price)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase border transition-all ${
+                className={`px-3 py-1.5 rounded-full text-[10px] font-semibold border ${
                   selectedPricing === price
                     ? "bg-mora-500 text-black border-mora-500"
-                    : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+                    : "bg-white/5 border-white/10 text-slate-400"
                 }`}
               >
                 {price}
@@ -242,20 +244,16 @@ const [showFilters, setShowFilters] = useState(false);
         </div>
 
         {/* CATEGORY */}
-        <div className="flex items-center justify-between mb-6">
-          <h4 className="text-xs font-black text-mora-400 uppercase tracking-[0.4em]">
+        <div className="mb-3 flex justify-between items-center">
+          <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest">
             Category
           </h4>
-
-          <button
-            onClick={() => setShowFilters(false)}
-            className="p-2 text-slate-500 hover:text-white"
-          >
-            <X size={18} />
+          <button onClick={() => setShowFilters(false)}>
+            <X size={16} className="text-slate-400" />
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 max-h-[450px] overflow-y-auto pr-3">
+        <div className="grid grid-cols-2 gap-2 max-h-[250px] overflow-y-auto">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.name}
@@ -263,14 +261,14 @@ const [showFilters, setShowFilters] = useState(false);
                 setSelectedCategory(cat.name);
                 setShowFilters(false);
               }}
-              className={`flex items-center gap-3 px-4 py-3 rounded-full border text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-full text-[10px] border ${
                 selectedCategory === cat.name
                   ? "bg-mora-500 text-black border-mora-500"
-                  : "bg-white/[0.03] border-white/10 text-slate-400 hover:text-white"
+                  : "bg-white/5 border-white/10 text-slate-400"
               }`}
             >
-              <cat.icon size={16} />
-              <span>{cat.name}</span>
+              <cat.icon size={14} />
+              {cat.name}
             </button>
           ))}
         </div>
