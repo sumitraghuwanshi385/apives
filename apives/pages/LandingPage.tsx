@@ -95,7 +95,9 @@ const RANK_BADGE_STYLES = [
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
-const [allApis, setAllApis] = useState<ApiListing[]>([]);
+const [universalApis, setUniversalApis] = useState<ApiListing[]>([]);
+const [freshApis, setFreshApis] = useState<ApiListing[]>([]);
+const [communityApis, setCommunityApis] = useState<ApiListing[]>([]);
 const [top3Ids, setTop3Ids] = useState<string[]>([]);
 const [isLoading, setIsLoading] = useState(true);
 const [isMobile, setIsMobile] = useState(
@@ -172,45 +174,49 @@ api.id === apiId
 )
 );
 };
-const refetchLandingApis = async () => {
-  try {
-    const res = await fetch("https://apives.onrender.com/api/landing");
-    const list = await res.json();
+const res = await fetch("https://apives.onrender.com/api/landing");
+const data = await res.json();
 
-    const db: ApiListing[] = list.map((a: any) => ({
-      ...a,
-      id: a._id,
-      publishedAt: a.createdAt,
-      tags: Array.isArray(a.tags) ? a.tags : [],
-      features: Array.isArray(a.features) ? a.features : [],
-    }));
+const normalize = (arr: any[]) =>
+  arr.map((a: any) => ({
+    ...a,
+    id: a._id,
+    publishedAt: a.createdAt,
+    tags: Array.isArray(a.tags) ? a.tags : [],
+    features: Array.isArray(a.features) ? a.features : [],
+  }));
 
-    LANDING_API_CACHE = db;
-    setAllApis(db);
+const universal = normalize(data.universal || []);
+const fresh = normalize(data.fresh || []);
+const community = normalize(data.community || []);
 
-    // update top 3 safely
-    setTop3Ids(
-      [...db]
-        .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
-        .slice(0, 3)
-        .map(a => a.id)
-    );
-
-  } catch (e) {
-    console.error("Refetch failed", e);
-  }
+LANDING_API_CACHE = {
+  universal,
+  fresh,
+  community
 };
 
-// 9 APIs total
+setUniversalApis(universal);
+setFreshApis(fresh);
+setCommunityApis(community);
+
+setTop3Ids(
+  [...community]
+    .sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0))
+    .slice(0, 3)
+    .map(a => a.id)
+);
+
+// 12 APIs total
 
 // Universal (only shuffle)
-const featuredApis = lightShuffle(allApis).slice(0, 3);
+const featuredApis = lightShuffle(allApis).slice(0, 6);
 
 // Fresh (NO heavy filter)
-const freshApis = allApis.slice(3, 6);
+const freshApis = allApis.slice(6, 9);
 
 // Community (NO sort)
-const communityLoved = allApis.slice(6, 9);
+const communityLoved = allApis.slice(9, 12);
 
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
@@ -427,7 +433,7 @@ rounded-2xl bg-white/10 p-1"
   <SectionLoader text="Loading the Universal Grid" />
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-    {featuredApis.map((api, idx) => (
+    {universalApis.map((api, idx) => (
       <ApiCard
         key={`${api.id}-${idx}`}
         api={api}
@@ -487,7 +493,7 @@ rounded-2xl bg-white/10 p-1"
   <SectionLoader text="Fetching community favorites" />
 ) : (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-    {communityLoved.map((api, idx) => (
+    {communityApis.map((api, idx) => (
       <ApiCard
         key={`loved-${api.id}`}
         api={api}
