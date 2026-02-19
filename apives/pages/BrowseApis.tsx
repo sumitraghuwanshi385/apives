@@ -73,95 +73,86 @@ export const BrowseApis: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [topIds, setTopIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-const [selectedPricing, setSelectedPricing] = useState("All");
-const [showFilters, setShowFilters] = useState(false);
+  const [selectedPricing, setSelectedPricing] = useState("All");
+  const [showFilters, setShowFilters] = useState(false);
 
-  // 🚀 LOAD FUNCTION
- const loadApis = async (pageNumber: number, reset = false) => {
-  try {
-    setIsLoading(true);
-
-    const res = await fetch(
-      `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12`
-    );
-
-    const data = await res.json();
-
-    console.log("API RESPONSE:", data);
-
-    const list = Array.isArray(data.apis) ? data.apis : [];
-
-    const normalized = list.map((a: any) => ({
-      ...a,
-      id: a._id,
-    }));
-
-    if (reset) {
-      setApis(normalized);
-    } else {
-      setApis((prev) => [...prev, ...normalized]);
+  // 🔥 LIGHT SHUFFLE (cheap)
+  const lightShuffle = (arr: ApiListing[]) => {
+    const copy = [...arr];
+    for (let i = 0; i < Math.min(4, copy.length - 1); i++) {
+      const j = Math.floor(Math.random() * copy.length);
+      [copy[i], copy[j]] = [copy[j], copy[i]];
     }
+    return copy;
+  };
 
-    setHasMore(pageNumber < data.totalPages);
-    setPage(pageNumber);
+  const loadApis = async (pageNumber: number, reset = false) => {
+    try {
+      setIsLoading(true);
 
-    setIsLoading(false);
+      const res = await fetch(
+        `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12`
+      );
 
-  } catch (err) {
-    console.error("Pagination Load Error", err);
-    setIsLoading(false);
-  }
-};
+      const data = await res.json();
 
-  // 🚀 Initial Load
+      const normalized = (data.apis || []).map((a: any) => ({
+        ...a,
+        id: a._id,
+      }));
+
+      const shuffled = pageNumber === 1
+        ? lightShuffle(normalized)
+        : normalized;
+
+      if (reset) {
+        setApis(shuffled);
+      } else {
+        setApis((prev) => [...prev, ...shuffled]);
+      }
+
+      setHasMore(pageNumber < data.totalPages);
+      setPage(pageNumber);
+      setIsLoading(false);
+
+    } catch (err) {
+      console.error("Pagination Load Error", err);
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadApis(1, true);
   }, []);
 
-  // 🚀 Infinite Scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - 300 &&
-        hasMore &&
-        !isLoading
-      ) {
-        loadApis(page + 1);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [page, hasMore, isLoading]);
-
-  // 🔥 LIGHT FRONTEND FILTER (FAST)
+  // 🔥 FILTER (fast memo)
   const filteredApis = useMemo(() => {
-  return apis.filter((api) => {
-    const categoryMatch =
-      selectedCategory === "All" ||
-      api.category === selectedCategory;
+    return apis.filter((api) => {
 
-    const pricingMatch =
-      selectedPricing === "All" ||
-      api.pricing?.type === selectedPricing;
+      const categoryMatch =
+        selectedCategory === "All" ||
+        api.category === selectedCategory;
 
-    const lowerSearch = searchTerm.toLowerCase();
+      const pricingMatch =
+        selectedPricing === "All" ||
+        api.pricing?.type === selectedPricing;
 
-    const matchesSearch =
-      api.name?.toLowerCase().includes(lowerSearch) ||
-      api.description?.toLowerCase().includes(lowerSearch) ||
-      api.provider?.toLowerCase().includes(lowerSearch);
+      const lowerSearch = searchTerm.toLowerCase();
 
-    return categoryMatch && pricingMatch && matchesSearch;
-  });
-}, [apis, searchTerm, selectedCategory, selectedPricing]);
+      const matchesSearch =
+        api.name?.toLowerCase().includes(lowerSearch) ||
+        api.description?.toLowerCase().includes(lowerSearch) ||
+        api.provider?.toLowerCase().includes(lowerSearch);
+
+      return categoryMatch && pricingMatch && matchesSearch;
+    });
+  }, [apis, searchTerm, selectedCategory, selectedPricing]);
 
   return (
     <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-20 relative">
+
       <div className="absolute top-24 left-4 lg:left-8 z-30">
         <BackButton />
       </div>
@@ -183,100 +174,7 @@ const [showFilters, setShowFilters] = useState(false);
           </p>
         </div>
 
-        {/* SEARCH + FILTER UI */}
-<div className="max-w-2xl mx-auto mb-8 relative px-2">
-  <div className="flex items-center bg-black/50 border border-white/10 rounded-full px-3 py-2 shadow-xl">
-
-    {/* SEARCH ICON */}
-    <Search
-      className="text-slate-400 mr-2 flex-shrink-0"
-      size={16}
-    />
-
-    {/* INPUT */}
-    <input
-      type="text"
-      placeholder="Find APIs..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-xs"
-    />
-
-    {/* FILTER BUTTON */}
-    <button
-      onClick={() => setShowFilters(!showFilters)}
-      className={`ml-2 px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase transition-all ${
-        showFilters
-          ? "bg-mora-500 text-black"
-          : "bg-white/10 text-slate-300"
-      }`}
-    >
-      Filters
-    </button>
-  </div>
-
-  {/* FILTER PANEL */}
-  {showFilters && (
-    <div className="absolute top-full left-0 w-full mt-3 z-50">
-      <div className="bg-black border border-mora-500/30 rounded-2xl p-5 shadow-2xl">
-
-        {/* PRICING */}
-        <div className="mb-6">
-          <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest mb-3">
-            Pricing
-          </h4>
-
-          <div className="flex flex-wrap gap-2">
-            {["All", "Free", "Freemium", "Paid"].map((price) => (
-              <button
-                key={price}
-                onClick={() => setSelectedPricing(price)}
-                className={`px-3 py-1.5 rounded-full text-[10px] font-semibold border ${
-                  selectedPricing === price
-                    ? "bg-mora-500 text-black border-mora-500"
-                    : "bg-white/5 border-white/10 text-slate-400"
-                }`}
-              >
-                {price}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* CATEGORY */}
-        <div className="mb-3 flex justify-between items-center">
-          <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest">
-            Category
-          </h4>
-          <button onClick={() => setShowFilters(false)}>
-            <X size={16} className="text-slate-400" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 max-h-[250px] overflow-y-auto">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.name}
-              onClick={() => {
-                setSelectedCategory(cat.name);
-                setShowFilters(false);
-              }}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full text-[10px] border ${
-                selectedCategory === cat.name
-                  ? "bg-mora-500 text-black border-mora-500"
-                  : "bg-white/5 border-white/10 text-slate-400"
-              }`}
-            >
-              <cat.icon size={14} />
-              {cat.name}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  )}
-</div>
- {/* GRID */}
+        {/* GRID */}
         {apis.length === 0 && isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -285,26 +183,25 @@ const [showFilters, setShowFilters] = useState(false);
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {filteredApis.map((api) => (
-                <ApiCard
-                  key={api.id}
-                  api={api}
-                  topIds={topIds}
-                />
+                <ApiCard key={api.id} api={api} />
               ))}
             </div>
 
-            {isLoading && (
-              <div className="flex justify-center py-10">
-                <p className="text-mora-400 text-xs uppercase tracking-widest">
-                  Loading More APIs...
-                </p>
+            {hasMore && (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => loadApis(page + 1)}
+                  className="px-10 py-3 bg-white/5 border border-white/10 rounded-full text-white font-black text-xs uppercase tracking-widest"
+                >
+                  Load More APIs
+                </button>
               </div>
             )}
 
             {!hasMore && (
-              <div className="text-center text-slate-500 text-xs uppercase tracking-widest">
+              <div className="text-center text-slate-500 text-xs uppercase tracking-widest mt-6">
                 End of APIs
               </div>
             )}
