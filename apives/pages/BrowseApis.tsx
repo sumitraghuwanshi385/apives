@@ -81,6 +81,7 @@ export const BrowseApis: React.FC = () => {
   const [topIds, setTopIds] = useState<string[]>([]);
   const [filteredApis, setFilteredApis] = useState<ApiListing[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+const [visibleCount, setVisibleCount] = useState(12);
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
@@ -168,6 +169,7 @@ if (!lowerTerm) {
 }
 
 setFilteredApis(result);
+setVisibleCount(12);
       setIsLoading(false);
     };
 
@@ -276,7 +278,7 @@ setFilteredApis(result);
           </div>
         ) : filteredApis.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
-            {filteredApis.map((api) => (
+            {filteredApis.slice(0, visibleCount).map((api) => (
               <ApiCard
                 key={api.id}
                 api={api}
@@ -284,6 +286,42 @@ setFilteredApis(result);
               />
             ))}
           </div>
+) : filteredApis.length > 0 ? (
+  <>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
+      {filteredApis.slice(0, visibleCount).map((api) => (
+        <ApiCard
+          key={api.id}
+          api={api}
+          topIds={topIds}
+        />
+      ))}
+    </div>
+
+    {visibleCount < filteredApis.length && (
+      <div className="flex justify-center mt-6 md:mt-10">
+        <button
+          onClick={() => setVisibleCount(prev => prev + 12)}
+          className="
+            px-8 md:px-10
+            py-3 md:py-3.5
+            rounded-full
+            bg-white/5
+            border border-white/10
+            text-white
+            text-[10px] md:text-xs
+            font-black
+            uppercase tracking-[0.3em]
+            hover:bg-white/10
+            transition-all
+            active:scale-95
+          "
+        >
+          Load More
+        </button>
+      </div>
+    )}
+  </>
         ) : (
           <div className="text-center py-20 px-6">
             <h3 className="text-2xl font-display font-bold text-white mb-2">
