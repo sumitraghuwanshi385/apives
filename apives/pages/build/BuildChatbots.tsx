@@ -57,11 +57,11 @@ const YOUTUBE_DATA = [
       "Walkthrough of embeddings, vector search, context limits, retries, and validation."
   },
   {
-    title: "Build and Deploy an Al Chatbot Using LLMs, Python, RunPod, Hugging Face, and React Native",
-    url: "https://youtu.be/KyQKTJhSIak?si=fUIjyc3jAn88G3yZ",
+    title: "Build & Deploy an AI Chatbot | LLMs, FastAPI, RunPod, React Native",
+    url: "https://youtu.be/KyQKTJhSIak",
     description:
-      "Learn how to deploy Large Language Models (LLMs) and custom APIs using RunPod, and build a full React Native app that connects to Firebase and the RunPod endpoints. By the end, you’ll have a fully functional chatbot app and level up your AI, development, and deployment skills."
-  }
+      "Building a full AI chatbot application using large language models, FastAPI backend, RunPod for scalable inference, and React/React Native for frontend integration, covering deployment, hosting, and production concepts." 
+}
 ];
 
 export default function BuildChatbots() {
