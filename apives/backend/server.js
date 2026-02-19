@@ -61,6 +61,75 @@ app.get("/api/landing", async (req, res) => {
     res.status(500).json({ error: "Landing fetch failed" });
   }
 });
+
+// ================= FRESH PAGINATION =================
+app.get("/api/fresh", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const skip = (page - 1) * limit;
+
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+
+    const [apis, total] = await Promise.all([
+      Api.find({
+        createdAt: { $gte: fifteenDaysAgo },
+        status: { $ne: "paused" }
+      })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      Api.countDocuments({
+        createdAt: { $gte: fifteenDaysAgo },
+        status: { $ne: "paused" }
+      })
+    ]);
+
+    res.json({
+      apis,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+
+  } catch (err) {
+    console.error("Fresh fetch error:", err);
+    res.status(500).json({ error: "Fresh fetch failed" });
+  }
+});
+
+
+// ================= COMMUNITY PAGINATION =================
+app.get("/api/community", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const skip = (page - 1) * limit;
+
+    const [apis, total] = await Promise.all([
+      Api.find({ status: { $ne: "paused" } })
+        .sort({ upvotes: -1 })
+        .skip(skip)
+        .limit(limit),
+
+      Api.countDocuments({ status: { $ne: "paused" } })
+    ]);
+
+    res.json({
+      apis,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+
+  } catch (err) {
+    console.error("Community fetch error:", err);
+    res.status(500).json({ error: "Community fetch failed" });
+  }
+});
+
 // ================= OTHER ROUTES =================
 const authRoutes = require("./routes/auth");
 const apiRoutes = require("./routes/apis");
