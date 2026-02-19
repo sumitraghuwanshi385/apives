@@ -282,6 +282,8 @@ export default function BuildImageGeneration() {
 
   </div>  
 
+{/* EXTRA SPACE BEFORE OPERATIONAL INSIGHT */}  <div className="mt-12"> 
+
       {/* OPERATIONAL INSIGHT */}
       <div className="max-w-6xl mx-auto mb-20">
         <div className="bg-green-500/5 border border-green-500/30 rounded-2xl p-6 backdrop-blur-xl">
@@ -354,6 +356,7 @@ export default function BuildImageGeneration() {
 
         </div>
       </div>
+</div>
 
       {/* CURATED APIS */}
       <div className="max-w-7xl mx-auto mb-6">
