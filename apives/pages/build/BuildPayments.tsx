@@ -83,7 +83,10 @@ const [loading, setLoading] = useState(true);
   useEffect(() => {
   (async () => {
     try {
-      const usecaseRes = await apiService.getUsecaseBySlug("payments");
+
+      const usecasePromise = apiService.getUsecaseBySlug("payments");
+
+      const usecaseRes = await usecasePromise;
 
       const ids =
         usecaseRes?.curatedApiIds?.map((a: any) =>
@@ -92,22 +95,23 @@ const [loading, setLoading] = useState(true);
 
       setSelectedIds(ids);
 
-      if (ids.length > 0) {
-        const res = await fetch(
-          `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
-        ).then(r => r.json());
-
-        const list = res?.apis || [];
-
-        const normalized = list.map((a: any) => ({
-          ...a,
-          id: a._id
-        }));
-
-        setCuratedApis(normalized);
-      } else {
+      if (ids.length === 0) {
         setCuratedApis([]);
+        setLoading(false);
+        return;
       }
+
+      // 🔥 No waiting gap
+      const apiRes = await fetch(
+        `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+      ).then(r => r.json());
+
+      const normalized = (apiRes?.apis || []).map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
+
+      setCuratedApis(normalized);
 
     } catch (err) {
       console.error("Payments load failed", err);
