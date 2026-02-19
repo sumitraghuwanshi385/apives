@@ -15,7 +15,13 @@ Image
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import ApiCard from '../components/ApiCard';
-let LANDING_API_CACHE: ApiListing[] | null = null;
+let LANDING_API_CACHE:
+  | {
+      universal: ApiListing[];
+      fresh: ApiListing[];
+      community: ApiListing[];
+    }
+  | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
  console.log("SPONSOR TRACK FIRED 👉", sponsor, type); fetch("https://apives.onrender.com/api/sponsor/track", {
