@@ -60,10 +60,23 @@ router.get('/mine', verify, async (req, res) => {
 // ✅ GET ALL APIS (Public) — PAGINATED
 router.get('/', async (req, res) => {
   try {
-    const includePaused = req.query.includePaused === 'true';
+    const { page = 1, limit = 12, includePaused, ids } = req.query;
 
-    // 🔥 FIXED FILTER
-    const filter = includePaused
+    // 🔥 1️⃣ IF IDS PROVIDED → RETURN ONLY THOSE
+    if (ids) {
+      const idArray = ids.split(',');
+
+      const apis = await ApiListing.find({
+        _id: { $in: idArray }
+      })
+      .select("name category pricing provider upvotes latency gallery verified createdAt externalUrl description");
+
+      return res.json({ apis });
+    }
+
+    // 🔥 2️⃣ NORMAL PAGINATION (BROWSE PAGE SAFE)
+
+    const filter = includePaused === 'true'
       ? {}
       : {
           $or: [
@@ -72,15 +85,14 @@ router.get('/', async (req, res) => {
           ]
         };
 
-    // 👇 pagination params
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 12;
-    const skip = (page - 1) * limit;
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
 
     const apis = await ApiListing.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit)
+      .limit(limitNumber)
       .select("name category pricing provider upvotes latency gallery verified createdAt externalUrl description");
 
     const total = await ApiListing.countDocuments(filter);
@@ -88,8 +100,8 @@ router.get('/', async (req, res) => {
     return res.json({
       apis,
       total,
-      page,
-      totalPages: Math.ceil(total / limit)
+      page: pageNumber,
+      totalPages: Math.ceil(total / limitNumber)
     });
 
   } catch (err) {
@@ -97,7 +109,6 @@ router.get('/', async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 });
-
 // ✅ DELETE API (Protected)  ← FIXED
 router.delete('/:id', verify, async (req, res) => {
   try {
