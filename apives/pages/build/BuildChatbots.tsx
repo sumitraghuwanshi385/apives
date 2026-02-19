@@ -67,10 +67,11 @@ const YOUTUBE_DATA = [
 export default function BuildChatbots() {
   const admin = isAdmin();
 
-  const [allApis, setAllApis] = useState<ApiListing[]>([]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [curatedApis, setCuratedApis] = useState<ApiListing[]>([]);
+const [allApis, setAllApis] = useState<ApiListing[]>([]);
+const [selectedIds, setSelectedIds] = useState<string[]>([]);
+const [dropdownOpen, setDropdownOpen] = useState(false);
+const [loading, setLoading] = useState(true);
 
   /* ===============================
      FAST LOAD (Parallel)
@@ -78,7 +79,6 @@ export default function BuildChatbots() {
   useEffect(() => {
   (async () => {
     try {
-      // 1️⃣ Get usecase first
       const usecaseRes = await apiService.getUsecaseBySlug("chatbots");
 
       if (!usecaseRes?.curatedApiIds?.length) {
@@ -92,12 +92,32 @@ export default function BuildChatbots() {
 
       setSelectedIds(ids);
 
-      // 2️⃣ Fetch ONLY required APIs
       const res = await fetch(
         `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
       ).then(r => r.json());
 
-      const list = Array.isArray(res.apis) ? res.apis : [];
+      const normalized = res.apis.map((a: any) => ({
+        ...a,
+        id: a._id
+      }));
+
+      setCuratedApis(normalized);
+
+    } catch (err) {
+      console.error("Chatbot load failed", err);
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, []);
+
+useEffect(() => {
+  if (!dropdownOpen || !admin) return;
+
+  (async () => {
+    try {
+      const res = await apiService.getAllApis();
+      const list = Array.isArray(res) ? res : res?.data || [];
 
       const normalized = list.map((a: any) => ({
         ...a,
@@ -107,12 +127,10 @@ export default function BuildChatbots() {
       setAllApis(normalized);
 
     } catch (err) {
-      console.error("Chatbot load failed", err);
-    } finally {
-      setLoading(false);
+      console.error("Admin full fetch failed", err);
     }
   })();
-}, []);
+}, [dropdownOpen, admin]);
 
   /* ===============================
      SAVE CURATED
@@ -129,9 +147,6 @@ export default function BuildChatbots() {
     }
   };
 
-  const curatedApis = allApis.filter(api =>
-    selectedIds.includes(api.id)
-  );
 
   /* ===============================
      YOUTUBE PREVIEW
