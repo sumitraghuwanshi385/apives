@@ -81,7 +81,7 @@ export default function BuildChatbots() {
       // ❌ removed setLoading(true)
 
       const [apisRes, usecaseRes] = await Promise.all([
-        fetch("https://apives.onrender.com/api/apis?page=1&limit=100&includePaused=true")
+      fetch("https://apives.onrender.com/api/apis?page=1&limit=20")
           .then(r => r.json()),
         apiService.getUsecaseBySlug("chatbots")
       ]);
@@ -350,7 +350,7 @@ export default function BuildChatbots() {
 
   Real failures come from silent API errors, runaway token costs,
   missing retries, and lack of observability. These problems don’t
-  show up in demos — they show up under real user traffic.
+  show up in demos, they show up under real user traffic.
 
   <br /><br />
 
