@@ -28,17 +28,35 @@ app.get("/ping", (req, res) => {
   res.status(200).send("OK");
 });
 
-// 🔥 Lightweight Landing APIs (9 only)
+// 🔥 Optimized Landing APIs (6 + 3 + 3 split)
 app.get("/api/landing", async (req, res) => {
   try {
-    const apis = await Api.find({})
-      .sort({ upvotes: -1 })
-      .limit(9)
-      .select(
-        "name category pricing provider upvotes latency gallery verified createdAt externalUrl description"
-      );
 
-    res.json(apis);
+    const [universal, fresh, community] = await Promise.all([
+
+      // 🔥 Universal (6 random active APIs)
+      Api.aggregate([
+        { $match: { status: { $ne: "paused" } } },
+        { $sample: { size: 6 } }
+      ]),
+
+      // 🔥 Fresh (latest 3)
+      Api.find({ status: { $ne: "paused" } })
+        .sort({ createdAt: -1 })
+        .limit(3),
+
+      // 🔥 Community (most liked 3)
+      Api.find({ status: { $ne: "paused" } })
+        .sort({ upvotes: -1 })
+        .limit(3)
+    ]);
+
+    res.json({
+      universal,
+      fresh,
+      community
+    });
+
   } catch (err) {
     console.error("Landing fetch error:", err);
     res.status(500).json({ error: "Landing fetch failed" });
