@@ -29,47 +29,52 @@ export const BrowseApis: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [topIds, setTopIds] = useState<string[]>([]);
-
+const [showCategories, setShowCategories] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // 🚀 LOAD FUNCTION
-  const loadApis = async (pageNumber: number, reset = false) => {
-    try {
-      setIsLoading(true);
+ const loadApis = async (pageNumber: number, reset = false) => {
+  try {
+    setIsLoading(true);
 
-      const res = await fetch(
-        `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12`
-      );
+    const res = await fetch(
+      `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12`
+    );
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!data?.data) {
-        console.error("Invalid API response");
-        setIsLoading(false);
-        return;
-      }
+    console.log("API RESPONSE:", data);
 
-      const normalized = data.data.map((a: any) => ({
-        ...a,
-        id: a._id,
-      }));
+    const list = Array.isArray(data)
+      ? data
+      : Array.isArray(data.data)
+      ? data.data
+      : [];
 
-      if (reset) {
-        setApis(normalized);
-      } else {
-        setApis((prev) => [...prev, ...normalized]);
-      }
+    const normalized = list.map((a: any) => ({
+      ...a,
+      id: a._id,
+    }));
 
-      setHasMore(pageNumber < data.totalPages);
-      setPage(pageNumber);
-
-      setIsLoading(false);
-    } catch (err) {
-      console.error("Pagination Load Error", err);
-      setIsLoading(false);
+    if (reset) {
+      setApis(normalized);
+    } else {
+      setApis((prev) => [...prev, ...normalized]);
     }
-  };
+
+    setHasMore(
+      data.totalPages ? pageNumber < data.totalPages : false
+    );
+
+    setPage(pageNumber);
+    setIsLoading(false);
+
+  } catch (err) {
+    console.error("Pagination Load Error", err);
+    setIsLoading(false);
+  }
+};
 
   // 🚀 Initial Load
   useEffect(() => {
@@ -135,37 +140,52 @@ export const BrowseApis: React.FC = () => {
         </div>
 
         {/* SEARCH BAR */}
-        <div className="max-w-3xl mx-auto mb-8">
-          <div className="flex items-center bg-black/40 border border-white/10 rounded-full px-4 py-3">
-            <Search className="text-slate-500 mr-3" size={18} />
-            <input
-              type="text"
-              placeholder="Search APIs..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-sm"
-            />
-          </div>
-        </div>
+        {/* SEARCH BAR */}
+<div className="max-w-3xl mx-auto mb-8 relative">
+  <div className="flex items-center bg-black/40 border border-white/10 rounded-full px-4 py-3">
+    <Search className="text-slate-500 mr-3" size={18} />
 
-        {/* CATEGORY SELECT */}
-        <div className="flex flex-wrap gap-2 justify-center mb-10">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-xs font-bold uppercase border transition-all
-                ${
-                  selectedCategory === cat
-                    ? "bg-mora-500 text-black border-mora-500"
-                    : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
-                }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+    <input
+      type="text"
+      placeholder="Search APIs..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-sm"
+    />
 
+    <button
+      onClick={() => setShowCategories(!showCategories)}
+      className="ml-3 px-4 py-1.5 rounded-full text-xs font-bold uppercase border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+    >
+      Category
+    </button>
+  </div>
+
+  {/* CATEGORY DROPDOWN */}
+  {showCategories && (
+    <div className="absolute top-full left-0 w-full mt-4 bg-black border border-white/10 rounded-2xl p-4 shadow-xl z-50">
+      <div className="flex flex-wrap gap-2">
+        {CATEGORIES.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => {
+              setSelectedCategory(cat);
+              setShowCategories(false);
+            }}
+            className={`px-4 py-2 rounded-full text-xs font-bold uppercase border transition-all
+              ${
+                selectedCategory === cat
+                  ? "bg-mora-500 text-black border-mora-500"
+                  : "bg-white/5 border-white/10 text-slate-400 hover:text-white"
+              }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
         {/* GRID */}
         {apis.length === 0 && isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
