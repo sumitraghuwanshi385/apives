@@ -147,7 +147,9 @@ Recently Added APIs.
 <button
 onClick={() => setShowFilters(!showFilters)}
 className={`w-full flex items-center justify-center gap-2 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${
-showFilters ? 'bg-mora-500 text-black border-mora-500' : 'bg-white/5 border-white/10 text-slate-300'
+showFilters 
+? 'bg-white text-black border-white' 
+: 'bg-white/5 border-white/10 text-slate-300'
 }`}
 >
 <SlidersHorizontal size={14} />
@@ -169,7 +171,7 @@ key={price}
 onClick={() => setSelectedPricing(price)}
 className={`px-4 py-2 rounded-full text-xs font-bold border ${
 selectedPricing === price
-? 'bg-mora-500 text-black border-mora-500'
+? 'bg-white text-black border-white'
 : 'bg-white/5 border-white/10 text-slate-400'
 }`}
 >
@@ -190,7 +192,7 @@ key={cat.name}
 onClick={() => { setSelectedCategory(cat.name); setShowFilters(false); }}
 className={`flex items-center gap-2 px-4 py-2 rounded-full border text-xs font-bold uppercase ${
 selectedCategory === cat.name
-? 'bg-mora-500 text-black border-mora-500'
+? 'bg-white text-black border-white'
 : 'bg-white/5 border-white/10 text-slate-400'
 }`}
 >
