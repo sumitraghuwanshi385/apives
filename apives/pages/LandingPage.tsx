@@ -181,6 +181,14 @@ useEffect(() => {
 
 }, []);
 
+const updateLandingUpvotes = (apiId: string, delta: number) => {
+  const update = (list: ApiListing[]) =>
+    list.map(api =>
+      api.id === apiId
+        ? { ...api, upvotes: Math.max((api.upvotes || 0) + delta, 0) }
+        : api
+    );
+
   setUniversalApis(prev => update(prev));
   setFreshApis(prev => update(prev));
   setCommunityApis(prev => update(prev));
@@ -224,7 +232,6 @@ return (
   </section>  
 
 <section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
-
 
 {/* Community Sponsor */}
 
