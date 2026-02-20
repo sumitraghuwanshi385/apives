@@ -309,8 +309,6 @@ opacity-60
   </div>
 </div>
 
-<section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
-
 {/* Community Sponsor */}
 
   <div className="pb-6 md:pb-8">  
