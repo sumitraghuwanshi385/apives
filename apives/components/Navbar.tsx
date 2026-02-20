@@ -16,7 +16,6 @@ const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: str
 );  export const Navbar: React.FC = () => {  
 const [isOpen, setIsOpen] = React.useState(false);  
 const [isScrolled, setIsScrolled] = useState(false);  
-const [totalApis, setTotalApis] = useState<number | null>(null);
 const [isAuthenticated, setIsAuthenticated] = useState(false);  
 const [isLoggingOut, setIsLoggingOut] = useState(false);  const location = useLocation();
 const navigate = useNavigate();
@@ -44,22 +43,6 @@ window.removeEventListener('scroll', handleScroll);
 window.removeEventListener('auth-change', checkAuth);
 };
 
-}, []);
-
-useEffect(() => {
-  const fetchTotalApis = async () => {
-    try {
-      const res = await fetch(
-        "https://apives.onrender.com/api/apis?page=1&limit=1"
-      );
-      const data = await res.json();
-      setTotalApis(data.total);
-    } catch (err) {
-      console.error("Failed to fetch total APIs");
-    }
-  };
-
-  fetchTotalApis();
 }, []);
 
 const handleLogout = () => {
@@ -228,49 +211,7 @@ transition-all
         </>    
       ) : (    
         <MobileNavLink to="/access" icon={Terminal} onClick={() => setIsOpen(false)}>Access Console</MobileNavLink>    
-      )} 
-{/* 🔥 LIVE API NODE STATUS (Animated Compact Block) */}
-{totalApis !== null && (
-  <div className="relative ml-3 group">
-
-    <div className="
-      relative
-      flex items-center gap-2
-      px-4 py-1.5
-      rounded-full
-      bg-black/40
-      border border-white/10
-      backdrop-blur-xl
-      overflow-hidden
-      transition-all
-      hover:border-mora-500/50
-    ">
-
-      {/* Animated Pulse Dot */}
-      <div className="relative">
-        <div className="w-2 h-2 rounded-full bg-mora-500 animate-ping absolute"></div>
-        <div className="w-2 h-2 rounded-full bg-mora-500 relative"></div>
-      </div>
-
-      {/* Number */}
-      <span className="text-[10px] font-black uppercase tracking-widest text-white">
-        {totalApis.toLocaleString()}
-      </span>
-
-      <span className="text-[8px] text-slate-400 uppercase tracking-widest">
-        Nodes
-      </span>
-
-      {/* Glow Accent Lines (Navbar style match) */}
-      <div className="absolute inset-0 pointer-events-none rounded-full">
-        <div className="absolute left-0 top-0 bottom-0 w-1/2 border-l-[2px] border-mora-500 rounded-l-full shadow-[-15px_0_30px_-5px_rgba(34,197,94,0.4)] opacity-40 group-hover:opacity-100 transition-all"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-1/2 border-r-[2px] border-mora-500 rounded-r-full shadow-[15px_0_30px_-5px_rgba(34,197,94,0.4)] opacity-40 group-hover:opacity-100 transition-all"></div>
-      </div>
-
-    </div>
-
-  </div>
-)}   
+      )}    
     </div>    
   </div>    
 )}
