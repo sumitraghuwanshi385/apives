@@ -223,7 +223,7 @@ if (pageNumber === 1) {
 ">
 
     {/* Navbar Style Glow */}
-<div className="absolute inset-0 rounded-full pointer-events-none hidden md:block">
+<div className="absolute inset-0 rounded-full pointer-events-none">
   <div className="absolute top-0 bottom-0 left-0 w-[50%] border-l-[2px] border-mora-500 rounded-l-full shadow-[-15px_0_30px_-5px_rgba(34,197,94,0.45)] opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
   <div className="absolute top-0 bottom-0 right-0 w-[50%] border-r-[2px] border-mora-500 rounded-r-full shadow-[15px_0_30px_-5px_rgba(34,197,94,0.45)] opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
 </div>
