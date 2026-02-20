@@ -210,19 +210,23 @@ if (pageNumber === 1) {
 <div className="max-w-2xl mx-auto mb-8 relative px-2">
 
   <div className="
-    relative
-    flex items-center
-    bg-black/50
-    border border-white/10
-    rounded-full
-    px-4 md:px-6
-    py-2 md:py-3
-    shadow-xl
-  ">
+  relative
+  flex items-center
+  bg-black/50
+  border border-white/10
+  rounded-full
+  px-4 md:px-6
+  py-2 md:py-3
+  shadow-xl
+  overflow-hidden
+  group
+">
 
-    {/* Side Accent Lines (Desktop Only) */}
-    <div className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 h-6 w-[1px] bg-mora-500/30" />
-    <div className="hidden md:block absolute right-4 top-1/2 -translate-y-1/2 h-6 w-[1px] bg-mora-500/30" />
+    {/* Navbar Style Glow */}
+<div className="absolute inset-0 rounded-full pointer-events-none hidden md:block">
+  <div className="absolute top-0 bottom-0 left-0 w-[50%] border-l-[2px] border-mora-500 rounded-l-full shadow-[-15px_0_30px_-5px_rgba(34,197,94,0.45)] opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
+  <div className="absolute top-0 bottom-0 right-0 w-[50%] border-r-[2px] border-mora-500 rounded-r-full shadow-[15px_0_30px_-5px_rgba(34,197,94,0.45)] opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
+</div>
 
     {/* SEARCH ICON */}
     <Search
