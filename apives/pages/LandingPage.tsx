@@ -182,30 +182,6 @@ useEffect(() => {
 
 }, []);
 
-useEffect(() => {
-  const fetchTotalApis = async () => {
-    try {
-      const res = await fetch(
-        "https://apives.onrender.com/api/apis?page=1&limit=1"
-      );
-      const data = await res.json();
-      setTotalApis(data.total);
-    } catch (err) {
-      console.error("Failed to fetch total APIs");
-    }
-  };
-
-  fetchTotalApis();
-}, []);
-
-const updateLandingUpvotes = (apiId: string, delta: number) => {
-  const update = (list: ApiListing[]) =>
-    list.map(api =>
-      api.id === apiId
-        ? { ...api, upvotes: Math.max((api.upvotes || 0) + delta, 0) }
-        : api
-    );
-
   setUniversalApis(prev => update(prev));
   setFreshApis(prev => update(prev));
   setCommunityApis(prev => update(prev));
