@@ -343,6 +343,12 @@ const presets=[
 { name:"Dog Image", url:"https://dog.ceo/api/breeds/image/random"}
 ];
 
+const autoResize=(e)=>{
+const el=e.target;
+el.style.height="auto";
+el.style.height=el.scrollHeight+"px";
+};
+
 const formatJSON=(data)=>{
 try{
 return JSON.stringify(JSON.parse(data),null,2);
@@ -489,8 +495,6 @@ Run real APIs and inspect JSON responses instantly.
 
 </div>
 
-{/* MINI HEADLINE ADDED */}
-
 <p className="text-center text-xs text-slate-500 mb-3">
 Try these example APIs to quickly test the runner
 </p>
@@ -573,19 +577,26 @@ Clear
 Headers (optional JSON)
 </p>
 
+<p className="text-[11px] text-slate-500 mb-2">
+Headers dalna ho to yaha JSON format me add kar sakte ho (example: Authorization token, API key etc.)
+</p>
+
 <textarea
 value={headers}
-onChange={(e)=>setHeaders(e.target.value)}
+onChange={(e)=>{
+setHeaders(e.target.value);
+autoResize(e);
+}}
+onInput={autoResize}
+rows={2}
 placeholder={`{
  "Content-Type":"application/json",
  "Authorization":"Bearer YOUR_API_KEY"
 }`}
-className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
+className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white resize-none"
 />
 
 </div>
-
-{/* BODY */}
 
 {method!=="GET" && (
 
@@ -595,13 +606,22 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 Request Body (JSON)
 </p>
 
+<p className="text-[11px] text-slate-500 mb-2">
+POST / PUT requests ke liye yaha JSON request body add kar sakte ho.
+</p>
+
 <textarea
 value={body}
-onChange={(e)=>setBody(e.target.value)}
+onChange={(e)=>{
+setBody(e.target.value);
+autoResize(e);
+}}
+onInput={autoResize}
+rows={2}
 placeholder={`{
  "example":"data"
 }`}
-className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
+className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white resize-none"
 />
 
 </div>
@@ -641,7 +661,11 @@ style={oneDark}
 customStyle={{
 background:"transparent",
 margin:0,
-padding:0
+padding:0,
+textShadow:"none"
+}}
+codeTagProps={{
+style:{textShadow:"none"}
 }}
 >
 
