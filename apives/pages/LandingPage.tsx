@@ -10,7 +10,8 @@ Hash,
 Server,
 Trophy,
 LayoutGrid,
-Image
+Image,
+Zap, Copy, Check
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
@@ -283,118 +284,16 @@ rounded-2xl bg-white/10 p-1"
 {/* ===============================
  APIVES QUICK START PLAYGROUND
 ================================ */}
-<section className="py-14 md:py-20 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* background glow */}
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none" />
+<export const QuickStartPlayground = () => {
 
-<div className="max-w-6xl mx-auto px-4 md:px-8 relative z-10">
+const [lang,setLang] = useState("python");
+const [copied,setCopied] = useState(false);
+const [code,setCode] = useState("");
 
-{/* Header */}
-<div className="text-center mb-10">
+const codeSnippets:any = {
 
-<h2 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
-Start Building Instantly
-</h2>
-
-<p className="text-slate-400 mt-2 text-sm md:text-base max-w-xl mx-auto">
-Generate code snippets for Apives APIs and integrate within seconds.
-</p>
-
-</div>
-
-
-{/* Macbook Code Box */}
-<div className="
-relative
-rounded-2xl
-border border-white/10
-bg-[#0b0b0b]
-shadow-[0_40px_120px_rgba(0,0,0,0.9)]
-overflow-hidden
-">
-
-{/* Macbook header */}
-<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
-
-{/* mac dots */}
-<div className="flex gap-2">
-<div className="w-3 h-3 rounded-full bg-red-500"></div>
-<div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-<div className="w-3 h-3 rounded-full bg-green-500"></div>
-</div>
-
-{/* actions */}
-<div className="flex gap-2">
-
-<button className="
-px-4 py-1.5
-rounded-full
-text-[10px]
-font-black
-uppercase
-bg-mora-500
-text-black
-hover:scale-105
-transition-all
-">
-⚡ Generate Code
-</button>
-
-<button
-onClick={()=>{
-navigator.clipboard.writeText(document.getElementById("apives-code")?.innerText || "")
-}}
-className="
-px-4 py-1.5
-rounded-full
-text-[10px]
-font-black
-uppercase
-bg-white/10
-text-white
-hover:bg-white/20
-transition-all
-">
-📋 Copy
-</button>
-
-</div>
-
-</div>
-
-
-{/* language tabs */}
-<div className="flex gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
-
-{["Python","Node","cURL","Go"].map((lang,i)=>(
-<button
-key={i}
-className="
-px-4 py-1.5
-rounded-full
-text-[10px]
-font-black
-uppercase
-bg-white/5
-text-slate-300
-hover:bg-mora-500
-hover:text-black
-transition-all
-">
-{lang}
-</button>
-))}
-
-</div>
-
-
-{/* code */}
-<div className="p-6 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
-
-<pre id="apives-code" className="leading-relaxed">
-
-{`import apives
+python: `import apives
 
 client = apives.Client(
   api_key="YOUR_APIVES_API_KEY"
@@ -405,7 +304,210 @@ response = client.chat.create(
   message="Hello from Apives"
 )
 
-print(response.output)`}
+print(response.output)
+`,
+
+node:`import Apives from "apives"
+
+const client = new Apives({
+  apiKey:"YOUR_APIVES_API_KEY"
+})
+
+const res = await client.chat.create({
+  model:"apives-gpt",
+  message:"Hello from Apives"
+})
+
+console.log(res.output)
+`,
+
+curl:`curl https://api.apives.com/v1/chat \\
+ -H "Authorization: Bearer YOUR_APIVES_API_KEY" \\
+ -H "Content-Type: application/json" \\
+ -d '{
+   "model":"apives-gpt",
+   "message":"Hello from Apives"
+ }'
+`,
+
+go:`package main
+
+import (
+  "fmt"
+  "apives"
+)
+
+func main(){
+
+client := apives.New("YOUR_APIVES_API_KEY")
+
+res := client.Chat("Hello from Apives")
+
+fmt.Println(res)
+
+}`
+};
+
+const generateCode = ()=>{
+setCode(codeSnippets[lang]);
+};
+
+const copyCode = async ()=>{
+await navigator.clipboard.writeText(code);
+setCopied(true);
+setTimeout(()=>setCopied(false),2000);
+};
+
+return(
+
+<section className="py-16 bg-black border-t border-white/5 relative overflow-hidden">
+
+<div className="max-w-6xl mx-auto px-6">
+
+{/* HEADER */}
+
+<div className="text-center mb-10">
+
+<h2 className="text-3xl md:text-4xl font-display font-bold text-white">
+Start Building Instantly
+</h2>
+
+<p className="text-slate-400 text-sm mt-2">
+Generate real integration code for Apives APIs
+</p>
+
+</div>
+
+{/* TERMINAL */}
+
+<div className="
+relative
+rounded-2xl
+border border-white/10
+bg-[#070707]
+shadow-[0_50px_120px_rgba(0,0,0,0.9)]
+overflow-hidden
+">
+
+{/* MAC HEADER */}
+
+<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
+
+<div className="flex gap-2">
+
+<div className="w-3 h-3 rounded-full bg-red-500"/>
+<div className="w-3 h-3 rounded-full bg-yellow-400"/>
+<div className="w-3 h-3 rounded-full bg-green-500"/>
+
+</div>
+
+<div className="flex gap-2 items-center">
+
+{/* GENERATE */}
+
+<button
+onClick={generateCode}
+className="
+flex items-center gap-2
+px-4 py-1.5
+rounded-full
+text-[10px]
+font-black
+uppercase
+bg-mora-500
+text-black
+hover:scale-105
+transition
+"
+>
+
+<Zap size={14}/>
+Generate
+
+</button>
+
+{/* COPY */}
+
+<div className="relative">
+
+<button
+onClick={copyCode}
+className="
+w-9 h-9
+flex items-center justify-center
+rounded-full
+bg-white/5
+border border-white/10
+hover:bg-mora-500
+hover:text-black
+transition
+"
+>
+
+{copied ? <Check size={16}/> : <Copy size={16}/>}
+
+</button>
+
+{copied && (
+
+<div className="
+absolute
+-top-7
+left-1/2
+-translate-x-1/2
+text-[10px]
+bg-mora-500
+text-black
+px-2 py-0.5
+rounded-full
+animate-fade-in
+">
+Copied
+</div>
+
+)}
+
+</div>
+
+</div>
+
+</div>
+
+{/* LANGUAGES */}
+
+<div className="flex gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
+
+{["python","node","curl","go"].map(l=>(
+<button
+key={l}
+onClick={()=>setLang(l)}
+className={`
+px-4 py-1.5
+rounded-full
+text-[10px]
+font-black
+uppercase
+transition
+${lang===l
+? "bg-mora-500 text-black"
+: "bg-white/5 text-slate-300 hover:bg-white/10"}
+`}
+>
+
+{l}
+
+</button>
+))}
+
+</div>
+
+{/* CODE */}
+
+<div className="p-6 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
+
+<pre className="leading-relaxed">
+
+{code || `Click "Generate" to create integration code`}
 
 </pre>
 
@@ -414,8 +516,12 @@ print(response.output)`}
 </div>
 
 </div>
+
 </section>
 
+);
+
+};
 {/* ===============================
  WHAT ARE YOU BUILDING TODAY
 ================================ */}
