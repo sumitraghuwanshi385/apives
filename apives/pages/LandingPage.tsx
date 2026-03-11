@@ -306,44 +306,29 @@ Never expose secret keys in frontend code.
 
 };
 
+
 const LiveApiRunner = () => {
 
 const [endpoint,setEndpoint]=useState("https://api.ipify.org?format=json");
+const [method,setMethod]=useState("GET");
+const [headers,setHeaders]=useState("");
+const [body,setBody]=useState("");
+
 const [response,setResponse]=useState("");
 const [loading,setLoading]=useState(false);
 const [status,setStatus]=useState("");
+const [statusCode,setStatusCode]=useState(null);
+const [time,setTime]=useState(null);
+const [history,setHistory]=useState([]);
 
 const presets = [
 
-{
-name:"IP API",
-url:"https://api.ipify.org?format=json"
-},
-
-{
-name:"Random User",
-url:"https://randomuser.me/api/"
-},
-
-{
-name:"Bitcoin Price",
-url:"https://api.coinbase.com/v2/prices/spot?currency=USD"
-},
-
-{
-name:"Weather",
-url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true"
-},
-
-{
-name:"GitHub User",
-url:"https://api.github.com/users/vercel"
-},
-
-{
-name:"Dog Image",
-url:"https://dog.ceo/api/breeds/image/random"
-}
+{ name:"IP API", url:"https://api.ipify.org?format=json" },
+{ name:"Random User", url:"https://randomuser.me/api/" },
+{ name:"Bitcoin Price", url:"https://api.coinbase.com/v2/prices/spot?currency=USD" },
+{ name:"Weather", url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true" },
+{ name:"GitHub User", url:"https://api.github.com/users/vercel" },
+{ name:"Dog Image", url:"https://dog.ceo/api/breeds/image/random" }
 
 ];
 
@@ -352,16 +337,11 @@ const sendRequest = async () => {
 if(!endpoint) return;
 
 setLoading(true);
-setStatus("Fetching API...");
+setStatus("Running request...");
+setStatusCode(null);
+setTime(null);
 
-try{
-
-const sendRequest = async () => {
-
-if(!endpoint) return;
-
-setLoading(true);
-setStatus("Sending request via Apives runner...");
+const start = Date.now();
 
 try{
 
@@ -373,20 +353,31 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
-url:endpoint
+url:endpoint,
+method,
+headers,
+body
 })
 }
 );
 
 const data = await res.json();
 
+const end = Date.now();
+
+setTime(end-start);
+
 if(data.success){
 
-setResponse(
-JSON.stringify(data.data,null,2)
-);
+const json = JSON.stringify(data.data,null,2);
+setResponse(json);
+setStatusCode(data.status);
+setStatus("Success");
 
-setStatus(`Success • ${data.status}`);
+setHistory(prev=>[
+{url:endpoint,method,time:end-start},
+...prev.slice(0,5)
+]);
 
 }else{
 
@@ -398,14 +389,12 @@ setStatus("Error");
 }catch(err){
 
 setResponse(
-`Request failed.
+`Request failed
 
 Possible reasons:
-• API server offline
-• Endpoint invalid
 • API requires authentication
-
-Try another public API.`
+• API blocked request
+• Invalid endpoint`
 );
 
 setStatus("Runner Error");
@@ -419,15 +408,23 @@ setLoading(false);
 const clearResponse = () => {
 setResponse("");
 setStatus("");
+setStatusCode(null);
+setTime(null);
+};
+
+const copyResponse = async () => {
+
+if(!response) return;
+
+await navigator.clipboard.writeText(response);
+
 };
 
 return(
 
 <section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* subtle green glow */}
-
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none"/>
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
 
 <div className="max-w-5xl mx-auto px-4 relative z-10">
 
@@ -440,12 +437,12 @@ Live API Request Runner
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Run real public APIs and inspect JSON responses instantly.
+Run real APIs and inspect JSON responses instantly.
 </p>
 
 </div>
 
-{/* PRESET PILLS */}
+{/* PRESET APIs */}
 
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
@@ -453,9 +450,7 @@ Run real public APIs and inspect JSON responses instantly.
 <button
 key={i}
 onClick={()=>setEndpoint(p.url)}
-className="px-3 py-1.5 text-xs font-semibold rounded-full
-bg-white/10 backdrop-blur-md border border-white/20
-text-slate-200 hover:bg-white/20 transition"
+className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hover:bg-white/20"
 >
 {p.name}
 </button>
@@ -463,73 +458,159 @@ text-slate-200 hover:bg-white/20 transition"
 
 </div>
 
-{/* RUNNER */}
+{/* REQUEST PANEL */}
 
-<div className="bg-[#070707] border border-white/10 rounded-2xl p-4 shadow-[0_30px_80px_rgba(0,0,0,0.9)]">
+<div className="bg-[#070707] border border-white/10 rounded-2xl p-4">
 
-{/* INPUT */}
+{/* METHOD + URL */}
 
-<div className="flex flex-col md:flex-row gap-2 mb-3">
+<div className="flex gap-2 mb-3">
+
+<select
+value={method}
+onChange={(e)=>setMethod(e.target.value)}
+className="bg-black border border-white/10 text-xs px-2 rounded"
+>
+
+<option>GET</option>
+<option>POST</option>
+
+</select>
 
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
-placeholder="Enter any public API URL..."
-className="flex-1 bg-black border border-white/10 px-3 py-2 rounded-lg text-sm text-white focus:outline-none focus:border-green-500"
+className="flex-1 bg-black border border-white/10 text-sm px-3 py-2 rounded text-white"
+placeholder="Enter API URL"
 />
-
-<div className="flex gap-2">
 
 <button
 onClick={sendRequest}
-className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-full
-bg-white/10 backdrop-blur-md border border-white/20
-text-white hover:bg-white/20 transition"
+className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hover:bg-white/20"
 >
-<Play size={14}/>
 Run
 </button>
 
 <button
 onClick={clearResponse}
-className="px-3 py-1.5 text-xs font-semibold rounded-full
-bg-white/10 backdrop-blur-md border border-white/20
-text-slate-300 hover:bg-white/20 transition"
+className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20"
 >
 Clear
 </button>
 
 </div>
 
+{/* HEADERS */}
+
+<div className="mb-3">
+
+<p className="text-xs text-slate-400 mb-1">Headers (JSON)</p>
+
+<textarea
+value={headers}
+onChange={(e)=>setHeaders(e.target.value)}
+placeholder='{"Authorization":"Bearer API_KEY"}'
+className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
+/>
+
 </div>
 
-{/* STATUS */}
+{/* BODY */}
 
-{status && (
+{method==="POST" && (
 
-<div className="text-xs text-green-400 mb-2 font-mono">
-{status}
+<div className="mb-3">
+
+<p className="text-xs text-slate-400 mb-1">Request Body</p>
+
+<textarea
+value={body}
+onChange={(e)=>setBody(e.target.value)}
+placeholder='{"message":"hello"}'
+className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
+/>
+
 </div>
 
 )}
 
+{/* STATUS */}
+
+<div className="flex items-center gap-3 mb-2 text-xs font-mono">
+
+{status && <span className="text-green-400">{status}</span>}
+
+{statusCode && (
+
+<span className="px-2 py-0.5 bg-green-500/20 rounded">
+{statusCode}
+</span>
+
+)}
+
+{time && <span>{time} ms</span>}
+
+<button
+onClick={copyResponse}
+className="ml-auto text-xs px-2 py-1 border border-white/10 rounded"
+>
+Copy JSON
+</button>
+
+</div>
+
 {/* RESPONSE */}
 
-<div className="relative">
+<div className="border border-white/10 rounded-xl p-4 bg-black/80 text-xs overflow-x-auto">
 
-<pre className="font-mono text-xs bg-black/80 border border-white/10 p-4 rounded-xl overflow-x-auto leading-relaxed">
+<SyntaxHighlighter
+language="json"
+style={oneDark}
+customStyle={{
+background:"transparent",
+margin:0,
+padding:0
+}}
+>
 
-<code className="text-green-400 whitespace-pre">
+{loading ? "Loading..." : response || "Response will appear here"}
 
-{loading ? "Loading response..." : response || "Response will appear here"}
-
-</code>
-
-</pre>
+</SyntaxHighlighter>
 
 </div>
 
 </div>
+
+{/* HISTORY */}
+
+{history.length>0 && (
+
+<div className="mt-5">
+
+<p className="text-xs text-slate-400 mb-2">Recent Requests</p>
+
+<div className="space-y-1">
+
+{history.map((h,i)=>(
+<div
+key={i}
+className="text-xs text-slate-400 flex justify-between bg-white/5 px-2 py-1 rounded"
+>
+
+<span>{h.method}</span>
+
+<span className="truncate max-w-[200px]">{h.url}</span>
+
+<span>{h.time}ms</span>
+
+</div>
+))}
+
+</div>
+
+</div>
+
+)}
 
 </div>
 
