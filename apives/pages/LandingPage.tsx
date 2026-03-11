@@ -217,7 +217,7 @@ Example snippets showing how APIs are typically integrated in apps.
 
 <div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-xs text-green-300 flex gap-3 items-start">
 
-<Info size={22} className="mt-[1px]"/>
+<Info className="w-6 h-6 mt-[2px] text-green-400 flex-shrink-0"/>
 
 <p>
 These code snippets are examples for demonstration purposes.
@@ -297,7 +297,7 @@ style:{textShadow:"none"}
 
 <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex gap-3">
 
-<Key size={22}/>
+<Key className="w-6 h-6 text-white flex-shrink-0"/>
 
 <p>
 
