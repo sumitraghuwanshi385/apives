@@ -578,7 +578,8 @@ Headers (optional JSON)
 </p>
 
 <p className="text-[11px] text-slate-500 mb-2">
-Headers dalna ho to yaha JSON format me add kar sakte ho (example: Authorization token, API key etc.)
+Add request headers here in JSON format if required.
+Example: Authorization token, API key, custom headers.
 </p>
 
 <textarea
@@ -607,7 +608,7 @@ Request Body (JSON)
 </p>
 
 <p className="text-[11px] text-slate-500 mb-2">
-POST / PUT requests ke liye yaha JSON request body add kar sakte ho.
+Add JSON request body here for POST or PUT requests.
 </p>
 
 <textarea
