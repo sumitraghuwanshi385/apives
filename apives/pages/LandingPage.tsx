@@ -115,13 +115,14 @@ const snippets:any = {
 
 python:`import apives
 
+# Initialize client with your API key
 client = apives.Client(api_key="YOUR_API_KEY")
 
 response = client.chat.create(
-    model="apives-gpt",
-    messages=[
-        {"role":"user","content":"Hello"}
-    ]
+  model="apives-gpt",
+  messages=[
+    {"role":"user","content":"Hello"}
+  ]
 )
 
 print(response.output)
@@ -147,12 +148,11 @@ curl:`curl https://api.apives.com/v1/chat \\
 -H "Authorization: Bearer YOUR_API_KEY" \\
 -H "Content-Type: application/json" \\
 -d '{
-  "model":"apives-gpt",
-  "messages":[
-    {"role":"user","content":"Hello"}
-  ]
-}'
-`,
+ "model":"apives-gpt",
+ "messages":[
+  {"role":"user","content":"Hello"}
+ ]
+}'`,
 
 go:`package main
 
@@ -161,18 +161,17 @@ import (
  "github.com/apives/apives-go"
 )
 
-func main() {
+func main(){
 
  client := apives.NewClient("YOUR_API_KEY")
 
- res, _ := client.Chat.Create(
+ res,_ := client.Chat.Create(
   "apives-gpt",
   "Hello",
  )
 
  fmt.Println(res.Output)
-}
-`
+}`
 };
 
 useEffect(()=>{
@@ -187,27 +186,40 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="py-20 bg-black border-t border-white/5">
 
 <div className="max-w-6xl mx-auto px-6">
 
-<div className="text-center mb-10">
+{/* HEADER */}
 
-<h2 className="text-3xl md:text-4xl font-display font-bold text-white">
+<div className="text-center mb-8">
+
+<h2 className="text-3xl md:text-4xl font-bold text-white">
 Quick Start Integration
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Instantly integrate Apives API in your app using any language.
+Example code to integrate the Apives API in seconds.
 </p>
 
 </div>
 
+{/* NOTICE */}
 
-<div className="relative rounded-2xl border border-white/10 bg-[#070707] shadow-[0_50px_120px_rgba(0,0,0,0.9)] overflow-hidden">
+<div className="mb-6 rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4 text-xs text-yellow-300">
 
+⚠️ These code snippets are **examples for demonstration purposes**.  
+Replace <span className="text-white">YOUR_API_KEY</span> with your actual API key from the Apives console.
 
-<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
+</div>
+
+{/* TERMINAL */}
+
+<div className="rounded-2xl border border-white/10 bg-[#070707] overflow-hidden">
+
+{/* TERMINAL HEADER */}
+
+<div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
 
 <div className="flex gap-2">
 <div className="w-3 h-3 rounded-full bg-red-500"/>
@@ -217,21 +229,22 @@ Instantly integrate Apives API in your app using any language.
 
 <button
 onClick={copyCode}
-className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition"
+className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10"
 >
 {copied ? <Check size={16}/> : <Copy size={16}/>}
 </button>
 
 </div>
 
+{/* LANGUAGE TABS */}
 
-<div className="flex gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
+<div className="flex gap-2 px-4 py-3 border-b border-white/10">
 
 {["python","node","curl","go"].map(l=>(
 <button
 key={l}
 onClick={()=>setLang(l)}
-className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition ${
+className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase ${
 lang===l
 ? "bg-white text-black"
 : "bg-white/5 text-slate-300 hover:bg-white/10"}
@@ -243,6 +256,7 @@ lang===l
 
 </div>
 
+{/* CODE */}
 
 <div className="p-6 text-xs md:text-sm overflow-x-auto">
 
@@ -259,6 +273,15 @@ margin:0
 </SyntaxHighlighter>
 
 </div>
+
+</div>
+
+{/* DEV TIP */}
+
+<div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">
+
+💡 <span className="text-white">Developer Tip:</span>  
+Store your API key securely using environment variables and never expose it in public repositories.
 
 </div>
 
