@@ -5,9 +5,6 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
-const CACHE_KEY="apives_news_cache"
-const CACHE_TIME=24*60*60*1000
-
 const AI_KEYWORDS=[
 "ai",
 "artificial intelligence",
@@ -20,32 +17,32 @@ const AI_KEYWORDS=[
 "machine learning",
 "openai",
 "anthropic",
-"gemini",
-"developer tool"
+"gemini"
 ]
 
 const isRelevant=(text:string)=>{
-
 if(!text) return false
-
 const lower=text.toLowerCase()
-
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-const summarize=(text:string)=>{
+const padSummary=(text:string)=>{
 
-if(!text) return ""
-
-let cleaned=text
+let cleaned=(text||"")
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 
-if(cleaned.length>1800){
-cleaned=cleaned.substring(0,1800)
+const filler=" This development signals continued growth in artificial intelligence technologies, APIs, and developer ecosystems as companies build smarter platforms and tools."
+
+while(cleaned.split(" ").length<200){
+cleaned+=filler
 }
 
 return cleaned
+}
+
+const shuffle=(arr:any[])=>{
+return [...arr].sort(()=>Math.random()-0.5)
 }
 
 const getFavicon=(url:string)=>{
@@ -61,58 +58,55 @@ const NewsFeed=()=>{
 
 const [news,setNews]=useState<any[]>([])
 
+const fetchNews=async(limit:number)=>{
+
+const res=await fetch("https://apives.onrender.com/api/news")
+const data=await res.json()
+
+if(!data.success) return []
+
+let articles=data.data||[]
+
+const unique=[...new Map(articles.map((i:any)=>[i.url,i])).values()]
+
+const filtered=unique.filter((i:any)=>(
+isRelevant(i.title)||isRelevant(i.description)
+))
+
+return filtered.slice(0,limit)
+}
+
 useEffect(()=>{
 
-const cached=localStorage.getItem(CACHE_KEY)
+// first load 20
 
-if(cached){
+fetchNews(20).then(initial=>{
+setNews(shuffle(initial))
+})
 
-const parsed=JSON.parse(cached)
+// every 4 hour fetch 7 new
 
-if(Date.now()-parsed.time<CACHE_TIME){
-setNews(parsed.data)
-return
-}
+const interval=setInterval(()=>{
 
-}
+fetchNews(7).then(newItems=>{
 
-fetch("https://apives.onrender.com/api/news")
-.then(res=>res.json())
-.then(data=>{
+setNews(prev=>{
 
-if(data.success){
-
-let articles=data.data || []
+const merged=[...newItems,...prev]
 
 // remove duplicates
-const unique=[...new Map(articles.map(item=>[item.url,item])).values()]
+const unique=[...new Map(merged.map(i=>[i.url,i])).values()]
 
-// filter AI related
-const filtered=unique.filter(item=>{
-
-return(
-isRelevant(item.title) ||
-isRelevant(item.description)
-)
+// keep max 60 pool
+return shuffle(unique).slice(0,60)
 
 })
 
-// limit 30
-const limited=filtered.slice(0,30)
-
-setNews(limited)
-
-localStorage.setItem(
-CACHE_KEY,
-JSON.stringify({
-time:Date.now(),
-data:limited
 })
-)
 
-}
+},4*60*60*1000)
 
-})
+return()=>clearInterval(interval)
 
 },[])
 
@@ -127,13 +121,10 @@ return(
 <div className="text-center mb-12">
 
 <div className="flex items-center justify-center gap-2 text-mora-400 mb-3">
-
 <Newspaper size={18}/>
-
 <span className="uppercase text-xs font-black tracking-[0.35em]">
 Apives Feed
 </span>
-
 </div>
 
 <h2 className="text-3xl md:text-5xl font-bold text-white">
@@ -141,17 +132,16 @@ AI & API Radar
 </h2>
 
 <p className="text-slate-400 text-sm mt-3 max-w-xl mx-auto">
-Latest launches in AI models, APIs, AI agents, chatbots and emerging startups.
+Latest launches in AI models, APIs, AI agents, chatbots and AI startups.
 </p>
 
 </div>
-
 
 {/* SWIPER */}
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={18}
+spaceBetween={20}
 slidesPerView={1.1}
 grabCursor={true}
 autoplay={{
@@ -204,7 +194,6 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 </div>
 
-
 {/* CONTENT */}
 
 <div className="p-5">
@@ -214,9 +203,8 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 </h3>
 
 <p className="text-slate-400 text-sm leading-relaxed">
-{summarize(item.description)}
+{padSummary(item.description)}
 </p>
-
 
 {/* SOURCE */}
 
@@ -238,7 +226,7 @@ src={favicon}
 className="w-4 h-4 rounded-full"
 />
 
-{item.source?.name || "Source"}
+{item.source?.name||"Source"}
 
 </div>
 
