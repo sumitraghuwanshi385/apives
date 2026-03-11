@@ -150,7 +150,8 @@ curl:`curl https://api.example.com/v1/chat \\
 -H "Content-Type: application/json" \\
 -d '{
  "message":"Hello"
-}'`,
+}'
+`,
 
 go:`package main
 
@@ -193,7 +194,7 @@ return(
 
 <section className="py-14 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* GREEN GLOW */}
+{/* green glow */}
 
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none"/>
 
@@ -209,19 +210,6 @@ Quick Start Integration
 
 <p className="text-slate-400 text-sm mt-2">
 Example snippets showing how APIs are typically integrated in apps.
-</p>
-
-</div>
-
-{/* NOTICE */}
-
-<div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-xs text-green-300 flex gap-3 items-start">
-
-<Info className="w-4 h-4 mt-[2px] text-green-400 flex-shrink-0"/>
-
-<p>
-These code snippets are examples for demonstration purposes.
-Replace <span className="text-white">YOUR_API_KEY</span> with an API key obtained from the respective API provider.
 </p>
 
 </div>
@@ -249,7 +237,7 @@ className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 bord
 
 </div>
 
-{/* LANG TABS */}
+{/* LANGUAGE TABS */}
 
 <div className="flex flex-wrap gap-2 px-4 py-3 border-b border-white/10">
 
@@ -293,11 +281,13 @@ style:{textShadow:"none"}
 
 </div>
 
-{/* DEV TIP */}
+{/* DEVELOPER TIP */}
 
-<div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex items-center gap-3">
+<div className="mt-5 rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-300 flex items-center gap-3">
 
-<Key className="w-3 h-3 text-white flex-shrink-0"/>
+<div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+<Key className="w-4 h-4 text-green-400"/>
+</div>
 
 <p>
 
@@ -315,7 +305,6 @@ Never expose secret keys in frontend code.
 );
 
 };
-
 
 const LiveApiRunner = () => {
 
@@ -338,7 +327,7 @@ url:"https://randomuser.me/api/"
 
 {
 name:"Bitcoin Price",
-url:"https://api.coindesk.com/v1/bpi/currentprice.json"
+url:"https://api.coinbase.com/v2/prices/spot?currency=USD"
 },
 
 {
@@ -358,7 +347,7 @@ url:"https://dog.ceo/api/breeds/image/random"
 
 ];
 
-const sendRequest=async()=>{
+const sendRequest = async () => {
 
 if(!endpoint) return;
 
@@ -367,17 +356,37 @@ setStatus("Fetching API...");
 
 try{
 
-const res=await fetch(endpoint);
+const res = await fetch(endpoint,{
+method:"GET"
+});
 
-const data=await res.json();
+const text = await res.text();
 
-setResponse(JSON.stringify(data,null,2));
+try{
 
-setStatus(`Success • ${res.status}`);
+const json = JSON.stringify(JSON.parse(text),null,2);
+setResponse(json);
 
 }catch{
 
-setResponse("Request failed");
+setResponse(text);
+
+}
+
+setStatus(`Success • ${res.status}`);
+
+}catch(err){
+
+setResponse(
+`Request failed.
+
+Possible reasons:
+• API blocks browser requests (CORS)
+• Endpoint requires API key
+• Invalid URL
+
+Try another public API.`
+);
 
 setStatus("Error");
 
@@ -387,18 +396,18 @@ setLoading(false);
 
 };
 
-const clearResponse=()=>{
+const clearResponse = () => {
 setResponse("");
 setStatus("");
 };
 
 return(
 
-<section className="py-12 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* green glow */}
+{/* subtle green glow */}
 
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none"/>
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none"/>
 
 <div className="max-w-5xl mx-auto px-4 relative z-10">
 
@@ -411,12 +420,12 @@ Live API Request Runner
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Run real API requests and inspect JSON responses instantly.
+Run real public APIs and inspect JSON responses instantly.
 </p>
 
 </div>
 
-{/* PRESETS */}
+{/* PRESET PILLS */}
 
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
@@ -424,7 +433,9 @@ Run real API requests and inspect JSON responses instantly.
 <button
 key={i}
 onClick={()=>setEndpoint(p.url)}
-className="px-3 py-1.5 text-xs font-black rounded-full bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500 hover:text-black transition"
+className="px-3 py-1.5 text-xs font-semibold rounded-full
+bg-white/10 backdrop-blur-md border border-white/20
+text-slate-200 hover:bg-white/20 transition"
 >
 {p.name}
 </button>
@@ -443,7 +454,7 @@ className="px-3 py-1.5 text-xs font-black rounded-full bg-green-500/10 text-gree
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
-placeholder="https://api.example.com"
+placeholder="Enter any public API URL..."
 className="flex-1 bg-black border border-white/10 px-3 py-2 rounded-lg text-sm text-white focus:outline-none focus:border-green-500"
 />
 
@@ -451,7 +462,9 @@ className="flex-1 bg-black border border-white/10 px-3 py-2 rounded-lg text-sm t
 
 <button
 onClick={sendRequest}
-className="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-full bg-green-500 text-black hover:scale-105 transition"
+className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-full
+bg-white/10 backdrop-blur-md border border-white/20
+text-white hover:bg-white/20 transition"
 >
 <Play size={14}/>
 Run
@@ -459,7 +472,9 @@ Run
 
 <button
 onClick={clearResponse}
-className="px-4 py-2 text-xs font-bold rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10"
+className="px-3 py-1.5 text-xs font-semibold rounded-full
+bg-white/10 backdrop-blur-md border border-white/20
+text-slate-300 hover:bg-white/20 transition"
 >
 Clear
 </button>
@@ -482,9 +497,13 @@ Clear
 
 <div className="relative">
 
-<pre className="text-green-400 font-mono text-xs bg-black/80 border border-white/10 p-4 rounded-xl overflow-x-auto leading-relaxed">
+<pre className="font-mono text-xs bg-black/80 border border-white/10 p-4 rounded-xl overflow-x-auto leading-relaxed">
+
+<code className="text-green-400 whitespace-pre">
 
 {loading ? "Loading response..." : response || "Response will appear here"}
+
+</code>
 
 </pre>
 
