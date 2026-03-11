@@ -11,7 +11,9 @@ Server,
 Trophy,
 LayoutGrid,
 Image,
-Zap, Copy, Check
+Copy,
+Check,
+Play
 } from 'lucide-react';
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
@@ -98,6 +100,196 @@ const RANK_BADGE_STYLES = [
 { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
+
+const QuickStartPlayground = () => {
+
+const [lang,setLang] = useState("python");
+const [copied,setCopied] = useState(false);
+const [code,setCode] = useState("");
+
+const snippets:any = {
+
+python:`import apives
+
+client = apives.Client(api_key="YOUR_API_KEY")
+
+res = client.chat.create(
+  model="apives-gpt",
+  message="Hello"
+)
+
+print(res.output)`,
+
+node:`import Apives from "apives"
+
+const client = new Apives({apiKey:"YOUR_API_KEY"})
+
+const res = await client.chat.create({
+ model:"apives-gpt",
+ message:"Hello"
+})
+
+console.log(res.output)`,
+
+curl:`curl https://api.apives.com/v1/chat
+-H "Authorization: Bearer YOUR_API_KEY"
+-d '{"message":"Hello"}'`,
+
+go:`package main
+import "fmt"
+
+func main(){
+fmt.Println("Hello from Apives")
+}`
+};
+
+const generateCode=()=>setCode(snippets[lang]);
+
+const copyCode=async()=>{
+await navigator.clipboard.writeText(code);
+setCopied(true);
+setTimeout(()=>setCopied(false),1500);
+};
+
+return(
+
+<section className="py-16 bg-black border-t border-white/5">
+
+<div className="max-w-5xl mx-auto px-6">
+
+<h2 className="text-3xl text-white font-bold text-center mb-8">
+Quick Start Integration
+</h2>
+
+<div className="bg-[#080808] border border-white/10 rounded-2xl overflow-hidden">
+
+<div className="flex justify-between items-center px-4 py-3 border-b border-white/10">
+
+<button
+onClick={generateCode}
+className="flex items-center gap-2 bg-mora-500 text-black px-4 py-1 rounded-full text-xs font-bold"
+>
+<Zap size={14}/>
+Generate
+</button>
+
+<button
+onClick={copyCode}
+className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"
+>
+{copied ? <Check size={16}/> : <Copy size={16}/>}
+</button>
+
+</div>
+
+<div className="flex gap-2 px-4 py-2 border-b border-white/10">
+
+{["python","node","curl","go"].map(l=>(
+<button
+key={l}
+onClick={()=>setLang(l)}
+className={`px-3 py-1 rounded-full text-xs font-bold ${
+lang===l ? "bg-mora-500 text-black" : "bg-white/5 text-slate-300"
+}`}
+>
+{l}
+</button>
+))}
+
+</div>
+
+<div className="p-6 font-mono text-sm text-slate-300">
+<pre>{code || "Click Generate to create integration code"}</pre>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+);
+
+};
+
+const LiveApiRunner = () => {
+
+const [endpoint,setEndpoint]=useState("");
+const [response,setResponse]=useState("");
+const [loading,setLoading]=useState(false);
+
+const sendRequest=async()=>{
+
+if(!endpoint)return;
+
+setLoading(true);
+
+try{
+
+const res=await fetch(endpoint);
+
+const data=await res.json();
+
+setResponse(JSON.stringify(data,null,2));
+
+}catch{
+
+setResponse("Request failed");
+
+}
+
+setLoading(false);
+
+};
+
+return(
+
+<section className="py-16 bg-black border-t border-white/5">
+
+<div className="max-w-5xl mx-auto px-6">
+
+<h2 className="text-3xl text-white font-bold text-center mb-8">
+Live API Request Runner
+</h2>
+
+<div className="bg-[#070707] border border-white/10 rounded-2xl p-6">
+
+<div className="flex gap-3 mb-4">
+
+<input
+value={endpoint}
+onChange={(e)=>setEndpoint(e.target.value)}
+placeholder="https://api.apives.com/endpoint"
+className="flex-1 bg-black border border-white/10 px-4 py-2 rounded-xl text-white"
+/>
+
+<button
+onClick={sendRequest}
+className="flex items-center gap-2 bg-mora-500 text-black px-5 py-2 rounded-xl font-bold"
+>
+
+<Play size={16}/>
+Send
+
+</button>
+
+</div>
+
+<pre className="text-green-400 font-mono text-xs bg-black p-4 rounded-xl overflow-x-auto">
+
+{loading ? "Loading..." : response || "Response will appear here"}
+
+</pre>
+
+</div>
+
+</div>
+
+</section>
+
+);
+
+};
 
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
