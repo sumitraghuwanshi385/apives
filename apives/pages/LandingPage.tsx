@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import NewsFeed from "../components/NewsFeed";
 import {
 TrendingUp,
 Heart,
@@ -916,6 +917,7 @@ rounded-2xl bg-white/10 p-1"
 
 <LiveApiRunner />
 
+
 {/* ===============================
  WHAT ARE YOU BUILDING TODAY
 ================================ */}
@@ -1194,6 +1196,7 @@ rounded-2xl bg-white/10 p-1"
 </div>
     </div> 
   </section>  
+<NewsFeed />
 </div>
 
 );
