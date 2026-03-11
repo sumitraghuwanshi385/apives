@@ -15,22 +15,31 @@ router.post("/run", async (req, res) => {
 
   try {
 
-    // convert headers string → JSON
-    if(headers && typeof headers === "string"){
-      try{
-        headers = JSON.parse(headers);
-      }catch{
-        headers = {};
-      }
+    // safe headers
+    if(!headers || typeof headers !== "object"){
+      headers = {};
+    }
+
+    // GET request me body remove
+    if(method === "GET"){
+      body = undefined;
     }
 
     const start = Date.now();
 
     const response = await axios({
-      url,
-      method,
-      headers,
-      data: body
+      url: url,
+      method: method || "GET",
+      headers: headers,
+      data: body,
+      timeout: 20000,
+
+      // large JSON allow
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+
+      // 4xx 5xx ko bhi capture kare
+      validateStatus: () => true
     });
 
     const end = Date.now();
