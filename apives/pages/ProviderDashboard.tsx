@@ -159,9 +159,13 @@ export const ProviderDashboard: React.FC = () => {
       id:a._id || a.id
     }));
 
-    setSavedNodes(
-      normalizedAllDb.filter((api:any)=> savedIds.includes(api.id))
-    );
+    const savedSet = new Set(savedIds.map(String));
+
+setSavedNodes(
+  normalizedAllDb.filter((api: any) =>
+    savedSet.has(String(api.id))
+  )
+);
 
   } catch (e) {
     console.error("getAllApis failed",e);
