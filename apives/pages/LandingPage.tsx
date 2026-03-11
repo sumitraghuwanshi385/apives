@@ -270,7 +270,6 @@ margin:0
 
 };
 
-export default QuickStartPlayground;
 
 const LiveApiRunner = () => {
 
