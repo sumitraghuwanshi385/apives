@@ -57,15 +57,19 @@ fetch("https://apives.onrender.com/api/news")
 
 if(data.success){
 
-const limited=data.data.slice(0,30)
+let articles=data.data || []
 
-setNews(limited)
+if(articles.length>30){
+articles=articles.slice(0,30)
+}
+
+setNews(articles)
 
 localStorage.setItem(
 CACHE_KEY,
 JSON.stringify({
 time:Date.now(),
-data:limited
+data:articles
 })
 )
 
@@ -79,7 +83,8 @@ return(
 
 <section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_65%)]"/>
+{/* background glow */}
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_70%)]"/>
 
 <div className="max-w-7xl mx-auto px-6 relative z-10">
 
@@ -102,7 +107,7 @@ AI & API Radar
 </h2>
 
 <p className="text-slate-400 text-sm mt-4 max-w-xl mx-auto">
-Daily signals from AI models, developer APIs and tools shaping the future of software.
+Daily signals from AI models and developer APIs shaping the future of software.
 </p>
 
 </div>
@@ -112,19 +117,20 @@ Daily signals from AI models, developer APIs and tools shaping the future of sof
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={30}
-slidesPerView={1.2}
+spaceBetween={26}
+slidesPerView={1.35}
 centeredSlides={true}
 grabCursor={true}
+loop={true}
 autoplay={{
 delay:4000,
 disableOnInteraction:false
 }}
 breakpoints={{
-480:{slidesPerView:1.35},
-640:{slidesPerView:1.6},
-768:{slidesPerView:2},
-1024:{slidesPerView:2.6}
+480:{slidesPerView:1.5},
+640:{slidesPerView:1.8},
+768:{slidesPerView:2.3},
+1024:{slidesPerView:2.8}
 }}
 >
 
@@ -145,25 +151,26 @@ block
 rounded-[26px]
 overflow-hidden
 border border-white/10
-bg-[#0b0b0b]
+bg-[#0a0a0a]
 transition-all
 duration-500
+active:-translate-y-2
 hover:-translate-y-2
-shadow-[0_20px_70px_rgba(0,0,0,0.7)]
-hover:shadow-[0_0_60px_rgba(34,197,94,0.35)]
+shadow-[0_10px_40px_rgba(0,0,0,0.6)]
+hover:shadow-[0_0_70px_rgba(34,197,94,0.35)]
 "
 >
 
 {/* IMAGE */}
 
-<div className="relative h-48 overflow-hidden">
+<div className="relative h-40 overflow-hidden">
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
 className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
 />
 
-<div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"/>
 
 </div>
 
@@ -176,14 +183,14 @@ className="w-full h-full object-cover group-hover:scale-110 transition duration-
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-sm mt-4 leading-relaxed">
+<p className="text-slate-400 text-sm mt-3 leading-relaxed">
 {summarize(item.description)}
 </p>
 
 
 {/* SOURCE */}
 
-<div className="flex items-center justify-between mt-6">
+<div className="flex items-center justify-between mt-5">
 
 <div className="
 flex items-center gap-2
@@ -201,7 +208,7 @@ src={favicon}
 className="w-4 h-4 rounded-full"
 />
 
-{item.source.name}
+{item.source?.name || "Source"}
 
 </div>
 
