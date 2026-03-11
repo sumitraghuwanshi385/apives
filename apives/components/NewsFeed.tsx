@@ -6,7 +6,7 @@ import { Newspaper } from "lucide-react"
 import "swiper/css"
 
 const TITLE_WORDS = 5
-const DESC_WORDS = 40
+const DESC_WORDS = 70
 
 const AI_KEYWORDS=[
 "ai",
