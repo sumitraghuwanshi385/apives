@@ -147,7 +147,10 @@ if (pageNumber === 1) {
 useEffect(() => {
   const delay = setTimeout(() => {
     loadApis(1, true);
-  }, 350);
+  }, 400);
+
+  return () => clearTimeout(delay);
+}, [searchTerm, selectedCategory, selectedPricing]);
 
   return () => clearTimeout(delay);
 }, [searchTerm, selectedCategory, selectedPricing]);
