@@ -57,6 +57,7 @@ console.log('DETAILS PAGE ID 👉', id);
   const [upvotes, setUpvotes] = useState(0);
 const [showGalleryControls, setShowGalleryControls] = useState(true);
 const [galleryIndex, setGalleryIndex] = useState(0);
+const [top3Ids, setTop3Ids] = useState<string[]>([]);
 const [isVerified, setIsVerified] = useState(false);
 const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
@@ -80,9 +81,17 @@ useEffect(() => {
 
       setApi({
   ...data,
-  id: data._id,          // 👈 IMPORTANT
+  id: data._id,         
   publishedAt: data.createdAt
 });
+
+const rankRes = await fetch(
+  "https://apives.onrender.com/api/community?page=1&limit=3"
+);
+
+const rankData = await rankRes.json();
+
+setTop3Ids(rankData.apis.map((a: any) => a._id));
 
 setIsVerified(data.verified === true);
 
@@ -99,7 +108,7 @@ setIsLiked(likedApis.includes(id));
        } catch (err: any) {
   console.error('ApiDetails fetch error:', err);
 
-  // 👇 400, 403, 404 sab pe not found dikhao
+  
   if (
     err?.response?.status === 400 ||
     err?.response?.status === 403 ||
@@ -148,24 +157,17 @@ useEffect(() => {
 
   try {
     let res;
-
-    // ✅ STEP 1: future state nikaalo
+    
     const nextLiked = !isLiked;
 
-    // ✅ STEP 2: backend call (sirf DB update)
     if (isLiked) {
       res = await apiService.unlikeApi(id!);
     } else {
       res = await apiService.likeApi(id!);
     }
-
-    // ✅ STEP 3: UI state ek jagah se set
+    
     setIsLiked(nextLiked);
-
-    // ✅ STEP 4: SINGLE SOURCE OF TRUTH = DB
     setUpvotes(res.upvotes);
-
-    // ✅ STEP 5: localStorage sync with SAME truth
     const likedApis = JSON.parse(
       localStorage.getItem('mora_liked_apis') || '[]'
     );
@@ -237,11 +239,12 @@ const handleShare = async () => {
   { name: 'Zenith', color: 'from-orange-400 to-amber-700' },
 ];
 
-// 🔥 simple local ranking based on upvotes
+const rankIndex = top3Ids.indexOf(api?.id);
+
 const rank =
-  upvotes >= 100 ? RANK_STYLES[0] :
-  upvotes >= 25  ? RANK_STYLES[1] :
-  upvotes >= 5   ? RANK_STYLES[2] :
+  rankIndex === 0 ? RANK_STYLES[0] :
+  rankIndex === 1 ? RANK_STYLES[1] :
+  rankIndex === 2 ? RANK_STYLES[2] :
   null;
 
 // 🆕 NEW BADGE LOGIC — last 15 days
