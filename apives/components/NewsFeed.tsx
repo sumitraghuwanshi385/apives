@@ -26,16 +26,19 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-const padSummary=(text:string)=>{
+const summarize=(text:string)=>{
 
-let cleaned=(text||"")
+if(!text) return ""
+
+let cleaned=text
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
+.trim()
 
-const filler=" This development signals continued growth in artificial intelligence technologies, APIs, and developer ecosystems as companies build smarter platforms and tools."
+const words=cleaned.split(" ")
 
-while(cleaned.split(" ").length<200){
-cleaned+=filler
+if(words.length>100){
+return words.slice(0,100).join(" ")
 }
 
 return cleaned
@@ -78,14 +81,12 @@ return filtered.slice(0,limit)
 
 useEffect(()=>{
 
-// first load 20
-
+// first load
 fetchNews(20).then(initial=>{
 setNews(shuffle(initial))
 })
 
-// every 4 hour fetch 7 new
-
+// refresh every 4h
 const interval=setInterval(()=>{
 
 fetchNews(7).then(newItems=>{
@@ -94,10 +95,8 @@ setNews(prev=>{
 
 const merged=[...newItems,...prev]
 
-// remove duplicates
 const unique=[...new Map(merged.map(i=>[i.url,i])).values()]
 
-// keep max 60 pool
 return shuffle(unique).slice(0,60)
 
 })
@@ -121,10 +120,13 @@ return(
 <div className="text-center mb-12">
 
 <div className="flex items-center justify-center gap-2 text-mora-400 mb-3">
+
 <Newspaper size={18}/>
+
 <span className="uppercase text-xs font-black tracking-[0.35em]">
 Apives Feed
 </span>
+
 </div>
 
 <h2 className="text-3xl md:text-5xl font-bold text-white">
@@ -203,7 +205,7 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 </h3>
 
 <p className="text-slate-400 text-sm leading-relaxed">
-{padSummary(item.description)}
+{summarize(item.description)}
 </p>
 
 {/* SOURCE */}
