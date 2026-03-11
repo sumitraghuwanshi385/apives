@@ -28,7 +28,9 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-const summarize=(text:string)=>{
+/* EXACT 60 WORD SUMMARIZER */
+
+const summarizeTo60=(text:string)=>{
 
 if(!text) return ""
 
@@ -37,7 +39,11 @@ let cleaned=text
 .replace(/[\r\n]+/g," ")
 .trim()
 
-let words=cleaned.split(" ")
+const words=cleaned.split(" ")
+
+if(words.length <= TARGET_WORDS){
+return cleaned
+}
 
 return words.slice(0,TARGET_WORDS).join(" ")
 }
@@ -75,7 +81,6 @@ isRelevant(i.title)||isRelevant(i.description)
 ))
 
 return filtered.slice(0,limit)
-
 }
 
 useEffect(()=>{
@@ -166,6 +171,7 @@ target="_blank"
 className="
 group
 block
+h-[420px]
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -192,19 +198,23 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 {/* CONTENT */}
 
-<div className="p-5 flex flex-col gap-4">
+<div className="p-5 flex flex-col justify-between h-[280px]">
 
-<h3 className="text-white font-bold text-base md:text-lg leading-snug">
+<div>
+
+<h3 className="text-white font-bold text-base md:text-lg leading-snug mb-3">
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-sm leading-relaxed line-clamp-4">
-{summarize(item.description)}
+<p className="text-slate-400 text-sm leading-relaxed min-h-[110px]">
+{summarizeTo60(item.description)}
 </p>
 
-{/* SOURCE + BUTTON */}
+</div>
 
-<div className="flex items-center justify-between">
+{/* SOURCE */}
+
+<div className="flex items-center justify-between mt-5">
 
 <div className="
 flex items-center gap-2
