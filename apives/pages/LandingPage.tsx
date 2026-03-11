@@ -101,166 +101,133 @@ const RANK_BADGE_STYLES = [
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
 
-
 const QuickStartPlayground = () => {
 
-const [lang,setLang] = useState("python")
-const [copied,setCopied] = useState(false)
+const [lang,setLang] = useState("python");
+const [copied,setCopied] = useState(false);
+const [code,setCode] = useState("");
 
 const snippets:any = {
 
-python:`import requests
+python:`import apives
 
-url = "https://api.apives.com/v1/example"
+client = apives.Client(api_key="YOUR_API_KEY")
 
-headers = {
- "Authorization":"Bearer YOUR_API_KEY"
-}
-
-response = requests.get(url,headers=headers)
-
-print(response.json())
-`,
-
-node:`import fetch from "node-fetch"
-
-const res = await fetch(
- "https://api.apives.com/v1/example",
- {
-  headers:{
-   Authorization:"Bearer YOUR_API_KEY"
-  }
- }
+res = client.chat.create(
+  model="apives-gpt",
+  message="Hello"
 )
 
-const data = await res.json()
+print(res.output)`,
 
-console.log(data)
-`,
+node:`import Apives from "apives"
 
-curl:`curl https://api.apives.com/v1/example \
+const client = new Apives({apiKey:"YOUR_API_KEY"})
+
+const res = await client.chat.create({
+ model:"apives-gpt",
+ message:"Hello"
+})
+
+console.log(res.output)`,
+
+curl:`curl https://api.apives.com/v1/chat
 -H "Authorization: Bearer YOUR_API_KEY"
-`,
+-d '{"message":"Hello"}'`,
 
 go:`package main
-
-import (
- "fmt"
- "net/http"
- "io/ioutil"
-)
+import "fmt"
 
 func main(){
-
-req,_ := http.NewRequest(
- "GET",
- "https://api.apives.com/v1/example",
- nil
-)
-
-req.Header.Set(
- "Authorization",
- "Bearer YOUR_API_KEY"
-)
-
-client := &http.Client{}
-
-res,_ := client.Do(req)
-
-body,_ := ioutil.ReadAll(res.Body)
-
-fmt.Println(string(body))
-
+fmt.Println("Hello from Apives")
 }`
-}
+};
 
-const copyCode = async ()=>{
-await navigator.clipboard.writeText(snippets[lang])
-setCopied(true)
-setTimeout(()=>setCopied(false),1500)
-}
+const generateCode = () => {
+setCode(snippets[lang]);
+};
+
+const copyCode = async () => {
+await navigator.clipboard.writeText(code);
+setCopied(true);
+setTimeout(()=>setCopied(false),1500);
+};
 
 return(
 
-<section className="py-16 bg-black border-t border-white/5">
+<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
 
 <div className="max-w-6xl mx-auto px-6">
 
-<div className="text-center mb-8">
+<div className="text-center mb-10">
 
 <h2 className="text-3xl md:text-4xl font-display font-bold text-white">
 Quick Start Integration
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Copy ready-to-use SDK examples and integrate instantly.
+Generate real integration code for Apives APIs instantly.
 </p>
 
 </div>
 
-<div className="bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden">
 
-{/* Mac header */}
+<div className="relative rounded-2xl border border-white/10 bg-[#070707] shadow-[0_50px_120px_rgba(0,0,0,0.9)] overflow-hidden">
+
 
 <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
 
 <div className="flex gap-2">
-
 <div className="w-3 h-3 rounded-full bg-red-500"/>
 <div className="w-3 h-3 rounded-full bg-yellow-400"/>
 <div className="w-3 h-3 rounded-full bg-green-500"/>
+</div>
+
+<div className="flex gap-3 items-center">
+
+<button
+onClick={generateCode}
+className="flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase bg-mora-500 text-black hover:scale-105 transition"
+>
+<Zap size={14}/>
+Generate
+</button>
+
+<button
+onClick={copyCode}
+className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-mora-500 hover:text-black transition"
+>
+{copied ? <Check size={16}/> : <Copy size={16}/>}
+</button>
 
 </div>
 
-<div className="flex gap-2 items-center">
+</div>
+
+
+<div className="flex gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
 
 {["python","node","curl","go"].map(l=>(
 <button
 key={l}
 onClick={()=>setLang(l)}
-className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition ${
 lang===l
 ? "bg-mora-500 text-black"
-: "bg-white/5 text-slate-300 hover:bg-white/10"
-}`}
+: "bg-white/5 text-slate-300 hover:bg-white/10"}
+`}
 >
 {l}
 </button>
 ))}
 
-<div className="relative">
-
-<button
-onClick={copyCode}
-className="w-9 h-9 flex items-center justify-center rounded-full bg-white/10 border border-white/10 hover:bg-mora-500 hover:text-black transition"
->
-
-{copied ? <Check size={16}/> : <Copy size={16}/>}
-
-</button>
-
-{copied && (
-
-<div className="absolute -top-7 left-1/2 -translate-x-1/2 text-[10px] bg-mora-500 text-black px-2 py-0.5 rounded-full">
-Copied
 </div>
 
-)}
 
-</div>
+<div className="p-6 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
 
-</div>
-
-</div>
-
-{/* Code */}
-
-<div className="p-6 font-mono text-sm overflow-x-auto">
-
-<pre className="min-w-[650px] leading-relaxed">
-
-<span className="text-green-400">{snippets[lang]}</span>
-
+<pre className="leading-relaxed min-w-[600px]">
+{code || `Click "Generate" to create integration code`}
 </pre>
 
 </div>
@@ -271,102 +238,143 @@ Copied
 
 </section>
 
-)
+);
 
-}
-
+};
 
 const LiveApiRunner = () => {
 
-const [endpoint,setEndpoint] = useState("https://api.ipify.org?format=json")
-const [method,setMethod] = useState("GET")
-const [response,setResponse] = useState("")
-const [status,setStatus] = useState("")
-const [loading,setLoading] = useState(false)
+const [endpoint,setEndpoint]=useState("https://api.ipify.org?format=json");
+const [response,setResponse]=useState("");
+const [loading,setLoading]=useState(false);
+const [status,setStatus]=useState("");
 
-const runApi = async ()=>{
+const presets = [
+{
+name:"IP API",
+url:"https://api.ipify.org?format=json"
+},
+{
+name:"Random User",
+url:"https://randomuser.me/api/"
+},
+{
+name:"Bitcoin Price",
+url:"https://api.coindesk.com/v1/bpi/currentprice.json"
+}
+];
 
-if(!endpoint) return
+const sendRequest=async()=>{
 
-setLoading(true)
+if(!endpoint)return;
+
+setLoading(true);
+setStatus("Fetching API...");
 
 try{
 
-const res = await fetch(endpoint,{method})
+const res=await fetch(endpoint);
 
-const text = await res.text()
+const data=await res.json();
 
-try{
-setResponse(JSON.stringify(JSON.parse(text),null,2))
-}
-catch{
-setResponse(text)
-}
+setResponse(JSON.stringify(data,null,2));
 
-setStatus(`Status ${res.status}`)
+setStatus(`Success • ${res.status}`);
 
 }catch{
 
-setStatus("Request Failed")
-setResponse("Error fetching API")
+setResponse("Request failed");
+
+setStatus("Error");
 
 }
 
-setLoading(false)
+setLoading(false);
 
-}
+};
+
+const clearResponse=()=>{
+setResponse("");
+setStatus("");
+};
 
 return(
 
-<section className="py-14 bg-black border-t border-white/5">
+<section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
 
 <div className="max-w-6xl mx-auto px-4 md:px-6">
 
-<div className="text-center mb-8">
+{/* HEADER */}
+
+<div className="text-center mb-6">
 
 <h2 className="text-3xl md:text-4xl font-display font-bold text-white">
 Live API Request Runner
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Test any real API endpoint instantly and inspect JSON responses.
+Test any public API instantly and inspect real responses.
 </p>
 
 </div>
 
-<div className="bg-[#070707] border border-white/10 rounded-2xl p-5 shadow-[0_30px_80px_rgba(0,0,0,0.7)]">
+{/* PRESETS */}
+
+<div className="flex flex-wrap justify-center gap-2 mb-4">
+
+{presets.map((p,i)=>(
+<button
+key={i}
+onClick={()=>setEndpoint(p.url)}
+className="px-3 py-1 rounded-full text-xs font-black bg-white/5 text-slate-300 hover:bg-mora-500 hover:text-black transition"
+>
+{p.name}
+</button>
+))}
+
+</div>
+
+{/* RUNNER BOX */}
+
+<div className="bg-[#070707] border border-white/10 rounded-2xl p-4 md:p-6 shadow-[0_40px_120px_rgba(0,0,0,0.8)]">
+
+{/* INPUT ROW */}
 
 <div className="flex flex-col md:flex-row gap-3 mb-4">
-
-<select
-value={method}
-onChange={(e)=>setMethod(e.target.value)}
-className="bg-black border border-white/10 text-white px-3 py-2 rounded-xl"
->
-
-<option>GET</option>
-<option>POST</option>
-
-</select>
 
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
 placeholder="https://api.example.com"
-className="flex-1 bg-black border border-white/10 px-4 py-2 rounded-xl text-white"
+className="w-full bg-black border border-white/10 px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-mora-500"
 />
 
+<div className="flex gap-2">
+
 <button
-onClick={runApi}
-className="flex items-center justify-center gap-2 bg-mora-500 text-black px-6 py-2 rounded-xl font-bold hover:scale-105 transition w-full md:w-auto"
+onClick={sendRequest}
+className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-mora-500 text-black px-5 py-2.5 rounded-xl font-bold hover:scale-105 transition"
 >
 
 <Play size={16}/>
-Run API
+Run
+
+</button>
+
+<button
+onClick={clearResponse}
+className="flex items-center justify-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10"
+>
+
+Clear
 
 </button>
 
 </div>
+
+</div>
+
+{/* STATUS */}
 
 {status && (
 
@@ -376,7 +384,11 @@ Run API
 
 )}
 
-<pre className="text-green-400 font-mono text-xs bg-black/70 border border-white/10 p-4 rounded-xl overflow-x-auto shadow-inner">
+{/* RESPONSE */}
+
+<div className="relative">
+
+<pre className="text-green-400 font-mono text-xs bg-black/70 border border-white/10 p-4 rounded-xl overflow-x-auto shadow-inner transition-all">
 
 {loading ? "Loading..." : response || "Response will appear here"}
 
@@ -386,12 +398,13 @@ Run API
 
 </div>
 
+</div>
+
 </section>
 
-)
+);
 
-}
-
+};
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
