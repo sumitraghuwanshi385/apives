@@ -152,9 +152,6 @@ useEffect(() => {
   return () => clearTimeout(delay);
 }, [searchTerm, selectedCategory, selectedPricing]);
 
-  return () => clearTimeout(delay);
-}, [searchTerm, selectedCategory, selectedPricing]);
-
   // 🚀 Infinite Scroll
   useEffect(() => {
     const handleScroll = () => {
