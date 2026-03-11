@@ -150,22 +150,26 @@ export const ProviderDashboard: React.FC = () => {
   // 🔹 SAVED NODES
   try {
 
-    const savedIds = JSON.parse(localStorage.getItem("mora_saved_apis") || "[]");
+    const savedIds = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
 
-    const allDb = await apiService.getAllApis();
+if (!savedIds.length) {
+  setSavedNodes([]);
+  return;
+}
 
-    const normalizedAllDb = (allDb || []).map((a:any)=>({
-      ...a,
-      id:a._id || a.id
-    }));
-
-    const savedSet = new Set(savedIds.map(String));
-
-setSavedNodes(
-  normalizedAllDb.filter((api: any) =>
-    savedSet.has(String(api.id))
-  )
+// 🔥 fetch ONLY saved APIs
+const res = await fetch(
+  `https://apives.onrender.com/api/apis?ids=${savedIds.join(",")}`
 );
+
+const data = await res.json();
+
+const normalized = (data.apis || []).map((a: any) => ({
+  ...a,
+  id: a._id || a.id
+}));
+
+setSavedNodes(normalized);
 
   } catch (e) {
     console.error("getAllApis failed",e);
