@@ -295,7 +295,7 @@ style:{textShadow:"none"}
 
 {/* DEV TIP */}
 
-<div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex gap-3">
+<div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex items-center gap-3">
 
 <Key className="w-3 h-3 text-white flex-shrink-0"/>
 
@@ -325,23 +325,42 @@ const [loading,setLoading]=useState(false);
 const [status,setStatus]=useState("");
 
 const presets = [
+
 {
 name:"IP API",
 url:"https://api.ipify.org?format=json"
 },
+
 {
 name:"Random User",
 url:"https://randomuser.me/api/"
 },
+
 {
 name:"Bitcoin Price",
 url:"https://api.coindesk.com/v1/bpi/currentprice.json"
+},
+
+{
+name:"Weather",
+url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true"
+},
+
+{
+name:"GitHub User",
+url:"https://api.github.com/users/vercel"
+},
+
+{
+name:"Dog Image",
+url:"https://dog.ceo/api/breeds/image/random"
 }
+
 ];
 
 const sendRequest=async()=>{
 
-if(!endpoint)return;
+if(!endpoint) return;
 
 setLoading(true);
 setStatus("Fetching API...");
@@ -375,33 +394,37 @@ setStatus("");
 
 return(
 
-<section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="py-12 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="max-w-6xl mx-auto px-4 md:px-6">
+{/* green glow */}
+
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none"/>
+
+<div className="max-w-5xl mx-auto px-4 relative z-10">
 
 {/* HEADER */}
 
 <div className="text-center mb-6">
 
-<h2 className="text-3xl md:text-4xl font-display font-bold text-white">
+<h2 className="text-3xl md:text-4xl font-bold text-white">
 Live API Request Runner
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Test any public API instantly and inspect real responses.
+Run real API requests and inspect JSON responses instantly.
 </p>
 
 </div>
 
 {/* PRESETS */}
 
-<div className="flex flex-wrap justify-center gap-2 mb-4">
+<div className="flex flex-wrap justify-center gap-2 mb-5">
 
 {presets.map((p,i)=>(
 <button
 key={i}
 onClick={()=>setEndpoint(p.url)}
-className="px-3 py-1 rounded-full text-xs font-black bg-white/5 text-slate-300 hover:bg-mora-500 hover:text-black transition"
+className="px-3 py-1.5 text-xs font-black rounded-full bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500 hover:text-black transition"
 >
 {p.name}
 </button>
@@ -409,40 +432,36 @@ className="px-3 py-1 rounded-full text-xs font-black bg-white/5 text-slate-300 h
 
 </div>
 
-{/* RUNNER BOX */}
+{/* RUNNER */}
 
-<div className="bg-[#070707] border border-white/10 rounded-2xl p-4 md:p-6 shadow-[0_40px_120px_rgba(0,0,0,0.8)]">
+<div className="bg-[#070707] border border-white/10 rounded-2xl p-4 shadow-[0_30px_80px_rgba(0,0,0,0.9)]">
 
-{/* INPUT ROW */}
+{/* INPUT */}
 
-<div className="flex flex-col md:flex-row gap-3 mb-4">
+<div className="flex flex-col md:flex-row gap-2 mb-3">
 
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
 placeholder="https://api.example.com"
-className="w-full bg-black border border-white/10 px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-mora-500"
+className="flex-1 bg-black border border-white/10 px-3 py-2 rounded-lg text-sm text-white focus:outline-none focus:border-green-500"
 />
 
 <div className="flex gap-2">
 
 <button
 onClick={sendRequest}
-className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-mora-500 text-black px-5 py-2.5 rounded-xl font-bold hover:scale-105 transition"
+className="flex items-center gap-1 px-4 py-2 text-xs font-bold rounded-full bg-green-500 text-black hover:scale-105 transition"
 >
-
-<Play size={16}/>
+<Play size={14}/>
 Run
-
 </button>
 
 <button
 onClick={clearResponse}
-className="flex items-center justify-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10"
+className="px-4 py-2 text-xs font-bold rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10"
 >
-
 Clear
-
 </button>
 
 </div>
@@ -453,7 +472,7 @@ Clear
 
 {status && (
 
-<div className="text-xs text-mora-400 mb-2 font-mono">
+<div className="text-xs text-green-400 mb-2 font-mono">
 {status}
 </div>
 
@@ -463,9 +482,9 @@ Clear
 
 <div className="relative">
 
-<pre className="text-green-400 font-mono text-xs bg-black/70 border border-white/10 p-4 rounded-xl overflow-x-auto shadow-inner transition-all">
+<pre className="text-green-400 font-mono text-xs bg-black/80 border border-white/10 p-4 rounded-xl overflow-x-auto leading-relaxed">
 
-{loading ? "Loading..." : response || "Response will appear here"}
+{loading ? "Loading response..." : response || "Response will appear here"}
 
 </pre>
 
@@ -480,6 +499,7 @@ Clear
 );
 
 };
+
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
