@@ -247,12 +247,29 @@ const LiveApiRunner = () => {
 const [endpoint,setEndpoint]=useState("https://api.ipify.org?format=json");
 const [response,setResponse]=useState("");
 const [loading,setLoading]=useState(false);
+const [status,setStatus]=useState("");
+
+const presets = [
+{
+name:"IP API",
+url:"https://api.ipify.org?format=json"
+},
+{
+name:"Random User",
+url:"https://randomuser.me/api/"
+},
+{
+name:"Bitcoin Price",
+url:"https://api.coindesk.com/v1/bpi/currentprice.json"
+}
+];
 
 const sendRequest=async()=>{
 
 if(!endpoint)return;
 
 setLoading(true);
+setStatus("Fetching API...");
 
 try{
 
@@ -262,9 +279,13 @@ const data=await res.json();
 
 setResponse(JSON.stringify(data,null,2));
 
+setStatus(`Success • ${res.status}`);
+
 }catch{
 
 setResponse("Request failed");
+
+setStatus("Error");
 
 }
 
@@ -272,52 +293,108 @@ setLoading(false);
 
 };
 
+const clearResponse=()=>{
+setResponse("");
+setStatus("");
+};
+
 return(
 
-<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="max-w-6xl mx-auto px-6">
+<div className="max-w-6xl mx-auto px-4 md:px-6">
 
-<div className="text-center mb-10">
+{/* HEADER */}
+
+<div className="text-center mb-6">
 
 <h2 className="text-3xl md:text-4xl font-display font-bold text-white">
 Live API Request Runner
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Test any public API instantly and inspect responses.
+Test any public API instantly and inspect real responses.
 </p>
 
 </div>
 
-<div className="bg-[#070707] border border-white/10 rounded-2xl p-6 shadow-[0_40px_120px_rgba(0,0,0,0.8)]">
+{/* PRESETS */}
 
-<div className="flex gap-3 mb-4 items-center">
+<div className="flex flex-wrap justify-center gap-2 mb-4">
+
+{presets.map((p,i)=>(
+<button
+key={i}
+onClick={()=>setEndpoint(p.url)}
+className="px-3 py-1 rounded-full text-xs font-black bg-white/5 text-slate-300 hover:bg-mora-500 hover:text-black transition"
+>
+{p.name}
+</button>
+))}
+
+</div>
+
+{/* RUNNER BOX */}
+
+<div className="bg-[#070707] border border-white/10 rounded-2xl p-4 md:p-6 shadow-[0_40px_120px_rgba(0,0,0,0.8)]">
+
+{/* INPUT ROW */}
+
+<div className="flex flex-col md:flex-row gap-3 mb-4">
 
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
 placeholder="https://api.example.com"
-className="flex-1 bg-black border border-white/10 px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-mora-500"
+className="w-full bg-black border border-white/10 px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-mora-500"
 />
+
+<div className="flex gap-2">
 
 <button
 onClick={sendRequest}
-className="flex items-center gap-2 bg-mora-500 text-black px-6 py-2.5 rounded-xl font-bold whitespace-nowrap hover:scale-105 transition"
+className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-mora-500 text-black px-5 py-2.5 rounded-xl font-bold hover:scale-105 transition"
 >
 
 <Play size={16}/>
-Run API
+Run
+
+</button>
+
+<button
+onClick={clearResponse}
+className="flex items-center justify-center px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10"
+>
+
+Clear
 
 </button>
 
 </div>
 
-<pre className="text-green-400 font-mono text-xs bg-black/70 border border-white/10 p-4 rounded-xl overflow-x-auto shadow-inner">
+</div>
+
+{/* STATUS */}
+
+{status && (
+
+<div className="text-xs text-mora-400 mb-2 font-mono">
+{status}
+</div>
+
+)}
+
+{/* RESPONSE */}
+
+<div className="relative">
+
+<pre className="text-green-400 font-mono text-xs bg-black/70 border border-white/10 p-4 rounded-xl overflow-x-auto shadow-inner transition-all">
 
 {loading ? "Loading..." : response || "Response will appear here"}
 
 </pre>
+
+</div>
 
 </div>
 
@@ -328,7 +405,6 @@ Run API
 );
 
 };
-
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
