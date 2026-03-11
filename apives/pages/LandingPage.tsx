@@ -281,6 +281,142 @@ rounded-2xl bg-white/10 p-1"
   </div>  
 
 {/* ===============================
+ APIVES QUICK START PLAYGROUND
+================================ */}
+<section className="py-14 md:py-20 bg-black border-t border-white/5 relative overflow-hidden">
+
+{/* background glow */}
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none" />
+
+<div className="max-w-6xl mx-auto px-4 md:px-8 relative z-10">
+
+{/* Header */}
+<div className="text-center mb-10">
+
+<h2 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
+Start Building Instantly
+</h2>
+
+<p className="text-slate-400 mt-2 text-sm md:text-base max-w-xl mx-auto">
+Generate code snippets for Apives APIs and integrate within seconds.
+</p>
+
+</div>
+
+
+{/* Macbook Code Box */}
+<div className="
+relative
+rounded-2xl
+border border-white/10
+bg-[#0b0b0b]
+shadow-[0_40px_120px_rgba(0,0,0,0.9)]
+overflow-hidden
+">
+
+{/* Macbook header */}
+<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
+
+{/* mac dots */}
+<div className="flex gap-2">
+<div className="w-3 h-3 rounded-full bg-red-500"></div>
+<div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+<div className="w-3 h-3 rounded-full bg-green-500"></div>
+</div>
+
+{/* actions */}
+<div className="flex gap-2">
+
+<button className="
+px-4 py-1.5
+rounded-full
+text-[10px]
+font-black
+uppercase
+bg-mora-500
+text-black
+hover:scale-105
+transition-all
+">
+⚡ Generate Code
+</button>
+
+<button
+onClick={()=>{
+navigator.clipboard.writeText(document.getElementById("apives-code")?.innerText || "")
+}}
+className="
+px-4 py-1.5
+rounded-full
+text-[10px]
+font-black
+uppercase
+bg-white/10
+text-white
+hover:bg-white/20
+transition-all
+">
+📋 Copy
+</button>
+
+</div>
+
+</div>
+
+
+{/* language tabs */}
+<div className="flex gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
+
+{["Python","Node","cURL","Go"].map((lang,i)=>(
+<button
+key={i}
+className="
+px-4 py-1.5
+rounded-full
+text-[10px]
+font-black
+uppercase
+bg-white/5
+text-slate-300
+hover:bg-mora-500
+hover:text-black
+transition-all
+">
+{lang}
+</button>
+))}
+
+</div>
+
+
+{/* code */}
+<div className="p-6 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
+
+<pre id="apives-code" className="leading-relaxed">
+
+{`import apives
+
+client = apives.Client(
+  api_key="YOUR_APIVES_API_KEY"
+)
+
+response = client.chat.create(
+  model="apives-gpt",
+  message="Hello from Apives"
+)
+
+print(response.output)`}
+
+</pre>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+{/* ===============================
  WHAT ARE YOU BUILDING TODAY
 ================================ */}
 <section className="py-10 md:py-16 bg-black border-t border-white/5 relative overflow-hidden">
