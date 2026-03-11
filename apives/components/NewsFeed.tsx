@@ -62,7 +62,7 @@ let articles=data.data || []
 // remove duplicates
 const unique=[...new Map(articles.map(item=>[item.url,item])).values()]
 
-// ensure max 30
+// limit 30
 const limited=unique.slice(0,30)
 
 setNews(limited)
@@ -83,12 +83,9 @@ data:limited
 
 return(
 
-<section className="py-16 bg-black border-t border-white/5 relative overflow-visible">
+<section className="py-16 bg-black border-t border-white/5">
 
-{/* background glow */}
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.18),transparent_70%)] pointer-events-none"/>
-
-<div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+<div className="max-w-7xl mx-auto px-4 md:px-6">
 
 {/* HEADER */}
 
@@ -119,9 +116,8 @@ Daily signals from AI models and developer APIs shaping the future of software.
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={20}
-slidesPerView={1.05}
-centeredSlides={false}
+spaceBetween={18}
+slidesPerView={1.1}
 grabCursor={true}
 autoplay={{
 delay:4000,
@@ -149,26 +145,25 @@ target="_blank"
 className="
 group
 block
+h-[360px]
 rounded-2xl
 overflow-hidden
 border border-white/10
 bg-[#0a0a0a]
 transition-all
-duration-400
-active:-translate-y-1
-hover:-translate-y-1
-shadow-[0_6px_30px_rgba(0,0,0,0.6)]
-hover:shadow-[0_0_60px_rgba(34,197,94,0.35)]
+duration-300
+hover:scale-[1.02]
+active:scale-[0.98]
 "
 >
 
 {/* IMAGE */}
 
-<div className="relative h-32 md:h-40 overflow-hidden">
+<div className="relative h-32 md:h-36 overflow-hidden">
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
-className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 />
 
 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"/>
@@ -178,15 +173,19 @@ className="w-full h-full object-cover group-hover:scale-110 transition duration-
 
 {/* CONTENT */}
 
-<div className="p-5">
+<div className="p-5 flex flex-col justify-between h-[220px]">
 
-<h3 className="text-white font-bold text-base md:text-lg leading-snug">
+<div>
+
+<h3 className="text-white font-bold text-base md:text-lg leading-snug line-clamp-2">
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-sm mt-3 leading-relaxed">
+<p className="text-slate-400 text-sm mt-3 leading-relaxed line-clamp-5">
 {summarize(item.description)}
 </p>
+
+</div>
 
 
 {/* SOURCE */}
@@ -219,8 +218,6 @@ font-black
 tracking-widest
 uppercase
 text-mora-400
-group-hover:text-white
-transition
 ">
 OPEN →
 </span>
