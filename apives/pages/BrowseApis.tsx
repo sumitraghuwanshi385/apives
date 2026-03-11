@@ -95,8 +95,8 @@ const lightShuffle = (arr: ApiListing[]) => {
     setIsLoading(true);
 
     const res = await fetch(
-      `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12`
-    );
+  `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12&search=${encodeURIComponent(searchTerm)}&category=${selectedCategory}&pricing=${selectedPricing}`
+);
 
     const data = await res.json();
 
@@ -144,6 +144,14 @@ if (pageNumber === 1) {
     loadApis(1, true);
   }, []);
 
+useEffect(() => {
+  const delay = setTimeout(() => {
+    loadApis(1, true);
+  }, 350);
+
+  return () => clearTimeout(delay);
+}, [searchTerm, selectedCategory, selectedPricing]);
+
   // 🚀 Infinite Scroll
   useEffect(() => {
     const handleScroll = () => {
@@ -162,26 +170,7 @@ if (pageNumber === 1) {
   }, [page, hasMore, isLoading]);
 
   // 🔥 LIGHT FRONTEND FILTER (FAST)
-  const filteredApis = useMemo(() => {
-  return apis.filter((api) => {
-    const categoryMatch =
-      selectedCategory === "All" ||
-      api.category === selectedCategory;
-
-    const pricingMatch =
-      selectedPricing === "All" ||
-      api.pricing?.type === selectedPricing;
-
-    const lowerSearch = searchTerm.toLowerCase();
-
-    const matchesSearch =
-      api.name?.toLowerCase().includes(lowerSearch) ||
-      api.description?.toLowerCase().includes(lowerSearch) ||
-      api.provider?.toLowerCase().includes(lowerSearch);
-
-    return categoryMatch && pricingMatch && matchesSearch;
-  });
-}, [apis, searchTerm, selectedCategory, selectedPricing]);
+  
 
   return (
     <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-20 relative">
@@ -328,7 +317,7 @@ if (pageNumber === 1) {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-              {filteredApis.map((api) => (
+              {apis.map((api) => (
                 <ApiCard
                   key={api.id}
                   api={api}
