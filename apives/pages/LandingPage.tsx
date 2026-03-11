@@ -15,6 +15,8 @@ Copy,
 Check,
 Play
 } from 'lucide-react';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import ApiCard from '../components/ApiCard';
@@ -244,15 +246,17 @@ lang===l
 
 <div className="p-6 text-xs md:text-sm overflow-x-auto">
 
-<pre className="leading-relaxed min-w-[600px] font-mono text-xs md:text-sm">
-
-<code className="text-green-400 whitespace-pre">
-
+<SyntaxHighlighter
+language={lang === "node" ? "javascript" : lang}
+style={oneDark}
+customStyle={{
+background:"transparent",
+padding:0,
+margin:0
+}}
+>
 {code}
-
-</code>
-
-</pre>
+</SyntaxHighlighter>
 
 </div>
 
