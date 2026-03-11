@@ -318,41 +318,40 @@ const [body,setBody]=useState("");
 
 const [response,setResponse]=useState("");
 const [loading,setLoading]=useState(false);
+
 const [status,setStatus]=useState("");
 const [statusCode,setStatusCode]=useState(null);
 const [time,setTime]=useState(null);
 
 const [history,setHistory]=useState([]);
 
-const methods = [
+const user = localStorage.getItem("mora_user");
+
+const methods=[
 "GET",
 "POST",
 "PUT",
 "DELETE"
 ];
 
-const presets = [
-
-{ name:"IP API", url:"https://api.ipify.org?format=json" },
-{ name:"Random User", url:"https://randomuser.me/api/" },
-{ name:"Bitcoin Price", url:"https://api.coinbase.com/v2/prices/spot?currency=USD" },
-{ name:"Weather", url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true" },
-{ name:"GitHub User", url:"https://api.github.com/users/vercel" },
-{ name:"Dog Image", url:"https://dog.ceo/api/breeds/image/random" }
-
+const presets=[
+{ name:"IP API", url:"https://api.ipify.org?format=json"},
+{ name:"Random User", url:"https://randomuser.me/api/"},
+{ name:"Bitcoin Price", url:"https://api.coinbase.com/v2/prices/spot?currency=USD"},
+{ name:"Weather", url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true"},
+{ name:"GitHub User", url:"https://api.github.com/users/vercel"},
+{ name:"Dog Image", url:"https://dog.ceo/api/breeds/image/random"}
 ];
 
-const formatJSON = (data) => {
-
+const formatJSON=(data)=>{
 try{
 return JSON.stringify(JSON.parse(data),null,2);
 }catch{
 return data;
 }
-
 };
 
-const getStatusColor = () => {
+const getStatusColor=()=>{
 
 if(!statusCode) return "bg-white/10";
 
@@ -363,23 +362,32 @@ if(statusCode>=400 && statusCode<500)
 return "bg-yellow-500/20 text-yellow-400";
 
 return "bg-red-500/20 text-red-400";
-
 };
 
-const sendRequest = async () => {
+const sendRequest=async()=>{
 
 if(!endpoint) return;
+
+let parsedHeaders={};
+
+if(headers.trim()!==""){
+try{
+parsedHeaders=JSON.parse(headers);
+}catch{
+parsedHeaders={};
+}
+}
 
 setLoading(true);
 setStatus("Running request...");
 setStatusCode(null);
 setTime(null);
 
-const start = Date.now();
+const start=Date.now();
 
 try{
 
-const res = await fetch(
+const res=await fetch(
 "https://apives.onrender.com/api/runner/run",
 {
 method:"POST",
@@ -389,31 +397,34 @@ headers:{
 body:JSON.stringify({
 url:endpoint,
 method,
-headers,
+headers:parsedHeaders,
 body
 })
 }
 );
 
-const data = await res.json();
+const data=await res.json();
 
-const end = Date.now();
-const duration = end-start;
+const duration=Date.now()-start;
 
 setTime(duration);
 
 if(data.success){
 
-const json = formatJSON(JSON.stringify(data.data));
+const json=formatJSON(JSON.stringify(data.data));
 
 setResponse(json);
 setStatusCode(data.status);
 setStatus("Success");
 
+if(user){
+
 setHistory(prev=>[
 {url:endpoint,method,time:duration},
-...prev.slice(0,8)
+...prev.slice(0,10)
 ]);
+
+}
 
 }else{
 
@@ -439,19 +450,23 @@ setLoading(false);
 
 };
 
-const clearResponse = () => {
+const clearResponse=()=>{
+setEndpoint("");
+setHeaders("");
+setBody("");
 setResponse("");
 setStatus("");
 setStatusCode(null);
 setTime(null);
 };
 
-const copyResponse = async () => {
+const clearHistory=()=>{
+setHistory([]);
+};
 
+const copyResponse=async()=>{
 if(!response) return;
-
 await navigator.clipboard.writeText(response);
-
 };
 
 return(
@@ -461,8 +476,6 @@ return(
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
 
 <div className="max-w-5xl mx-auto px-4 relative z-10">
-
-{/* HEADER */}
 
 <div className="text-center mb-6">
 
@@ -475,8 +488,6 @@ Run real APIs and inspect JSON responses instantly.
 </p>
 
 </div>
-
-{/* PRESET APIs */}
 
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
@@ -492,15 +503,9 @@ className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hov
 
 </div>
 
-{/* PANEL */}
-
 <div className="bg-[#070707] border border-white/10 rounded-2xl p-4">
 
-{/* METHOD + URL */}
-
 <div className="flex flex-wrap gap-2 mb-3 items-center">
-
-{/* CUSTOM METHOD MENU */}
 
 <div className="relative">
 
@@ -518,10 +523,7 @@ className="px-3 py-2 text-xs rounded bg-black border border-white/10"
 {methods.map(m=>(
 <div
 key={m}
-onClick={()=>{
-setMethod(m)
-setShowMethods(false)
-}}
+onClick={()=>{setMethod(m);setShowMethods(false)}}
 className="px-4 py-2 text-xs hover:bg-white/10 cursor-pointer"
 >
 {m}
@@ -543,21 +545,19 @@ placeholder="Enter API URL"
 
 <button
 onClick={sendRequest}
-className="px-3 py-1.5 text-xs rounded-full bg-green-500/20 border border-green-500/30 hover:bg-green-500/30"
+className="px-4 py-2 text-xs rounded-full bg-green-500/20 border border-green-500/30 hover:bg-green-500/30"
 >
 Run
 </button>
 
 <button
 onClick={clearResponse}
-className="px-3 py-1.5 text-xs rounded-full bg-white/10 border border-white/20"
+className="px-4 py-2 text-xs rounded-full bg-white/10 border border-white/20"
 >
 Clear
 </button>
 
 </div>
-
-{/* HEADERS */}
 
 <div className="mb-3">
 
@@ -571,8 +571,6 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 />
 
 </div>
-
-{/* BODY */}
 
 {method!=="GET" && (
 
@@ -591,21 +589,21 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 
 )}
 
-{/* STATUS */}
-
 <div className="flex flex-wrap items-center gap-3 mb-2 text-xs font-mono">
 
 {status && <span className="text-green-400">{status}</span>}
 
 {statusCode && (
-
 <span className={`px-2 py-0.5 rounded ${getStatusColor()}`}>
 {statusCode}
 </span>
-
 )}
 
-{time && <span>{time} ms</span>}
+{time && (
+<span className="bg-white/10 px-2 py-0.5 rounded">
+⏱ {time} ms
+</span>
+)}
 
 <button
 onClick={copyResponse}
@@ -615,8 +613,6 @@ Copy JSON
 </button>
 
 </div>
-
-{/* RESPONSE */}
 
 <div className="border border-white/10 rounded-xl p-4 bg-black/80 text-xs overflow-x-auto">
 
@@ -636,36 +632,24 @@ padding:0
 
 </div>
 
-{/* RESPONSE GRAPH */}
-
-{time && (
-
-<div className="mt-4">
-
-<p className="text-xs text-slate-400 mb-1">Response Time</p>
-
-<div className="h-2 bg-white/10 rounded overflow-hidden">
-
-<div
-className="h-full bg-green-500 transition-all"
-style={{width:`${Math.min(time,1000)/10}%`}}
-/>
-
 </div>
 
-</div>
-
-)}
-
-</div>
-
-{/* HISTORY */}
-
-{history.length>0 && (
+{user && history.length>0 && (
 
 <div className="mt-5">
 
-<p className="text-xs text-slate-400 mb-2">Recent Requests</p>
+<div className="flex justify-between items-center mb-2">
+
+<p className="text-xs text-slate-400">Recent Requests</p>
+
+<button
+onClick={clearHistory}
+className="text-xs text-red-400 hover:text-red-300"
+>
+Clear All
+</button>
+
+</div>
 
 <div className="space-y-1">
 
