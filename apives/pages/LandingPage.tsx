@@ -319,18 +319,40 @@ const [loading,setLoading]=useState(false);
 const [status,setStatus]=useState("");
 const [statusCode,setStatusCode]=useState(null);
 const [time,setTime]=useState(null);
+
 const [history,setHistory]=useState([]);
+const [collections,setCollections]=useState([]);
 
 const presets = [
-
 { name:"IP API", url:"https://api.ipify.org?format=json" },
 { name:"Random User", url:"https://randomuser.me/api/" },
 { name:"Bitcoin Price", url:"https://api.coinbase.com/v2/prices/spot?currency=USD" },
 { name:"Weather", url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true" },
 { name:"GitHub User", url:"https://api.github.com/users/vercel" },
 { name:"Dog Image", url:"https://dog.ceo/api/breeds/image/random" }
-
 ];
+
+const formatJSON = (data) => {
+try{
+return JSON.stringify(JSON.parse(data),null,2);
+}catch{
+return data;
+}
+};
+
+const getStatusColor = () => {
+
+if(!statusCode) return "bg-white/10";
+
+if(statusCode>=200 && statusCode<300)
+return "bg-green-500/20 text-green-400";
+
+if(statusCode>=400 && statusCode<500)
+return "bg-yellow-500/20 text-yellow-400";
+
+return "bg-red-500/20 text-red-400";
+
+};
 
 const sendRequest = async () => {
 
@@ -364,19 +386,21 @@ body
 const data = await res.json();
 
 const end = Date.now();
+const duration = end-start;
 
-setTime(end-start);
+setTime(duration);
 
 if(data.success){
 
-const json = JSON.stringify(data.data,null,2);
+const json = formatJSON(JSON.stringify(data.data));
+
 setResponse(json);
 setStatusCode(data.status);
 setStatus("Success");
 
 setHistory(prev=>[
-{url:endpoint,method,time:end-start},
-...prev.slice(0,5)
+{url:endpoint,method,time:duration},
+...prev.slice(0,8)
 ]);
 
 }else{
@@ -386,16 +410,14 @@ setStatus("Error");
 
 }
 
-}catch(err){
+}catch{
 
-setResponse(
-`Request failed
+setResponse(`Request failed
 
 Possible reasons:
 • API requires authentication
 • API blocked request
-• Invalid endpoint`
-);
+• Invalid endpoint`);
 
 setStatus("Runner Error");
 
@@ -417,6 +439,23 @@ const copyResponse = async () => {
 if(!response) return;
 
 await navigator.clipboard.writeText(response);
+
+};
+
+const saveCollection = () => {
+
+setCollections(prev=>[
+{url:endpoint,method},
+...prev
+]);
+
+};
+
+const shareLink = () => {
+
+const url = `${window.location.origin}?api=${encodeURIComponent(endpoint)}`;
+
+navigator.clipboard.writeText(url);
 
 };
 
@@ -442,7 +481,7 @@ Run real APIs and inspect JSON responses instantly.
 
 </div>
 
-{/* PRESET APIs */}
+{/* PRESETS */}
 
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
@@ -464,36 +503,34 @@ className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hov
 
 {/* METHOD + URL */}
 
-<div className="flex gap-2 mb-3">
+<div className="flex flex-wrap gap-2 mb-3 items-center">
 
 <select
 value={method}
 onChange={(e)=>setMethod(e.target.value)}
-className="bg-black border border-white/10 text-xs px-2 rounded"
+className="bg-black border border-white/10 text-xs px-2 py-2 rounded"
 >
-
 <option>GET</option>
 <option>POST</option>
-
 </select>
 
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
-className="flex-1 bg-black border border-white/10 text-sm px-3 py-2 rounded text-white"
+className="flex-1 min-w-0 bg-black border border-white/10 text-sm px-3 py-2 rounded text-white"
 placeholder="Enter API URL"
 />
 
 <button
 onClick={sendRequest}
-className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hover:bg-white/20"
+className="px-3 py-1.5 text-xs rounded-full bg-green-500/20 border border-green-500/30 hover:bg-green-500/30"
 >
 Run
 </button>
 
 <button
 onClick={clearResponse}
-className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20"
+className="px-3 py-1.5 text-xs rounded-full bg-white/10 border border-white/20"
 >
 Clear
 </button>
@@ -536,13 +573,13 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 
 {/* STATUS */}
 
-<div className="flex items-center gap-3 mb-2 text-xs font-mono">
+<div className="flex flex-wrap items-center gap-3 mb-2 text-xs font-mono">
 
 {status && <span className="text-green-400">{status}</span>}
 
 {statusCode && (
 
-<span className="px-2 py-0.5 bg-green-500/20 rounded">
+<span className={`px-2 py-0.5 rounded ${getStatusColor()}`}>
 {statusCode}
 </span>
 
@@ -555,6 +592,20 @@ onClick={copyResponse}
 className="ml-auto text-xs px-2 py-1 border border-white/10 rounded"
 >
 Copy JSON
+</button>
+
+<button
+onClick={saveCollection}
+className="text-xs px-2 py-1 border border-white/10 rounded"
+>
+Save
+</button>
+
+<button
+onClick={shareLink}
+className="text-xs px-2 py-1 border border-white/10 rounded"
+>
+Share
 </button>
 
 </div>
@@ -579,6 +630,27 @@ padding:0
 
 </div>
 
+{/* RESPONSE TIME GRAPH */}
+
+{time && (
+
+<div className="mt-4">
+
+<p className="text-xs text-slate-400 mb-1">Response Time</p>
+
+<div className="h-2 bg-white/10 rounded overflow-hidden">
+
+<div
+className="h-full bg-green-500 transition-all"
+style={{width:`${Math.min(time,1000)/10}%`}}
+/>
+
+</div>
+
+</div>
+
+)}
+
 </div>
 
 {/* HISTORY */}
@@ -599,9 +671,38 @@ className="text-xs text-slate-400 flex justify-between bg-white/5 px-2 py-1 roun
 
 <span>{h.method}</span>
 
-<span className="truncate max-w-[200px]">{h.url}</span>
+<span className="truncate max-w-[180px]">{h.url}</span>
 
 <span>{h.time}ms</span>
+
+</div>
+))}
+
+</div>
+
+</div>
+
+)}
+
+{/* COLLECTIONS */}
+
+{collections.length>0 && (
+
+<div className="mt-6">
+
+<p className="text-xs text-slate-400 mb-2">Saved API Collection</p>
+
+<div className="space-y-1">
+
+{collections.map((c,i)=>(
+<div
+key={i}
+className="text-xs text-slate-300 flex justify-between bg-white/5 px-2 py-1 rounded"
+>
+
+<span>{c.method}</span>
+
+<span className="truncate max-w-[200px]">{c.url}</span>
 
 </div>
 ))}
