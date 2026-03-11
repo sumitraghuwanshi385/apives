@@ -5,7 +5,7 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
-const TARGET_WORDS = 70
+const TARGET_WORDS = 60
 
 const AI_KEYWORDS=[
 "ai",
@@ -28,7 +28,7 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-const summarizeTo70=(text:string)=>{
+const summarize=(text:string)=>{
 
 if(!text) return ""
 
@@ -39,34 +39,7 @@ let cleaned=text
 
 let words=cleaned.split(" ")
 
-/* LONG NEWS → SUMMARIZE */
-if(words.length > TARGET_WORDS){
 return words.slice(0,TARGET_WORDS).join(" ")
-}
-
-/* SHORT NEWS → PAD NATURALLY */
-while(words.length < TARGET_WORDS){
-
-words.push(
-"AI",
-"technology",
-"is",
-"rapidly",
-"evolving",
-"with",
-"new",
-"tools",
-"and",
-"platforms",
-"shaping",
-"developer",
-"ecosystems"
-)
-
-}
-
-return words.slice(0,TARGET_WORDS).join(" ")
-
 }
 
 const shuffle=(arr:any[])=>{
@@ -193,7 +166,6 @@ target="_blank"
 className="
 group
 block
-h-[420px] 
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -220,23 +192,19 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 {/* CONTENT */}
 
-<div className="p-5 flex flex-col justify-between h-[260px]">
+<div className="p-5 flex flex-col gap-4">
 
-<div>
-
-<h3 className="text-white font-bold text-base md:text-lg leading-snug mb-3">
+<h3 className="text-white font-bold text-base md:text-lg leading-snug">
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-sm leading-relaxed">
-{summarizeTo70(item.description)}
+<p className="text-slate-400 text-sm leading-relaxed line-clamp-4">
+{summarize(item.description)}
 </p>
 
-</div>
+{/* SOURCE + BUTTON */}
 
-{/* SOURCE */}
-
-<div className="flex items-center justify-between mt-5">
+<div className="flex items-center justify-between">
 
 <div className="
 flex items-center gap-2
