@@ -13,7 +13,9 @@ LayoutGrid,
 Image,
 Copy,
 Check,
-Play
+Play,
+Info,
+Key
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -115,7 +117,6 @@ const snippets:any = {
 
 python:`import apives
 
-# Initialize client with your API key
 client = apives.Client(api_key="YOUR_API_KEY")
 
 response = client.chat.create(
@@ -131,47 +132,61 @@ print(response.output)
 node:`import Apives from "apives"
 
 const client = new Apives({
-  apiKey: "YOUR_API_KEY"
+ apiKey:"YOUR_API_KEY"
 })
 
 const response = await client.chat.create({
-  model: "apives-gpt",
-  messages: [
-    { role: "user", content: "Hello" }
-  ]
+ model:"apives-gpt",
+ messages:[
+  {role:"user",content:"Hello"}
+ ]
 })
 
 console.log(response.output)
 `,
 
-curl:`curl https://api.apives.com/v1/chat \\
+curl:`curl https://api.example.com/v1/chat \\
 -H "Authorization: Bearer YOUR_API_KEY" \\
 -H "Content-Type: application/json" \\
 -d '{
- "model":"apives-gpt",
- "messages":[
-  {"role":"user","content":"Hello"}
- ]
-}'`,
+ "message":"Hello"
+}'
+`,
 
 go:`package main
 
 import (
  "fmt"
- "github.com/apives/apives-go"
 )
 
 func main(){
 
- client := apives.NewClient("YOUR_API_KEY")
+ fmt.Println("Send request to API with YOUR_API_KEY")
 
- res,_ := client.Chat.Create(
-  "apives-gpt",
-  "Hello",
- )
+}
+`,
 
- fmt.Println(res.Output)
-}`
+java:`import java.net.*;
+import java.io.*;
+
+public class ApiExample{
+ public static void main(String[] args){
+  System.out.println("Call API using YOUR_API_KEY");
+ }
+}
+`,
+
+php:`<?php
+
+$apiKey="YOUR_API_KEY";
+
+$response=file_get_contents(
+ "https://api.example.com?key=".$apiKey
+);
+
+echo $response;
+
+?>`
 };
 
 useEffect(()=>{
@@ -186,40 +201,48 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="py-20 bg-black border-t border-white/5">
+<section className="py-24 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="max-w-6xl mx-auto px-6">
+{/* GREEN BACKGROUND GLOW */}
+
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none"/>
+
+<div className="max-w-6xl mx-auto px-6 relative z-10">
 
 {/* HEADER */}
 
-<div className="text-center mb-8">
+<div className="text-center mb-10">
 
 <h2 className="text-3xl md:text-4xl font-bold text-white">
 Quick Start Integration
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Example code to integrate the Apives API in seconds.
+Example snippets showing how APIs are typically integrated in apps.
 </p>
 
 </div>
 
 {/* NOTICE */}
 
-<div className="mb-6 rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4 text-xs text-yellow-300">
+<div className="mb-6 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-xs text-green-300 flex gap-3 items-start">
 
-⚠️ These code snippets are **examples for demonstration purposes**.  
-Replace <span className="text-white">YOUR_API_KEY</span> with your actual API key from the Apives console.
+<Info size={16} className="mt-[2px]"/>
+
+<p>
+These code snippets are examples for demonstration purposes.  
+Replace <span className="text-white">YOUR_API_KEY</span> with an API key obtained from the respective API provider.
+</p>
 
 </div>
 
 {/* TERMINAL */}
 
-<div className="rounded-2xl border border-white/10 bg-[#070707] overflow-hidden">
+<div className="relative rounded-2xl border border-white/10 bg-[#070707] shadow-[0_40px_120px_rgba(0,0,0,0.9)] overflow-hidden">
 
 {/* TERMINAL HEADER */}
 
-<div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
 
 <div className="flex gap-2">
 <div className="w-3 h-3 rounded-full bg-red-500"/>
@@ -238,13 +261,13 @@ className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 bord
 
 {/* LANGUAGE TABS */}
 
-<div className="flex gap-2 px-4 py-3 border-b border-white/10">
+<div className="flex flex-wrap gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
 
-{["python","node","curl","go"].map(l=>(
+{["python","node","curl","go","java","php"].map(l=>(
 <button
 key={l}
 onClick={()=>setLang(l)}
-className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase ${
+className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition ${
 lang===l
 ? "bg-white text-black"
 : "bg-white/5 text-slate-300 hover:bg-white/10"}
@@ -278,10 +301,16 @@ margin:0
 
 {/* DEV TIP */}
 
-<div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300">
+<div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex gap-3">
 
-💡 <span className="text-white">Developer Tip:</span>  
-Store your API key securely using environment variables and never expose it in public repositories.
+<Key size={16}/>
+
+<p>
+
+Always store API keys securely using environment variables.  
+Never expose secret keys in frontend code or public repositories.
+
+</p>
 
 </div>
 
