@@ -8,6 +8,31 @@ import "swiper/css"
 const CACHE_KEY="apives_news_cache"
 const CACHE_TIME=24*60*60*1000
 
+const AI_KEYWORDS=[
+"ai",
+"artificial intelligence",
+"api",
+"model",
+"chatbot",
+"agent",
+"llm",
+"startup",
+"machine learning",
+"openai",
+"anthropic",
+"gemini",
+"developer tool"
+]
+
+const isRelevant=(text:string)=>{
+
+if(!text) return false
+
+const lower=text.toLowerCase()
+
+return AI_KEYWORDS.some(k=>lower.includes(k))
+}
+
 const summarize=(text:string)=>{
 
 if(!text) return ""
@@ -16,8 +41,8 @@ let cleaned=text
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 
-if(cleaned.length>300){
-cleaned=cleaned.substring(0,300)
+if(cleaned.length>1800){
+cleaned=cleaned.substring(0,1800)
 }
 
 return cleaned
@@ -62,8 +87,18 @@ let articles=data.data || []
 // remove duplicates
 const unique=[...new Map(articles.map(item=>[item.url,item])).values()]
 
+// filter AI related
+const filtered=unique.filter(item=>{
+
+return(
+isRelevant(item.title) ||
+isRelevant(item.description)
+)
+
+})
+
 // limit 30
-const limited=unique.slice(0,30)
+const limited=filtered.slice(0,30)
 
 setNews(limited)
 
@@ -106,7 +141,7 @@ AI & API Radar
 </h2>
 
 <p className="text-slate-400 text-sm mt-3 max-w-xl mx-auto">
-Daily signals from AI models and developer APIs shaping the future of software.
+Latest launches in AI models, APIs, AI agents, chatbots and emerging startups.
 </p>
 
 </div>
@@ -145,12 +180,11 @@ target="_blank"
 className="
 group
 block
-h-[360px]
 rounded-2xl
 overflow-hidden
 border border-white/10
 bg-[#0a0a0a]
-transition-all
+transition-transform
 duration-300
 hover:scale-[1.02]
 active:scale-[0.98]
@@ -159,38 +193,34 @@ active:scale-[0.98]
 
 {/* IMAGE */}
 
-<div className="relative h-32 md:h-36 overflow-hidden">
+<div className="relative h-36 md:h-40 overflow-hidden">
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
 />
 
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"/>
+<div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
 
 </div>
 
 
 {/* CONTENT */}
 
-<div className="p-5 flex flex-col justify-between h-[220px]">
+<div className="p-5">
 
-<div>
-
-<h3 className="text-white font-bold text-base md:text-lg leading-snug line-clamp-2">
+<h3 className="text-white font-bold text-base md:text-lg leading-snug mb-3">
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-sm mt-3 leading-relaxed line-clamp-5">
+<p className="text-slate-400 text-sm leading-relaxed">
 {summarize(item.description)}
 </p>
-
-</div>
 
 
 {/* SOURCE */}
 
-<div className="flex items-center justify-between mt-4">
+<div className="flex items-center justify-between mt-5">
 
 <div className="
 flex items-center gap-2
