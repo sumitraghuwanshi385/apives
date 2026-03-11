@@ -6,6 +6,7 @@ import { Newspaper } from "lucide-react"
 import "swiper/css"
 
 const TARGET_WORDS = 50
+const TITLE_WORDS = 10
 
 const AI_KEYWORDS=[
 "ai",
@@ -28,7 +29,27 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-/* SMART 50 WORD BUILDER */
+/* TITLE → MAX 10 WORDS */
+
+const summarizeTitle=(title:string)=>{
+
+if(!title) return ""
+
+let cleaned=title
+.replace(/\s+/g," ")
+.replace(/[\r\n]+/g," ")
+.trim()
+
+const words=cleaned.split(" ")
+
+if(words.length<=TITLE_WORDS){
+return cleaned
+}
+
+return words.slice(0,TITLE_WORDS).join(" ")
+}
+
+/* DESCRIPTION → MAX 50 WORDS */
 
 const summarizeTo50=(title:string,desc:string)=>{
 
@@ -39,7 +60,7 @@ let text=(title+" "+(desc||""))
 
 let words=text.split(" ")
 
-if(words.length <= TARGET_WORDS){
+if(words.length<=TARGET_WORDS){
 return text
 }
 
@@ -201,11 +222,11 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 <div>
 
-<h3 className="text-white font-bold text-lg leading-snug mb-4">
-{item.title}
+<h3 className="text-white font-bold text-base leading-snug mb-3">
+{summarizeTitle(item.title)}
 </h3>
 
-<p className="text-slate-400 text-sm leading-relaxed">
+<p className="text-slate-400 text-xs leading-relaxed">
 {summarizeTo50(item.title,item.description)}
 </p>
 
@@ -222,7 +243,7 @@ border border-green-500/30
 text-green-400
 px-3 py-1
 rounded-full
-text-xs
+text-[10px]
 font-semibold
 ">
 
@@ -236,7 +257,7 @@ className="w-4 h-4 rounded-full"
 </div>
 
 <span className="
-text-xs
+text-[10px]
 font-black
 tracking-widest
 uppercase
