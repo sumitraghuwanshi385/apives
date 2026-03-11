@@ -489,6 +489,12 @@ Run real APIs and inspect JSON responses instantly.
 
 </div>
 
+{/* MINI HEADLINE ADDED */}
+
+<p className="text-center text-xs text-slate-500 mb-3">
+Try these example APIs to quickly test the runner
+</p>
+
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
 {presets.map((p,i)=>(
@@ -559,29 +565,42 @@ Clear
 
 </div>
 
+{/* HEADERS */}
+
 <div className="mb-3">
 
-<p className="text-xs text-slate-400 mb-1">Headers (JSON)</p>
+<p className="text-xs text-slate-400 mb-1">
+Headers (optional JSON)
+</p>
 
 <textarea
 value={headers}
 onChange={(e)=>setHeaders(e.target.value)}
-placeholder='{"Authorization":"Bearer API_KEY"}'
+placeholder={`{
+ "Content-Type":"application/json",
+ "Authorization":"Bearer YOUR_API_KEY"
+}`}
 className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
 />
 
 </div>
 
+{/* BODY */}
+
 {method!=="GET" && (
 
 <div className="mb-3">
 
-<p className="text-xs text-slate-400 mb-1">Request Body</p>
+<p className="text-xs text-slate-400 mb-1">
+Request Body (JSON)
+</p>
 
 <textarea
 value={body}
 onChange={(e)=>setBody(e.target.value)}
-placeholder='{"message":"hello"}'
+placeholder={`{
+ "example":"data"
+}`}
 className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
 />
 
@@ -681,6 +700,7 @@ className="text-xs text-slate-400 flex justify-between bg-white/5 px-2 py-1 roun
 );
 
 };
+
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
