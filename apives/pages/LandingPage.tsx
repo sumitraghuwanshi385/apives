@@ -328,10 +328,7 @@ const methods = [
 "GET",
 "POST",
 "PUT",
-"PATCH",
-"DELETE",
-"HEAD",
-"OPTIONS"
+"DELETE"
 ];
 
 const presets = [
