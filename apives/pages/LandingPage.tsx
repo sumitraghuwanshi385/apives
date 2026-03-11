@@ -297,7 +297,7 @@ style:{textShadow:"none"}
 
 <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex gap-3">
 
-<Key className="w-4 h-4 text-white flex-shrink-0"/>
+<Key className="w-3 h-3 text-white flex-shrink-0"/>
 
 <p>
 
