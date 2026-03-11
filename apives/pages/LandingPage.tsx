@@ -143,9 +143,11 @@ fmt.Println("Hello from Apives")
 }`
 };
 
-const generateCode=()=>setCode(snippets[lang]);
+const generateCode = () => {
+setCode(snippets[lang]);
+};
 
-const copyCode=async()=>{
+const copyCode = async () => {
 await navigator.clipboard.writeText(code);
 setCopied(true);
 setTimeout(()=>setCopied(false),1500);
@@ -153,21 +155,39 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="py-16 bg-black border-t border-white/5">
+<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="max-w-5xl mx-auto px-6">
+<div className="max-w-6xl mx-auto px-6">
 
-<h2 className="text-3xl text-white font-bold text-center mb-8">
+<div className="text-center mb-10">
+
+<h2 className="text-3xl md:text-4xl font-display font-bold text-white">
 Quick Start Integration
 </h2>
 
-<div className="bg-[#080808] border border-white/10 rounded-2xl overflow-hidden">
+<p className="text-slate-400 text-sm mt-2">
+Generate real integration code for Apives APIs instantly.
+</p>
 
-<div className="flex justify-between items-center px-4 py-3 border-b border-white/10">
+</div>
+
+
+<div className="relative rounded-2xl border border-white/10 bg-[#070707] shadow-[0_50px_120px_rgba(0,0,0,0.9)] overflow-hidden">
+
+
+<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
+
+<div className="flex gap-2">
+<div className="w-3 h-3 rounded-full bg-red-500"/>
+<div className="w-3 h-3 rounded-full bg-yellow-400"/>
+<div className="w-3 h-3 rounded-full bg-green-500"/>
+</div>
+
+<div className="flex gap-3 items-center">
 
 <button
 onClick={generateCode}
-className="flex items-center gap-2 bg-mora-500 text-black px-4 py-1 rounded-full text-xs font-bold"
+className="flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase bg-mora-500 text-black hover:scale-105 transition"
 >
 <Zap size={14}/>
 Generate
@@ -175,22 +195,27 @@ Generate
 
 <button
 onClick={copyCode}
-className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"
+className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-mora-500 hover:text-black transition"
 >
 {copied ? <Check size={16}/> : <Copy size={16}/>}
 </button>
 
 </div>
 
-<div className="flex gap-2 px-4 py-2 border-b border-white/10">
+</div>
+
+
+<div className="flex gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
 
 {["python","node","curl","go"].map(l=>(
 <button
 key={l}
 onClick={()=>setLang(l)}
-className={`px-3 py-1 rounded-full text-xs font-bold ${
-lang===l ? "bg-mora-500 text-black" : "bg-white/5 text-slate-300"
-}`}
+className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition ${
+lang===l
+? "bg-mora-500 text-black"
+: "bg-white/5 text-slate-300 hover:bg-white/10"}
+`}
 >
 {l}
 </button>
@@ -198,8 +223,13 @@ lang===l ? "bg-mora-500 text-black" : "bg-white/5 text-slate-300"
 
 </div>
 
-<div className="p-6 font-mono text-sm text-slate-300">
-<pre>{code || "Click Generate to create integration code"}</pre>
+
+<div className="p-6 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
+
+<pre className="leading-relaxed min-w-[600px]">
+{code || `Click "Generate" to create integration code`}
+</pre>
+
 </div>
 
 </div>
@@ -214,7 +244,7 @@ lang===l ? "bg-mora-500 text-black" : "bg-white/5 text-slate-300"
 
 const LiveApiRunner = () => {
 
-const [endpoint,setEndpoint]=useState("");
+const [endpoint,setEndpoint]=useState("https://api.ipify.org?format=json");
 const [response,setResponse]=useState("");
 const [loading,setLoading]=useState(false);
 
@@ -244,38 +274,46 @@ setLoading(false);
 
 return(
 
-<section className="py-16 bg-black border-t border-white/5">
+<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="max-w-5xl mx-auto px-6">
+<div className="max-w-6xl mx-auto px-6">
 
-<h2 className="text-3xl text-white font-bold text-center mb-8">
+<div className="text-center mb-10">
+
+<h2 className="text-3xl md:text-4xl font-display font-bold text-white">
 Live API Request Runner
 </h2>
 
-<div className="bg-[#070707] border border-white/10 rounded-2xl p-6">
+<p className="text-slate-400 text-sm mt-2">
+Test any public API instantly and inspect responses.
+</p>
 
-<div className="flex gap-3 mb-4">
+</div>
+
+<div className="bg-[#070707] border border-white/10 rounded-2xl p-6 shadow-[0_40px_120px_rgba(0,0,0,0.8)]">
+
+<div className="flex gap-3 mb-4 items-center">
 
 <input
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
-placeholder="https://api.apives.com/endpoint"
-className="flex-1 bg-black border border-white/10 px-4 py-2 rounded-xl text-white"
+placeholder="https://api.example.com"
+className="flex-1 bg-black border border-white/10 px-4 py-2.5 rounded-xl text-white focus:outline-none focus:border-mora-500"
 />
 
 <button
 onClick={sendRequest}
-className="flex items-center gap-2 bg-mora-500 text-black px-5 py-2 rounded-xl font-bold"
+className="flex items-center gap-2 bg-mora-500 text-black px-6 py-2.5 rounded-xl font-bold whitespace-nowrap hover:scale-105 transition"
 >
 
 <Play size={16}/>
-Send
+Run API
 
 </button>
 
 </div>
 
-<pre className="text-green-400 font-mono text-xs bg-black p-4 rounded-xl overflow-x-auto">
+<pre className="text-green-400 font-mono text-xs bg-black/70 border border-white/10 p-4 rounded-xl overflow-x-auto shadow-inner">
 
 {loading ? "Loading..." : response || "Response will appear here"}
 
