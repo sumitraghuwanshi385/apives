@@ -356,24 +356,44 @@ setStatus("Fetching API...");
 
 try{
 
-const res = await fetch(endpoint,{
-method:"GET"
-});
+const sendRequest = async () => {
 
-const text = await res.text();
+if(!endpoint) return;
+
+setLoading(true);
+setStatus("Sending request via Apives runner...");
 
 try{
 
-const json = JSON.stringify(JSON.parse(text),null,2);
-setResponse(json);
+const res = await fetch(
+"https://apives.onrender.com/api/runner/run",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+url:endpoint
+})
+}
+);
 
-}catch{
+const data = await res.json();
 
-setResponse(text);
+if(data.success){
+
+setResponse(
+JSON.stringify(data.data,null,2)
+);
+
+setStatus(`Success • ${data.status}`);
+
+}else{
+
+setResponse(JSON.stringify(data,null,2));
+setStatus("Error");
 
 }
-
-setStatus(`Success • ${res.status}`);
 
 }catch(err){
 
@@ -381,14 +401,14 @@ setResponse(
 `Request failed.
 
 Possible reasons:
-• API blocks browser requests (CORS)
-• Endpoint requires API key
-• Invalid URL
+• API server offline
+• Endpoint invalid
+• API requires authentication
 
 Try another public API.`
 );
 
-setStatus("Error");
+setStatus("Runner Error");
 
 }
 
