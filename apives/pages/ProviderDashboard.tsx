@@ -123,41 +123,48 @@ export const ProviderDashboard: React.FC = () => {
 }, [navigate]);
 
   const loadNodes = async () => {
+
+  // 🔹 MY NODES
   try {
-    // 1) DB se provider ki APIs (ONLY SOURCE OF TRUTH)
     const myDb = await apiService.getMyApis();
-    const normalizedDb = (myDb || []).map((n: any) => ({
+
+    const normalizedDb = (myDb || []).map((n:any) => ({
       ...n,
       id: n._id || n.id,
-      status: n.status || 'active',
+      status: n.status || "active"
     }));
 
-    // ✅ ONLY DB NODES (no mock / no local)
-    const byId = new Map<string, any>();
-    [...normalizedDb].forEach((a: any) => {
-      if (!a) return;
+    const byId = new Map();
+
+    normalizedDb.forEach((a:any)=>{
       const id = a._id || a.id;
-      if (id) byId.set(id, { ...a, id });
+      if(id) byId.set(id,{...a,id});
     });
 
     setMyNodes(Array.from(byId.values()));
 
-    // 4) Saved nodes: IDs localStorage me hain
-    const savedIds = JSON.parse(localStorage.getItem('mora_saved_apis') || '[]');
-
-// ✅ ONLY DB APIs for saved nodes
-const allDb = await apiService.getAllApis();
-const normalizedAllDb = (allDb || []).map((a: any) => ({
-  ...a,
-  id: a._id || a.id,
-}));
-
-setSavedNodes(
-  normalizedAllDb.filter((api: any) => savedIds.includes(api.id))
-);
   } catch (e) {
-    console.error('loadNodes failed:', e);
-    showNotification('Failed to load nodes from backend');
+    console.error("getMyApis failed",e);
+  }
+
+  // 🔹 SAVED NODES
+  try {
+
+    const savedIds = JSON.parse(localStorage.getItem("mora_saved_apis") || "[]");
+
+    const allDb = await apiService.getAllApis();
+
+    const normalizedAllDb = (allDb || []).map((a:any)=>({
+      ...a,
+      id:a._id || a.id
+    }));
+
+    setSavedNodes(
+      normalizedAllDb.filter((api:any)=> savedIds.includes(api.id))
+    );
+
+  } catch (e) {
+    console.error("getAllApis failed",e);
   }
 };
 
