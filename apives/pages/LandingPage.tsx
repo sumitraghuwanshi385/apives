@@ -323,10 +323,6 @@ const [status,setStatus]=useState("");
 const [statusCode,setStatusCode]=useState(null);
 const [time,setTime]=useState(null);
 
-const [history,setHistory]=useState([]);
-
-const user = localStorage.getItem("mora_user");
-
 const methods=[
 "GET",
 "POST",
@@ -349,19 +345,6 @@ return JSON.stringify(JSON.parse(data),null,2);
 }catch{
 return data;
 }
-};
-
-const getStatusColor=()=>{
-
-if(!statusCode) return "bg-white/10";
-
-if(statusCode>=200 && statusCode<300)
-return "bg-green-500/20 text-green-400";
-
-if(statusCode>=400 && statusCode<500)
-return "bg-yellow-500/20 text-yellow-400";
-
-return "bg-red-500/20 text-red-400";
 };
 
 const sendRequest=async()=>{
@@ -417,15 +400,6 @@ setResponse(json);
 setStatusCode(data.status);
 setStatus("Success");
 
-if(user){
-
-setHistory(prev=>[
-{url:endpoint,method,time:duration},
-...prev.slice(0,10)
-]);
-
-}
-
 }else{
 
 setResponse(JSON.stringify(data,null,2));
@@ -460,15 +434,6 @@ setStatusCode(null);
 setTime(null);
 };
 
-const clearHistory=()=>{
-setHistory([]);
-};
-
-const copyResponse=async()=>{
-if(!response) return;
-await navigator.clipboard.writeText(response);
-};
-
 return(
 
 <section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
@@ -476,6 +441,8 @@ return(
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
 
 <div className="max-w-5xl mx-auto px-4 relative z-10">
+
+{/* HEADER */}
 
 <div className="text-center mb-6">
 
@@ -488,6 +455,14 @@ Run real APIs and inspect JSON responses instantly.
 </p>
 
 </div>
+
+{/* MINI HEADLINE */}
+
+<p className="text-center text-xs text-slate-500 mb-4">
+Try these example APIs to quickly test the runner
+</p>
+
+{/* PRESET APIs */}
 
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
@@ -503,7 +478,11 @@ className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hov
 
 </div>
 
+{/* PANEL */}
+
 <div className="bg-[#070707] border border-white/10 rounded-2xl p-4">
+
+{/* METHOD + URL */}
 
 <div className="flex flex-wrap gap-2 mb-3 items-center">
 
@@ -540,7 +519,7 @@ className="px-4 py-2 text-xs hover:bg-white/10 cursor-pointer"
 value={endpoint}
 onChange={(e)=>setEndpoint(e.target.value)}
 className="flex-1 min-w-0 bg-black border border-white/10 text-sm px-3 py-2 rounded text-white"
-placeholder="Enter API URL"
+placeholder="https://api.example.com/endpoint"
 />
 
 <button
@@ -559,29 +538,42 @@ Clear
 
 </div>
 
+{/* HEADERS */}
+
 <div className="mb-3">
 
-<p className="text-xs text-slate-400 mb-1">Headers (JSON)</p>
+<p className="text-xs text-slate-400 mb-1">
+Headers (optional JSON)
+</p>
 
 <textarea
 value={headers}
 onChange={(e)=>setHeaders(e.target.value)}
-placeholder='{"Authorization":"Bearer API_KEY"}'
+placeholder={`{
+ "Content-Type":"application/json",
+ "Authorization":"Bearer YOUR_API_KEY"
+}`}
 className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
 />
 
 </div>
 
+{/* BODY */}
+
 {method!=="GET" && (
 
 <div className="mb-3">
 
-<p className="text-xs text-slate-400 mb-1">Request Body</p>
+<p className="text-xs text-slate-400 mb-1">
+Request Body (JSON)
+</p>
 
 <textarea
 value={body}
 onChange={(e)=>setBody(e.target.value)}
-placeholder='{"message":"hello"}'
+placeholder={`{
+ "example":"data"
+}`}
 className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white"
 />
 
@@ -589,12 +581,14 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 
 )}
 
+{/* STATUS */}
+
 <div className="flex flex-wrap items-center gap-3 mb-2 text-xs font-mono">
 
 {status && <span className="text-green-400">{status}</span>}
 
 {statusCode && (
-<span className={`px-2 py-0.5 rounded ${getStatusColor()}`}>
+<span className="px-2 py-0.5 rounded bg-green-500/20 text-green-400">
 {statusCode}
 </span>
 )}
@@ -605,14 +599,9 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 </span>
 )}
 
-<button
-onClick={copyResponse}
-className="ml-auto text-xs px-2 py-1 border border-white/10 rounded"
->
-Copy JSON
-</button>
-
 </div>
+
+{/* RESPONSE */}
 
 <div className="border border-white/10 rounded-xl p-4 bg-black/80 text-xs overflow-x-auto">
 
@@ -633,46 +622,6 @@ padding:0
 </div>
 
 </div>
-
-{user && history.length>0 && (
-
-<div className="mt-5">
-
-<div className="flex justify-between items-center mb-2">
-
-<p className="text-xs text-slate-400">Recent Requests</p>
-
-<button
-onClick={clearHistory}
-className="text-xs text-red-400 hover:text-red-300"
->
-Clear All
-</button>
-
-</div>
-
-<div className="space-y-1">
-
-{history.map((h,i)=>(
-<div
-key={i}
-className="text-xs text-slate-400 flex justify-between bg-white/5 px-2 py-1 rounded"
->
-
-<span>{h.method}</span>
-
-<span className="truncate max-w-[200px]">{h.url}</span>
-
-<span>{h.time}ms</span>
-
-</div>
-))}
-
-</div>
-
-</div>
-
-)}
 
 </div>
 
