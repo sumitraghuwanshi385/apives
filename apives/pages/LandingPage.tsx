@@ -150,38 +150,28 @@ curl:`curl https://api.example.com/v1/chat \\
 -H "Content-Type: application/json" \\
 -d '{
  "message":"Hello"
-}'
-`,
+}'`,
 
 go:`package main
 
-import (
- "fmt"
-)
+import "fmt"
 
 func main(){
+ fmt.Println("Send request using YOUR_API_KEY")
+}`,
 
- fmt.Println("Send request to API with YOUR_API_KEY")
-
-}
-`,
-
-java:`import java.net.*;
-import java.io.*;
-
-public class ApiExample{
+java:`public class ApiExample{
  public static void main(String[] args){
-  System.out.println("Call API using YOUR_API_KEY");
+  System.out.println("Use YOUR_API_KEY to call API");
  }
-}
-`,
+}`,
 
 php:`<?php
 
 $apiKey="YOUR_API_KEY";
 
 $response=file_get_contents(
- "https://api.example.com?key=".$apiKey
+"https://api.example.com?key=".$apiKey
 );
 
 echo $response;
@@ -201,9 +191,9 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="py-24 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="py-14 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* GREEN BACKGROUND GLOW */}
+{/* GREEN GLOW */}
 
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none"/>
 
@@ -211,7 +201,7 @@ return(
 
 {/* HEADER */}
 
-<div className="text-center mb-10">
+<div className="text-center mb-8">
 
 <h2 className="text-3xl md:text-4xl font-bold text-white">
 Quick Start Integration
@@ -225,12 +215,12 @@ Example snippets showing how APIs are typically integrated in apps.
 
 {/* NOTICE */}
 
-<div className="mb-6 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-xs text-green-300 flex gap-3 items-start">
+<div className="mb-5 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-xs text-green-300 flex gap-3 items-start">
 
-<Info size={16} className="mt-[2px]"/>
+<Info size={22} className="mt-[1px]"/>
 
 <p>
-These code snippets are examples for demonstration purposes.  
+These code snippets are examples for demonstration purposes.
 Replace <span className="text-white">YOUR_API_KEY</span> with an API key obtained from the respective API provider.
 </p>
 
@@ -238,11 +228,11 @@ Replace <span className="text-white">YOUR_API_KEY</span> with an API key obtaine
 
 {/* TERMINAL */}
 
-<div className="relative rounded-2xl border border-white/10 bg-[#070707] shadow-[0_40px_120px_rgba(0,0,0,0.9)] overflow-hidden">
+<div className="rounded-2xl border border-white/10 bg-[#070707] overflow-hidden">
 
 {/* TERMINAL HEADER */}
 
-<div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-black/40">
+<div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
 
 <div className="flex gap-2">
 <div className="w-3 h-3 rounded-full bg-red-500"/>
@@ -259,15 +249,15 @@ className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 bord
 
 </div>
 
-{/* LANGUAGE TABS */}
+{/* LANG TABS */}
 
-<div className="flex flex-wrap gap-2 px-4 py-3 border-b border-white/10 bg-black/20">
+<div className="flex flex-wrap gap-2 px-4 py-3 border-b border-white/10">
 
 {["python","node","curl","go","java","php"].map(l=>(
 <button
 key={l}
 onClick={()=>setLang(l)}
-className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition ${
+className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${
 lang===l
 ? "bg-white text-black"
 : "bg-white/5 text-slate-300 hover:bg-white/10"}
@@ -281,7 +271,7 @@ lang===l
 
 {/* CODE */}
 
-<div className="p-6 text-xs md:text-sm overflow-x-auto">
+<div className="p-5 text-xs md:text-sm overflow-x-auto">
 
 <SyntaxHighlighter
 language={lang === "node" ? "javascript" : lang}
@@ -289,7 +279,11 @@ style={oneDark}
 customStyle={{
 background:"transparent",
 padding:0,
-margin:0
+margin:0,
+textShadow:"none"
+}}
+codeTagProps={{
+style:{textShadow:"none"}
 }}
 >
 {code}
@@ -301,14 +295,14 @@ margin:0
 
 {/* DEV TIP */}
 
-<div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex gap-3">
+<div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-slate-300 flex gap-3">
 
-<Key size={16}/>
+<Key size={22}/>
 
 <p>
 
-Always store API keys securely using environment variables.  
-Never expose secret keys in frontend code or public repositories.
+Store API keys securely using environment variables.
+Never expose secret keys in frontend code.
 
 </p>
 
