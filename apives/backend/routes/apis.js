@@ -82,14 +82,34 @@ router.get('/', async (req, res) => {
 
     const { page = 1, limit = 12, includePaused } = req.query;
 
-    const filter = includePaused === 'true'
-      ? {}
-      : {
-          $or: [
-            { status: 'active' },
-            { status: { $exists: false } }
-          ]
-        };
+const search = req.query.search || "";
+
+    let filter = includePaused === 'true'
+  ? {}
+  : {
+      $or: [
+        { status: 'active' },
+        { status: { $exists: false } }
+      ]
+    };
+
+// 🔍 SEARCH SUPPORT
+if (search) {
+  filter = {
+    ...filter,
+    $and: [
+      filter,
+      {
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+          { provider: { $regex: search, $options: "i" } },
+          { tags: { $regex: search, $options: "i" } }
+        ]
+      }
+    ]
+  };
+}
 
     const pageNumber = parseInt(page);
     const limitNumber = parseInt(limit);
