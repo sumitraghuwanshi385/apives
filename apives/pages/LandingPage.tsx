@@ -469,11 +469,12 @@ rounded-2xl bg-white/10 p-1"
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
     {communityApis.map((api, idx) => (
       <ApiCard
-        key={`loved-${api.id}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-      />
+  key={`loved-${api.id}`}
+  api={api}
+  topIds={top3Ids}
+  rankIndex={top3Ids.indexOf(api.id)}
+  onLikeChange={updateLandingUpvotes}
+/>
     ))}
   </div>
 )}
