@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay } from "swiper/modules"
-import { Newspaper, Zap } from "lucide-react"
+import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
@@ -16,8 +16,8 @@ let cleaned=text
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 
-if(cleaned.length>150){
-cleaned=cleaned.substring(0,150)
+if(cleaned.length>300){
+cleaned=cleaned.substring(0,300)
 }
 
 return cleaned
@@ -102,7 +102,7 @@ AI & API Radar
 </h2>
 
 <p className="text-slate-400 text-sm mt-4 max-w-xl mx-auto">
-Discover daily signals from AI models, developer APIs and tools shaping the future of software.
+Daily signals from AI models, developer APIs and tools shaping the future of software.
 </p>
 
 </div>
@@ -112,18 +112,19 @@ Discover daily signals from AI models, developer APIs and tools shaping the futu
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={34}
-slidesPerView={1.1}
-grabCursor={true}
+spaceBetween={30}
+slidesPerView={1.2}
 centeredSlides={true}
+grabCursor={true}
 autoplay={{
 delay:4000,
 disableOnInteraction:false
 }}
 breakpoints={{
-640:{slidesPerView:1.4},
-768:{slidesPerView:1.8},
-1024:{slidesPerView:2.4}
+480:{slidesPerView:1.35},
+640:{slidesPerView:1.6},
+768:{slidesPerView:2},
+1024:{slidesPerView:2.6}
 }}
 >
 
@@ -141,21 +142,21 @@ target="_blank"
 className="
 group
 block
-rounded-[28px]
+rounded-[26px]
 overflow-hidden
 border border-white/10
-bg-[#0a0a0a]
+bg-[#0b0b0b]
 transition-all
 duration-500
 hover:-translate-y-2
-shadow-[0_20px_80px_rgba(0,0,0,0.65)]
-hover:shadow-[0_0_70px_rgba(34,197,94,0.35)]
+shadow-[0_20px_70px_rgba(0,0,0,0.7)]
+hover:shadow-[0_0_60px_rgba(34,197,94,0.35)]
 "
 >
 
 {/* IMAGE */}
 
-<div className="relative h-64 overflow-hidden">
+<div className="relative h-48 overflow-hidden">
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
@@ -164,33 +165,12 @@ className="w-full h-full object-cover group-hover:scale-110 transition duration-
 
 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"/>
 
-{/* FEED BADGE */}
-
-<div className="
-absolute top-5 left-5
-flex items-center gap-2
-px-4 py-1.5
-rounded-full
-text-[10px]
-font-black
-tracking-widest
-uppercase
-bg-mora-500/20
-text-mora-400
-border border-mora-500/40
-">
-
-<Zap size={12}/>
-Feed Grade
-
-</div>
-
 </div>
 
 
 {/* CONTENT */}
 
-<div className="p-7">
+<div className="p-6">
 
 <h3 className="text-white font-bold text-lg leading-snug">
 {item.title}
