@@ -8,6 +8,12 @@ const XIcon = ({ className }: { className?: string }) => (
 </svg>
 );
 
+const InstagramIcon = ({ className }: { className?: string }) => (
+<svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
+<path d="M7.75 2C4.57 2 2 4.57 2 7.75v8.5C2 19.43 4.57 22 7.75 22h8.5C19.43 22 22 19.43 22 16.25v-8.5C22 4.57 19.43 2 16.25 2h-8.5zm0 2h8.5A3.75 3.75 0 0 1 20 7.75v8.5A3.75 3.75 0 0 1 16.25 20h-8.5A3.75 3.75 0 0 1 4 16.25v-8.5A3.75 3.75 0 0 1 7.75 4zm8.75 1.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+</svg>
+);
+
 export const Footer: React.FC = () => {
 const location = useLocation();
 const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -76,6 +82,18 @@ return (
   >
     <XIcon className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
   </a>
+
+{/* Instagram */}
+<a
+href="https://www.instagram.com/apives_ecosystem?igsh=MTNib2NicGF4Z2Zocg=="
+target="_blank"
+rel="noopener noreferrer"
+className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9
+rounded-full bg-white/5 hover:bg-white/10 border border-white/5
+text-slate-500 hover:text-white transition-all group"
+>
+<InstagramIcon className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
+</a>
 
   {/* /// divider */}
   <span className="
