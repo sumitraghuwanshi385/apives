@@ -135,11 +135,13 @@ const authRoutes = require("./routes/auth");
 const apiRoutes = require("./routes/apis");
 const sponsorRoutes = require("./routes/sponsor");
 const usecaseRoutes = require("./routes/usecase");
+const runnerRoutes = require("./routes/runner");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/apis", apiRoutes);
 app.use("/api/sponsor", sponsorRoutes);
 app.use("/api/usecases", usecaseRoutes);
+app.use("/api/runner", runnerRoutes);
 
 // ================= DATABASE =================
 const DB_URI = process.env.MONGO_URI;
