@@ -15,6 +15,8 @@ Copy,
 Check,
 Play
 } from 'lucide-react';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import ApiCard from '../components/ApiCard';
@@ -101,6 +103,8 @@ const RANK_BADGE_STYLES = [
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
 
+
+
 const QuickStartPlayground = () => {
 
 const [lang,setLang] = useState("python");
@@ -113,39 +117,67 @@ python:`import apives
 
 client = apives.Client(api_key="YOUR_API_KEY")
 
-res = client.chat.create(
-  model="apives-gpt",
-  message="Hello"
+response = client.chat.create(
+    model="apives-gpt",
+    messages=[
+        {"role":"user","content":"Hello"}
+    ]
 )
 
-print(res.output)`,
+print(response.output)
+`,
 
 node:`import Apives from "apives"
 
-const client = new Apives({apiKey:"YOUR_API_KEY"})
-
-const res = await client.chat.create({
- model:"apives-gpt",
- message:"Hello"
+const client = new Apives({
+  apiKey: "YOUR_API_KEY"
 })
 
-console.log(res.output)`,
+const response = await client.chat.create({
+  model: "apives-gpt",
+  messages: [
+    { role: "user", content: "Hello" }
+  ]
+})
 
-curl:`curl https://api.apives.com/v1/chat
--H "Authorization: Bearer YOUR_API_KEY"
--d '{"message":"Hello"}'`,
+console.log(response.output)
+`,
+
+curl:`curl https://api.apives.com/v1/chat \\
+-H "Authorization: Bearer YOUR_API_KEY" \\
+-H "Content-Type: application/json" \\
+-d '{
+  "model":"apives-gpt",
+  "messages":[
+    {"role":"user","content":"Hello"}
+  ]
+}'
+`,
 
 go:`package main
-import "fmt"
 
-func main(){
-fmt.Println("Hello from Apives")
-}`
+import (
+ "fmt"
+ "github.com/apives/apives-go"
+)
+
+func main() {
+
+ client := apives.NewClient("YOUR_API_KEY")
+
+ res, _ := client.Chat.Create(
+  "apives-gpt",
+  "Hello",
+ )
+
+ fmt.Println(res.Output)
+}
+`
 };
 
-const generateCode = () => {
+useEffect(()=>{
 setCode(snippets[lang]);
-};
+},[lang]);
 
 const copyCode = async () => {
 await navigator.clipboard.writeText(code);
@@ -166,7 +198,7 @@ Quick Start Integration
 </h2>
 
 <p className="text-slate-400 text-sm mt-2">
-Generate real integration code for Apives APIs instantly.
+Instantly integrate Apives API in your app using any language.
 </p>
 
 </div>
@@ -183,24 +215,12 @@ Generate real integration code for Apives APIs instantly.
 <div className="w-3 h-3 rounded-full bg-green-500"/>
 </div>
 
-<div className="flex gap-3 items-center">
-
-<button
-onClick={generateCode}
-className="flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase bg-mora-500 text-black hover:scale-105 transition"
->
-<Zap size={14}/>
-Generate
-</button>
-
 <button
 onClick={copyCode}
-className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-mora-500 hover:text-black transition"
+className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition"
 >
 {copied ? <Check size={16}/> : <Copy size={16}/>}
 </button>
-
-</div>
 
 </div>
 
@@ -213,7 +233,7 @@ key={l}
 onClick={()=>setLang(l)}
 className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition ${
 lang===l
-? "bg-mora-500 text-black"
+? "bg-white text-black"
 : "bg-white/5 text-slate-300 hover:bg-white/10"}
 `}
 >
@@ -224,11 +244,19 @@ lang===l
 </div>
 
 
-<div className="p-6 font-mono text-xs md:text-sm text-slate-300 overflow-x-auto">
+<div className="p-6 text-xs md:text-sm overflow-x-auto">
 
-<pre className="leading-relaxed min-w-[600px]">
-{code || `Click "Generate" to create integration code`}
-</pre>
+<SyntaxHighlighter
+language={lang === "node" ? "javascript" : lang}
+style={oneDark}
+customStyle={{
+background:"transparent",
+padding:0,
+margin:0
+}}
+>
+{code}
+</SyntaxHighlighter>
 
 </div>
 
@@ -241,6 +269,8 @@ lang===l
 );
 
 };
+
+export default QuickStartPlayground;
 
 const LiveApiRunner = () => {
 
