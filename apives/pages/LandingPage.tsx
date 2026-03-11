@@ -311,6 +311,8 @@ const LiveApiRunner = () => {
 
 const [endpoint,setEndpoint]=useState("https://api.ipify.org?format=json");
 const [method,setMethod]=useState("GET");
+const [showMethods,setShowMethods]=useState(false);
+
 const [headers,setHeaders]=useState("");
 const [body,setBody]=useState("");
 
@@ -321,23 +323,36 @@ const [statusCode,setStatusCode]=useState(null);
 const [time,setTime]=useState(null);
 
 const [history,setHistory]=useState([]);
-const [collections,setCollections]=useState([]);
+
+const methods = [
+"GET",
+"POST",
+"PUT",
+"PATCH",
+"DELETE",
+"HEAD",
+"OPTIONS"
+];
 
 const presets = [
+
 { name:"IP API", url:"https://api.ipify.org?format=json" },
 { name:"Random User", url:"https://randomuser.me/api/" },
 { name:"Bitcoin Price", url:"https://api.coinbase.com/v2/prices/spot?currency=USD" },
 { name:"Weather", url:"https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true" },
 { name:"GitHub User", url:"https://api.github.com/users/vercel" },
 { name:"Dog Image", url:"https://dog.ceo/api/breeds/image/random" }
+
 ];
 
 const formatJSON = (data) => {
+
 try{
 return JSON.stringify(JSON.parse(data),null,2);
 }catch{
 return data;
 }
+
 };
 
 const getStatusColor = () => {
@@ -442,23 +457,6 @@ await navigator.clipboard.writeText(response);
 
 };
 
-const saveCollection = () => {
-
-setCollections(prev=>[
-{url:endpoint,method},
-...prev
-]);
-
-};
-
-const shareLink = () => {
-
-const url = `${window.location.origin}?api=${encodeURIComponent(endpoint)}`;
-
-navigator.clipboard.writeText(url);
-
-};
-
 return(
 
 <section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
@@ -481,7 +479,7 @@ Run real APIs and inspect JSON responses instantly.
 
 </div>
 
-{/* PRESETS */}
+{/* PRESET APIs */}
 
 <div className="flex flex-wrap justify-center gap-2 mb-5">
 
@@ -497,7 +495,7 @@ className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hov
 
 </div>
 
-{/* REQUEST PANEL */}
+{/* PANEL */}
 
 <div className="bg-[#070707] border border-white/10 rounded-2xl p-4">
 
@@ -505,14 +503,39 @@ className="px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 hov
 
 <div className="flex flex-wrap gap-2 mb-3 items-center">
 
-<select
-value={method}
-onChange={(e)=>setMethod(e.target.value)}
-className="bg-black border border-white/10 text-xs px-2 py-2 rounded"
+{/* CUSTOM METHOD MENU */}
+
+<div className="relative">
+
+<button
+onClick={()=>setShowMethods(!showMethods)}
+className="px-3 py-2 text-xs rounded bg-black border border-white/10"
 >
-<option>GET</option>
-<option>POST</option>
-</select>
+{method}
+</button>
+
+{showMethods && (
+
+<div className="absolute top-9 left-0 bg-black border border-white/10 rounded shadow-lg z-20">
+
+{methods.map(m=>(
+<div
+key={m}
+onClick={()=>{
+setMethod(m)
+setShowMethods(false)
+}}
+className="px-4 py-2 text-xs hover:bg-white/10 cursor-pointer"
+>
+{m}
+</div>
+))}
+
+</div>
+
+)}
+
+</div>
 
 <input
 value={endpoint}
@@ -554,7 +577,7 @@ className="w-full bg-black border border-white/10 rounded text-xs p-2 text-white
 
 {/* BODY */}
 
-{method==="POST" && (
+{method!=="GET" && (
 
 <div className="mb-3">
 
@@ -594,20 +617,6 @@ className="ml-auto text-xs px-2 py-1 border border-white/10 rounded"
 Copy JSON
 </button>
 
-<button
-onClick={saveCollection}
-className="text-xs px-2 py-1 border border-white/10 rounded"
->
-Save
-</button>
-
-<button
-onClick={shareLink}
-className="text-xs px-2 py-1 border border-white/10 rounded"
->
-Share
-</button>
-
 </div>
 
 {/* RESPONSE */}
@@ -630,7 +639,7 @@ padding:0
 
 </div>
 
-{/* RESPONSE TIME GRAPH */}
+{/* RESPONSE GRAPH */}
 
 {time && (
 
@@ -671,38 +680,9 @@ className="text-xs text-slate-400 flex justify-between bg-white/5 px-2 py-1 roun
 
 <span>{h.method}</span>
 
-<span className="truncate max-w-[180px]">{h.url}</span>
+<span className="truncate max-w-[200px]">{h.url}</span>
 
 <span>{h.time}ms</span>
-
-</div>
-))}
-
-</div>
-
-</div>
-
-)}
-
-{/* COLLECTIONS */}
-
-{collections.length>0 && (
-
-<div className="mt-6">
-
-<p className="text-xs text-slate-400 mb-2">Saved API Collection</p>
-
-<div className="space-y-1">
-
-{collections.map((c,i)=>(
-<div
-key={i}
-className="text-xs text-slate-300 flex justify-between bg-white/5 px-2 py-1 rounded"
->
-
-<span>{c.method}</span>
-
-<span className="truncate max-w-[200px]">{c.url}</span>
 
 </div>
 ))}
@@ -720,7 +700,6 @@ className="text-xs text-slate-300 flex justify-between bg-white/5 px-2 py-1 roun
 );
 
 };
-
 export const LandingPage: React.FC = () => {
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
