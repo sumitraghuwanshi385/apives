@@ -5,8 +5,8 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
-const TARGET_WORDS = 50
-const TITLE_WORDS = 10
+const TITLE_WORDS = 5
+const DESC_WORDS = 40
 
 const AI_KEYWORDS=[
 "ai",
@@ -29,7 +29,7 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-/* TITLE → MAX 10 WORDS */
+/* TITLE → 5 WORDS */
 
 const summarizeTitle=(title:string)=>{
 
@@ -49,22 +49,24 @@ return cleaned
 return words.slice(0,TITLE_WORDS).join(" ")
 }
 
-/* DESCRIPTION → MAX 50 WORDS */
+/* DESCRIPTION → 40 WORDS (NO TITLE REPEAT) */
 
-const summarizeTo50=(title:string,desc:string)=>{
+const summarizeDesc=(desc:string)=>{
 
-let text=(title+" "+(desc||""))
+if(!desc) return ""
+
+let cleaned=desc
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 .trim()
 
-let words=text.split(" ")
+const words=cleaned.split(" ")
 
-if(words.length<=TARGET_WORDS){
-return text
+if(words.length<=DESC_WORDS){
+return cleaned
 }
 
-return words.slice(0,TARGET_WORDS).join(" ")
+return words.slice(0,DESC_WORDS).join(" ")
 }
 
 const shuffle=(arr:any[])=>{
@@ -191,7 +193,7 @@ target="_blank"
 className="
 group
 block
-h-[480px]
+h-[520px]
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -205,7 +207,7 @@ active:scale-[0.98]
 
 {/* IMAGE */}
 
-<div className="relative h-44 md:h-48 overflow-hidden">
+<div className="relative h-48 md:h-52 overflow-hidden">
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
@@ -218,16 +220,16 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 {/* CONTENT */}
 
-<div className="p-6 flex flex-col justify-between h-[320px]">
+<div className="p-6 flex flex-col justify-between h-[340px]">
 
 <div>
 
-<h3 className="text-white font-bold text-base leading-snug mb-3">
+<h3 className="text-white font-bold text-sm leading-snug mb-3">
 {summarizeTitle(item.title)}
 </h3>
 
-<p className="text-slate-400 text-xs leading-relaxed">
-{summarizeTo50(item.title,item.description)}
+<p className="text-slate-400 text-[11px] leading-relaxed">
+{summarizeDesc(item.description)}
 </p>
 
 </div>
