@@ -15,7 +15,6 @@ Copy,
 Check,
 Play
 } from 'lucide-react';
-// @ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
