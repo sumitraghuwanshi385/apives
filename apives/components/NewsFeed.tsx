@@ -5,7 +5,7 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
-const TARGET_WORDS = 60
+const TARGET_WORDS = 50
 
 const AI_KEYWORDS=[
 "ai",
@@ -28,21 +28,19 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-/* EXACT 60 WORD SUMMARIZER */
+/* SMART 50 WORD BUILDER */
 
-const summarizeTo60=(text:string)=>{
+const summarizeTo50=(title:string,desc:string)=>{
 
-if(!text) return ""
-
-let cleaned=text
+let text=(title+" "+(desc||""))
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 .trim()
 
-const words=cleaned.split(" ")
+let words=text.split(" ")
 
 if(words.length <= TARGET_WORDS){
-return cleaned
+return text
 }
 
 return words.slice(0,TARGET_WORDS).join(" ")
@@ -81,6 +79,7 @@ isRelevant(i.title)||isRelevant(i.description)
 ))
 
 return filtered.slice(0,limit)
+
 }
 
 useEffect(()=>{
@@ -142,7 +141,7 @@ Latest launches in AI models, APIs, AI agents, chatbots and AI startups.
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={20}
+spaceBetween={24}
 slidesPerView={1.1}
 grabCursor={true}
 autoplay={{
@@ -171,7 +170,7 @@ target="_blank"
 className="
 group
 block
-h-[420px]
+h-[480px]
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -185,7 +184,7 @@ active:scale-[0.98]
 
 {/* IMAGE */}
 
-<div className="relative h-36 md:h-40 overflow-hidden">
+<div className="relative h-44 md:h-48 overflow-hidden">
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
@@ -198,23 +197,23 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 {/* CONTENT */}
 
-<div className="p-5 flex flex-col justify-between h-[280px]">
+<div className="p-6 flex flex-col justify-between h-[320px]">
 
 <div>
 
-<h3 className="text-white font-bold text-base md:text-lg leading-snug mb-3">
+<h3 className="text-white font-bold text-lg leading-snug mb-4">
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-sm leading-relaxed min-h-[110px]">
-{summarizeTo60(item.description)}
+<p className="text-slate-400 text-sm leading-relaxed">
+{summarizeTo50(item.title,item.description)}
 </p>
 
 </div>
 
 {/* SOURCE */}
 
-<div className="flex items-center justify-between mt-5">
+<div className="flex items-center justify-between mt-6">
 
 <div className="
 flex items-center gap-2
