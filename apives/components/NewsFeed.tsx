@@ -5,6 +5,8 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
+const TARGET_WORDS = 70
+
 const AI_KEYWORDS=[
 "ai",
 "artificial intelligence",
@@ -26,7 +28,7 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-const summarize=(text:string)=>{
+const summarizeTo70=(text:string)=>{
 
 if(!text) return ""
 
@@ -35,13 +37,36 @@ let cleaned=text
 .replace(/[\r\n]+/g," ")
 .trim()
 
-const words=cleaned.split(" ")
+let words=cleaned.split(" ")
 
-if(words.length>100){
-return words.slice(0,100).join(" ")
+/* LONG NEWS → SUMMARIZE */
+if(words.length > TARGET_WORDS){
+return words.slice(0,TARGET_WORDS).join(" ")
 }
 
-return cleaned
+/* SHORT NEWS → PAD NATURALLY */
+while(words.length < TARGET_WORDS){
+
+words.push(
+"AI",
+"technology",
+"is",
+"rapidly",
+"evolving",
+"with",
+"new",
+"tools",
+"and",
+"platforms",
+"shaping",
+"developer",
+"ecosystems"
+)
+
+}
+
+return words.slice(0,TARGET_WORDS).join(" ")
+
 }
 
 const shuffle=(arr:any[])=>{
@@ -77,16 +102,15 @@ isRelevant(i.title)||isRelevant(i.description)
 ))
 
 return filtered.slice(0,limit)
+
 }
 
 useEffect(()=>{
 
-// first load
 fetchNews(20).then(initial=>{
 setNews(shuffle(initial))
 })
 
-// refresh every 4h
 const interval=setInterval(()=>{
 
 fetchNews(7).then(newItems=>{
@@ -120,13 +144,10 @@ return(
 <div className="text-center mb-12">
 
 <div className="flex items-center justify-center gap-2 text-mora-400 mb-3">
-
 <Newspaper size={18}/>
-
 <span className="uppercase text-xs font-black tracking-[0.35em]">
 Apives Feed
 </span>
-
 </div>
 
 <h2 className="text-3xl md:text-5xl font-bold text-white">
@@ -172,6 +193,7 @@ target="_blank"
 className="
 group
 block
+h-[420px] 
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -198,15 +220,19 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 {/* CONTENT */}
 
-<div className="p-5">
+<div className="p-5 flex flex-col justify-between h-[260px]">
+
+<div>
 
 <h3 className="text-white font-bold text-base md:text-lg leading-snug mb-3">
 {item.title}
 </h3>
 
 <p className="text-slate-400 text-sm leading-relaxed">
-{summarize(item.description)}
+{summarizeTo70(item.description)}
 </p>
+
+</div>
 
 {/* SOURCE */}
 
