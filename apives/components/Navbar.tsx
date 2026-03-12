@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Newspaper } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -120,7 +120,7 @@ return (
 onClick={scrollToNews}
 className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
 >
-<Radio size={14} className="text-mora-500/70 group-hover:text-mora-500" />
+<Newspaper size={14} className="text-mora-500/70 group-hover:text-mora-500" />
 News Feed
 </button>
       </div>    
@@ -219,7 +219,7 @@ transition-all
 onClick={scrollToNews}
 className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
 >
-<Radio size={14} className="text-mora-500/70 group-hover:text-mora-500" />
+<Newspaper size={14} className="text-mora-500/70 group-hover:text-mora-500" />
 News Feed
 </button>    
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
