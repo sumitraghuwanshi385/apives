@@ -1086,11 +1086,10 @@ return (
 
 <section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* background glow */}
-
+{/* glow */}
 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.08),transparent_60%)] pointer-events-none" />
 
-<div className="max-w-6xl mx-auto px-6 relative z-10">
+<div className="max-w-4xl mx-auto px-6 relative z-10">
 
 {/* HEADER */}
 
@@ -1105,21 +1104,15 @@ Partners Powering Apives
 </h2>
 
 <p className="text-slate-400 text-sm mt-3 max-w-xl mx-auto">
-Developer platforms and infrastructure companies supporting the Apives ecosystem.
+Developer platforms supporting the Apives ecosystem.
 </p>
 
 </div>
 
 
-{/* GRID */}
+{/* ===== APEX SPONSOR ===== */}
 
-<div className="grid md:grid-cols-2 gap-10 items-start">
-
-{/* =========================
- APEX SPONSOR
-========================= */}
-
-<div className="text-center">
+<div className="text-center mb-12">
 
 <p className="
 text-[10px]
@@ -1183,82 +1176,77 @@ Turning B2B feedback into adoption signals
 </div>
 
 
-{/* PRIME SPONSOR */}
+{/* ===== PRIME SPONSOR ===== */}
 
-<div className="pb-6 md:pb-8 mt-10">
-  <div className="max-w-5xl mx-auto px-6 text-center">
+<div className="text-center">
 
-    <p
-      className="
-        text-[10px] md:text-xs
-        uppercase tracking-[0.35em]
-        font-black
-        bg-gradient-to-r from-slate-200 to-slate-400
-        bg-clip-text text-transparent
-        mb-4
-      "
-    >
-      Prime Sponsor
-    </p>
+<p className="
+text-[10px]
+uppercase tracking-[0.35em]
+font-black
+bg-gradient-to-r from-slate-200 to-slate-400
+bg-clip-text text-transparent
+mb-4
+">
+Prime Sponsor
+</p>
 
-    <a
-      href="#"
-      onClick={(e) => {
-        e.preventDefault();
-        handleSponsorClick(
-          "serpapi",
-          "https://serpapi.com"
-        );
-      }}
-      className="
-      relative inline-flex items-center gap-3
-      px-5 md:px-6 py-3 md:py-3.5
-      max-w-[520px] w-full
-      rounded-2xl
-      border border-white/20
-      bg-gradient-to-br from-white/10 to-transparent
-      hover:from-white/20
-      transition-all hover:scale-[1.02]
-      shadow-[0_0_40px_rgba(255,255,255,0.12)]
-      hover:shadow-[0_0_60px_rgba(255,255,255,0.22)]
-      "
-    >
+<a
+href="#"
+onClick={(e)=>{
+e.preventDefault()
+handleSponsorClick(
+"serpapi",
+"https://serpapi.com"
+)
+}}
+className="
+relative inline-flex items-center gap-3
+px-6 py-3.5
+rounded-2xl
+border border-white/20
+bg-gradient-to-br from-white/10 to-transparent
+hover:from-white/20
+transition-all hover:scale-[1.02]
+shadow-[0_0_40px_rgba(255,255,255,0.12)]
+hover:shadow-[0_0_60px_rgba(255,255,255,0.22)]
+"
+>
 
-      <img
-        src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-        alt="SerpApi"
-        className="
-        h-10 md:h-12 w-10 md:w-12
-        object-contain rounded-2xl
-        bg-white p-1
-        "
-      />
+<img
+src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+alt="SerpApi"
+className="
+h-10 md:h-12 w-10 md:w-12
+object-contain
+rounded-2xl
+bg-white
+p-1
+"
+/>
 
-      <div className="text-left">
+<div className="text-left">
 
-        <p className="text-white font-bold text-sm md:text-base">
-          SerpApi
-        </p>
+<p className="text-white font-bold text-sm md:text-base">
+SerpApi
+</p>
 
-        <p
-          className="
-          text-slate-400
-          text-[11px] md:text-xs
-          leading-snug
-          max-w-[320px] md:max-w-[360px]
-          "
-        >
-          Real-time Google Search results via a fast, reliable API built for developers.
-        </p>
-
-      </div>
-
-    </a>
-
-  </div>
+<p className="
+text-slate-400
+text-[11px] md:text-xs
+leading-snug
+max-w-[320px]
+">
+Real-time Google Search results via a fast developer API
+</p>
 
 </div>
 
+</a>
+
+</div>
+
+</div>
 </section>
 </div>
 
