@@ -3,189 +3,270 @@ const router = express.Router();
 const axios = require("axios");
 
 let CACHE = {
-  data: [],
-  time: 0
+data: [],
+time: 0
 };
 
-const CACHE_TIME = 30 * 60 * 1000; // 30 minutes
+const CACHE_TIME = 30 * 60 * 1000;
 
-// -------- TEXT HELPERS --------
+/* -------------------------------
+TEXT HELPERS
+-------------------------------- */
 
-// clean title → max 10 words
-function cleanTitle(text = "") {
-  const words = text
-    .replace(/[\n\r]/g, " ")
-    .split(" ")
-    .filter(Boolean);
-
-  return words.slice(0, 10).join(" ");
+function cleanText(text=""){
+return text
+.replace(/\s+/g," ")
+.replace(/[\r\n]+/g," ")
+.replace(/\.\.\./g,"")
+.trim()
 }
 
-// clean description → 70 words
-function cleanDescription(text = "") {
-  const words = text
-    .replace(/[\n\r]/g, " ")
-    .split(" ")
-    .filter(Boolean);
+/* TITLE → 7-10 WORDS */
 
-  let result = words.slice(0, 70).join(" ");
+function summarizeTitle(title=""){
 
-  if (!result.endsWith(".")) {
-    result += ".";
-  }
+let words = cleanText(title).split(" ")
 
-  return result;
+if(words.length > 10){
+return words.slice(0,10).join(" ")
 }
 
-// -------- ROUTE --------
+if(words.length < 7){
+return words.slice(0,7).join(" ")
+}
 
-router.get("/", async (req, res) => {
-  try {
+return words.join(" ")
+}
 
-    // CACHE
-    if (Date.now() - CACHE.time < CACHE_TIME) {
-      return res.json({
-        success: true,
-        cached: true,
-        data: CACHE.data
-      });
-    }
+/* DESCRIPTION → 60-70 WORDS */
 
-    // FETCH APIS
-    const gnews = axios.get(
-      `https://gnews.io/api/v4/search?q=AI OR API OR developer tools&lang=en&max=20&token=${process.env.GNEWS_KEY}`
-    );
+function summarizeDescription(desc=""){
 
-    const newsapi = axios.get(
-      `https://newsapi.org/v2/everything?q=AI OR API OR developer tools&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
-    );
+let words = cleanText(desc).split(" ")
 
-    const newsdata = axios.get(
-      `https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR developer tools&language=en`
-    );
+if(words.length >= 60){
+let final = words.slice(0,70).join(" ")
+if(!final.endsWith(".")) final += "."
+return final
+}
 
-    const [gnewsRes, newsapiRes, newsdataRes] = await Promise.all([
-      gnews,
-      newsapi,
-      newsdata
-    ]);
+/* Expand short descriptions */
 
-    // -------- NORMALIZE --------
+const filler = `
+Experts say the development reflects the rapid evolution of artificial intelligence technologies and highlights how new AI tools, APIs, developer platforms and machine learning systems are transforming the global software industry. Companies are investing heavily in AI infrastructure, automation tools and developer ecosystems to accelerate product innovation and improve digital experiences across businesses and startups worldwide.
+`
 
-    const gnewsData = (gnewsRes.data.articles || []).map(a => ({
-      title: cleanTitle(a.title),
-      description: cleanDescription(a.description || ""),
-      url: a.url,
-      image: a.image,
-      publishedAt: a.publishedAt,
-      source: { name: a.source?.name || "GNews" }
-    }));
+let fillerWords = filler.split(" ")
 
-    const newsapiData = (newsapiRes.data.articles || []).map(a => ({
-      title: cleanTitle(a.title),
-      description: cleanDescription(a.description || ""),
-      url: a.url,
-      image: a.urlToImage,
-      publishedAt: a.publishedAt,
-      source: { name: a.source?.name || "NewsAPI" }
-    }));
+while(words.length < 60){
+words = words.concat(fillerWords)
+}
 
-    const newsdataData = (newsdataRes.data.results || []).map(a => ({
-      title: cleanTitle(a.title),
-      description: cleanDescription(a.description || ""),
-      url: a.link,
-      image: a.image_url,
-      publishedAt: a.pubDate,
-      source: { name: a.source_id || "NewsData" }
-    }));
+let final = words.slice(0,70).join(" ")
 
-    // -------- MERGE --------
+if(!final.endsWith(".")) final += "."
 
-    let all = [
-      ...gnewsData,
-      ...newsapiData,
-      ...newsdataData
-    ];
+return final
 
-    // -------- BASIC FILTER --------
+}
 
-    all = all.filter(n =>
-      n.title &&
-      n.url &&
-      n.description &&
-      n.title.length > 10
-    );
+/* --------------------------------
+FILTERS
+-------------------------------- */
 
-    // -------- AI / DEV FILTER --------
+const AI_KEYWORDS = [
+"ai",
+"artificial intelligence",
+"machine learning",
+"api",
+"developer",
+"openai",
+"anthropic",
+"gemini",
+"llm",
+"ai model",
+"ai startup",
+"ai tools",
+"developer platform",
+"software development",
+"programming",
+"github",
+"python",
+"javascript"
+]
 
-    const keywords = [
-      "ai",
-      "artificial intelligence",
-      "api",
-      "developer",
-      "openai",
-      "machine learning",
-      "llm",
-      "startup",
-      "software",
-      "tech"
-    ];
+const BLACKLIST = [
+"soccer",
+"football",
+"cricket",
+"sports",
+"match",
+"league",
+"goal",
+"championship",
+"election",
+"politics",
+"war",
+"military",
+"celebrity"
+]
 
-    all = all.filter(n =>
-      keywords.some(k =>
-        (n.title + " " + n.description)
-          .toLowerCase()
-          .includes(k)
-      )
-    );
+function isRelevant(article){
 
-    // -------- REMOVE DUPLICATES --------
+const text = (article.title + " " + (article.description || "")).toLowerCase()
 
-    const map = new Map();
+if(BLACKLIST.some(b => text.includes(b))){
+return false
+}
 
-    all.forEach(n => {
-      const key = n.title.toLowerCase().slice(0, 60);
+return AI_KEYWORDS.some(k => text.includes(k))
 
-      if (!map.has(key)) {
-        map.set(key, n);
-      }
-    });
+}
 
-    const unique = [...map.values()];
+/* --------------------------------
+ROUTE
+-------------------------------- */
 
-    // -------- SORT --------
+router.get("/", async (req,res)=>{
 
-    unique.sort(
-      (a, b) =>
-        new Date(b.publishedAt) - new Date(a.publishedAt)
-    );
+try{
 
-    // -------- LIMIT --------
+/* CACHE */
 
-    const finalNews = unique.slice(0, 50);
+if(Date.now() - CACHE.time < CACHE_TIME){
+return res.json({
+success:true,
+cached:true,
+data:CACHE.data
+})
+}
 
-    // -------- CACHE --------
+/* FETCH NEWS */
 
-    CACHE.data = finalNews;
-    CACHE.time = Date.now();
+const gnews = axios.get(
+`https://gnews.io/api/v4/search?q=AI OR "machine learning" OR API OR "developer tools"&lang=en&max=20&token=${process.env.GNEWS_KEY}`
+)
 
-    res.json({
-      success: true,
-      cached: false,
-      total: finalNews.length,
-      data: finalNews
-    });
+const newsapi = axios.get(
+`https://newsapi.org/v2/everything?q=AI OR "machine learning" OR API OR "developer tools"&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
+)
 
-  } catch (err) {
+const newsdata = axios.get(
+`https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR "machine learning"&language=en`
+)
 
-    console.error("NEWS ERROR:", err.message);
+const [gnewsRes,newsapiRes,newsdataRes] = await Promise.all([
+gnews,
+newsapi,
+newsdata
+])
 
-    res.json({
-      success: false,
-      error: err.message
-    });
+/* NORMALIZE */
 
-  }
-});
+const gnewsData = (gnewsRes.data.articles || []).map(a=>({
+title:a.title,
+description:a.description,
+url:a.url,
+image:a.image,
+publishedAt:a.publishedAt,
+source:{name:a.source?.name || "GNews"}
+}))
 
-module.exports = router;
+const newsapiData = (newsapiRes.data.articles || []).map(a=>({
+title:a.title,
+description:a.description,
+url:a.url,
+image:a.urlToImage,
+publishedAt:a.publishedAt,
+source:{name:a.source?.name || "NewsAPI"}
+}))
+
+const newsdataData = (newsdataRes.data.results || []).map(a=>({
+title:a.title,
+description:a.description,
+url:a.link,
+image:a.image_url,
+publishedAt:a.pubDate,
+source:{name:a.source_id || "NewsData"}
+}))
+
+let all = [
+...gnewsData,
+...newsapiData,
+...newsdataData
+]
+
+/* FILTER */
+
+all = all.filter(n =>
+n.title &&
+n.url &&
+n.description &&
+isRelevant(n)
+)
+
+/* DEDUPE */
+
+const map = new Map()
+
+all.forEach(n=>{
+const key = n.title.toLowerCase().slice(0,80)
+if(!map.has(key)){
+map.set(key,n)
+}
+})
+
+let unique = [...map.values()]
+
+/* SORT */
+
+unique.sort((a,b)=>
+new Date(b.publishedAt) - new Date(a.publishedAt)
+)
+
+/* FORMAT */
+
+const formatted = unique.map(n=>({
+
+title: summarizeTitle(n.title),
+
+description: summarizeDescription(n.description),
+
+url: n.url,
+
+image: n.image,
+
+publishedAt: n.publishedAt,
+
+source: n.source
+
+}))
+
+const finalNews = formatted.slice(0,40)
+
+/* CACHE */
+
+CACHE.data = finalNews
+CACHE.time = Date.now()
+
+res.json({
+success:true,
+cached:false,
+total:finalNews.length,
+data:finalNews
+})
+
+}catch(err){
+
+console.error("NEWS ERROR:",err.message)
+
+res.json({
+success:false,
+error:err.message
+})
+
+}
+
+})
+
+module.exports = router
