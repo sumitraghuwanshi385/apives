@@ -171,6 +171,27 @@ News Feed
         </Link>    
       )}
 
+{/* 📰 Mobile News Icon */}
+<button
+onClick={scrollToNews}
+className="
+md:hidden
+w-7 h-7 md:w-10 md:h-10
+flex items-center justify-center
+rounded-full
+border
+bg-white/[0.05]
+backdrop-blur-[20px]
+border-white/20
+text-slate-300
+hover:bg-white/[0.1]
+active:scale-90
+transition-all
+"
+>
+<Newspaper size={14} className="md:w-5 md:h-5" />
+</button>
+
 
 
 {/* 🔍 Mobile-only Search icon */}
@@ -217,11 +238,11 @@ transition-all
       <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
 <button
 onClick={scrollToNews}
-className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
+className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-300 hover:text-mora-400 hover:bg-mora-500/5 border border-transparent hover:border-white/10 transition-all uppercase tracking-wide"
 >
-<Newspaper size={14} className="text-mora-500/70 group-hover:text-mora-500" />
+<Newspaper size={13} className="text-mora-500/60" />
 News Feed
-</button>    
+</button>
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
