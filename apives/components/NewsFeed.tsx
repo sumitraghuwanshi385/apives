@@ -154,7 +154,10 @@ return()=>clearInterval(interval)
 
 return(
 
-<section className="py-16 bg-black border-t border-white/5">
+<section
+id="news-feed"
+className="py-16 bg-black border-t border-white/5 scroll-mt-32"
+>
 
 <div className="max-w-7xl mx-auto px-4 md:px-6">
 
