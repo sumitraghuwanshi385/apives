@@ -5,89 +5,6 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
-const TITLE_MIN = 7
-const TITLE_MAX = 10
-const DESC_MIN = 60
-const DESC_MAX = 70
-
-const AI_KEYWORDS=[
-"ai",
-"artificial intelligence",
-"api",
-"model",
-"chatbot",
-"agent",
-"llm",
-"startup",
-"machine learning",
-"openai",
-"anthropic",
-"gemini"
-]
-
-const isRelevant=(text:string)=>{
-if(!text) return false
-const lower=text.toLowerCase()
-return AI_KEYWORDS.some(k=>lower.includes(k))
-}
-
-/* TITLE → 7-10 WORDS CLEAN */
-
-const summarizeTitle=(title:string)=>{
-
-if(!title) return ""
-
-let cleaned=title
-.replace(/\s+/g," ")
-.replace(/[\r\n]+/g," ")
-.trim()
-
-const words=cleaned.split(" ")
-
-if(words.length<=TITLE_MAX && words.length>=TITLE_MIN){
-return cleaned
-}
-
-if(words.length>TITLE_MAX){
-return words.slice(0,TITLE_MAX).join(" ")
-}
-
-return words.slice(0,Math.min(words.length,TITLE_MAX)).join(" ")
-}
-
-/* DESCRIPTION → 60-70 WORDS FULL */
-
-const summarizeDesc=(desc:string)=>{
-
-if(!desc) return ""
-
-let cleaned=desc
-.replace(/\s+/g," ")
-.replace(/[\r\n]+/g," ")
-.trim()
-
-let words=cleaned.split(" ")
-
-if(words.length>=DESC_MIN){
-return words.slice(0,DESC_MAX).join(" ")
-}
-
-/* expand short news naturally */
-
-const filler=[
-"Experts say the development reflects the rapid evolution of artificial intelligence technologies",
-"and highlights how new AI tools, APIs, and developer platforms are transforming the software industry.",
-"Companies are increasingly investing in AI infrastructure and automation capabilities",
-"to accelerate product development and improve digital experiences across industries."
-]
-
-while(words.length < DESC_MIN){
-words = words.concat(filler.join(" ").split(" "))
-}
-
-return words.slice(0,DESC_MAX).join(" ")
-}
-
 const shuffle=(arr:any[])=>{
 return [...arr].sort(()=>Math.random()-0.5)
 }
@@ -107,6 +24,8 @@ const [news,setNews]=useState<any[]>([])
 
 const fetchNews=async(limit:number)=>{
 
+try{
+
 const res=await fetch("https://apives.onrender.com/api/news")
 const data=await res.json()
 
@@ -114,13 +33,15 @@ if(!data.success) return []
 
 let articles=data.data||[]
 
+/* remove duplicates */
+
 const unique=[...new Map(articles.map((i:any)=>[i.url,i])).values()]
 
-const filtered=unique.filter((i:any)=>(
-isRelevant(i.title)||isRelevant(i.description)
-))
+return unique.slice(0,limit)
 
-return filtered.slice(0,limit)
+}catch{
+return []
+}
 
 }
 
@@ -130,9 +51,11 @@ fetchNews(20).then(initial=>{
 setNews(shuffle(initial))
 })
 
+/* auto refresh every 30 min */
+
 const interval=setInterval(()=>{
 
-fetchNews(7).then(newItems=>{
+fetchNews(10).then(newItems=>{
 
 setNews(prev=>{
 
@@ -146,7 +69,7 @@ return shuffle(unique).slice(0,60)
 
 })
 
-},4*60*60*1000)
+},30*60*1000)
 
 return()=>clearInterval(interval)
 
@@ -212,10 +135,11 @@ return(
 <a
 href={item.url}
 target="_blank"
+rel="noopener noreferrer"
 className="
 group
 block
-h-[570px]   /* 10% bigger for desktop */
+h-[570px]
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -247,11 +171,11 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 <div>
 
 <h3 className="text-white font-bold text-sm leading-snug mb-3">
-{summarizeTitle(item.title)}
+{item.title}
 </h3>
 
 <p className="text-slate-400 text-[11px] leading-relaxed">
-{summarizeDesc(item.description)}
+{item.description}
 </p>
 
 </div>
@@ -276,7 +200,7 @@ src={favicon}
 className="w-4 h-4 rounded-full"
 />
 
-{item.source?.name||"Source"}
+{item.source?.name || "Source"}
 
 </div>
 
