@@ -56,6 +56,27 @@ navigate('/');
 }, 1000);
 };
 
+const scrollToNews = () => {
+
+navigate("/")
+
+setTimeout(() => {
+
+const el = document.getElementById("news-feed")
+
+if(el){
+el.scrollIntoView({
+behavior:"smooth",
+block:"start"
+})
+}
+
+},300)
+
+setIsOpen(false)
+
+}
+
 if (isAuthPage || isOnboardingPage) return null;
 
 const navContainerStyle = isScrolled && !isOpen
@@ -95,6 +116,13 @@ return (
         <NavLink to="/sponsorship" icon={Handshake}>
   For Sponsorship
 </NavLink>   
+<button
+onClick={scrollToNews}
+className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
+>
+<Radio size={14} className="text-mora-500/70 group-hover:text-mora-500" />
+News Feed
+</button>
       </div>    
     </div>    
 
@@ -186,7 +214,14 @@ transition-all
       <MobileNavLink to="/" icon={HomeIcon} onClick={() => setIsOpen(false)}>Home</MobileNavLink>    
       <MobileNavLink to="/browse" icon={Search} onClick={() => setIsOpen(false)}>Explore APIs</MobileNavLink>    
       <MobileNavLink to="/fresh" icon={Zap} onClick={() => setIsOpen(false)}>New Releases</MobileNavLink>    
-      <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>    
+      <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
+<button
+onClick={scrollToNews}
+className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
+>
+<Radio size={14} className="text-mora-500/70 group-hover:text-mora-500" />
+News Feed
+</button>    
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
