@@ -205,11 +205,11 @@ return(
 
 <div className="text-center mb-8">
 
-<h2 className="text-3xl md:text-4xl font-bold text-white">
+<h2 className="text-2xl md:text-4xl font-bold text-white">
 Quick Start Integration
 </h2>
 
-<p className="text-slate-400 text-sm mt-2">
+<p className="text-slate-400 text-xs sm:text-sm mt-2">
 Example snippets showing how APIs are typically integrated in apps.
 </p>
 
@@ -486,11 +486,11 @@ return(
 
 <div className="text-center mb-6">
 
-<h2 className="text-3xl md:text-4xl font-bold text-white">
+<h2 className="text-2xl md:text-4xl font-bold text-white">
 Live API Request Runner
 </h2>
 
-<p className="text-slate-400 text-sm mt-2">
+<p className="text-slate-400 text-xs sm:text-sm mt-2">
 Run real APIs and inspect JSON responses instantly.
 </p>
 
