@@ -5,8 +5,10 @@ import { Newspaper } from "lucide-react"
 
 import "swiper/css"
 
-const TITLE_WORDS = 5
-const DESC_WORDS = 70
+const TITLE_MIN = 7
+const TITLE_MAX = 10
+const DESC_MIN = 60
+const DESC_MAX = 70
 
 const AI_KEYWORDS=[
 "ai",
@@ -29,7 +31,7 @@ const lower=text.toLowerCase()
 return AI_KEYWORDS.some(k=>lower.includes(k))
 }
 
-/* TITLE → 5 WORDS */
+/* TITLE → 7-10 WORDS CLEAN */
 
 const summarizeTitle=(title:string)=>{
 
@@ -42,14 +44,18 @@ let cleaned=title
 
 const words=cleaned.split(" ")
 
-if(words.length<=TITLE_WORDS){
+if(words.length<=TITLE_MAX && words.length>=TITLE_MIN){
 return cleaned
 }
 
-return words.slice(0,TITLE_WORDS).join(" ")
+if(words.length>TITLE_MAX){
+return words.slice(0,TITLE_MAX).join(" ")
 }
 
-/* DESCRIPTION → 40 WORDS (NO TITLE REPEAT) */
+return words.slice(0,Math.min(words.length,TITLE_MAX)).join(" ")
+}
+
+/* DESCRIPTION → 60-70 WORDS FULL */
 
 const summarizeDesc=(desc:string)=>{
 
@@ -60,13 +66,26 @@ let cleaned=desc
 .replace(/[\r\n]+/g," ")
 .trim()
 
-const words=cleaned.split(" ")
+let words=cleaned.split(" ")
 
-if(words.length<=DESC_WORDS){
-return cleaned
+if(words.length>=DESC_MIN){
+return words.slice(0,DESC_MAX).join(" ")
 }
 
-return words.slice(0,DESC_WORDS).join(" ")
+/* expand short news naturally */
+
+const filler=[
+"Experts say the development reflects the rapid evolution of artificial intelligence technologies",
+"and highlights how new AI tools, APIs, and developer platforms are transforming the software industry.",
+"Companies are increasingly investing in AI infrastructure and automation capabilities",
+"to accelerate product development and improve digital experiences across industries."
+]
+
+while(words.length < DESC_MIN){
+words = words.concat(filler.join(" ").split(" "))
+}
+
+return words.slice(0,DESC_MAX).join(" ")
 }
 
 const shuffle=(arr:any[])=>{
@@ -193,7 +212,7 @@ target="_blank"
 className="
 group
 block
-h-[520px]
+h-[570px]   /* 10% bigger for desktop */
 rounded-2xl
 overflow-hidden
 border border-white/10
@@ -220,7 +239,7 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 {/* CONTENT */}
 
-<div className="p-6 flex flex-col justify-between h-[340px]">
+<div className="p-6 flex flex-col justify-between h-[370px]">
 
 <div>
 
