@@ -1075,6 +1075,7 @@ return (
           View Top APIs  
         </Link>  
       </div>
+</section>
 
 <NewsFeed />
 
