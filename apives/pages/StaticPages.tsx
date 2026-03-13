@@ -203,7 +203,7 @@ export const SponsorshipPage: React.FC = () => (
         <p className="text-slate-400 text-xs mb-5">For detailed pricing,additional placement opportunities and packages, reach out to our team.</p>
         <div className="flex flex-col items-center gap-3">
           <a href="mailto:beatslevelone@gmail.com" className="bg-mora-600 hover:bg-mora-500 text-white font-bold py-2.5 px-8 rounded-full transition-all shadow-lg flex items-center gap-2 text-xs">
-            <Mail size={16} /> beatslevelone@gmail.com
+            <Mail size={16} /> usestartives@gmail.com
           </a>
           <span className="text-[9px] text-slate-500 uppercase tracking-widest font-mono">Signal Response: 24-48 hours</span>
         </div>
