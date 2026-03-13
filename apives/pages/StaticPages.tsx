@@ -243,7 +243,7 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     </p>
                     <div className="space-y-3">
                         <div className="flex items-center gap-2.5 text-xs text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                            <Mail size={14} className="text-mora-500" /> beatslevelone@gmail.com
+                            <Mail size={14} className="text-mora-500" /> usestartives@gmail.com
                         </div>
                     </div>
                 </div>
