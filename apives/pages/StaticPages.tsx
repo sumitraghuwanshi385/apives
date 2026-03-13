@@ -356,7 +356,7 @@ export const CookiesPage: React.FC = () => (
         </h3>
         <p className="text-xs leading-relaxed">
           If you have any questions about cookies or privacy, feel free to reach out at
-          <span className="text-mora-400 font-semibold"> beatslevelone@gmail.com</span>.
+          <span className="text-mora-400 font-semibold"> usestartives@gmail.com</span>.
         </p>
       </section>
 
