@@ -399,10 +399,10 @@ export const PrivacyPage: React.FC = () => (
     Your data is yours. If you want to delete your account or any API you listed,
     just email us at{" "}
     <a
-      href="mailto:beatslevelone@gmail.com"
+      href="mailto:usestartives@gmail.com"
       className="text-green-400 hover:text-green-300 underline underline-offset-2 transition"
     >
-      beatslevelone@gmail.com
+      usestartives@gmail.com
     </a>.
     We’ll manually remove your information.
   </p>
@@ -530,7 +530,7 @@ export const DocumentationPage: React.FC = () => (
     {/* Founder */}
     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
       <h4 className="text-white font-bold text-sm mb-1">
-        Sumit Gupta
+        Sumit Raghuwanshi 
       </h4>
       <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
         Founder
@@ -544,7 +544,7 @@ export const DocumentationPage: React.FC = () => (
     {/* Founder */}
     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
       <h4 className="text-white font-bold text-sm mb-1">
-        Piyush Raghuwanshi
+        Piyush Aggrawal 
       </h4>
       <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
         Founder
