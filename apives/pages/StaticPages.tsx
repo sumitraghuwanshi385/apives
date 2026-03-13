@@ -530,7 +530,7 @@ export const DocumentationPage: React.FC = () => (
     {/* Founder */}
     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
       <h4 className="text-white font-bold text-sm mb-1">
-        Prince Gupta
+        Sumit Gupta
       </h4>
       <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
         Founder
@@ -541,13 +541,13 @@ export const DocumentationPage: React.FC = () => (
       </p>
     </div>
 
-    {/* Co-Founder */}
+    {/* Founder */}
     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
       <h4 className="text-white font-bold text-sm mb-1">
-        Sumit Raghuwanshi
+        Piyush Raghuwanshi
       </h4>
       <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
-        Co-Founder
+        Founder
       </p>
       <p className="text-slate-400 text-[11px] leading-relaxed">
         Focused on platform architecture, reliability, and shaping Apives
