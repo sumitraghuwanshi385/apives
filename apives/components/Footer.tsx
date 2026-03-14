@@ -26,7 +26,7 @@ const handleFeedbackSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   const form = e.currentTarget;
   const data = new FormData(form);
 
-  await fetch('https://formsubmit.co/ajax/beatslevelone@gmail.com', {
+  await fetch('https://formsubmit.co/ajax/apivesecosystem@gmail.com', {
     method: 'POST',
     body: data,
   });
@@ -41,7 +41,7 @@ const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   const form = e.currentTarget;
   const data = new FormData(form);
 
-  await fetch('https://formsubmit.co/ajax/beatslevelone@gmail.com', {
+  await fetch('https://formsubmit.co/ajax/apivesecosystem@gmail.com', {
     method: 'POST',
     body: data,
   });
