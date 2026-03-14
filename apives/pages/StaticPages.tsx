@@ -202,8 +202,8 @@ export const SponsorshipPage: React.FC = () => (
         <h3 className="text-lg font-bold text-white mb-1.5">Ready to Interface?</h3>
         <p className="text-slate-400 text-xs mb-5">For detailed pricing,additional placement opportunities and packages, reach out to our team.</p>
         <div className="flex flex-col items-center gap-3">
-          <a href="mailto:beatslevelone@gmail.com" className="bg-mora-600 hover:bg-mora-500 text-white font-bold py-2.5 px-8 rounded-full transition-all shadow-lg flex items-center gap-2 text-xs">
-            <Mail size={16} /> apivesecosytem@gmail.com
+          <a href="mailto:apivesecosystem@gmail.com" className="bg-mora-600 hover:bg-mora-500 text-white font-bold py-2.5 px-8 rounded-full transition-all shadow-lg flex items-center gap-2 text-xs">
+            <Mail size={16} /> apivesecosystem@gmail.com
           </a>
           <span className="text-[9px] text-slate-500 uppercase tracking-widest font-mono">Signal Response: 24-48 hours</span>
         </div>
@@ -224,7 +224,7 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget;
         const data = new FormData(form);
 
-        await fetch('https://formsubmit.co/ajax/apivesecosytem@gmail.com', {
+        await fetch('https://formsubmit.co/ajax/apivesecosystem@gmail.com', {
             method: 'POST',
             body: data,
         });
@@ -243,7 +243,7 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     </p>
                     <div className="space-y-3">
                         <div className="flex items-center gap-2.5 text-xs text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                            <Mail size={14} className="text-mora-500" /> apivesecosytem@gmail.com
+                            <Mail size={14} className="text-mora-500" /> apivesecosystem@gmail.com
                         </div>
                     </div>
                 </div>
@@ -356,7 +356,7 @@ export const CookiesPage: React.FC = () => (
         </h3>
         <p className="text-xs leading-relaxed">
           If you have any questions about cookies or privacy, feel free to reach out at
-          <span className="text-mora-400 font-semibold"> apivesecosytem@gmail.com</span>.
+          <span className="text-mora-400 font-semibold"> apivesecosystem@gmail.com</span>.
         </p>
       </section>
 
@@ -399,10 +399,10 @@ export const PrivacyPage: React.FC = () => (
     Your data is yours. If you want to delete your account or any API you listed,
     just email us at{" "}
     <a
-      href="mailto:usestartives@gmail.com"
+      href="mailto:apivesecosystem@gmail.com"
       className="text-green-400 hover:text-green-300 underline underline-offset-2 transition"
     >
-      apivesecosytem@gmail.com
+      apivesecosystem@gmail.com
     </a>.
     We’ll manually remove your information.
   </p>
