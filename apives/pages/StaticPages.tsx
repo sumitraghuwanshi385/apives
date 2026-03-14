@@ -203,7 +203,7 @@ export const SponsorshipPage: React.FC = () => (
         <p className="text-slate-400 text-xs mb-5">For detailed pricing,additional placement opportunities and packages, reach out to our team.</p>
         <div className="flex flex-col items-center gap-3">
           <a href="mailto:beatslevelone@gmail.com" className="bg-mora-600 hover:bg-mora-500 text-white font-bold py-2.5 px-8 rounded-full transition-all shadow-lg flex items-center gap-2 text-xs">
-            <Mail size={16} /> usestartives@gmail.com
+            <Mail size={16} /> apivesecosytem@gmail.com
           </a>
           <span className="text-[9px] text-slate-500 uppercase tracking-widest font-mono">Signal Response: 24-48 hours</span>
         </div>
@@ -243,7 +243,7 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
                     </p>
                     <div className="space-y-3">
                         <div className="flex items-center gap-2.5 text-xs text-slate-300 bg-white/5 p-3 rounded-xl border border-white/5">
-                            <Mail size={14} className="text-mora-500" /> usestartives@gmail.com
+                            <Mail size={14} className="text-mora-500" /> apivesecosytem@gmail.com
                         </div>
                     </div>
                 </div>
@@ -356,7 +356,7 @@ export const CookiesPage: React.FC = () => (
         </h3>
         <p className="text-xs leading-relaxed">
           If you have any questions about cookies or privacy, feel free to reach out at
-          <span className="text-mora-400 font-semibold"> usestartives@gmail.com</span>.
+          <span className="text-mora-400 font-semibold"> apivesecosytem@gmail.com@</span>.
         </p>
       </section>
 
@@ -402,7 +402,7 @@ export const PrivacyPage: React.FC = () => (
       href="mailto:usestartives@gmail.com"
       className="text-green-400 hover:text-green-300 underline underline-offset-2 transition"
     >
-      usestartives@gmail.com
+      apivesecosytem@gmail.com
     </a>.
     We’ll manually remove your information.
   </p>
@@ -530,7 +530,7 @@ export const DocumentationPage: React.FC = () => (
     {/* Founder */}
     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
       <h4 className="text-white font-bold text-sm mb-1">
-        Sumit Raghuwanshi 
+        Piyush Aggarwal 
       </h4>
       <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
         Founder
@@ -544,10 +544,10 @@ export const DocumentationPage: React.FC = () => (
     {/* Founder */}
     <div className="p-5 bg-white/5 border border-white/10 rounded-2xl">
       <h4 className="text-white font-bold text-sm mb-1">
-        Piyush Aggrawal 
+        Sumit Raghuwanshi 
       </h4>
       <p className="text-mora-400 text-[10px] uppercase tracking-widest mb-2">
-        Founder
+        Co-Founder
       </p>
       <p className="text-slate-400 text-[11px] leading-relaxed">
         Focused on platform architecture, reliability, and shaping Apives
