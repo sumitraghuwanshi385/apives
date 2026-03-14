@@ -224,7 +224,7 @@ const handleSupportSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         const form = e.currentTarget;
         const data = new FormData(form);
 
-        await fetch('https://formsubmit.co/ajax/beatslevelone@gmail.com', {
+        await fetch('https://formsubmit.co/ajax/apivesecosytem@gmail.com', {
             method: 'POST',
             body: data,
         });
