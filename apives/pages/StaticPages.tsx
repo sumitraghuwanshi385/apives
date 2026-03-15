@@ -520,17 +520,6 @@ export const DocumentationPage: React.FC = () => (
                 For power users, Apives supports complex endpoint definitions including custom headers and body parameters. Ensure your mock responses are accurate.
             </p>
         </section>
-<section className="not-prose">
-  <h3 className="text-white text-lg md:text-xl font-bold mb-4">
-    Makers of Apives
-  </h3>
-
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    
-    
-
-  </div>
-</section>
     </div>
   </PageLayout>
 );
