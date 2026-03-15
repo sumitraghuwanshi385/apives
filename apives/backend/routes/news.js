@@ -18,6 +18,7 @@ return text
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 .replace(/\.\.\./g,"")
+.replace(/Experts say.*$/i,"")
 .trim()
 }
 
@@ -44,16 +45,31 @@ function summarizeDescription(desc=""){
 
 let words = cleanText(desc).split(" ")
 
+/* remove junk words */
+
+words = words.filter(w =>
+!["said","says","according","report"].includes(w.toLowerCase())
+)
+
 if(words.length >= 60){
+
 let final = words.slice(0,70).join(" ")
+
 if(!final.endsWith(".")) final += "."
+
 return final
+
 }
 
-/* Expand short descriptions */
+/* safe filler */
 
 const filler = `
-Experts say the development reflects the rapid evolution of artificial intelligence technologies and highlights how new AI tools, APIs, developer platforms and machine learning systems are transforming the global software industry. Companies are investing heavily in AI infrastructure, automation tools and developer ecosystems to accelerate product innovation and improve digital experiences across businesses and startups worldwide.
+The development highlights the growing impact of artificial intelligence,
+developer platforms and modern APIs across the global software ecosystem.
+Companies and startups are rapidly adopting AI models, automation tools,
+cloud infrastructure and developer platforms to build smarter applications,
+improve productivity and accelerate innovation across digital products,
+software services and emerging technology platforms.
 `
 
 let fillerWords = filler.split(" ")
@@ -68,6 +84,31 @@ if(!final.endsWith(".")) final += "."
 
 return final
 
+}
+
+/* --------------------------------
+CATEGORY DETECTOR (NEW)
+-------------------------------- */
+
+function detectCategory(article){
+
+const text = (article.title + " " + (article.description || "")).toLowerCase()
+
+if(text.includes("api")) return "APIs"
+
+if(text.includes("ai model") || text.includes("llm") || text.includes("openai") || text.includes("anthropic") || text.includes("gemini"))
+return "AI Models"
+
+if(text.includes("startup") || text.includes("funding"))
+return "Startups"
+
+if(text.includes("developer") || text.includes("github") || text.includes("programming"))
+return "Developer Tools"
+
+if(text.includes("agent"))
+return "AI Agents"
+
+return "AI"
 }
 
 /* --------------------------------
@@ -92,7 +133,9 @@ const AI_KEYWORDS = [
 "programming",
 "github",
 "python",
-"javascript"
+"javascript",
+"ai agents",
+"developer tools"
 ]
 
 const BLACKLIST = [
@@ -108,7 +151,10 @@ const BLACKLIST = [
 "politics",
 "war",
 "military",
-"celebrity"
+"celebrity",
+"crime",
+"murder",
+"attack"
 ]
 
 function isRelevant(article){
@@ -144,15 +190,15 @@ data:CACHE.data
 /* FETCH NEWS */
 
 const gnews = axios.get(
-`https://gnews.io/api/v4/search?q=AI OR "machine learning" OR API OR "developer tools"&lang=en&max=20&token=${process.env.GNEWS_KEY}`
+`https://gnews.io/api/v4/search?q=AI OR "machine learning" OR API OR "developer tools" OR "AI startup"&lang=en&max=20&token=${process.env.GNEWS_KEY}`
 )
 
 const newsapi = axios.get(
-`https://newsapi.org/v2/everything?q=AI OR "machine learning" OR API OR "developer tools"&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
+`https://newsapi.org/v2/everything?q=AI OR "machine learning" OR API OR "developer tools" OR startup&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
 )
 
 const newsdata = axios.get(
-`https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR "machine learning"&language=en`
+`https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR "machine learning" OR startup&language=en`
 )
 
 const [gnewsRes,newsapiRes,newsdataRes] = await Promise.all([
@@ -205,15 +251,18 @@ n.description &&
 isRelevant(n)
 )
 
-/* DEDUPE */
+/* DEDUPE (IMPROVED) */
 
 const map = new Map()
 
 all.forEach(n=>{
-const key = n.title.toLowerCase().slice(0,80)
+
+const key = cleanText(n.title).toLowerCase().slice(0,70)
+
 if(!map.has(key)){
 map.set(key,n)
 }
+
 })
 
 let unique = [...map.values()]
@@ -237,6 +286,8 @@ url: n.url,
 image: n.image,
 
 publishedAt: n.publishedAt,
+
+category: detectCategory(n),
 
 source: n.source
 
