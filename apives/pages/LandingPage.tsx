@@ -1285,7 +1285,7 @@ hover:shadow-[0_0_60px_rgba(180,83,9,0.45)]
 >
 
 <img
-src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774009098/Picsart_26-03-20_17-47-02-831_szxuv6.png"
+src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png"
 alt="Startives"
 className="
 h-10 md:h-12 w-10 md:w-12
