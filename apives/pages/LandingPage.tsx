@@ -1246,8 +1246,6 @@ Real-time Google Search results via a fast developer API
 
 </div>
 
-</div>
-
 
 {/* ===== ZENITH SPONSOR ===== */}
 
@@ -1316,6 +1314,8 @@ Empowering Startup Founders to Connect & Build.
 </div>
 
 </a>
+
+</div>
 
 </div>
 
