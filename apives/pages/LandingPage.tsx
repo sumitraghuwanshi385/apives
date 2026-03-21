@@ -1246,7 +1246,79 @@ Real-time Google Search results via a fast developer API
 
 </div>
 
+
+{/* ===== ZENITH SPONSOR ===== */}
+
+<div className="text-center mt-10">
+
+<p className="
+text-[10px]
+uppercase tracking-[0.35em]
+font-black
+bg-gradient-to-r from-orange-500 to-amber-700
+bg-clip-text text-transparent
+mb-4
+">
+Zenith Sponsor
+</p>
+
+<a
+href="#"
+onClick={(e)=>{
+e.preventDefault()
+handleSponsorClick(
+"startives",
+"https://startives.com"
+)
+}}
+className="
+relative inline-flex items-center gap-3
+px-6 py-3.5
+rounded-2xl
+border border-orange-500/30
+bg-gradient-to-br from-orange-500/10 to-transparent
+hover:from-orange-500/20
+transition-all hover:scale-[1.02]
+shadow-[0_0_40px_rgba(180,83,9,0.25)]
+hover:shadow-[0_0_60px_rgba(180,83,9,0.45)]
+"
+>
+
+<img
+src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774009098/Picsart_26-03-20_17-47-02-831_szxuv6.png"
+alt="Startives"
+className="
+h-10 md:h-12 w-10 md:w-12
+object-contain
+rounded-2xl
+bg-white/10
+p-1
+"
+/>
+
+<div className="text-left">
+
+<p className="text-white font-bold text-sm md:text-base">
+Startives
+</p>
+
+<p className="
+text-slate-400
+text-[11px] md:text-xs
+leading-snug
+max-w-[320px]
+">
+Empowering Startup Founders to Connect & Build.
+</p>
+
 </div>
+
+</a>
+
+</div>
+
+</div>
+
 </section>
 </div>
 
