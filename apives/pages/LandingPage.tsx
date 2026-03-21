@@ -1291,7 +1291,7 @@ className="
 h-10 md:h-12 w-10 md:w-12
 object-contain
 rounded-2xl
-bg-white/10
+bg-white
 p-1
 "
 />
