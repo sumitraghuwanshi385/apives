@@ -26,7 +26,7 @@ const fetchNews=async(limit:number)=>{
 
 try{
 
-const res=await fetch("https://apives.onrender.com/api/news")
+const res=await fetch("https://apives-3xrc.onrender.com/api/news")
 const data=await res.json()
 
 if(!data.success) return []
