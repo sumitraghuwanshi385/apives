@@ -159,7 +159,7 @@ if (!savedIds.length) {
 
 // 🔥 fetch ONLY saved APIs
 const res = await fetch(
-  `https://apives.onrender.com/api/apis?ids=${savedIds.join(",")}`
+  `https://apives-3xrc.onrender.com/api/apis?ids=${savedIds.join(",")}`
 );
 
 const data = await res.json();
