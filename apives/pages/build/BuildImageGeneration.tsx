@@ -106,7 +106,7 @@ const [loading, setLoading] = useState(true);
 
       if (ids.length > 0) {
         const res = await fetch(
-          `https://apives.onrender.com/api/apis?ids=${ids.join(",")}`
+          `https://apives-3xrc.onrender.com/api/apis?ids=${ids.join(",")}`
         ).then(r => r.json());
 
         const list = res?.apis || [];
@@ -135,7 +135,7 @@ useEffect(() => {
   (async () => {
     try {
       const res = await fetch(
-        "https://apives.onrender.com/api/apis?page=1&limit=500&includePaused=true"
+        "https://apives-3xrc.onrender.com/api/apis?page=1&limit=500&includePaused=true"
       ).then(r => r.json());
 
       const list = res?.apis || [];
