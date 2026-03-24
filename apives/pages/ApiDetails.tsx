@@ -86,7 +86,7 @@ useEffect(() => {
 });
 
 const rankRes = await fetch(
-  "https://apives.onrender.com/api/community?page=1&limit=3"
+  "https://apives-3xrc.onrender.com/api/community?page=1&limit=3"
 );
 
 const rankData = await rankRes.json();
