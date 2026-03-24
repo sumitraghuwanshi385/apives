@@ -32,7 +32,7 @@ let LANDING_API_CACHE:
   | null = null;
 
 const trackSponsor = (sponsor: string, type: "impression" | "click") => {
- console.log("SPONSOR TRACK FIRED 👉", sponsor, type); fetch("https://apives.onrender.com/api/sponsor/track", {
+ console.log("SPONSOR TRACK FIRED 👉", sponsor, type); fetch("https://apives-3xrc.onrender.com/api/sponsor/track", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -395,7 +395,7 @@ const start=Date.now();
 try{
 
 const res=await fetch(
-"https://apives.onrender.com/api/runner/run",
+"https://apives-3xrc.onrender.com/api/runner/run",
 {
 method:"POST",
 headers:{
@@ -765,7 +765,7 @@ useEffect(() => {
       }
 
       // ✅ FETCH
-      const res = await fetch("https://apives.onrender.com/api/landing");
+      const res = await fetch("https://apives-3xrc.onrender.com/api/landing");
       const data = await res.json();
 
       const normalize = (arr: any[]) =>
