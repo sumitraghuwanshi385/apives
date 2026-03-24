@@ -53,7 +53,7 @@ if (user.email !== "beatslevelone@gmail.com") {
   useEffect(() => {
     setLoading(true);
 
-    fetch(`https://apives.onrender.com/api/sponsor/stats?range=${range}`)
+    fetch(`https://apives-3xrc.onrender.com/api/sponsor/stats?range=${range}`)
       .then((res) => res.json())
       .then((json) => {
         setData(json || []);
