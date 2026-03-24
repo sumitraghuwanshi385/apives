@@ -92,7 +92,7 @@ const loadFresh = async (pageNumber: number) => {
   });
 
   const res = await fetch(
-    `https://apives.onrender.com/api/fresh?${query.toString()}`
+    `https://apives-3xrc.onrender.com/api/fresh?${query.toString()}`
   );
 
   const data = await res.json();
@@ -114,7 +114,7 @@ const loadFresh = async (pageNumber: number) => {
 
   // REAL ranking (global top 3)
   const rankRes = await fetch(
-    "https://apives.onrender.com/api/community?page=1&limit=3"
+    "https://apives-3xrc.onrender.com/api/community?page=1&limit=3"
   );
   const rankData = await rankRes.json();
 
