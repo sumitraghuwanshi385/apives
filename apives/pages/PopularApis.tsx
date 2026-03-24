@@ -95,7 +95,7 @@ export const PopularApis: React.FC = () => {
     });
 
     const res = await fetch(
-      `https://apives.onrender.com/api/community?${query.toString()}`
+      `https://apives-3xrc.onrender.com/api/community?${query.toString()}`
     );
 
     const data = await res.json();
@@ -117,7 +117,7 @@ export const PopularApis: React.FC = () => {
 
     // REAL GLOBAL RANKING
     const rankRes = await fetch(
-      "https://apives.onrender.com/api/community?page=1&limit=3"
+      "https://apives-3xrc.onrender.com/api/community?page=1&limit=3"
     );
     const rankData = await rankRes.json();
 
