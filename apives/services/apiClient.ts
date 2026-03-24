@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://apives.onrender.com/api';
+const API_URL = 'https://apives-3xrc.onrender.com/api';
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
