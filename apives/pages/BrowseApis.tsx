@@ -95,7 +95,7 @@ const lightShuffle = (arr: ApiListing[]) => {
     setIsLoading(true);
 
     const res = await fetch(
-  `https://apives.onrender.com/api/apis?page=${pageNumber}&limit=12&search=${encodeURIComponent(searchTerm)}&category=${selectedCategory}&pricing=${selectedPricing}`
+  `https://apives-3xrc.onrender.com/api/apis?page=${pageNumber}&limit=12&search=${encodeURIComponent(searchTerm)}&category=${selectedCategory}&pricing=${selectedPricing}`
 );
 
     const data = await res.json();
@@ -124,7 +124,7 @@ if (reset) {
 // 🔥 Fetch real top 3 most liked APIs (only first page)
 if (pageNumber === 1) {
   const rankRes = await fetch(
-    "https://apives.onrender.com/api/community?page=1&limit=3"
+    "https://apives-3xrc.onrender.com/api/community?page=1&limit=3"
   );
   const rankData = await rankRes.json();
 
