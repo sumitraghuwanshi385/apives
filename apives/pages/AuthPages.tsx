@@ -173,13 +173,6 @@ const [verifyType, setVerifyType] = useState<VerifyType>('forgot');
         // CALLING BACKEND
         const data = await apiService.register({ name, email, password });
 
-        // Save Token & User Info
-        localStorage.setItem('mora_user', JSON.stringify({ 
-            ...data.user, 
-            token: data.token 
-        }));
-
-        window.dispatchEvent(new CustomEvent('auth-change'));
         setVerifyType('signup');   // ✅ important
 setView('verify');         // ✅ go to verify screen
 setSuccessMessage(`Verification code sent to ${email}`);
