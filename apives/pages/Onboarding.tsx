@@ -36,12 +36,6 @@ export const OnboardingPage: React.FC = () => {
         return;
     }
 
-    // AUTH MEMORY LOGIC: If onboarding already completed, redirect to dashboard
-    if (localStorage.getItem('mora_onboarding_complete') === 'true') {
-        navigate('/provider', { replace: true });
-        return;
-    }
-
     const parsed = JSON.parse(user);
     setUserName(parsed.name || 'Builder');
 
@@ -71,7 +65,11 @@ export const OnboardingPage: React.FC = () => {
       } else {
           // AUTH MEMORY LOGIC: Set flag on completion
           localStorage.setItem('mora_onboarding_complete', 'true');
-          navigate('/provider');
+
+// 🔥 small delay for smooth UX (optional but pro)
+setTimeout(() => {
+  navigate('/provider', { replace: true });
+}, 300);
       }
   };
 
