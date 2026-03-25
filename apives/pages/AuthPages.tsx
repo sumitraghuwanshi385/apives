@@ -219,13 +219,18 @@ setSuccessMessage(`Verification code sent to ${email}`);
       setLoadingText("Verifying token integrity...");
 
       try {
-          await apiService.verifyOtp(email, verificationCode);
+          const data = await apiService.verifyOtp(email, verificationCode);
 
 if (verifyType === 'signup') {
-  // ✅ signup → onboarding
-  const user = JSON.parse(localStorage.getItem('mora_user') || '{}');
-  user.isVerified = true;
-  localStorage.setItem('mora_user', JSON.stringify(user));
+
+  // 🔥 REAL USER SAVE (MOST IMPORTANT FIX)
+  localStorage.setItem('mora_user', JSON.stringify({
+    ...data.user,
+    token: data.token
+  }));
+
+  // optional but recommended
+  window.dispatchEvent(new CustomEvent('auth-change'));
 
   navigate('/onboarding');
 } else {
