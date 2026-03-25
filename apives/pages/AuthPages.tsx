@@ -6,6 +6,8 @@ import { BackButton } from '../components/BackButton';
 
 type AuthView = 'login' | 'signup' | 'forgot' | 'verify' | 'reset';
 
+type VerifyType = 'signup' | 'forgot';
+
 interface PasswordInputProps {
   value: string;
   onChange: (s: string) => void;
@@ -72,6 +74,7 @@ export const AccessPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
+const [verifyType, setVerifyType] = useState<VerifyType>('forgot');
   const [newPassword, setNewPassword] = useState('');
 
   const [showPasswordError, setShowPasswordError] = useState(false);
@@ -177,7 +180,9 @@ export const AccessPage: React.FC = () => {
         }));
 
         window.dispatchEvent(new CustomEvent('auth-change'));
-        navigate('/onboarding');
+        setVerifyType('signup');   // ✅ important
+setView('verify');         // ✅ go to verify screen
+setSuccessMessage(`Verification code sent to ${email}`);
         
       } catch (err: any) {
         // Show Backend Error
@@ -215,8 +220,19 @@ export const AccessPage: React.FC = () => {
 
       try {
           await apiService.verifyOtp(email, verificationCode);
-          setView('reset');
-          setSuccessMessage('Token verified. Initialize new key.');
+
+if (verifyType === 'signup') {
+  // ✅ signup → onboarding
+  const user = JSON.parse(localStorage.getItem('mora_user') || '{}');
+  user.isVerified = true;
+  localStorage.setItem('mora_user', JSON.stringify(user));
+
+  navigate('/onboarding');
+} else {
+  // ✅ forgot password (UNCHANGED FLOW)
+  setView('reset');
+  setSuccessMessage('Token verified. Initialize new key.');
+}
       } catch (err: any) {
           const msg = err.response?.data?.message || "Invalid token.";
           alert(msg);
@@ -376,8 +392,14 @@ export const AccessPage: React.FC = () => {
                         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/5 mb-3 border border-white/10">
                             <Key className="text-yellow-500" size={24} />
                         </div>
-                        <h3 className="text-white font-bold">Verify Link</h3>
-                        <p className="text-xs text-slate-400 mt-1">Enter the temporal token dispatched to <span className="text-white">{email}</span></p>
+                        <h3 className="text-white font-bold">
+  {verifyType === 'signup' ? 'Verify Your Account' : 'Verify Link'}
+</h3>
+                        <p className="text-xs text-slate-400 mt-1">
+{verifyType === 'signup'
+  ? `Enter the verification code sent to ${email}`
+  : `Enter the temporal token dispatched to ${email}`}
+</p>
                     </div>
                     <div className="space-y-1">
                         <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1 mb-1">Temporal Token</label>
