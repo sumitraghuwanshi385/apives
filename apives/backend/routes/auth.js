@@ -26,7 +26,7 @@ async function sendOtpViaResend(toEmail, code) {
     body: JSON.stringify({
       from,
       to: [toEmail],
-      subject: 'Apives Password Reset OTP',
+      subject: 'Apives Verification Code',
       html: `
         <div style="font-family: Arial, sans-serif; color: #111;">
           <h2>Apives Password Reset</h2>
@@ -58,13 +58,24 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = new User({ name, email, password: hashedPassword });
-    const savedUser = await user.save();
+await user.save();
 
-    const token = jwt.sign({ id: savedUser._id, email: savedUser.email }, process.env.JWT_SECRET);
-    return res.json({
-      token,
-      user: { id: savedUser._id, name: savedUser.name, email: savedUser.email },
-    });
+// ✅ OTP GENERATE
+const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+// ✅ OLD OTP DELETE
+await Otp.deleteMany({ email });
+
+// ✅ SAVE OTP
+await new Otp({ email, code }).save();
+
+// ✅ SEND OTP EMAIL (same function jo forgot me use ho rha)
+await sendOtpViaResend(email, code);
+
+// ❌ TOKEN MAT DE ABHI
+return res.json({
+  message: 'Signup successful, OTP sent',
+});
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
@@ -129,7 +140,27 @@ router.post('/verify-otp', async (req, res) => {
     const validOtp = await Otp.findOne({ email, code: otp });
     if (!validOtp) return res.status(400).json({ message: 'Invalid or expired token' });
 
-    return res.json({ message: 'Token verified' });
+    // ✅ USER VERIFY MARK
+await User.findOneAndUpdate({ email }, { isVerified: true });
+
+// ✅ USER FETCH
+const user = await User.findOne({ email });
+
+// ✅ TOKEN GENERATE (AB LOGIN HOGA)
+const token = jwt.sign(
+  { id: user._id, email: user.email },
+  process.env.JWT_SECRET
+);
+
+return res.json({
+  message: 'Verified',
+  token,
+  user: {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+  },
+});
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
