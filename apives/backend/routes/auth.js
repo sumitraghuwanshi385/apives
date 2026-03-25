@@ -28,15 +28,96 @@ async function sendOtpViaResend(toEmail, code) {
       to: [toEmail],
       subject: 'Apives Verification Code',
       html: `
-        <div style="font-family: Arial, sans-serif; color: #111;">
-          <h2>Apives Password Reset</h2>
-          <p>Your OTP is:</p>
-          <div style="font-size:32px;font-weight:700;letter-spacing:6px;background:#f2f2f2;padding:12px 16px;border-radius:10px;display:inline-block;">
-            ${code}
-          </div>
-          <p style="margin-top:16px;">Valid for <b>5 minutes</b>.</p>
-        </div>
-      `,
+<body style="margin:0;padding:0;background:#0b0b0b;font-family:Arial,sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+<tr>
+<td align="center">
+
+<table width="520" cellpadding="0" cellspacing="0" style="background:#111;border-radius:20px;padding:40px;border:1px solid #1f1f1f;box-shadow:0 0 40px rgba(34,197,94,0.1);">
+
+<tr>
+<td align="center" style="padding-bottom:20px;">
+<img src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png" width="120"/>
+</td>
+</tr>
+
+<tr>
+<td align="center" style="padding-bottom:10px;">
+<h2 style="color:#fff;margin:0;font-size:22px;">
+Verify Your Account
+</h2>
+</td>
+</tr>
+
+<tr>
+<td align="center" style="padding-bottom:25px;">
+<p style="color:#9ca3af;font-size:14px;margin:0;">
+Use the OTP below to continue with Apives
+</p>
+</td>
+</tr>
+
+<tr>
+<td align="center" style="padding-bottom:25px;">
+<div style="
+display:inline-block;
+padding:18px 28px;
+background:#0f172a;
+border:1px solid #22c55e;
+border-radius:14px;
+font-size:30px;
+letter-spacing:10px;
+color:#22c55e;
+font-weight:bold;
+">
+${code}
+</div>
+</td>
+</tr>
+
+<tr>
+<td align="center" style="padding-bottom:30px;">
+<p style="color:#6b7280;font-size:13px;margin:0;">
+Valid for 5 minutes • Do not share this code
+</p>
+</td>
+</tr>
+
+<tr>
+<td align="center" style="padding-bottom:30px;">
+<a href="https://apives.com"
+style="
+background:#22c55e;
+color:#000;
+padding:12px 26px;
+border-radius:999px;
+text-decoration:none;
+font-weight:bold;
+font-size:14px;
+display:inline-block;
+">
+Open Apives →
+</a>
+</td>
+</tr>
+
+<tr>
+<td align="center" style="border-top:1px solid #1f1f1f;padding-top:20px;">
+<p style="color:#6b7280;font-size:12px;margin:0;">
+Built for builders 🚀 — Apives
+</p>
+</td>
+</tr>
+
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+`,
     }),
   });
 
