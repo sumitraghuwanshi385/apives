@@ -18,7 +18,7 @@ return ""
 }
 }
 
-// ✅ WORD BASED TRUNCATE (60 words)
+// ✅ 60 words truncate
 const truncateWords=(text:string,limit:number=60)=>{
 if(!text) return ""
 const words=text.split(" ")
@@ -35,24 +35,17 @@ const fetchNews=async(limit:number)=>{
 try{
 const res=await fetch("https://apives-3xrc.onrender.com/api/news")
 const data=await res.json()
-
 if(!data.success) return []
-
 let articles=data.data||[]
-
 const unique=[...new Map(articles.map((i:any)=>[i.url,i])).values()]
-
 return unique.slice(0,limit)
-
 }catch{
 return []
 }
 }
 
 useEffect(()=>{
-fetchNews(20).then(initial=>{
-setNews(shuffle(initial))
-})
+fetchNews(20).then(initial=>setNews(shuffle(initial)))
 
 const interval=setInterval(()=>{
 fetchNews(10).then(newItems=>{
@@ -67,25 +60,27 @@ return shuffle(unique).slice(0,60)
 return()=>clearInterval(interval)
 },[])
 
-// ✅ BODY SCROLL LOCK
+// 🔥 STRONG SCROLL LOCK
 useEffect(()=>{
 if(selected){
 document.body.style.overflow="hidden"
+document.body.style.position="fixed"
+document.body.style.width="100%"
 }else{
 document.body.style.overflow="auto"
+document.body.style.position="static"
 }
 },[selected])
 
 return(
 
-<section id="news-feed" className="py-16 bg-black border-t border-white/5">
+<section className="py-16 bg-black border-t border-white/5">
 
 <div className="max-w-7xl mx-auto px-4 md:px-6">
 
 {/* HEADER */}
 
 <div className="text-center mb-12">
-
 <div className="flex items-center justify-center gap-2 text-mora-400 mb-3">
 <Newspaper size={18}/>
 <span className="uppercase text-xs font-black tracking-[0.35em]">
@@ -100,16 +95,14 @@ AI & API Radar
 <p className="text-slate-400 text-sm mt-3 max-w-xl mx-auto">
 Latest launches in AI models, APIs, AI agents, chatbots and AI startups.
 </p>
-
 </div>
 
 {/* SWIPER */}
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={20} // ✅ slightly tight
+spaceBetween={20}
 slidesPerView={1.1}
-grabCursor={true}
 autoplay={{delay:4000,disableOnInteraction:false}}
 breakpoints={{
 480:{slidesPerView:1.2},
@@ -124,17 +117,9 @@ breakpoints={{
 const favicon=getFavicon(item.url)
 
 return(
-
 <SwiperSlide key={i}>
 
-<div className="
-group relative block h-[560px]
-rounded-2xl overflow-hidden
-border border-white/10 bg-[#0a0a0a]
-transition duration-300 hover:scale-[1.02]
-">
-
-{/* EXPAND */}
+<div className="group relative h-[550px] rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a]">
 
 <button
 onClick={()=>setSelected(item)}
@@ -145,47 +130,33 @@ className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md border borde
 
 <a href={item.url} target="_blank" className="block h-full">
 
-{/* IMAGE */}
-
-<div className="relative h-48 overflow-hidden">
+<div className="h-48 overflow-hidden">
 <img
-src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
-className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+src={item.image}
+className="w-full h-full object-cover transition group-hover:scale-105"
 />
-<div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
 </div>
 
-{/* CONTENT */}
-
-<div className="p-5 flex flex-col justify-between h-[360px]"> {/* ✅ padding reduce */}
+<div className="p-5 flex flex-col justify-between h-[360px]">
 
 <div>
-
-<h3 className="text-white font-bold text-sm mb-2 leading-snug">
+<h3 className="text-white font-bold text-sm mb-2">
 {item.title}
 </h3>
 
-<p className="text-slate-400 text-[11px] leading-relaxed">
+<p className="text-slate-400 text-[11px]">
 {truncateWords(item.description,60)}
 </p>
-
 </div>
 
-{/* SOURCE */}
+<div className="flex justify-between mt-3">
 
-<div className="flex items-center justify-between mt-3"> {/* ✅ gap reduced */}
-
-<div className="flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-[10px] font-semibold">
-
-<img src={favicon} className="w-4 h-4 rounded-full"/>
-
-{item.source?.name || "Source"}
-
+<div className="flex items-center gap-2 text-green-400 text-[10px]">
+<img src={favicon} className="w-4 h-4"/>
+{item.source?.name}
 </div>
 
-<span className="text-[10px] font-black tracking-widest uppercase text-mora-400">
-OPEN →
-</span>
+<span className="text-[10px] text-mora-400">OPEN →</span>
 
 </div>
 
@@ -196,56 +167,58 @@ OPEN →
 </div>
 
 </SwiperSlide>
-
 )
-
 })}
 
 </Swiper>
 
 </div>
 
-{/* ================= MODAL ================= */}
+{/* 🔥 FINAL MODAL */}
 
 {selected && (
-<div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
+<div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center">
 
 <div className="
-relative w-full max-w-lg   /* ✅ SMALL WIDTH */
-max-h-[90vh]
+relative
+w-[92%] sm:w-[420px]   /* 🔥 SMALL WIDTH */
+max-h-[85vh]
 bg-[#0a0a0a]
-rounded-2xl overflow-hidden
+rounded-xl
 border border-green-500/30
-shadow-[0_0_40px_rgba(34,197,94,0.2)]
+shadow-[0_0_30px_rgba(34,197,94,0.2)]
+overflow-hidden
 ">
 
 {/* CLOSE */}
 
 <button
 onClick={()=>setSelected(null)}
-className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 p-2 rounded-full"
+className="absolute top-3 right-3 bg-white/10 backdrop-blur-md border border-white/20 p-2 rounded-full z-50"
 >
-<X size={16} className="text-white"/>
+<X size={14} className="text-white"/>
 </button>
 
-<div className="overflow-y-auto max-h-[90vh]">
+{/* SCROLLABLE INNER */}
 
-<img src={selected.image} className="w-full h-52 object-cover"/>
+<div className="overflow-y-auto max-h-[85vh]">
 
-<div className="p-5">
+<img src={selected.image} className="w-full h-48 object-cover"/>
 
-<h2 className="text-white text-base font-bold mb-3">
+<div className="p-4">
+
+<h2 className="text-white text-sm font-bold mb-2">
 {selected.title}
 </h2>
 
-<p className="text-slate-300 text-[13px] leading-relaxed">
+<p className="text-slate-300 text-[12px] leading-relaxed">
 {selected.description}
 </p>
 
 <a
 href={selected.url}
 target="_blank"
-className="inline-block mt-4 text-green-400 text-sm font-semibold"
+className="block mt-4 text-green-400 text-sm font-semibold"
 >
 Read Full Article →
 </a>
