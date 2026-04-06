@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay } from "swiper/modules"
-import { Newspaper } from "lucide-react"
+import { Newspaper, Maximize2, X } from "lucide-react" // ✅ added icons
 
 import "swiper/css"
 
@@ -18,9 +18,18 @@ return ""
 }
 }
 
+// ✅ NEW truncate function
+const truncate=(text:string,limit:number=120)=>{
+if(!text) return ""
+return text.length>limit ? text.slice(0,limit)+"..." : text
+}
+
 const NewsFeed=()=>{
 
 const [news,setNews]=useState<any[]>([])
+
+// ✅ modal state
+const [selected,setSelected]=useState<any>(null)
 
 const fetchNews=async(limit:number)=>{
 
@@ -32,8 +41,6 @@ const data=await res.json()
 if(!data.success) return []
 
 let articles=data.data||[]
-
-/* remove duplicates */
 
 const unique=[...new Map(articles.map((i:any)=>[i.url,i])).values()]
 
@@ -50,8 +57,6 @@ useEffect(()=>{
 fetchNews(20).then(initial=>{
 setNews(shuffle(initial))
 })
-
-/* auto refresh every 30 min */
 
 const interval=setInterval(()=>{
 
@@ -132,12 +137,10 @@ return(
 
 <SwiperSlide key={i}>
 
-<a
-href={item.url}
-target="_blank"
-rel="noopener noreferrer"
+<div
 className="
 group
+relative
 block
 h-[570px]
 rounded-2xl
@@ -149,6 +152,22 @@ duration-300
 hover:scale-[1.02]
 active:scale-[0.98]
 "
+>
+
+{/* ✅ EXPAND BUTTON */}
+
+<button
+onClick={()=>setSelected(item)}
+className="absolute top-3 right-3 z-20 bg-black/60 hover:bg-black p-2 rounded-full"
+>
+<Maximize2 size={16} className="text-white"/>
+</button>
+
+<a
+href={item.url}
+target="_blank"
+rel="noopener noreferrer"
+className="block h-full"
 >
 
 {/* IMAGE */}
@@ -174,8 +193,9 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 {item.title}
 </h3>
 
+{/* ✅ TRUNCATED TEXT */}
 <p className="text-slate-400 text-[11px] leading-relaxed">
-{item.description}
+{truncate(item.description,120)}
 </p>
 
 </div>
@@ -220,6 +240,8 @@ OPEN →
 
 </a>
 
+</div>
+
 </SwiperSlide>
 
 )
@@ -229,6 +251,52 @@ OPEN →
 </Swiper>
 
 </div>
+
+{/* ✅ FULLSCREEN MODAL */}
+
+{selected && (
+<div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+
+<div className="bg-[#0a0a0a] max-w-2xl w-full rounded-2xl overflow-hidden animate-[fadeIn_0.3s_ease]">
+
+{/* CLOSE */}
+
+<div className="flex justify-end p-3">
+<button onClick={()=>setSelected(null)}>
+<X className="text-white"/>
+</button>
+</div>
+
+<img
+src={selected.image}
+className="w-full h-60 object-cover"
+/>
+
+<div className="p-6">
+
+<h2 className="text-white text-lg font-bold mb-3">
+{selected.title}
+</h2>
+
+{/* ✅ FULL DESCRIPTION */}
+<p className="text-slate-300 text-sm leading-relaxed">
+{selected.description}
+</p>
+
+<a
+href={selected.url}
+target="_blank"
+className="inline-block mt-5 text-green-400 text-sm font-semibold"
+>
+Read Full Article →
+</a>
+
+</div>
+
+</div>
+
+</div>
+)}
 
 </section>
 
