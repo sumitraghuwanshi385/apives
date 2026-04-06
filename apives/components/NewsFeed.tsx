@@ -18,7 +18,7 @@ return ""
 }
 }
 
-// ✅ WORD BASED TRUNCATE (50–60 words)
+// ✅ WORD BASED TRUNCATE (60 words)
 const truncateWords=(text:string,limit:number=60)=>{
 if(!text) return ""
 const words=text.split(" ")
@@ -32,7 +32,6 @@ const [news,setNews]=useState<any[]>([])
 const [selected,setSelected]=useState<any>(null)
 
 const fetchNews=async(limit:number)=>{
-
 try{
 const res=await fetch("https://apives-3xrc.onrender.com/api/news")
 const data=await res.json()
@@ -48,38 +47,27 @@ return unique.slice(0,limit)
 }catch{
 return []
 }
-
 }
 
 useEffect(()=>{
-
 fetchNews(20).then(initial=>{
 setNews(shuffle(initial))
 })
 
 const interval=setInterval(()=>{
-
 fetchNews(10).then(newItems=>{
-
 setNews(prev=>{
-
 const merged=[...newItems,...prev]
-
 const unique=[...new Map(merged.map(i=>[i.url,i])).values()]
-
 return shuffle(unique).slice(0,60)
-
 })
-
 })
-
 },30*60*1000)
 
 return()=>clearInterval(interval)
-
 },[])
 
-// ✅ BODY SCROLL LOCK FIX
+// ✅ BODY SCROLL LOCK
 useEffect(()=>{
 if(selected){
 document.body.style.overflow="hidden"
@@ -90,10 +78,7 @@ document.body.style.overflow="auto"
 
 return(
 
-<section
-id="news-feed"
-className="py-16 bg-black border-t border-white/5 scroll-mt-32"
->
+<section id="news-feed" className="py-16 bg-black border-t border-white/5">
 
 <div className="max-w-7xl mx-auto px-4 md:px-6">
 
@@ -122,18 +107,15 @@ Latest launches in AI models, APIs, AI agents, chatbots and AI startups.
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={24}
+spaceBetween={20} // ✅ slightly tight
 slidesPerView={1.1}
 grabCursor={true}
-autoplay={{
-delay:4000,
-disableOnInteraction:false
-}}
+autoplay={{delay:4000,disableOnInteraction:false}}
 breakpoints={{
 480:{slidesPerView:1.2},
-640:{slidesPerView:1.6},
+640:{slidesPerView:1.5},
 768:{slidesPerView:2},
-1024:{slidesPerView:2.6}
+1024:{slidesPerView:2.5}
 }}
 >
 
@@ -145,56 +127,44 @@ return(
 
 <SwiperSlide key={i}>
 
-<div
-className="
-group relative block h-[570px]
+<div className="
+group relative block h-[560px]
 rounded-2xl overflow-hidden
 border border-white/10 bg-[#0a0a0a]
-transition duration-300
-hover:scale-[1.02]
-"
->
+transition duration-300 hover:scale-[1.02]
+">
 
-{/* EXPAND BUTTON */}
+{/* EXPAND */}
 
 <button
 onClick={()=>setSelected(item)}
-className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md hover:bg-black/80 p-2 rounded-full border border-white/20"
+className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md border border-white/20 p-2 rounded-full"
 >
 <Maximize2 size={16} className="text-white"/>
 </button>
 
-<a
-href={item.url}
-target="_blank"
-rel="noopener noreferrer"
-className="block h-full"
->
+<a href={item.url} target="_blank" className="block h-full">
 
 {/* IMAGE */}
 
-<div className="relative h-48 md:h-52 overflow-hidden">
-
+<div className="relative h-48 overflow-hidden">
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
 className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
 />
-
 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
-
 </div>
 
 {/* CONTENT */}
 
-<div className="p-6 flex flex-col justify-between h-[370px]">
+<div className="p-5 flex flex-col justify-between h-[360px]"> {/* ✅ padding reduce */}
 
 <div>
 
-<h3 className="text-white font-bold text-sm leading-snug mb-3">
+<h3 className="text-white font-bold text-sm mb-2 leading-snug">
 {item.title}
 </h3>
 
-{/* ✅ 50-60 WORDS */}
 <p className="text-slate-400 text-[11px] leading-relaxed">
 {truncateWords(item.description,60)}
 </p>
@@ -203,7 +173,7 @@ className="w-full h-full object-cover transition duration-700 group-hover:scale-
 
 {/* SOURCE */}
 
-<div className="flex items-center justify-between mt-6">
+<div className="flex items-center justify-between mt-3"> {/* ✅ gap reduced */}
 
 <div className="flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-[10px] font-semibold">
 
@@ -241,45 +211,33 @@ OPEN →
 <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
 
 <div className="
-relative w-full max-w-2xl max-h-[90vh]
+relative w-full max-w-lg   /* ✅ SMALL WIDTH */
+max-h-[90vh]
 bg-[#0a0a0a]
 rounded-2xl overflow-hidden
 border border-green-500/30
 shadow-[0_0_40px_rgba(34,197,94,0.2)]
-animate-[fadeIn_0.25s_ease]
 ">
 
-{/* CLOSE BUTTON */}
+{/* CLOSE */}
 
 <button
 onClick={()=>setSelected(null)}
-className="
-absolute top-4 right-4 z-50
-bg-white/10 backdrop-blur-md
-border border-white/20
-p-2 rounded-full
-hover:bg-white/20
-"
+className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-white/20 p-2 rounded-full"
 >
 <X size={16} className="text-white"/>
 </button>
 
-{/* SCROLLABLE CONTENT */}
-
 <div className="overflow-y-auto max-h-[90vh]">
 
-<img
-src={selected.image}
-className="w-full h-60 object-cover"
-/>
+<img src={selected.image} className="w-full h-52 object-cover"/>
 
-<div className="p-6">
+<div className="p-5">
 
-<h2 className="text-white text-lg font-bold mb-3">
+<h2 className="text-white text-base font-bold mb-3">
 {selected.title}
 </h2>
 
-{/* FULL DESCRIPTION */}
 <p className="text-slate-300 text-[13px] leading-relaxed">
 {selected.description}
 </p>
@@ -287,7 +245,7 @@ className="w-full h-60 object-cover"
 <a
 href={selected.url}
 target="_blank"
-className="inline-block mt-5 text-green-400 text-sm font-semibold"
+className="inline-block mt-4 text-green-400 text-sm font-semibold"
 >
 Read Full Article →
 </a>
