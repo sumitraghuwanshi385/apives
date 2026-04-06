@@ -10,14 +10,14 @@ time: 0
 const CACHE_TIME = 30 * 60 * 1000;
 
 /* -------------------------------
-TEXT CLEANER (UPGRADED 🔥)
+TEXT CLEANER (ONLY SAFE FIXES)
 -------------------------------- */
 
 function cleanText(text=""){
 return text
-.replace(/\[\+\d+\schars\]/g,"")        // remove [xxxx chars]
-.replace(/<[^>]*>/g,"")                 // remove HTML tags
-.replace(/\.\.\.+/g,"")                 // remove ....
+.replace(/\[\+\d+\schars\]/g,"")      // remove [2377 chars]
+.replace(/<[^>]*>/g,"")               // remove HTML tags
+.replace(/\.\.\.+/g,"")               // remove ....
 .replace(/ONLY AVAILABLE IN PAID PLANS/gi,"")
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
@@ -25,14 +25,11 @@ return text
 }
 
 /* -------------------------------
-DESCRIPTION (FULL REAL TEXT)
+DESCRIPTION (NO LIMIT)
 -------------------------------- */
 
 function formatDescription(desc=""){
-
-let final = cleanText(desc)
-
-return final
+return cleanText(desc)
 }
 
 /* -------------------------------
@@ -105,11 +102,11 @@ newsapi,
 newsdata
 ])
 
-/* NORMALIZE (IMPROVED FETCH 🔥) */
+/* NORMALIZE (NO LIMIT, JUST CLEAN) */
 
 const gnewsData = (gnewsRes.data.articles || []).map(a=>({
 title:a.title,
-description: a.content || a.description || "", // ✅ try content first
+description: a.content || a.description || "",
 url:a.url,
 image:a.image,
 publishedAt:a.publishedAt,
@@ -118,7 +115,7 @@ source:{name:a.source?.name || "GNews"}
 
 const newsapiData = (newsapiRes.data.articles || []).map(a=>({
 title:a.title,
-description: a.content || a.description || "", // ✅ try content first
+description: a.content || a.description || "",
 url:a.url,
 image:a.urlToImage,
 publishedAt:a.publishedAt,
@@ -127,7 +124,7 @@ source:{name:a.source?.name || "NewsAPI"}
 
 const newsdataData = (newsdataRes.data.results || []).map(a=>({
 title:a.title,
-description: a.content || a.description || "", // ✅ try content first
+description: a.content || a.description || "",
 url:a.link,
 image:a.image_url,
 publishedAt:a.pubDate,
@@ -174,7 +171,7 @@ const finalNews = unique.slice(0,40).map(n=>({
 
 title: cleanText(n.title),
 
-// ✅ CLEAN FULL DESCRIPTION (NO LIMIT)
+// ✅ FULL CLEAN DESCRIPTION (NO LIMIT)
 description: formatDescription(n.description),
 
 url: n.url,
