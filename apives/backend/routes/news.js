@@ -10,7 +10,7 @@ time: 0
 const CACHE_TIME = 30 * 60 * 1000;
 
 /* -------------------------------
-TEXT HELPERS
+TEXT CLEANER
 -------------------------------- */
 
 function cleanText(text=""){
@@ -18,118 +18,64 @@ return text
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 .replace(/\.\.\./g,"")
-.replace(/Experts say.*$/i,"")
 .trim()
 }
 
-/* TITLE → CLEAN (NO FORCE LIMIT) */
+/* -------------------------------
+DESCRIPTION (ONLY REAL TEXT)
+NO FAKE ADDITIONS
+-------------------------------- */
 
-function summarizeTitle(title=""){
-return cleanText(title)
-}
-
-/* ❌ OLD DESCRIPTION LOGIC REMOVED EFFECT
-   ✅ NEW REAL DESCRIPTION FUNCTION
-*/
-
-function enhanceDescription(desc=""){
+function formatDescription(desc=""){
 
 let words = cleanText(desc).split(" ").filter(Boolean)
 
-/* remove junk */
+/* keep only real words, max 150 */
 
-words = words.filter(w =>
-!["said","says","according","report","reports"].includes(w.toLowerCase())
-)
-
-/* if already good length */
-
-if(words.length >= 80){
-let final = words.slice(0,200).join(" ")
-if(!final.endsWith(".")) final += "."
-return final
-}
-
-/* if short → slightly expand (NO FAKE FILLER, ONLY SAFE EXTENSION) */
-
-const contextBoost = [
-"This update reflects ongoing developments in AI and API ecosystems.",
-"Developers and startups are increasingly leveraging such technologies.",
-"The trend highlights rapid innovation across modern software platforms."
-]
-
-let boosted = [...words]
-
-let i = 0
-while(boosted.length < 120 && i < contextBoost.length){
-boosted = boosted.concat(contextBoost[i].split(" "))
-i++
-}
-
-let final = boosted.slice(0,180).join(" ")
+let final = words.slice(0,150).join(" ")
 
 if(!final.endsWith(".")) final += "."
 
 return final
 }
 
-/* --------------------------------
-CATEGORY DETECTOR (UNCHANGED)
+/* -------------------------------
+STRICT FILTER (ONLY CORE TECH)
 -------------------------------- */
 
-function detectCategory(article){
-
-const text = (article.title + " " + (article.description || "")).toLowerCase()
-
-if(text.includes("api")) return "APIs"
-
-if(text.includes("ai model") || text.includes("llm") || text.includes("openai") || text.includes("anthropic") || text.includes("gemini"))
-return "AI Models"
-
-if(text.includes("startup") || text.includes("funding"))
-return "Startups"
-
-if(text.includes("developer") || text.includes("github") || text.includes("programming"))
-return "Developer Tools"
-
-if(text.includes("agent"))
-return "AI Agents"
-
-return "AI"
-}
-
-/* --------------------------------
-FILTERS (STRONGER)
--------------------------------- */
-
-const AI_KEYWORDS = [
-"ai","artificial intelligence","machine learning","api","developer",
-"openai","anthropic","gemini","llm","ai model","ai startup",
-"ai tools","developer platform","software development",
-"programming","github","python","javascript",
-"ai agents","developer tools","saas","cloud","automation"
+const ALLOWED_KEYWORDS = [
+"ai","artificial intelligence","machine learning","ml",
+"api","apis",
+"saas","software as a service",
+"startup","startups","funding",
+"data science","data","analytics",
+"developer","platform","automation",
+"cloud","llm","openai","anthropic","gemini"
 ]
 
-const BLACKLIST = [
-"soccer","football","cricket","sports","match","league","goal",
-"championship","election","politics","war","military",
-"celebrity","crime","murder","attack","movie","tv","bollywood"
+const BLOCKED = [
+"sports","cricket","football","match","league",
+"politics","election","war","military",
+"celebrity","movie","film","bollywood",
+"crime","murder","attack"
 ]
 
 function isRelevant(article){
 
-const text = (article.title + " " + (article.description || "")).toLowerCase()
+const text = (article.title + " " + article.description).toLowerCase()
 
-if(BLACKLIST.some(b => text.includes(b))){
+/* block garbage */
+
+if(BLOCKED.some(b => text.includes(b))){
 return false
 }
 
-/* MUST match strong tech keywords */
+/* must match strong tech keywords */
 
-return AI_KEYWORDS.some(k => text.includes(k))
+return ALLOWED_KEYWORDS.some(k => text.includes(k))
 }
 
-/* --------------------------------
+/* -------------------------------
 ROUTE
 -------------------------------- */
 
@@ -147,18 +93,18 @@ data:CACHE.data
 })
 }
 
-/* FETCH NEWS */
+/* FETCH */
 
 const gnews = axios.get(
-`https://gnews.io/api/v4/search?q=AI OR "machine learning" OR API OR "developer tools" OR "AI startup"&lang=en&max=20&token=${process.env.GNEWS_KEY}`
+`https://gnews.io/api/v4/search?q=AI OR API OR SaaS OR "machine learning" OR startup OR "data science"&lang=en&max=20&token=${process.env.GNEWS_KEY}`
 )
 
 const newsapi = axios.get(
-`https://newsapi.org/v2/everything?q=AI OR "machine learning" OR API OR "developer tools" OR startup&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
+`https://newsapi.org/v2/everything?q=AI OR API OR SaaS OR "machine learning" OR startup OR "data science"&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
 )
 
 const newsdata = axios.get(
-`https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR "machine learning" OR startup&language=en`
+`https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR SaaS OR "machine learning" OR startup OR "data science"&language=en`
 )
 
 const [gnewsRes,newsapiRes,newsdataRes] = await Promise.all([
@@ -202,12 +148,12 @@ let all = [
 ...newsdataData
 ]
 
-/* FILTER */
+/* FILTER STRICT */
 
 all = all.filter(n =>
 n.title &&
-n.url &&
 n.description &&
+n.url &&
 isRelevant(n)
 )
 
@@ -216,13 +162,10 @@ isRelevant(n)
 const map = new Map()
 
 all.forEach(n=>{
-
-const key = cleanText(n.title).toLowerCase().slice(0,70)
-
+const key = cleanText(n.title).toLowerCase().slice(0,80)
 if(!map.has(key)){
 map.set(key,n)
 }
-
 })
 
 let unique = [...map.values()]
@@ -233,14 +176,13 @@ unique.sort((a,b)=>
 new Date(b.publishedAt) - new Date(a.publishedAt)
 )
 
-/* FORMAT */
+/* FINAL FORMAT */
 
-const formatted = unique.map(n=>({
+const finalNews = unique.slice(0,40).map(n=>({
 
-title: summarizeTitle(n.title),
+title: cleanText(n.title),
 
-/* ✅ REAL DESCRIPTION */
-description: enhanceDescription(n.description),
+description: formatDescription(n.description), // ✅ REAL ONLY
 
 url: n.url,
 
@@ -248,13 +190,9 @@ image: n.image,
 
 publishedAt: n.publishedAt,
 
-category: detectCategory(n),
-
 source: n.source
 
 }))
-
-const finalNews = formatted.slice(0,40)
 
 /* CACHE */
 
