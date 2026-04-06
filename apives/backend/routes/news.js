@@ -27,11 +27,8 @@ NO LIMIT ❌
 -------------------------------- */
 
 function formatDescription(desc=""){
-
-// ✅ CLEAN ONLY (NO TRIM, NO LIMIT)
-let final = cleanText(desc)
-
-return final
+// ✅ ONLY CLEAN — NO LIMIT / NO CUT
+return cleanText(desc)
 }
 
 /* -------------------------------
@@ -59,13 +56,9 @@ function isRelevant(article){
 
 const text = (article.title + " " + article.description).toLowerCase()
 
-/* block garbage */
-
 if(BLOCKED.some(b => text.includes(b))){
 return false
 }
-
-/* must match strong tech keywords */
 
 return ALLOWED_KEYWORDS.some(k => text.includes(k))
 }
@@ -112,7 +105,7 @@ newsdata
 
 const gnewsData = (gnewsRes.data.articles || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description, // ✅ FIXED
 url:a.url,
 image:a.image,
 publishedAt:a.publishedAt,
@@ -121,7 +114,7 @@ source:{name:a.source?.name || "GNews"}
 
 const newsapiData = (newsapiRes.data.articles || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description, // ✅ FIXED
 url:a.url,
 image:a.urlToImage,
 publishedAt:a.publishedAt,
@@ -130,7 +123,7 @@ source:{name:a.source?.name || "NewsAPI"}
 
 const newsdataData = (newsdataRes.data.results || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description, // ✅ FIXED
 url:a.link,
 image:a.image_url,
 publishedAt:a.pubDate,
@@ -177,7 +170,7 @@ const finalNews = unique.slice(0,40).map(n=>({
 
 title: cleanText(n.title),
 
-// ✅ FULL DESCRIPTION (NO LIMIT)
+// ✅ FULL RAW DESCRIPTION (NO LIMIT)
 description: formatDescription(n.description),
 
 url: n.url,
