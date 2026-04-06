@@ -10,32 +10,33 @@ time: 0
 const CACHE_TIME = 30 * 60 * 1000;
 
 /* -------------------------------
-TEXT CLEANER
+TEXT CLEANER (UPGRADED 🔥)
 -------------------------------- */
 
 function cleanText(text=""){
 return text
+.replace(/\[\+\d+\schars\]/g,"")        // remove [xxxx chars]
+.replace(/<[^>]*>/g,"")                 // remove HTML tags
+.replace(/\.\.\.+/g,"")                 // remove ....
+.replace(/ONLY AVAILABLE IN PAID PLANS/gi,"")
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
-.replace(/\.\.\./g,"")
 .trim()
 }
 
 /* -------------------------------
 DESCRIPTION (FULL REAL TEXT)
-NO LIMIT ❌
 -------------------------------- */
 
 function formatDescription(desc=""){
 
-// ✅ CLEAN ONLY (NO TRIM, NO LIMIT)
 let final = cleanText(desc)
 
 return final
 }
 
 /* -------------------------------
-STRICT FILTER (ONLY CORE TECH)
+STRICT FILTER
 -------------------------------- */
 
 const ALLOWED_KEYWORDS = [
@@ -59,13 +60,9 @@ function isRelevant(article){
 
 const text = (article.title + " " + article.description).toLowerCase()
 
-/* block garbage */
-
 if(BLOCKED.some(b => text.includes(b))){
 return false
 }
-
-/* must match strong tech keywords */
 
 return ALLOWED_KEYWORDS.some(k => text.includes(k))
 }
@@ -108,11 +105,11 @@ newsapi,
 newsdata
 ])
 
-/* NORMALIZE */
+/* NORMALIZE (IMPROVED FETCH 🔥) */
 
 const gnewsData = (gnewsRes.data.articles || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description || "", // ✅ try content first
 url:a.url,
 image:a.image,
 publishedAt:a.publishedAt,
@@ -121,7 +118,7 @@ source:{name:a.source?.name || "GNews"}
 
 const newsapiData = (newsapiRes.data.articles || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description || "", // ✅ try content first
 url:a.url,
 image:a.urlToImage,
 publishedAt:a.publishedAt,
@@ -130,7 +127,7 @@ source:{name:a.source?.name || "NewsAPI"}
 
 const newsdataData = (newsdataRes.data.results || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description || "", // ✅ try content first
 url:a.link,
 image:a.image_url,
 publishedAt:a.pubDate,
@@ -143,7 +140,7 @@ let all = [
 ...newsdataData
 ]
 
-/* FILTER STRICT */
+/* FILTER */
 
 all = all.filter(n =>
 n.title &&
@@ -177,7 +174,7 @@ const finalNews = unique.slice(0,40).map(n=>({
 
 title: cleanText(n.title),
 
-// ✅ FULL DESCRIPTION (NO LIMIT)
+// ✅ CLEAN FULL DESCRIPTION (NO LIMIT)
 description: formatDescription(n.description),
 
 url: n.url,
