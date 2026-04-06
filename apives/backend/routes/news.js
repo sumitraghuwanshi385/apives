@@ -22,19 +22,14 @@ return text
 }
 
 /* -------------------------------
-DESCRIPTION (ONLY REAL TEXT)
-NO FAKE ADDITIONS
+DESCRIPTION (FULL REAL TEXT)
+NO LIMIT ❌
 -------------------------------- */
 
 function formatDescription(desc=""){
 
-let words = cleanText(desc).split(" ").filter(Boolean)
-
-/* keep only real words, max 150 */
-
-let final = words.slice(0,150).join(" ")
-
-if(!final.endsWith(".")) final += "."
+// ✅ CLEAN ONLY (NO TRIM, NO LIMIT)
+let final = cleanText(desc)
 
 return final
 }
@@ -182,7 +177,8 @@ const finalNews = unique.slice(0,40).map(n=>({
 
 title: cleanText(n.title),
 
-description: formatDescription(n.description), // ✅ REAL ONLY
+// ✅ FULL DESCRIPTION (NO LIMIT)
+description: formatDescription(n.description),
 
 url: n.url,
 
