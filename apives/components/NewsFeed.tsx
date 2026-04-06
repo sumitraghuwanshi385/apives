@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay } from "swiper/modules"
-import { Newspaper, Maximize2, X } from "lucide-react" // ✅ added icons
+import { Newspaper, Maximize2, X } from "lucide-react"
 
 import "swiper/css"
 
@@ -18,23 +18,22 @@ return ""
 }
 }
 
-// ✅ NEW truncate function
-const truncate=(text:string,limit:number=120)=>{
+// ✅ WORD BASED TRUNCATE (50–60 words)
+const truncateWords=(text:string,limit:number=60)=>{
 if(!text) return ""
-return text.length>limit ? text.slice(0,limit)+"..." : text
+const words=text.split(" ")
+if(words.length<=limit) return text
+return words.slice(0,limit).join(" ")+"..."
 }
 
 const NewsFeed=()=>{
 
 const [news,setNews]=useState<any[]>([])
-
-// ✅ modal state
 const [selected,setSelected]=useState<any>(null)
 
 const fetchNews=async(limit:number)=>{
 
 try{
-
 const res=await fetch("https://apives-3xrc.onrender.com/api/news")
 const data=await res.json()
 
@@ -79,6 +78,15 @@ return shuffle(unique).slice(0,60)
 return()=>clearInterval(interval)
 
 },[])
+
+// ✅ BODY SCROLL LOCK FIX
+useEffect(()=>{
+if(selected){
+document.body.style.overflow="hidden"
+}else{
+document.body.style.overflow="auto"
+}
+},[selected])
 
 return(
 
@@ -139,26 +147,19 @@ return(
 
 <div
 className="
-group
-relative
-block
-h-[570px]
-rounded-2xl
-overflow-hidden
-border border-white/10
-bg-[#0a0a0a]
-transition-transform
-duration-300
+group relative block h-[570px]
+rounded-2xl overflow-hidden
+border border-white/10 bg-[#0a0a0a]
+transition duration-300
 hover:scale-[1.02]
-active:scale-[0.98]
 "
 >
 
-{/* ✅ EXPAND BUTTON */}
+{/* EXPAND BUTTON */}
 
 <button
 onClick={()=>setSelected(item)}
-className="absolute top-3 right-3 z-20 bg-black/60 hover:bg-black p-2 rounded-full"
+className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md hover:bg-black/80 p-2 rounded-full border border-white/20"
 >
 <Maximize2 size={16} className="text-white"/>
 </button>
@@ -176,7 +177,7 @@ className="block h-full"
 
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
-className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
 />
 
 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
@@ -193,9 +194,9 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 {item.title}
 </h3>
 
-{/* ✅ TRUNCATED TEXT */}
+{/* ✅ 50-60 WORDS */}
 <p className="text-slate-400 text-[11px] leading-relaxed">
-{truncate(item.description,120)}
+{truncateWords(item.description,60)}
 </p>
 
 </div>
@@ -204,33 +205,15 @@ className="w-full h-full object-cover transition-transform duration-700 group-ho
 
 <div className="flex items-center justify-between mt-6">
 
-<div className="
-flex items-center gap-2
-bg-green-500/15
-border border-green-500/30
-text-green-400
-px-3 py-1
-rounded-full
-text-[10px]
-font-semibold
-">
+<div className="flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-[10px] font-semibold">
 
-<img
-src={favicon}
-className="w-4 h-4 rounded-full"
-/>
+<img src={favicon} className="w-4 h-4 rounded-full"/>
 
 {item.source?.name || "Source"}
 
 </div>
 
-<span className="
-text-[10px]
-font-black
-tracking-widest
-uppercase
-text-mora-400
-">
+<span className="text-[10px] font-black tracking-widest uppercase text-mora-400">
 OPEN →
 </span>
 
@@ -252,20 +235,38 @@ OPEN →
 
 </div>
 
-{/* ✅ FULLSCREEN MODAL */}
+{/* ================= MODAL ================= */}
 
 {selected && (
-<div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+<div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
 
-<div className="bg-[#0a0a0a] max-w-2xl w-full rounded-2xl overflow-hidden animate-[fadeIn_0.3s_ease]">
+<div className="
+relative w-full max-w-2xl max-h-[90vh]
+bg-[#0a0a0a]
+rounded-2xl overflow-hidden
+border border-green-500/30
+shadow-[0_0_40px_rgba(34,197,94,0.2)]
+animate-[fadeIn_0.25s_ease]
+">
 
-{/* CLOSE */}
+{/* CLOSE BUTTON */}
 
-<div className="flex justify-end p-3">
-<button onClick={()=>setSelected(null)}>
-<X className="text-white"/>
+<button
+onClick={()=>setSelected(null)}
+className="
+absolute top-4 right-4 z-50
+bg-white/10 backdrop-blur-md
+border border-white/20
+p-2 rounded-full
+hover:bg-white/20
+"
+>
+<X size={16} className="text-white"/>
 </button>
-</div>
+
+{/* SCROLLABLE CONTENT */}
+
+<div className="overflow-y-auto max-h-[90vh]">
 
 <img
 src={selected.image}
@@ -278,8 +279,8 @@ className="w-full h-60 object-cover"
 {selected.title}
 </h2>
 
-{/* ✅ FULL DESCRIPTION */}
-<p className="text-slate-300 text-sm leading-relaxed">
+{/* FULL DESCRIPTION */}
+<p className="text-slate-300 text-[13px] leading-relaxed">
 {selected.description}
 </p>
 
@@ -290,6 +291,8 @@ className="inline-block mt-5 text-green-400 text-sm font-semibold"
 >
 Read Full Article →
 </a>
+
+</div>
 
 </div>
 
