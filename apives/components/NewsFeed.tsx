@@ -129,8 +129,8 @@ group relative block h-[500px]
 rounded-2xl overflow-hidden
 border border-white/10 bg-[#0a0a0a]
 transition duration-300
-hover:scale-[1.02]
-active:scale-100   /* ✅ FIX TOUCH ZOOM */
+hover:scale-100   /* ❌ REMOVE ZOOM */
+active:scale-100
 ">
 
 {/* EXPAND */}
@@ -152,7 +152,7 @@ className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md border borde
 <div className="relative h-44 overflow-hidden">
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
-className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+className="w-full h-full object-cover transition duration-300 group-hover:scale-100"  /* ❌ REMOVE IMAGE ZOOM */
 />
 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"/>
 </div>
@@ -167,7 +167,7 @@ className="w-full h-full object-cover transition duration-700 group-hover:scale-
 {item.title}
 </h3>
 
-{/* ✅ 7 LINE LIMIT (PURE CSS — NO WORD CUT) */}
+{/* ✅ FULL TEXT (NO LIMIT, ONLY VISUAL CLAMP) */}
 <p className="text-slate-400 text-[11px] leading-relaxed line-clamp-7">
 {item.description}
 </p>
@@ -242,8 +242,8 @@ className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-whi
 {selected.title}
 </h2>
 
-{/* ✅ FULL DESCRIPTION (NO LIMIT) */}
-<p className="text-slate-300 text-[12px] leading-relaxed">
+{/* ✅ FULL RAW DESCRIPTION (NO LIMIT) */}
+<p className="text-slate-300 text-[12px] leading-relaxed whitespace-pre-line">
 {selected.description}
 </p>
 
