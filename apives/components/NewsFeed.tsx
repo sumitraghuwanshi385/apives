@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from "react"
+import React,{useEffect,useState,useRef} from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay } from "swiper/modules"
 import { Newspaper, Maximize2, X } from "lucide-react"
@@ -18,18 +18,13 @@ return ""
 }
 }
 
-// ✅ ONLY DISPLAY LIMIT (NO SUMMARY, NO CHANGE TO REAL TEXT)
-const truncateWords=(text:string,limit:number=65)=>{
-if(!text) return ""
-const words=text.split(" ")
-if(words.length<=limit) return text
-return words.slice(0,limit).join(" ")+"..."
-}
-
 const NewsFeed=()=>{
 
 const [news,setNews]=useState<any[]>([])
 const [selected,setSelected]=useState<any>(null)
+
+// ✅ SCROLL POSITION FIX
+const scrollRef = useRef(0)
 
 const fetchNews=async(limit:number)=>{
 try{
@@ -67,16 +62,14 @@ return shuffle(unique).slice(0,60)
 return()=>clearInterval(interval)
 },[])
 
-// ✅ STRONG BODY SCROLL LOCK
+// ✅ BODY LOCK + SCROLL RESTORE
 useEffect(()=>{
 if(selected){
+scrollRef.current = window.scrollY
 document.body.style.overflow="hidden"
-document.body.style.height="100vh"
-document.body.style.touchAction="none"
 }else{
 document.body.style.overflow="auto"
-document.body.style.height="auto"
-document.body.style.touchAction="auto"
+window.scrollTo(0, scrollRef.current)
 }
 },[selected])
 
@@ -111,7 +104,7 @@ Latest launches in AI models, APIs, AI agents, chatbots and AI startups.
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={18} // ✅ tighter spacing
+spaceBetween={18}
 slidesPerView={1.05}
 grabCursor={true}
 autoplay={{delay:4000,disableOnInteraction:false}}
@@ -132,16 +125,21 @@ return(
 <SwiperSlide key={i}>
 
 <div className="
-group relative block h-[500px]   /* ✅ reduced ~10% */
+group relative block h-[500px]
 rounded-2xl overflow-hidden
 border border-white/10 bg-[#0a0a0a]
-transition duration-300 hover:scale-[1.02]
+transition duration-300
+hover:scale-[1.02]
+active:scale-100   /* ✅ FIX TOUCH ZOOM */
 ">
 
 {/* EXPAND */}
 
 <button
-onClick={()=>setSelected(item)}
+onClick={(e)=>{
+e.stopPropagation()
+setSelected(item)
+}}
 className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md border border-white/20 p-2 rounded-full"
 >
 <Maximize2 size={16} className="text-white"/>
@@ -151,7 +149,7 @@ className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md border borde
 
 {/* IMAGE */}
 
-<div className="relative h-44 overflow-hidden"> {/* slightly smaller */}
+<div className="relative h-44 overflow-hidden">
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
 className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
@@ -161,7 +159,7 @@ className="w-full h-full object-cover transition duration-700 group-hover:scale-
 
 {/* CONTENT */}
 
-<div className="p-4 flex flex-col justify-between h-[320px]"> {/* reduced */}
+<div className="p-4 flex flex-col justify-between h-[320px]">
 
 <div>
 
@@ -169,9 +167,9 @@ className="w-full h-full object-cover transition duration-700 group-hover:scale-
 {item.title}
 </h3>
 
-{/* ✅ ONLY DISPLAY LIMIT (REAL TEXT) */}
-<p className="text-slate-400 text-[11px] leading-relaxed">
-{truncateWords(item.description,65)}
+{/* ✅ 7 LINE LIMIT (PURE CSS — NO WORD CUT) */}
+<p className="text-slate-400 text-[11px] leading-relaxed line-clamp-7">
+{item.description}
 </p>
 
 </div>
@@ -217,7 +215,7 @@ OPEN →
 
 <div className="
 relative 
-w-[90%] sm:w-[380px]   /* ✅ more compact */
+w-[90%] sm:w-[380px]
 max-h-[85vh]
 bg-[#0a0a0a]
 rounded-2xl overflow-hidden
@@ -244,7 +242,7 @@ className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-whi
 {selected.title}
 </h2>
 
-{/* ✅ FULL REAL DESCRIPTION (NO LIMIT) */}
+{/* ✅ FULL DESCRIPTION (NO LIMIT) */}
 <p className="text-slate-300 text-[12px] leading-relaxed">
 {selected.description}
 </p>
