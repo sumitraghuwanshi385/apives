@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const cheerio = require("cheerio");
 
 let CACHE = {
 data: [],
@@ -10,11 +11,26 @@ time: 0
 const CACHE_TIME = 30 * 60 * 1000;
 
 /* -------------------------------
-TEXT CLEANER
+PROXY HEADERS (ANTI BLOCK)
+-------------------------------- */
+
+const HEADERS = {
+"User-Agent":
+"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+"Accept-Language": "en-US,en;q=0.9",
+"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+"Connection": "keep-alive"
+};
+
+/* -------------------------------
+TEXT CLEANER (UPGRADED)
 -------------------------------- */
 
 function cleanText(text=""){
 return text
+.replace(/\[\+\d+\schars\]/g,"") // remove [xxxx chars]
+.replace(/<[^>]*>/g,"")          // remove HTML tags
+.replace(/ONLY AVAILABLE IN PAID PLANS/gi,"")
 .replace(/\s+/g," ")
 .replace(/[\r\n]+/g," ")
 .replace(/\.\.\./g,"")
@@ -23,16 +39,54 @@ return text
 
 /* -------------------------------
 DESCRIPTION (FULL REAL TEXT)
-NO LIMIT ❌
 -------------------------------- */
 
 function formatDescription(desc=""){
-// ✅ ONLY CLEAN — NO LIMIT / NO CUT
 return cleanText(desc)
 }
 
 /* -------------------------------
-STRICT FILTER (ONLY CORE TECH)
+SCRAPER (FULL ARTICLE)
+-------------------------------- */
+
+async function getFullArticle(url){
+
+try{
+
+const { data } = await axios.get(url,{ headers: HEADERS, timeout: 8000 })
+
+const $ = cheerio.load(data)
+
+/* try multiple selectors */
+let text = ""
+
+$("article p").each((i,el)=>{
+text += $(el).text() + " "
+})
+
+if(!text){
+$("p").each((i,el)=>{
+text += $(el).text() + " "
+})
+}
+
+text = cleanText(text)
+
+/* fallback if scraper failed */
+if(text.length < 200){
+return ""
+}
+
+return text
+
+}catch(err){
+return ""
+}
+
+}
+
+/* -------------------------------
+STRICT FILTER
 -------------------------------- */
 
 const ALLOWED_KEYWORDS = [
@@ -105,7 +159,7 @@ newsdata
 
 const gnewsData = (gnewsRes.data.articles || []).map(a=>({
 title:a.title,
-description: a.content || a.description, // ✅ FIXED
+description: a.content || a.description,
 url:a.url,
 image:a.image,
 publishedAt:a.publishedAt,
@@ -114,7 +168,7 @@ source:{name:a.source?.name || "GNews"}
 
 const newsapiData = (newsapiRes.data.articles || []).map(a=>({
 title:a.title,
-description: a.content || a.description, // ✅ FIXED
+description: a.content || a.description,
 url:a.url,
 image:a.urlToImage,
 publishedAt:a.publishedAt,
@@ -123,7 +177,7 @@ source:{name:a.source?.name || "NewsAPI"}
 
 const newsdataData = (newsdataRes.data.results || []).map(a=>({
 title:a.title,
-description: a.content || a.description, // ✅ FIXED
+description: a.content || a.description,
 url:a.link,
 image:a.image_url,
 publishedAt:a.pubDate,
@@ -136,7 +190,7 @@ let all = [
 ...newsdataData
 ]
 
-/* FILTER STRICT */
+/* FILTER */
 
 all = all.filter(n =>
 n.title &&
@@ -164,35 +218,40 @@ unique.sort((a,b)=>
 new Date(b.publishedAt) - new Date(a.publishedAt)
 )
 
-/* FINAL FORMAT */
+/* -------------------------------
+SCRAPE FULL ARTICLES (🔥 MAIN PART)
+-------------------------------- */
 
-const finalNews = unique.slice(0,40).map(n=>({
+const enriched = await Promise.all(
+unique.slice(0,40).map(async (n)=>{
 
+const full = await getFullArticle(n.url)
+
+return {
 title: cleanText(n.title),
 
-// ✅ FULL RAW DESCRIPTION (NO LIMIT)
-description: formatDescription(n.description),
+// ✅ PRIORITY: FULL ARTICLE → FALLBACK: API DESC
+description: full || formatDescription(n.description),
 
 url: n.url,
-
 image: n.image,
-
 publishedAt: n.publishedAt,
-
 source: n.source
+}
 
-}))
+})
+)
 
 /* CACHE */
 
-CACHE.data = finalNews
+CACHE.data = enriched
 CACHE.time = Date.now()
 
 res.json({
 success:true,
 cached:false,
-total:finalNews.length,
-data:finalNews
+total:enriched.length,
+data:enriched
 })
 
 }catch(err){
