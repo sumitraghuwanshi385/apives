@@ -18,8 +18,8 @@ return ""
 }
 }
 
-// ✅ WORD BASED TRUNCATE (60 words)
-const truncateWords=(text:string,limit:number=60)=>{
+// ✅ ONLY DISPLAY LIMIT (NO SUMMARY, NO CHANGE TO REAL TEXT)
+const truncateWords=(text:string,limit:number=65)=>{
 if(!text) return ""
 const words=text.split(" ")
 if(words.length<=limit) return text
@@ -67,7 +67,7 @@ return shuffle(unique).slice(0,60)
 return()=>clearInterval(interval)
 },[])
 
-// ✅ STRONG BODY SCROLL LOCK (UPDATED)
+// ✅ STRONG BODY SCROLL LOCK
 useEffect(()=>{
 if(selected){
 document.body.style.overflow="hidden"
@@ -111,15 +111,15 @@ Latest launches in AI models, APIs, AI agents, chatbots and AI startups.
 
 <Swiper
 modules={[Autoplay]}
-spaceBetween={20}
-slidesPerView={1.1}
+spaceBetween={18} // ✅ tighter spacing
+slidesPerView={1.05}
 grabCursor={true}
 autoplay={{delay:4000,disableOnInteraction:false}}
 breakpoints={{
-480:{slidesPerView:1.2},
-640:{slidesPerView:1.5},
-768:{slidesPerView:2},
-1024:{slidesPerView:2.5}
+480:{slidesPerView:1.15},
+640:{slidesPerView:1.4},
+768:{slidesPerView:1.9},
+1024:{slidesPerView:2.3}
 }}
 >
 
@@ -132,7 +132,7 @@ return(
 <SwiperSlide key={i}>
 
 <div className="
-group relative block h-[560px]
+group relative block h-[500px]   /* ✅ reduced ~10% */
 rounded-2xl overflow-hidden
 border border-white/10 bg-[#0a0a0a]
 transition duration-300 hover:scale-[1.02]
@@ -151,7 +151,7 @@ className="absolute top-3 right-3 z-20 bg-black/50 backdrop-blur-md border borde
 
 {/* IMAGE */}
 
-<div className="relative h-48 overflow-hidden">
+<div className="relative h-44 overflow-hidden"> {/* slightly smaller */}
 <img
 src={item.image || "https://images.unsplash.com/photo-1677442136019-21780ecad995"}
 className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
@@ -161,8 +161,7 @@ className="w-full h-full object-cover transition duration-700 group-hover:scale-
 
 {/* CONTENT */}
 
-{/* ✅ FIXED HEIGHT + FLEX GAP CONTROL */}
-<div className="p-5 flex flex-col justify-between h-[360px]">
+<div className="p-4 flex flex-col justify-between h-[320px]"> {/* reduced */}
 
 <div>
 
@@ -170,15 +169,15 @@ className="w-full h-full object-cover transition duration-700 group-hover:scale-
 {item.title}
 </h3>
 
+{/* ✅ ONLY DISPLAY LIMIT (REAL TEXT) */}
 <p className="text-slate-400 text-[11px] leading-relaxed">
-{truncateWords(item.description,60)}
+{truncateWords(item.description,65)}
 </p>
 
 </div>
 
 {/* SOURCE */}
 
-{/* ✅ FIXED BOTTOM ALIGN (SPACE CONTROL) */}
 <div className="flex items-center justify-between mt-2">
 
 <div className="flex items-center gap-2 bg-green-500/15 border border-green-500/30 text-green-400 px-3 py-1 rounded-full text-[10px] font-semibold">
@@ -218,8 +217,8 @@ OPEN →
 
 <div className="
 relative 
-w-[92%] sm:w-[400px]   /* ✅ SMALLER WIDTH */
-max-h-[85vh]           /* ✅ HEIGHT CONTROL */
+w-[90%] sm:w-[380px]   /* ✅ more compact */
+max-h-[85vh]
 bg-[#0a0a0a]
 rounded-2xl overflow-hidden
 border border-green-500/30
@@ -235,10 +234,9 @@ className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-whi
 <X size={16} className="text-white"/>
 </button>
 
-{/* ✅ ONLY INNER SCROLL (FIXED BACKGROUND) */}
 <div className="overflow-y-auto max-h-[85vh]">
 
-<img src={selected.image} className="w-full h-44 object-cover"/> {/* ✅ slightly smaller */}
+<img src={selected.image} className="w-full h-40 object-cover"/>
 
 <div className="p-4">
 
@@ -246,6 +244,7 @@ className="absolute top-4 right-4 bg-white/10 backdrop-blur-md border border-whi
 {selected.title}
 </h2>
 
+{/* ✅ FULL REAL DESCRIPTION (NO LIMIT) */}
 <p className="text-slate-300 text-[12px] leading-relaxed">
 {selected.description}
 </p>
