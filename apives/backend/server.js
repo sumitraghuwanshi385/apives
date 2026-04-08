@@ -23,6 +23,11 @@ const Api = require('./models/ApiListing');
 
 // ================= BASIC ROUTES =================
 
+// ✅ ROOT ROUTE (ADD THIS HERE)
+app.get("/", (req, res) => {
+  res.send("Apives backend running 🚀");
+});
+
 // 🔥 Health check
 app.get("/ping", (req, res) => {
   res.status(200).send("OK");
