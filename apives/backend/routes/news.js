@@ -10,6 +10,26 @@ time: 0
 const CACHE_TIME = 30 * 60 * 1000;
 
 /* -------------------------------
+AXIOS INSTANCE (TIMEOUT ADD)
+-------------------------------- */
+
+const axiosInstance = axios.create({
+timeout: 8000
+});
+
+/* -------------------------------
+SAFE FETCH (NO CRASH)
+-------------------------------- */
+
+const safeFetch = async (promise) => {
+try{
+return await promise;
+}catch{
+return { data: {} };
+}
+};
+
+/* -------------------------------
 TEXT CLEANER
 -------------------------------- */
 
@@ -30,11 +50,7 @@ NO LIMIT ❌
 -------------------------------- */
 
 function formatDescription(desc=""){
-
-// ✅ CLEAN ONLY (NO TRIM, NO LIMIT)
-let final = cleanText(desc)
-
-return final
+return cleanText(desc)
 }
 
 /* -------------------------------
@@ -62,13 +78,9 @@ function isRelevant(article){
 
 const text = (article.title + " " + article.description).toLowerCase()
 
-/* block garbage */
-
 if(BLOCKED.some(b => text.includes(b))){
 return false
 }
-
-/* must match strong tech keywords */
 
 return ALLOWED_KEYWORDS.some(k => text.includes(k))
 }
@@ -93,29 +105,31 @@ data:CACHE.data
 
 /* FETCH */
 
-const gnews = axios.get(
+const gnews = axiosInstance.get(
 `https://gnews.io/api/v4/search?q=AI OR API OR SaaS OR "machine learning" OR startup OR "data science"&lang=en&max=20&token=${process.env.GNEWS_KEY}`
 )
 
-const newsapi = axios.get(
+const newsapi = axiosInstance.get(
 `https://newsapi.org/v2/everything?q=AI OR API OR SaaS OR "machine learning" OR startup OR "data science"&language=en&pageSize=20&apiKey=${process.env.NEWSAPI_KEY}`
 )
 
-const newsdata = axios.get(
+const newsdata = axiosInstance.get(
 `https://newsdata.io/api/1/news?apikey=${process.env.NEWSDATA_KEY}&q=AI OR API OR SaaS OR "machine learning" OR startup OR "data science"&language=en`
 )
 
+/* ✅ SAFE PROMISE.ALL (NO CRASH) */
+
 const [gnewsRes,newsapiRes,newsdataRes] = await Promise.all([
-gnews,
-newsapi,
-newsdata
+safeFetch(gnews),
+safeFetch(newsapi),
+safeFetch(newsdata)
 ])
 
 /* NORMALIZE */
 
 const gnewsData = (gnewsRes.data.articles || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description,
 url:a.url,
 image:a.image,
 publishedAt:a.publishedAt,
@@ -124,7 +138,7 @@ source:{name:a.source?.name || "GNews"}
 
 const newsapiData = (newsapiRes.data.articles || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description,
 url:a.url,
 image:a.urlToImage,
 publishedAt:a.publishedAt,
@@ -133,7 +147,7 @@ source:{name:a.source?.name || "NewsAPI"}
 
 const newsdataData = (newsdataRes.data.results || []).map(a=>({
 title:a.title,
-description:a.description,
+description: a.content || a.description,
 url:a.link,
 image:a.image_url,
 publishedAt:a.pubDate,
@@ -180,7 +194,6 @@ const finalNews = unique.slice(0,40).map(n=>({
 
 title: cleanText(n.title),
 
-// ✅ FULL DESCRIPTION (NO LIMIT)
 description: formatDescription(n.description),
 
 url: n.url,
