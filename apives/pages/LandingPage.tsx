@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import NewsFeed from "../components/NewsFeed";
 import {
 TrendingUp,
 Heart,
@@ -1078,7 +1077,6 @@ return (
 </div>
 </section>
 
-<NewsFeed />
 
 {/* ===============================
  APIVES SPONSORS
