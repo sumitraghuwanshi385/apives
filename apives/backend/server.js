@@ -28,6 +28,10 @@ app.get("/", (req, res) => {
   res.send("Apives backend running 🚀");
 });
 
+app.head("/", (req, res) => {
+  res.status(200).end();
+});
+
 // 🔥 Health check
 app.get("/ping", (req, res) => {
   res.status(200).send("OK");
