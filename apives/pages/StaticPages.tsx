@@ -64,11 +64,11 @@ export const SponsorshipPage: React.FC = () => (
   {/* APEX */}
   <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <Crown className="text-amber-400" size={18} />
+      <Users className="text-green-400" size={18} />
       <h4 className="text-white font-bold">Apex Sponsors</h4>
     </div>
-    <p className="text-slate-400 text-xs">
-      Top-tier brand visibility for category-defining companies.
+    <p className="text-slate-400 text-xs">     
+Supporting the ecosystem and developer adoption.
     </p>
     <ul className="space-y-2">
       {[
@@ -93,7 +93,7 @@ export const SponsorshipPage: React.FC = () => (
       <h4 className="text-white font-bold">Prime Sponsors</h4>
     </div>
     <p className="text-slate-400 text-xs">
-      Always-visible, long-term brand presence.
+      Always-Shine and long-term brand presence.
     </p>
     <ul className="space-y-2">
       {[
@@ -166,11 +166,11 @@ export const SponsorshipPage: React.FC = () => (
   {/* COMMUNITY */}
   <div className="space-y-3">
     <div className="flex items-center gap-2">
-      <Users className="text-green-400" size={18} />
+      <Crown className="text-amber-400" size={18} />
       <h4 className="text-white font-bold">Apives Partner</h4>
     </div>
     <p className="text-slate-400 text-xs">
-      Supporting the ecosystem and developer adoption.
+      Top-tier brand visibility for category-defining companies.
     </p>
     <ul className="space-y-2">
       {[
