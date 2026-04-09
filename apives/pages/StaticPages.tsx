@@ -73,7 +73,6 @@ export const SponsorshipPage: React.FC = () => (
     <ul className="space-y-2">
       {[
         'Slots: 2',
-        'First impression visibility on the landing page',
         'Premium branding & trust association'
       ].map((t, i) => (
         <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
@@ -99,8 +98,7 @@ export const SponsorshipPage: React.FC = () => (
     <ul className="space-y-2">
       {[
         'Slots: 2',
-        'Consistent exposure across all pages',
-        'Strong recall without disrupting UX'
+        'Strong recall in Sponser section'
       ].map((t, i) => (
         <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
           <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
@@ -125,7 +123,6 @@ export const SponsorshipPage: React.FC = () => (
     <ul className="space-y-2">
       {[
         'Slots: 2',
-        'Visible during core discovery flows',
         'Aligned with high-intent users'
       ].map((t, i) => (
         <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
