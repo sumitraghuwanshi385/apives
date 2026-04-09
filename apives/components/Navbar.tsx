@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Newspaper } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -56,26 +56,6 @@ navigate('/');
 }, 1000);
 };
 
-const scrollToNews = () => {
-
-navigate("/")
-
-setTimeout(() => {
-
-const el = document.getElementById("news-feed")
-
-if(el){
-el.scrollIntoView({
-behavior:"smooth",
-block:"start"
-})
-}
-
-},300)
-
-setIsOpen(false)
-
-}
 
 if (isAuthPage || isOnboardingPage) return null;
 
@@ -116,13 +96,6 @@ return (
         <NavLink to="/sponsorship" icon={Handshake}>
   For Sponsorship
 </NavLink>   
-<button
-onClick={scrollToNews}
-className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
->
-<Newspaper size={14} className="text-mora-500/70 group-hover:text-mora-500" />
-News Feed
-</button>
       </div>    
     </div>    
 
@@ -171,9 +144,9 @@ News Feed
         </Link>    
       )}
 
-{/* 📰 Mobile News Icon */}
+{/* 🤝 Mobile Sponsorship Icon */}
 <button
-onClick={scrollToNews}
+onClick={() => navigate('/sponsorship')}
 className="
 md:hidden
 w-7 h-7 md:w-10 md:h-10
@@ -189,7 +162,7 @@ active:scale-90
 transition-all
 "
 >
-<Newspaper size={14} className="md:w-5 md:h-5" />
+<Handshake size={14} className="md:w-5 md:h-5 text-mora-500" />
 </button>
 
 
@@ -236,13 +209,9 @@ transition-all
       <MobileNavLink to="/browse" icon={Search} onClick={() => setIsOpen(false)}>Explore APIs</MobileNavLink>    
       <MobileNavLink to="/fresh" icon={Zap} onClick={() => setIsOpen(false)}>New Releases</MobileNavLink>    
       <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
-<button
-onClick={scrollToNews}
-className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-300 hover:text-mora-400 hover:bg-mora-500/5 border border-transparent hover:border-white/10 transition-all uppercase tracking-wide"
->
-<Newspaper size={13} className="text-mora-500/60" />
-News Feed
-</button>
+<MobileNavLink to="/sponsorship" icon={Handshake} onClick={() => setIsOpen(false)}>
+  Sponsorship
+</MobileNavLink>
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
