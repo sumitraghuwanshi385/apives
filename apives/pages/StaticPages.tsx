@@ -73,7 +73,6 @@ export const SponsorshipPage: React.FC = () => (
     <ul className="space-y-2">
       {[
         'Slots: 2',
-        'Displayed directly below “Total APIs Listed”',
         'First impression visibility on the landing page',
         'Premium branding & trust association'
       ].map((t, i) => (
@@ -99,8 +98,7 @@ export const SponsorshipPage: React.FC = () => (
     </p>
     <ul className="space-y-2">
       {[
-        'Slots: 4',
-        'Displayed on the Landing Page (above Footer)',
+        'Slots: 2',
         'Consistent exposure across all pages',
         'Strong recall without disrupting UX'
       ].map((t, i) => (
@@ -127,7 +125,6 @@ export const SponsorshipPage: React.FC = () => (
     <ul className="space-y-2">
       {[
         'Slots: 2',
-        'Displayed on the Browse APIs page',
         'Visible during core discovery flows',
         'Aligned with high-intent users'
       ].map((t, i) => (
@@ -173,16 +170,16 @@ export const SponsorshipPage: React.FC = () => (
   <div className="space-y-3">
     <div className="flex items-center gap-2">
       <Users className="text-green-400" size={18} />
-      <h4 className="text-white font-bold">Community Sponsors</h4>
+      <h4 className="text-white font-bold">Apives Sponsor</h4>
     </div>
     <p className="text-slate-400 text-xs">
       Supporting the ecosystem and developer adoption.
     </p>
     <ul className="space-y-2">
       {[
-        'Fresh APIs page: 2 slots',
-        'Community Favorites page: 2 slots',
-        'Embedded inside community-focused experiences',
+        'Slots: 1',
+        'Our main Apives sponser tag',
+        'Embedded below hero section for users-focused experiences',
         'Built for ecosystem-first brands'
       ].map((t, i) => (
         <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
@@ -192,7 +189,7 @@ export const SponsorshipPage: React.FC = () => (
       ))}
     </ul>
     <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
-      Label: Community Sponsor
+      Label: Apives Sponsor
     </span>
   </div>
 
