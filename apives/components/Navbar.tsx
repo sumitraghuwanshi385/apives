@@ -162,7 +162,7 @@ active:scale-90
 transition-all
 "
 >
-<Handshake size={14} className="md:w-5 md:h-5 text-mora-500" />
+<Handshake size={14} className="md:w-5 md:h-5" />
 </button>
 
 
@@ -187,7 +187,7 @@ transition-all
 
 > 
 
-  <Search size={14} className="md:w-5 md:h-5 text-mora-500" />    
+  <Search size={14} className="md:w-5 md:h-5" />    
 </button>  <div className="relative">    
             <button     
               onClick={() => setIsOpen(!isOpen)}     
