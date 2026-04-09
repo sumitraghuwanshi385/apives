@@ -170,7 +170,7 @@ export const SponsorshipPage: React.FC = () => (
   <div className="space-y-3">
     <div className="flex items-center gap-2">
       <Users className="text-green-400" size={18} />
-      <h4 className="text-white font-bold">Apives Sponsor</h4>
+      <h4 className="text-white font-bold">Apives Partner</h4>
     </div>
     <p className="text-slate-400 text-xs">
       Supporting the ecosystem and developer adoption.
@@ -178,8 +178,8 @@ export const SponsorshipPage: React.FC = () => (
     <ul className="space-y-2">
       {[
         'Slots: 1',
-        'Our main Apives sponser tag',
-        'Embedded below hero section for users-focused experiences',
+        'Our main Apives Partner Tag',
+        'Seamless user experiences, right below the Hero section',
         'Built for ecosystem-first brands'
       ].map((t, i) => (
         <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
@@ -189,7 +189,7 @@ export const SponsorshipPage: React.FC = () => (
       ))}
     </ul>
     <span className="text-[10px] uppercase tracking-widest text-mora-400 font-bold">
-      Label: Apives Sponsor
+      Label: Apives Partner
     </span>
   </div>
 
