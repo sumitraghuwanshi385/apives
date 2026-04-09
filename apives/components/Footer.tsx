@@ -209,7 +209,7 @@ text-slate-500 hover:text-white transition-all group"
     </span>
 
     <span>
-      &copy; 2025 Apives Ecosystem • Made with 💚
+      &copy; 2025 Apives Ecosystem
     </span>
 
   </p>
