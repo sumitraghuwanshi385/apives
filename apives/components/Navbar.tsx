@@ -187,7 +187,7 @@ transition-all
 
 > 
 
-  <Search size={14} className="md:w-5 md:h-5" />    
+  <Search size={14} className="md:w-5 md:h-5 text-mora-500" />    
 </button>  <div className="relative">    
             <button     
               onClick={() => setIsOpen(!isOpen)}     
