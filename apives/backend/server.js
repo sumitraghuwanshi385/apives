@@ -45,13 +45,13 @@ app.get("/api/landing", async (req, res) => {
 
       // 🔥 Universal (6 random)
       Api.aggregate([
-        { $sample: { size: 6 } }
+        { $sample: { size: 9 } }
       ]),
 
       // 🔥 Fresh (latest 3)
       Api.find({})
         .sort({ createdAt: -1 })
-        .limit(3),
+        .limit(6),
 
       // 🔥 Community (most liked 3)
       Api.find({})
