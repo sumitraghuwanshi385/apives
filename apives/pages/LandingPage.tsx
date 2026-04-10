@@ -283,10 +283,10 @@ style:{textShadow:"none"}
 
 {/* DEVELOPER TIP */}
 
-<div className="mt-5 rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-300 flex items-center gap-3">
+<div className="mt-3 rounded-lg border border-green-500/20 bg-green-500/10 p-2.5 text-[11px] text-green-300 flex items-center gap-2">
 
-<div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-<Key className="w-4 h-4 text-green-400"/>
+<div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+<Key className="w-3.5 h-3.5 text-green-400"/>
 </div>
 
 <p>
