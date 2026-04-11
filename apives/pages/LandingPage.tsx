@@ -861,8 +861,8 @@ return (
 
 {/* HEADING */}
 <div className="text-center mb-3 -mt-2 md:-mt-4">
-  <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-slate-500 font-bold">
-    Exclusive Builder Perk
+  <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
+    EXCLUSIVE BUILDER PERK
   </p>
 </div>
 
