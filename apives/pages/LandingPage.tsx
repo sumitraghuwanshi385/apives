@@ -859,6 +859,73 @@ return (
     </div>  
   </section>  
 
+<div className="w-full flex justify-center mt-4 md:mt-6 px-4">
+  <div className="
+    w-full max-w-2xl
+    flex items-center justify-between
+    gap-3
+    px-3 py-2
+    rounded-full
+    border border-green-500/30
+    bg-green-500/10
+    backdrop-blur-md
+    hover:bg-green-500/15
+    transition-all
+    shadow-[0_0_20px_rgba(34,197,94,0.15)]
+  ">
+
+    {/* LEFT SIDE */}
+    <div className="flex items-center gap-2">
+
+      {/* SERPAPI LOGO */}
+      <img
+        src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+        alt="SerpApi"
+        className="w-6 h-6 rounded-full bg-white p-[2px]"
+      />
+
+      {/* X ICON */}
+      <span className="text-slate-500 text-[10px] font-bold">×</span>
+
+      {/* APIVES LOGO */}
+      <img
+        src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+        alt="Apives"
+        className="w-6 h-6 object-contain"
+      />
+
+      {/* TEXT */}
+      <div className="flex flex-col leading-tight ml-1">
+        <p className="text-green-400 text-[11px] font-bold">
+          $500 API Credits for Builders
+        </p>
+
+        <p className="text-[10px] text-slate-400">
+          First 30 users only • Use code <span className="text-white font-semibold">APIVES500</span>
+        </p>
+      </div>
+    </div>
+
+    {/* RIGHT CTA */}
+    <button
+      onClick={() => navigate("/offers/serpapi")}
+      className="
+        text-[9px] md:text-[10px]
+        px-3 py-1
+        rounded-full
+        bg-white text-black
+        font-bold uppercase
+        tracking-widest
+        hover:scale-105
+        transition-all
+      "
+    >
+      Claim
+    </button>
+
+  </div>
+</div>
+
 <section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
 
 {/* ===============================
