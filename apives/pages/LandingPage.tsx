@@ -859,12 +859,12 @@ return (
     </div>  
   </section>  
 
-<div className="w-full flex justify-center mt-4 md:mt-6 px-4">
+<div className="w-full flex justify-center mt-3 md:mt-4 px-4">
   <div className="
-    w-full max-w-2xl
+    w-full max-w-xl
     flex items-center justify-between
     gap-3
-    px-3 py-2
+    px-3 py-1.5
     rounded-full
     border border-green-500/30
     bg-green-500/10
@@ -874,43 +874,39 @@ return (
     shadow-[0_0_20px_rgba(34,197,94,0.15)]
   ">
 
-    {/* LEFT SIDE */}
+    {/* LEFT */}
     <div className="flex items-center gap-2">
 
-      {/* SERPAPI LOGO */}
       <img
         src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
         alt="SerpApi"
-        className="w-6 h-6 rounded-full bg-white p-[2px]"
+        className="w-5 h-5 rounded-full bg-white p-[2px]"
       />
 
-      {/* X ICON */}
       <span className="text-slate-500 text-[10px] font-bold">×</span>
 
-      {/* APIVES LOGO */}
       <img
         src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
         alt="Apives"
-        className="w-6 h-6 object-contain"
+        className="w-5 h-5 object-contain"
       />
 
-      {/* TEXT */}
       <div className="flex flex-col leading-tight ml-1">
         <p className="text-green-400 text-[11px] font-bold">
           $500 API Credits for Builders
         </p>
 
         <p className="text-[10px] text-slate-400">
-          First 30 users only • Use code <span className="text-white font-semibold">APIVES500</span>
+          Limited access for early builders!
         </p>
       </div>
     </div>
 
-    {/* RIGHT CTA */}
+    {/* BUTTON */}
     <button
       onClick={() => navigate("/offers/serpapi")}
       className="
-        text-[9px] md:text-[10px]
+        text-[9px]
         px-3 py-1
         rounded-full
         bg-white text-black
