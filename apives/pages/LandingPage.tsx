@@ -871,16 +871,29 @@ return (
 
   {/* OFFER BOX */}
   <div className="flex justify-center px-4">
-    <div className="w-full max-w-xl flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md shadow-[0_0_25px_rgba(34,197,94,0.2)]">
+    <div className="
+      w-full max-w-xl 
+      flex items-center justify-between 
+      gap-2 md:gap-3   /* 🔽 mobile gap reduced */
+      px-4 py-3 
+      rounded-xl 
+      border border-green-500/30 
+      bg-green-500/10 
+      backdrop-blur-md 
+      md:shadow-[0_0_25px_rgba(34,197,94,0.2)]  /* ❌ mobile shadow removed */
+    ">
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3"> {/* 🔽 mobile spacing tight */}
 
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
           className="w-6 h-6 rounded-lg bg-white p-[2px]"
         />
 
-        <span className="text-slate-500 text-xs font-bold">×</span>
+        {/* ❗ X spacing reduced */}
+        <span className="text-slate-500 text-[10px] md:text-xs font-bold mx-0.5">
+          ×
+        </span>
 
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
@@ -888,19 +901,30 @@ return (
         />
 
         <div>
-          <p className="text-green-400 text-xs font-bold">
+          {/* 🔽 text size reduced (mobile only) */}
+          <p className="text-green-400 text-[11px] md:text-xs font-bold">
             $500 SerpAPI Credits for Builders
           </p>
-          <p className="text-[10px] text-slate-400">
+
+          <p className="text-[9px] md:text-[10px] text-slate-400">
             Limited access for early builders
           </p>
         </div>
 
       </div>
 
+      {/* 🔽 button reduced ~15% mobile */}
       <button
         onClick={() => navigate("/offers/serpapi")}
-        className="text-[10px] px-3 py-1.5 rounded-full bg-white text-black font-bold uppercase tracking-widest hover:scale-105 transition-all"
+        className="
+          text-[9px] md:text-[10px] 
+          px-2.5 md:px-3 
+          py-1 md:py-1.5 
+          rounded-full 
+          bg-white text-black 
+          font-bold uppercase tracking-widest 
+          hover:scale-105 transition-all
+        "
       >
         Claim
       </button>
@@ -910,7 +934,7 @@ return (
 
 </section>
 
-<section className="pt-4 md:pt-6 pb-6 bg-black border-t border-white/5">
+<section className="pt-4 md:pt-6 pb-6 bg-black">
 
   <QuickStartPlayground />
   <LiveApiRunner />
@@ -931,9 +955,9 @@ return (
       <h2 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
         What are you building today?
       </h2>
-      <p className="mt-2 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-        Choose a use-case and explore APIs curated specifically for that build.
-      </p>
+      <p className="mt-2 text-slate-400 text-xs md:text-sm max-w-xl mx-auto">
+  Choose a use-case and explore APIs curated specifically for that build.
+</p>
     </div>
 
     {/* Grid */}
