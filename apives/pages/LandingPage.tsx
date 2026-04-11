@@ -727,6 +727,9 @@ className="text-xs text-slate-400 flex justify-between bg-white/5 px-2 py-1 roun
 };
 
 export const LandingPage: React.FC = () => {
+
+const navigate = useNavigate();
+
 const [isAuthenticated, setIsAuthenticated] = useState(false);
 const [userName, setUserName] = useState('');
 const [universalApis, setUniversalApis] = useState<ApiListing[]>([]);
@@ -1214,8 +1217,8 @@ border border-amber-400/40
 bg-gradient-to-br from-amber-400/15 to-transparent
 hover:from-amber-400/25
 transition-all
-shadow-[0_0_35px_rgba(245,158,11,0.25)]
-hover:shadow-[0_0_55px_rgba(245,158,11,0.45)]
+shadow-[0_0_25px_rgba(245,158,11,0.18)]
+hover:shadow-[0_0_40px_rgba(245,158,11,0.30)]
 "
 >
 
@@ -1356,9 +1359,8 @@ border border-orange-500/30
 bg-gradient-to-br from-orange-500/10 to-transparent
 hover:from-orange-500/20
 transition-all hover:scale-[1.02]
-shadow-[0_0_35px_rgba(249,115,22,0.25)]
-hover:shadow-[0_0_55px_rgba(249,115,22,0.45)]
-"
+shadow-[0_0_25px_rgba(249,115,22,0.18)]
+hover:shadow-[0_0_40px_rgba(249,115,22,0.30)]"
 >
 
 <img
