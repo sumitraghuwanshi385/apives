@@ -1214,8 +1214,8 @@ border border-amber-400/40
 bg-gradient-to-br from-amber-400/15 to-transparent
 hover:from-amber-400/25
 transition-all
-shadow-[0_0_35px_rgba(255,255,255,0.12)]
-hover:shadow-[0_0_55px_rgba(255,255,255,0.22)]
+shadow-[0_0_35px_rgba(245,158,11,0.25)]
+hover:shadow-[0_0_55px_rgba(245,158,11,0.45)]
 "
 >
 
@@ -1356,8 +1356,8 @@ border border-orange-500/30
 bg-gradient-to-br from-orange-500/10 to-transparent
 hover:from-orange-500/20
 transition-all hover:scale-[1.02]
-shadow-[0_0_35px_rgba(255,255,255,0.12)]
-hover:shadow-[0_0_55px_rgba(255,255,255,0.22)]
+shadow-[0_0_35px_rgba(249,115,22,0.25)]
+hover:shadow-[0_0_55px_rgba(249,115,22,0.45)]
 "
 >
 
