@@ -859,86 +859,62 @@ return (
     </div>  
   </section>  
 
-{/* HEADING */}
-<div className="text-center mb-3 -mt-2 md:-mt-4">
-  <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
-    EXCLUSIVE BUILDER PERK
-  </p>
-</div>
+{/* ================= OFFER SECTION ================= */}
+<section className="relative py-4 md:py-6 bg-black">
 
-{/* OFFER BOX */}
-<div className="w-full flex justify-center mt-1 md:mt-2 px-4 -translate-y-6 md:-translate-y-8">
-  <div className="
-    w-full max-w-xl
-    flex items-center justify-between
-    gap-3
-    px-4 py-3
-    rounded-xl
-    border border-green-500/30
-    bg-green-500/10
-    backdrop-blur-md
-    hover:bg-green-500/15
-    transition-all
-    shadow-[0_0_25px_rgba(34,197,94,0.2)]
-  ">
-
-    {/* LEFT */}
-    <div className="flex items-center gap-3">
-
-      <img
-        src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-        alt="SerpApi"
-        className="w-6 h-6 rounded-lg bg-white p-[2px]"
-      />
-
-      <span className="text-slate-500 text-xs font-bold">×</span>
-
-      <img
-        src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-        alt="Apives"
-        className="w-6 h-6 object-contain"
-      />
-
-      <div className="flex flex-col leading-tight">
-        <p className="text-green-400 text-xs font-bold">
-          $500 SerpAPI Credits for Builders
-        </p>
-
-        <p className="text-[10px] text-slate-400">
-          Limited access for early builders
-        </p>
-      </div>
-    </div>
-
-    {/* BUTTON */}
-    <button
-      onClick={() => navigate("/offers/serpapi")}
-      className="
-        text-[10px]
-        px-3 py-1.5
-        rounded-full
-        bg-white text-black
-        font-bold uppercase
-        tracking-widest
-        hover:scale-105
-        transition-all
-      "
-    >
-      Claim
-    </button>
-
+  {/* HEADING */}
+  <div className="text-center mb-2">
+    <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
+      EXCLUSIVE BUILDER PERK
+    </p>
   </div>
-</div>
 
-<section className="pt-2 pb-3 md:pt-3 md:pb-4 bg-black border-t border-white/5">
+  {/* OFFER BOX */}
+  <div className="flex justify-center px-4">
+    <div className="w-full max-w-xl flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md shadow-[0_0_25px_rgba(34,197,94,0.2)]">
 
-{/* ===============================
- APIVES QUICK START PLAYGROUND
-================================ */}
+      <div className="flex items-center gap-3">
 
-<QuickStartPlayground />
+        <img
+          src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+          className="w-6 h-6 rounded-lg bg-white p-[2px]"
+        />
 
-<LiveApiRunner />
+        <span className="text-slate-500 text-xs font-bold">×</span>
+
+        <img
+          src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+          className="w-7 h-7 object-contain"
+        />
+
+        <div>
+          <p className="text-green-400 text-xs font-bold">
+            $500 SerpAPI Credits for Builders
+          </p>
+          <p className="text-[10px] text-slate-400">
+            Limited access for early builders
+          </p>
+        </div>
+
+      </div>
+
+      <button
+        onClick={() => navigate("/offers/serpapi")}
+        className="text-[10px] px-3 py-1.5 rounded-full bg-white text-black font-bold uppercase tracking-widest hover:scale-105 transition-all"
+      >
+        Claim
+      </button>
+
+    </div>
+  </div>
+
+</section>
+
+<section className="pt-4 md:pt-6 pb-6 bg-black border-t border-white/5">
+
+  <QuickStartPlayground />
+  <LiveApiRunner />
+</section>
 
 
 {/* ===============================
