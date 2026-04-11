@@ -825,7 +825,10 @@ const updateLandingUpvotes = (apiId: string, delta: number) => {
 return (
 <div className="flex flex-col min-h-screen overflow-hidden bg-black text-slate-100 selection:bg-mora-500/30">
 <section className="relative pt-24 md:pt-36 pb-8 md:pb-12 overflow-hidden">
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(34,197,94,0.1),transparent_70%)] pointer-events-none"></div>
+
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]pointer-events-none"></div>
+
+
 <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
 <h1 className="text-3xl md:text-8xl font-display font-bold text-white tracking-tighter mb-4 md:mb-8 leading-[1] animate-slide-up">
 {isAuthenticated ? (
@@ -1210,10 +1213,9 @@ rounded-2xl
 border border-amber-400/40
 bg-gradient-to-br from-amber-400/15 to-transparent
 hover:from-amber-400/25
-transition-all
-shadow-[0_0_40px_rgba(245,158,11,0.25)]
-hover:shadow-[0_0_60px_rgba(245,158,11,0.45)]
-"
+transition-all hover:scale-[1.02]
+shadow-[0_0_40px_rgba(180,83,9,0.25)]
+hover:shadow-[0_0_60px_rgba(180,83,9,0.45)]"
 >
 
 <img
@@ -1277,8 +1279,8 @@ border border-white/20
 bg-gradient-to-br from-white/10 to-transparent
 hover:from-white/20
 transition-all hover:scale-[1.02]
-shadow-[0_0_40px_rgba(255,255,255,0.12)]
-hover:shadow-[0_0_60px_rgba(255,255,255,0.22)]
+shadow-[0_0_40px_rgba(180,83,9,0.25)]
+hover:shadow-[0_0_60px_rgba(180,83,9,0.45)]
 "
 >
 
