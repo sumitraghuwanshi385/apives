@@ -914,8 +914,6 @@ return (
 
   <QuickStartPlayground />
   <LiveApiRunner />
-</section>
-
 
 {/* ===============================
  WHAT ARE YOU BUILDING TODAY
