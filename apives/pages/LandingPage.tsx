@@ -874,17 +874,16 @@ return (
     <div className="
       w-full max-w-xl 
       flex items-center justify-between 
-      gap-2 md:gap-3   /* 🔽 mobile gap reduced */
+      gap-2 md:gap-3   /*  mobile gap reduced */
       px-4 py-3 
       rounded-xl 
       border border-green-500/30 
       bg-green-500/10 
       backdrop-blur-md 
-      md:shadow-[0_0_25px_rgba(34,197,94,0.2)]  /* ❌ mobile shadow removed */
+      md:shadow-[0_0_25px_rgba(34,197,94,0.2)]  /*  mobile shadow removed */
     ">
 
-      <div className="flex items-center gap-2 md:gap-3"> {/* 🔽 mobile spacing tight */}
-
+      <div className="flex items-center">
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
           className="w-6 h-6 rounded-lg bg-white p-[2px]"
@@ -903,7 +902,7 @@ return (
         <div>
           {/* 🔽 text size reduced (mobile only) */}
           <p className="text-green-400 text-[11px] md:text-xs font-bold">
-            Get $500 Free SerpAPI Credits
+            Get 500 Free SerpAPI Credits
           </p>
 
           <p className="text-[9px] md:text-[10px] text-slate-400">
