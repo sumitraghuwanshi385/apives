@@ -192,7 +192,7 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="pt-8 pb-12 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="pt-4 md:pt-6 pb-6 bg-black">
 
 {/* green glow */}
 
@@ -204,7 +204,7 @@ return(
 
 <div className="text-center mb-4">
 
-<h2 className="text-2xl md:text-4xl font-bold text-mora">
+<h2 className="text-2xl md:text-4xl font-bold !text-green-400">
 Quick Start Integration
 </h2>
 
@@ -477,15 +477,15 @@ await navigator.clipboard.writeText(response);
 
 return(
 
-<section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="pt-4 md:pt-6 pb-6 bg-black">
 
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
+<div className="absolute inset-0 bg-transparent pointer-events-none"/>
 
 <div className="max-w-5xl mx-auto px-4 relative z-10">
 
 <div className="text-center mb-6">
 
-<h2 className="text-2xl md:text-4xl font-bold text-white">
+<h2 className="text-2xl md:text-4xl font-bold text-mora">
 Live API Request Runner
 </h2>
 
@@ -860,38 +860,37 @@ return (
   </section>  
 
 {/* ================= OFFER SECTION ================= */}
-<section className="relative py-4 md:py-6 bg-black">
+<section className="relative pt-2 pb-4 md:pt-3 md:pb-5 bg-black -mt-4 md:-mt-6">
 
   {/* HEADING */}
-  <div className="text-center mb-2">
+  <div className="text-center mb-1 -mt-1">
     <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
       EXCLUSIVE BUILDER PERK
     </p>
   </div>
 
   {/* OFFER BOX */}
-  <div className="flex justify-center px-4">
+  <div className="flex justify-center px-4 mt-1">
     <div className="w-full max-w-xl flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md shadow-[0_0_25px_rgba(34,197,94,0.2)]">
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 md:gap-3">
 
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
           className="w-6 h-6 rounded-lg bg-white p-[2px]"
         />
 
-        <span className="text-slate-500 text-xs font-bold">×</span>
-
+        <span className="text-slate-500 text-[10px] mx-[-2px] font-bold">×</span>
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
           className="w-7 h-7 object-contain"
         />
 
         <div>
-          <p className="text-green-400 text-xs font-bold">
+          <p className="text-green-400 text-[11px] md:text-xs font-bold">
             $500 SerpAPI Credits for Builders
           </p>
-          <p className="text-[10px] text-slate-400">
+          <p className="text-[9px] md:text-[10px] text-slate-400">
             Limited access for early builders
           </p>
         </div>
@@ -910,7 +909,7 @@ return (
 
 </section>
 
-<section className="pt-4 md:pt-6 pb-6 bg-black border-t border-white/5">
+<section className="pt-4 md:pt-6 pb-6 bg-black">
 
   <QuickStartPlayground />
   <LiveApiRunner />
@@ -927,7 +926,7 @@ return (
 
     {/* Header */}
     <div className="text-center mb-8 md:mb-12">
-      <h2 className="text-2xl md:text-4xl font-display font-bold text-mora tracking-tight">
+      <h2 className="text-2xl md:text-4xl font-display font-bold !text-mora">
         What are you building today?
       </h2>
       <p className="mt-2 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
