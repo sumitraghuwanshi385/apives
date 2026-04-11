@@ -1,13 +1,13 @@
 import React from "react";
-import { Gift, CheckCircle2, ArrowRight } from "lucide-react";
+import { Gift, CheckCircle2, ArrowRight, Mail } from "lucide-react";
 import { BackButton } from "../components/BackButton";
 
 export default function SerpApiOffer() {
   return (
-    <div className="min-h-screen bg-black pt-28 pb-20 relative selection:bg-mora-500/30">
+    <div className="min-h-screen bg-black pt-24 pb-20 relative selection:bg-mora-500/30">
 
-      {/* BACK BUTTON */}
-      <div className="absolute top-28 left-4 lg:left-8 z-20">
+      {/* BACK BUTTON (thoda upar) */}
+      <div className="absolute top-20 left-4 lg:left-8 z-20">
         <BackButton />
       </div>
 
@@ -20,14 +20,14 @@ export default function SerpApiOffer() {
 
             <img
               src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-              className="w-9 h-9 rounded-xl bg-white p-[3px]"
+              className="w-10 h-10 rounded-xl bg-white p-[3px]"
             />
 
             <span className="text-slate-500 text-sm font-bold">×</span>
 
             <img
               src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-              className="w-10 h-10 object-contain"
+              className="w-11 h-11 object-contain"
             />
 
           </div>
@@ -54,7 +54,11 @@ export default function SerpApiOffer() {
           </div>
 
           <p className="text-slate-300 text-xs leading-relaxed">
-            Each selected user receives <span className="text-white font-semibold">500 Free SerpAPI Credits</span> to build, test, and launch projects.
+            Each selected user receives{" "}
+            <span className="text-white font-semibold">
+              500 Free SerpAPI Credits
+            </span>{" "}
+            to build, test, and launch real-world API products.
           </p>
 
         </div>
@@ -71,7 +75,7 @@ export default function SerpApiOffer() {
 
             {[
               "Click on Claim or visit SerpAPI",
-              "Contact their support via email or live chat",
+              "Contact their support via chat or email (contact@serpapi.com)",
               "Mention code: Apives500",
               "Credits will be added to your account"
             ].map((step, i) => (
@@ -80,6 +84,12 @@ export default function SerpApiOffer() {
                 <p>{step}</p>
               </div>
             ))}
+
+            {/* extra explanation */}
+            <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">
+              Simply click below, send the pre-written message, and their team will
+              verify and activate your credits. The process is quick and handled manually.
+            </p>
 
           </div>
 
@@ -113,14 +123,21 @@ export default function SerpApiOffer() {
 
 
         {/* ================= CTA ================= */}
-        <div className="text-center">
+        <div className="text-center space-y-4">
 
-          <button
-            onClick={() => window.open("https://serpapi.com", "_blank")}
-            className="px-5 py-2.5 rounded-full bg-white text-black font-bold uppercase text-[10px] tracking-widest hover:scale-105 transition-all flex items-center gap-2 mx-auto"
+          {/* MAIL BUTTON */}
+          <a
+            href={`mailto:contact@serpapi.com?subject=Apives Offer Claim&body=Hello SerpAPI Team,%0D%0A%0D%0AI would like to claim the Apives 500 Free Credits offer.%0D%0APlease activate the credits for my account.%0D%0A%0D%0AThank you.`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-mora-500 text-black font-bold uppercase text-[10px] tracking-widest hover:scale-105 transition-all"
           >
-            Go to SerpAPI <ArrowRight size={14} />
-          </button>
+            <Mail size={14} />
+            Claim via Email
+          </a>
+
+          <p className="text-[11px] text-slate-500 max-w-xs mx-auto leading-relaxed">
+            Click the button above and send the message. Once reviewed, your credits
+            will be activated directly by the SerpAPI team.
+          </p>
 
         </div>
 
