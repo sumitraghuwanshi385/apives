@@ -72,7 +72,7 @@ return (
     <Route path="/fresh" element={<FreshApis />} />    
     <Route path="/popular" element={<PopularApis />} />    
     <Route path="/onboarding" element={<OnboardingPage />} />    
-<Route path="/offers/serpapi" element={<SerpApiOffer />} />
+<Route path="/serpapi" element={<SerpApiOffer />} />
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
