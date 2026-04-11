@@ -192,19 +192,19 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="py-14 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="pt-8 pb-12 bg-black border-t border-white/5 relative overflow-hidden">
 
 {/* green glow */}
 
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)] pointer-events-none"/>
+<div className="absolute inset-0 bg-transparent pointer-events-none"/>
 
 <div className="max-w-6xl mx-auto px-6 relative z-10">
 
 {/* HEADER */}
 
-<div className="text-center mb-8">
+<div className="text-center mb-4">
 
-<h2 className="text-2xl md:text-4xl font-bold text-white">
+<h2 className="text-2xl md:text-4xl font-bold text-mora">
 Quick Start Integration
 </h2>
 
@@ -859,15 +859,15 @@ return (
     </div>  
   </section>  
 
-{/* 🔥 HEADING */}
-<div className="text-center mt-4 md:mt-6 mb-2">
+{/* HEADING */}
+<div className="text-center mb-3 -mt-2 md:-mt-4">
   <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-slate-500 font-bold">
     Exclusive Builder Perk
   </p>
 </div>
 
-{/* 🔥 OFFER BOX */}
-<div className="w-full flex justify-center mt-1 md:mt-2 px-4 -translate-y-4 md:-translate-y-6">
+{/* OFFER BOX */}
+<div className="w-full flex justify-center mt-1 md:mt-2 px-4 -translate-y-6 md:-translate-y-8">
   <div className="
     w-full max-w-xl
     flex items-center justify-between
@@ -947,13 +947,13 @@ return (
 <section className="py-10 md:py-16 bg-black border-t border-white/5 relative overflow-hidden">
 
   {/* glow */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(34,197,94,0.25),transparent_70%)] pointer-events-none"/>
+  <div className="absolute inset-0 bg-transparent pointer-events-none"/>
 
   <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
 
     {/* Header */}
     <div className="text-center mb-8 md:mb-12">
-      <h2 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
+      <h2 className="text-2xl md:text-4xl font-display font-bold text-mora tracking-tight">
         What are you building today?
       </h2>
       <p className="mt-2 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
