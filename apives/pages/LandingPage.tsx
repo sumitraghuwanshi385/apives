@@ -859,45 +859,53 @@ return (
     </div>  
   </section>  
 
-<div className="w-full flex justify-center mt-3 md:mt-4 px-4">
+{/* 🔥 HEADING */}
+<div className="text-center mt-4 md:mt-6 mb-2">
+  <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-slate-500 font-bold">
+    Exclusive Builder Perk
+  </p>
+</div>
+
+{/* 🔥 OFFER BOX */}
+<div className="w-full flex justify-center mt-1 md:mt-2 px-4 -translate-y-4 md:-translate-y-6">
   <div className="
     w-full max-w-xl
     flex items-center justify-between
     gap-3
-    px-3 py-1.5
-    rounded-full
+    px-4 py-3
+    rounded-xl
     border border-green-500/30
     bg-green-500/10
     backdrop-blur-md
     hover:bg-green-500/15
     transition-all
-    shadow-[0_0_20px_rgba(34,197,94,0.15)]
+    shadow-[0_0_25px_rgba(34,197,94,0.2)]
   ">
 
     {/* LEFT */}
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
 
       <img
         src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
         alt="SerpApi"
-        className="w-5 h-5 rounded-full bg-white p-[2px]"
+        className="w-6 h-6 rounded-lg bg-white p-[2px]"
       />
 
-      <span className="text-slate-500 text-[10px] font-bold">×</span>
+      <span className="text-slate-500 text-xs font-bold">×</span>
 
       <img
         src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
         alt="Apives"
-        className="w-5 h-5 object-contain"
+        className="w-6 h-6 object-contain"
       />
 
-      <div className="flex flex-col leading-tight ml-1">
-        <p className="text-green-400 text-[11px] font-bold">
-          $500 API Credits for Builders
+      <div className="flex flex-col leading-tight">
+        <p className="text-green-400 text-xs font-bold">
+          $500 SerpAPI Credits for Builders
         </p>
 
         <p className="text-[10px] text-slate-400">
-          Limited access for early builders!
+          Limited access for early builders
         </p>
       </div>
     </div>
@@ -906,8 +914,8 @@ return (
     <button
       onClick={() => navigate("/offers/serpapi")}
       className="
-        text-[9px]
-        px-3 py-1
+        text-[10px]
+        px-3 py-1.5
         rounded-full
         bg-white text-black
         font-bold uppercase
@@ -939,7 +947,7 @@ return (
 <section className="py-10 md:py-16 bg-black border-t border-white/5 relative overflow-hidden">
 
   {/* glow */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)] pointer-events-none" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(34,197,94,0.25),transparent_70%)] pointer-events-none"/>
 
   <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
 
