@@ -903,7 +903,7 @@ return (
         <div>
           {/* 🔽 text size reduced (mobile only) */}
           <p className="text-green-400 text-[11px] md:text-xs font-bold">
-            $500 SerpAPI Credits for Builders
+            Get $500 Free SerpAPI Credits
           </p>
 
           <p className="text-[9px] md:text-[10px] text-slate-400">
