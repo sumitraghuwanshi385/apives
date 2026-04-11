@@ -1,139 +1,130 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Gift, CheckCircle2, ArrowRight } from "lucide-react";
+import { BackButton } from "../components/BackButton";
 
 export default function SerpApiOffer() {
-
-  const navigate = useNavigate();
-
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black pt-28 pb-20 relative selection:bg-mora-500/30">
 
-      {/* ================= HERO ================= */}
-      <section className="pt-24 pb-10 text-center">
+      {/* BACK BUTTON */}
+      <div className="absolute top-28 left-4 lg:left-8 z-20">
+        <BackButton />
+      </div>
 
-        <div className="flex items-center justify-center gap-3 mb-6">
+      <div className="max-w-2xl mx-auto px-6">
 
-          <img
-            src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-            className="w-10 h-10 rounded-xl bg-white p-[3px]"
-          />
+        {/* ================= HERO ================= */}
+        <div className="text-center mb-10">
 
-          <span className="text-slate-500 text-lg font-bold">×</span>
+          <div className="flex items-center justify-center gap-2 mb-5">
 
-          <img
-            src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-            className="w-12 h-12 object-contain"
-          />
+            <img
+              src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+              className="w-9 h-9 rounded-xl bg-white p-[3px]"
+            />
 
-        </div>
+            <span className="text-slate-500 text-sm font-bold">×</span>
 
-        <h1 className="text-3xl md:text-5xl font-bold">
-          $500 SerpAPI Credits
-        </h1>
+            <img
+              src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+              className="w-10 h-10 object-contain"
+            />
 
-        <p className="text-slate-400 mt-3 text-sm md:text-base max-w-xl mx-auto">
-          Exclusive offer for Apives builders. Get free credits to test and scale your API-powered products.
-        </p>
+          </div>
 
-      </section>
+          <h1 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
+            500 Free SerpAPI Credits
+          </h1>
 
-
-      {/* ================= OFFER HIGHLIGHT ================= */}
-      <section className="py-8 text-center">
-
-        <div className="max-w-xl mx-auto border border-green-500/30 bg-green-500/10 rounded-2xl p-6">
-
-          <p className="text-green-400 font-bold text-lg">
-            🎁 What You Get
-          </p>
-
-          <p className="mt-2 text-slate-300 text-sm">
-            Each selected user receives <span className="text-white font-bold">$500 in SerpAPI credits</span> to use for building and testing projects.
+          <p className="text-slate-400 mt-2 text-xs md:text-sm max-w-md mx-auto">
+            Exclusive offer for Apives builders to test and scale API-powered products faster.
           </p>
 
         </div>
 
-      </section>
+
+        {/* ================= WHAT YOU GET ================= */}
+        <div className="border border-green-500/20 bg-green-500/10 rounded-2xl p-4 mb-8">
+
+          <div className="flex items-center gap-2 mb-2">
+            <Gift size={16} className="text-green-400" />
+            <p className="text-green-400 text-sm font-bold">
+              What You Get
+            </p>
+          </div>
+
+          <p className="text-slate-300 text-xs leading-relaxed">
+            Each selected user receives <span className="text-white font-semibold">500 Free SerpAPI Credits</span> to build, test, and launch projects.
+          </p>
+
+        </div>
 
 
-      {/* ================= HOW TO REDEEM ================= */}
-      <section className="py-10">
+        {/* ================= HOW TO REDEEM ================= */}
+        <div className="mb-10">
 
-        <div className="max-w-2xl mx-auto px-6">
-
-          <h2 className="text-xl md:text-2xl font-bold mb-4">
+          <h2 className="text-lg font-bold text-white mb-4">
             How to Redeem
           </h2>
 
-          <div className="space-y-4 text-slate-300 text-sm">
+          <div className="space-y-3 text-slate-300 text-xs">
 
-            <p>1. Click on <span className="text-white font-semibold">"Claim"</span> or visit SerpAPI.</p>
-
-            <p>2. Reach out to SerpAPI support via:</p>
-
-            <ul className="list-disc ml-5">
-              <li>Email: contact@serpapi.com</li>
-              <li>Or their live chat support</li>
-            </ul>
-
-            <p>
-              3. Mention the code: <span className="text-green-400 font-bold">Apives500</span>
-            </p>
-
-            <p>
-              4. Their team will manually add credits to your account.
-            </p>
+            {[
+              "Click on Claim or visit SerpAPI",
+              "Contact their support via email or live chat",
+              "Mention code: Apives500",
+              "Credits will be added to your account"
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+                <p>{step}</p>
+              </div>
+            ))}
 
           </div>
 
         </div>
 
-      </section>
 
+        {/* ================= DETAILS ================= */}
+        <div className="mb-10">
 
-      {/* ================= IMPORTANT ================= */}
-      <section className="py-8">
-
-        <div className="max-w-2xl mx-auto px-6">
-
-          <h2 className="text-xl md:text-2xl font-bold mb-4">
+          <h2 className="text-lg font-bold text-white mb-4">
             Important Details
           </h2>
 
-          <div className="space-y-3 text-sm text-slate-400">
+          <div className="space-y-3 text-slate-400 text-xs">
 
-            <p>• Only <span className="text-white font-semibold">30 users</span> will receive this offer</p>
-
-            <p>• Each user gets <span className="text-white font-semibold">$500 credits</span></p>
-
-            <p>• First come, first served basis</p>
-
-            <p>• Limited time offer — may expire anytime</p>
+            {[
+              "Only 30 users will receive this offer",
+              "Each user gets 500 Free Credits",
+              "First come, first served",
+              "Limited time availability"
+            ].map((item, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <CheckCircle2 size={14} className="text-mora-500 mt-0.5" />
+                <p>{item}</p>
+              </div>
+            ))}
 
           </div>
 
         </div>
 
-      </section>
 
+        {/* ================= CTA ================= */}
+        <div className="text-center">
 
-      {/* ================= CTA ================= */}
-      <section className="py-12 text-center">
+          <button
+            onClick={() => window.open("https://serpapi.com", "_blank")}
+            className="px-5 py-2.5 rounded-full bg-white text-black font-bold uppercase text-[10px] tracking-widest hover:scale-105 transition-all flex items-center gap-2 mx-auto"
+          >
+            Go to SerpAPI <ArrowRight size={14} />
+          </button>
 
-        <button
-          onClick={() => window.open("https://serpapi.com", "_blank")}
-          className="px-6 py-3 rounded-full bg-white text-black font-bold uppercase text-xs tracking-widest hover:scale-105 transition-all"
-        >
-          Go to SerpAPI
-        </button>
+        </div>
 
-      </section>
-
-
-      {/* ================= FOOTER ================= */}
-      <footer className="border-t border-white/10 py-6 text-center text-xs text-slate-500">
-        © Apives — Built for Developers
-      </footer>
-
+      </div>
     </div>
   );
 }
