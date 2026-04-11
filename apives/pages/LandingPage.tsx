@@ -883,7 +883,8 @@ return (
       md:shadow-[0_0_25px_rgba(34,197,94,0.2)]  /*  mobile shadow removed */
     ">
 
-      <div className="flex items-center">
+      <div className="flex items-center gap-2 md:gap-3">
+
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
           className="w-6 h-6 rounded-lg bg-white p-[2px]"
@@ -1087,7 +1088,7 @@ return (
     </div>  
   </section>  
  
-    <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">  
+    <section className="pt-12 pb-6 md:pt-16 md:pb-12 bg-black border-t border-white/5"> 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
         <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
           <Zap className="mr-3 text-white" size={18} /> Fresh APIs  
@@ -1116,7 +1117,7 @@ return (
       </div>  
     </section>  
 
-  <section className="py-16 md:py-24 bg-black border-t border-white/5">  
+  <section className="pt-12 pb-6 md:pt-16 md:pb-12 bg-black border-t border-white/5">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
       <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
         <Heart className="mr-3 text-red-500" size={18} /> Community Favorites  
@@ -1151,10 +1152,11 @@ return (
  APIVES SPONSORS
 ================================ */}
 
-<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
+<section className="pt-10 pb-20 bg-black border-t border-white/5 relative overflow-hidden">
 
 {/* glow */}
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.08),transparent_60%)] pointer-events-none" />
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
+
 
 <div className="max-w-4xl mx-auto px-6 relative z-10">
 
