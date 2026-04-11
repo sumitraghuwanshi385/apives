@@ -196,7 +196,7 @@ return(
 
 {/* green glow */}
 
-<div className="absolute inset-0 bg-transparent pointer-events-none"/>
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
 
 <div className="max-w-6xl mx-auto px-6 relative z-10">
 
@@ -863,7 +863,7 @@ return (
 <section className="relative py-4 md:py-6 bg-black">
 
   {/* HEADING */}
-  <div className="text-center mb-2">
+  <div className="text-center mb-3 md:mb-4">
     <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
       EXCLUSIVE BUILDER PERK
     </p>
@@ -921,13 +921,14 @@ return (
 <section className="py-10 md:py-16 bg-black border-t border-white/5 relative overflow-hidden">
 
   {/* glow */}
-  <div className="absolute inset-0 bg-transparent pointer-events-none"/>
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
+
 
   <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
 
     {/* Header */}
     <div className="text-center mb-8 md:mb-12">
-      <h2 className="text-2xl md:text-4xl font-display font-bold text-mora tracking-tight">
+      <h2 className="text-2xl md:text-4xl font-display font-bold text-white tracking-tight">
         What are you building today?
       </h2>
       <p className="mt-2 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
