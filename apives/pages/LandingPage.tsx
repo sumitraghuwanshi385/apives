@@ -192,7 +192,7 @@ setTimeout(()=>setCopied(false),1500);
 
 return(
 
-<section className="pt-4 md:pt-6 pb-6 bg-black">
+<section className="pt-8 pb-12 bg-black border-t border-white/5 relative overflow-hidden">
 
 {/* green glow */}
 
@@ -204,7 +204,7 @@ return(
 
 <div className="text-center mb-4">
 
-<h2 className="text-2xl md:text-4xl font-bold !text-green-400">
+<h2 className="text-2xl md:text-4xl font-bold text-mora">
 Quick Start Integration
 </h2>
 
@@ -477,15 +477,15 @@ await navigator.clipboard.writeText(response);
 
 return(
 
-<section className="pt-4 md:pt-6 pb-6 bg-black">
+<section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="absolute inset-0 bg-transparent pointer-events-none"/>
+<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
 
 <div className="max-w-5xl mx-auto px-4 relative z-10">
 
 <div className="text-center mb-6">
 
-<h2 className="text-2xl md:text-4xl font-bold text-mora">
+<h2 className="text-2xl md:text-4xl font-bold text-white">
 Live API Request Runner
 </h2>
 
@@ -860,509 +860,36 @@ return (
   </section>  
 
 {/* ================= OFFER SECTION ================= */}
-<section className="relative pt-2 pb-4 md:pt-3 md:pb-5 bg-black -mt-4 md:-mt-6">
+<section className="relative py-4 md:py-6 bg-black">
 
   {/* HEADING */}
-  <div className="text-center mb-1 -mt-1">
+  <div className="text-center mb-2">
     <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
       EXCLUSIVE BUILDER PERK
     </p>
   </div>
 
   {/* OFFER BOX */}
-  <div className="flex justify-center px-4 mt-1">
+  <div className="flex justify-center px-4">
     <div className="w-full max-w-xl flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md shadow-[0_0_25px_rgba(34,197,94,0.2)]">
 
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-3">
 
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
           className="w-6 h-6 rounded-lg bg-white p-[2px]"
         />
 
-        <span className="text-slate-500 text-[10px] mx-[-2px] font-bold">×</span>
+        <span className="text-slate-500 text-xs font-bold">×</span>
+
         <img
           src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
           className="w-7 h-7 object-contain"
         />
 
         <div>
-          <p className="text-green-400 text-[11px] md:text-xs font-bold">
+          <p className="text-green-400 text-xs font-bold">
             $500 SerpAPI Credits for Builders
           </p>
-          <p className="text-[9px] md:text-[10px] text-slate-400">
-            Limited access for early builders
-          </p>
-        </div>
-
-      </div>
-
-      <button
-        onClick={() => navigate("/offers/serpapi")}
-        className="text-[10px] px-3 py-1.5 rounded-full bg-white text-black font-bold uppercase tracking-widest hover:scale-105 transition-all"
-      >
-        Claim
-      </button>
-
-    </div>
-  </div>
-
-</section>
-
-<section className="pt-4 md:pt-6 pb-6 bg-black">
-
-  <QuickStartPlayground />
-  <LiveApiRunner />
-
-{/* ===============================
- WHAT ARE YOU BUILDING TODAY
-================================ */}
-<section className="py-10 md:py-16 bg-black border-t border-white/5 relative overflow-hidden">
-
-  {/* glow */}
-  <div className="absolute inset-0 bg-transparent pointer-events-none"/>
-
-  <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
-
-    {/* Header */}
-    <div className="text-center mb-8 md:mb-12">
-      <h2 className="text-2xl md:text-4xl font-display font-bold !text-mora">
-        What are you building today?
-      </h2>
-      <p className="mt-2 text-slate-400 text-sm md:text-base max-w-xl mx-auto">
-        Choose a use-case and explore APIs curated specifically for that build.
-      </p>
-    </div>
-
-    {/* Grid */}
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-      {[
-  {
-    title: "AI Chatbots",
-    desc: "LLMs, chat, assistants",
-    icon: Zap,
-    link: "/build/chatbots"
-  },
-  {
-    title: "Voice to Text",
-    desc: "Speech recognition APIs",
-    icon: Activity,
-    link: "/build/voice"
-  },
-  {
-    title: "Image Generation",
-    desc: "Text → Image models",
-    icon: Image,
-    link: "/build/image-generation"
-  },
-  {
-    title: "Payments",
-    desc: "Billing & subscriptions",
-    icon: Server,
-    link: "/build/payments"
-  },
-  {
-    title: "Authentication",
-    desc: "Login, OTP, identity",
-    icon: Hash,
-    link: "/build/authentication"
-  },
-  {
-    title: "Analytics",
-    desc: "Tracking & insights",
-    icon: TrendingUp,
-    link: "/build/analytics"
-  }
-      ].map((item, i) => (
-        <Link
-          key={i}
-          to={item.link}
-          className="
-            group relative
-            bg-dark-900/50 hover:bg-dark-900/80
-            border border-white/10 hover:border-mora-500/40
-            rounded-2xl
-            p-4 md:p-6
-            transition-all duration-500
-            hover:-translate-y-1
-            overflow-hidden
-          "
-        >
-          {/* hover glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-mora-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-
-          <div className="relative z-10 flex flex-col gap-3">
-
-            {/* Icon */}
-            <div className="
-              w-10 h-10 md:w-12 md:h-12
-              rounded-xl
-              flex items-center justify-center
-              bg-mora-500/10
-              border border-mora-500/30
-              text-mora-400
-              shadow-[0_0_20px_rgba(34,197,94,0.25)]
-            ">
-              <item.icon size={22} />
-            </div>
-
-            {/* Text */}
-            <div>
-              <h3 className="text-white font-bold text-sm md:text-base tracking-tight">
-                {item.title}
-              </h3>
-              <p className="text-slate-400 text-[11px] md:text-sm mt-1">
-                {item.desc}
-              </p>
-            </div>
-
-            {/* CTA */}
-            <span className="
-              mt-auto
-              inline-flex items-center gap-1
-              text-[10px] md:text-xs
-              font-black uppercase tracking-widest
-              text-mora-400
-            ">
-              Explore APIs →
-            </span>
-
-          </div>
-        </Link>
-      ))}
-
-    </div>
-  </div>
-</section>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
-          <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
-            <LayoutGrid className="mr-3 text-mora-500" size={18} /> The Universal Grid  
-          </h2> 
- {isLoading ? (
-  <SectionLoader text="Loading the Universal Grid" />
-) : (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-    {universalApis.map((api, idx) => (
-      <ApiCard
-        key={`${api.id}-${idx}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-      />
-    ))}
-  </div>
-)}
-
-<div className="flex justify-center">  
-        <Link to="/browse" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">  
-          Browse All APIs 
-        </Link>  
-      </div>  
-    </div>  
-  </section>  
- 
-    <section className="py-16 md:py-24 bg-dark-950 border-t border-white/5">  
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
-        <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
-          <Zap className="mr-3 text-white" size={18} /> Fresh APIs  
-        </h2>  
-
-        {isLoading ? (
-  <SectionLoader text="Syncing fresh APIs" />
-) : (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-    {freshApis.map((api, idx) => (
-      <ApiCard
-        key={`new-${api.id}`}
-        api={api}
-        topIds={top3Ids}
-        onLikeChange={updateLandingUpvotes}
-      />
-    ))}
-  </div>
-)}
-
-<div className="flex justify-center">  
-          <Link to="/fresh" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all hover:bg-white/10 active:scale-95">  
-            View New Arrivals  
-          </Link>  
-        </div>  
-      </div>  
-    </section>  
-
-  <section className="py-16 md:py-24 bg-black border-t border-white/5">  
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">  
-      <h2 className="text-lg md:text-2xl font-display font-bold text-white flex items-center mb-10 md:mb-16 uppercase tracking-widest">  
-        <Heart className="mr-3 text-red-500" size={18} /> Community Favorites  
-      </h2>  
-
-      {isLoading ? (
-  <SectionLoader text="Fetching community favorites" />
-) : (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
-    {communityApis.map((api, idx) => (
-      <ApiCard
-  key={`loved-${api.id}`}
-  api={api}
-  topIds={top3Ids}
-  rankIndex={top3Ids.indexOf(api.id)}
-  onLikeChange={updateLandingUpvotes}
-/>
-    ))}
-  </div>
-)}
-
-<div className="flex justify-center">  
-        <Link to="/popular" className="px-10 py-4 md:px-14 md:py-5 rounded-full bg-white/5 border border-white/10 text-white font-black text-[10px] md:text-xs uppercase tracking-[0.3em] transition-all hover:bg-white/10 active:scale-95">  
-          View Top APIs  
-        </Link>  
-      </div>
-</div>
-</section>
-
-
-{/* ===============================
- APIVES SPONSORS
-================================ */}
-
-<section className="py-20 bg-black border-t border-white/5 relative overflow-hidden">
-
-{/* glow */}
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.08),transparent_60%)] pointer-events-none" />
-
-<div className="max-w-4xl mx-auto px-6 relative z-10">
-
-{/* HEADER */}
-
-<div className="text-center mb-14">
-
-<p className="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-black mb-3">
-SPONSORS
-</p>
-
-<h2 className="text-3xl md:text-4xl font-bold text-white">
-Partners Powering Apives
-</h2>
-
-<p className="text-slate-400 text-sm mt-3 max-w-xl mx-auto">
-Developer platforms supporting the Apives ecosystem.
-</p>
-
-</div>
-
-
-{/* ===== APEX SPONSOR ===== */}
-
-<div className="text-center mb-12">
-
-<p className="
-text-[10px]
-uppercase tracking-[0.35em]
-font-black
-bg-gradient-to-r from-amber-400 to-yellow-600
-bg-clip-text text-transparent
-mb-4
-">
-Apex Sponsor
-</p>
-
-<a
-href="#"
-onClick={(e)=>{
-e.preventDefault()
-handleSponsorClick(
-"scoutpanels",
-"https://scoutpanels.com"
-)
-}}
-className="
-relative inline-flex items-center gap-4
-px-6 py-4
-rounded-2xl
-border border-amber-400/40
-bg-gradient-to-br from-amber-400/15 to-transparent
-hover:from-amber-400/25
-transition-all
-shadow-[0_0_40px_rgba(245,158,11,0.25)]
-hover:shadow-[0_0_60px_rgba(245,158,11,0.45)]
-"
->
-
-<img
-src="https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg"
-alt="ScoutPanels"
-className="
-h-10 md:h-12 w-10 md:w-12
-object-contain
-rounded-2xl
-bg-white
-p-1
-"
-/>
-
-<div className="text-left">
-
-<p className="text-white font-bold text-sm md:text-base">
-ScoutPanels
-</p>
-
-<p className="text-slate-400 text-xs md:text-sm">
-Turning B2B feedback into adoption signals
-</p>
-
-</div>
-
-</a>
-
-</div>
-
-
-{/* ===== PRIME SPONSOR ===== */}
-
-<div className="text-center">
-
-<p className="
-text-[10px]
-uppercase tracking-[0.35em]
-font-black
-bg-gradient-to-r from-slate-200 to-slate-400
-bg-clip-text text-transparent
-mb-4
-">
-Prime Sponsor
-</p>
-
-<a
-href="#"
-onClick={(e)=>{
-e.preventDefault()
-handleSponsorClick(
-"serpapi",
-"https://serpapi.com"
-)
-}}
-className="
-relative inline-flex items-center gap-3
-px-6 py-3.5
-rounded-2xl
-border border-white/20
-bg-gradient-to-br from-white/10 to-transparent
-hover:from-white/20
-transition-all hover:scale-[1.02]
-shadow-[0_0_40px_rgba(255,255,255,0.12)]
-hover:shadow-[0_0_60px_rgba(255,255,255,0.22)]
-"
->
-
-<img
-src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-alt="SerpApi"
-className="
-h-10 md:h-12 w-10 md:w-12
-object-contain
-rounded-2xl
-bg-white
-p-1
-"
-/>
-
-<div className="text-left">
-
-<p className="text-white font-bold text-sm md:text-base">
-SerpApi
-</p>
-
-<p className="
-text-slate-400
-text-[11px] md:text-xs
-leading-snug
-max-w-[320px]
-">
-Real-time Google Search results via a fast developer API
-</p>
-
-</div>
-
-</a>
-
-</div>
-
-
-{/* ===== ZENITH SPONSOR ===== */}
-
-<div className="text-center mt-10">
-
-<p className="
-text-[10px]
-uppercase tracking-[0.35em]
-font-black
-bg-gradient-to-r from-orange-500 to-amber-700
-bg-clip-text text-transparent
-mb-4
-">
-Zenith Sponsor
-</p>
-
-<a
-href="#"
-onClick={(e)=>{
-e.preventDefault()
-handleSponsorClick(
-"startives",
-"https://startives.com"
-)
-}}
-className="
-relative inline-flex items-center gap-3
-px-6 py-3.5
-rounded-2xl
-border border-orange-500/30
-bg-gradient-to-br from-orange-500/10 to-transparent
-hover:from-orange-500/20
-transition-all hover:scale-[1.02]
-shadow-[0_0_40px_rgba(180,83,9,0.25)]
-hover:shadow-[0_0_60px_rgba(180,83,9,0.45)]
-"
->
-
-<img
-src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png"
-alt="Startives"
-className="
-h-10 md:h-12 w-10 md:w-12
-object-contain
-rounded-2xl
-bg-white
-p-1
-"
-/>
-
-<div className="text-left">
-
-<p className="text-white font-bold text-sm md:text-base">
-Startives
-</p>
-
-<p className="
-text-slate-400
-text-[11px] md:text-xs
-leading-snug
-max-w-[320px]
-">
-Empowering Startup Founders to Connect & Build.
-</p>
-
-</div>
-
-</a>
-
-</div>
-
-</div>
-
-</section>
-</div>
-
-);
-};
+          <p className="text-[10px] text-slate-400">
+            Limit
