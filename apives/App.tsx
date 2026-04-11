@@ -22,6 +22,7 @@ import { SubmitApi } from './pages/SubmitApi';
 import { FreshApis } from './pages/FreshApis';
 import { PopularApis } from './pages/PopularApis';
 import { OnboardingPage } from './pages/Onboarding';
+import SerpApiOffer from "./pages/offers/SerpApiOffer";
 
 import {
 EnterprisePage,
@@ -71,6 +72,7 @@ return (
     <Route path="/fresh" element={<FreshApis />} />    
     <Route path="/popular" element={<PopularApis />} />    
     <Route path="/onboarding" element={<OnboardingPage />} />    
+<Route path="/offers/serpapi" element={<SerpApiOffer />} />
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
