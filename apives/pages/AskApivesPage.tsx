@@ -212,6 +212,31 @@ const AnimatedOrb = () => {
           background: "radial-gradient(circle at 32% 28%, #a7f3d0, #10b981 40%, #065f46 80%)",
           animation: "orbGlow 3.5s ease-in-out infinite",
         }} />
+
+{show && (
+  <div className="word-in" style={{
+    position: "absolute",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    gap: "2px",
+  }}>
+    <div style={{ transform: "scale(0.8)" }}>
+      {ORB_LABELS[idx].icon}
+    </div>
+    <span style={{
+      fontSize: "9px",
+      fontWeight: 700,
+      letterSpacing: "0.08em",
+      color: "#6ee7b7"
+    }}>
+      {ORB_LABELS[idx].text}
+    </span>
+  </div>
+)}
+
         <div style={{
           position: "absolute",
           top: "22%", left: "24%", width: "28%", height: "20%",
@@ -228,19 +253,6 @@ const AnimatedOrb = () => {
             animation: `dataPing 2.4s ease-out ${i * 0.8}s infinite`,
           }} />
         ))}
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: "120px", justifyContent: "center", height: "28px" }}>
-        {show && (
-          <span className="word-in" style={{
-            display: "flex", alignItems: "center", gap: "5px",
-            fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em",
-            color: "rgba(52,211,153,0.85)",
-          }}>
-            {ORB_LABELS[idx].icon}
-            {ORB_LABELS[idx].text}
-          </span>
-        )}
       </div>
     </div>
   );
@@ -563,13 +575,42 @@ const CompareModal = ({
               Compare APIs
             </h3>
           </div>
-          <button onClick={onClose} className="glass-btn" style={{
-            width: "32px", height: "32px", borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-          }}>
-            <X size={13} color="rgba(255,255,255,0.45)" />
-          </button>
-        </div>
+          <button
+  onClick={onClose}
+  style={{
+    width: "34px",
+    height: "34px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+
+    background: "rgba(255,255,255,0.06)",
+    backdropFilter: "blur(14px)",
+    WebkitBackdropFilter: "blur(14px)",
+
+    border: "1px solid rgba(255,255,255,0.12)",
+
+    boxShadow: `
+      inset 0 1px 2px rgba(255,255,255,0.15),
+      0 4px 12px rgba(0,0,0,0.35)
+    `,
+
+    transition: "all 0.2s ease",
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.background = "rgba(255,255,255,0.12)";
+    e.currentTarget.style.transform = "scale(1.08)";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.background = "rgba(255,255,255,0.06)";
+    e.currentTarget.style.transform = "scale(1)";
+  }}
+>
+  <X size={14} color="rgba(255,255,255,0.75)" />
+</button>
+</div>
 
         <div style={{ overflowY: "auto", flex: 1, padding: "16px 20px 0" }}>
           {!result && (
@@ -1075,18 +1116,8 @@ useEffect(() => {
       >
         {/* Ambient background */}
         <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
-          <div style={{
-            position: "absolute", top: "-100px", left: "-80px",
-            width: "380px", height: "380px", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }} />
-          <div style={{
-            position: "absolute", bottom: "-80px", right: "-80px",
-            width: "320px", height: "320px", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(5,150,105,0.08) 0%, transparent 70%)",
-            filter: "blur(70px)",
-          }} />
+          
+          
           <div style={{
             position: "absolute", inset: 0, opacity: 0.016,
             backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
@@ -1107,32 +1138,44 @@ useEffect(() => {
         }}>
           {/* Left */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <button
-              onClick={() => navigate(-1)}
-              className="close-btn-green"
-              style={{
-                width: "36px", height: "36px", borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                backdropFilter: "blur(12px)", cursor: "pointer",
-              }}
-            >
-              <X size={15} color="#34d399" />
-            </button>
-            <div>
-              <p style={{
-                fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)",
-                lineHeight: 1.2, letterSpacing: "-0.01em",
-              }}>
-                Ask Apives AI
-              </p>
-              <p style={{
-                fontSize: "10px", fontWeight: 500, letterSpacing: "0.04em",
-                color: "rgba(52,211,153,0.48)", marginTop: "1px",
-              }}>
-                Enterprise API Intelligence
-              </p>
-            </div>
-          </div>
+  <button
+    onClick={() => navigate(-1)}
+    className="close-btn-green"
+    style={{
+      width: "36px",
+      height: "36px",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backdropFilter: "blur(12px)",
+      cursor: "pointer",
+    }}
+  >
+    <X size={15} color="#34d399" />
+  </button>
+
+  <div>
+    <p style={{
+      fontSize: "15px",
+      fontWeight: 800,
+      color: "rgba(255,255,255,0.93)",
+      lineHeight: 1.2,
+      letterSpacing: "-0.01em",
+    }}>
+      Ask Apives AI
+    </p>
+    <p style={{
+      fontSize: "10px",
+      fontWeight: 500,
+      letterSpacing: "0.04em",
+      color: "rgba(52,211,153,0.48)",
+      marginTop: "1px",
+    }}>
+      API Intelligence Assistant
+    </p>
+  </div>
+</div>
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -1206,14 +1249,22 @@ useEffect(() => {
 
               {/* Hero text */}
               <h2 style={{
-                fontSize: "18px", fontWeight: 900,
-                marginTop: "20px", marginBottom: "6px", lineHeight: 1.2,
-                letterSpacing: "-0.02em",
-              }}>
-                The API Intelligence
-                <br />
-                <span style={{ color: "#34d399" }}>you deserve</span>
-              </h2>
+  fontSize: "26px",
+  fontWeight: 900,
+  marginTop: "20px",
+  marginBottom: "8px",
+  lineHeight: 1.2,
+  letterSpacing: "-0.02em",
+}}>
+  The API Intelligence
+  <br />
+  <span style={{
+    color: "#22c55e", // MORE GREEN
+    textShadow: "0 0 12px rgba(34,197,94,0.5)"
+  }}>
+    You Deserve
+  </span>
+</h2>
 
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
