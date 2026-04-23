@@ -20,7 +20,6 @@ import {
   Brain,
   Bolt,
 } from "lucide-react";
-
 import ApiBreakdown from "../components/ai/ApiBreakdown";
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 
@@ -29,13 +28,9 @@ const STYLES = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
   /* Hide global Navbar + Footer on this page */
-  body > nav,
-  #root > nav,
-  nav[data-global],
-  header[data-global],
-  body > footer,
-  #root > footer,
-  footer { display: none !important; }
+  nav, header, footer, [data-global] {
+    display: none !important;
+  }
 
   .chat-scroll::-webkit-scrollbar { width: 3px; }
   .chat-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -127,48 +122,6 @@ const STYLES = `
     border-color: rgba(52,211,153,0.38);
     box-shadow: 0 0 0 3px rgba(52,211,153,0.07);
   }
-  .glass-btn {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    transition: background 0.2s, transform 0.15s;
-  }
-  .glass-btn:hover { background: rgba(255,255,255,0.09); transform: scale(1.04); }
-
-  .close-btn-green {
-    position: relative;
-    overflow: hidden;
-    background: rgba(52,211,153,0.08) !important;
-    border: 1px solid rgba(52,211,153,0.20) !important;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .close-btn-green::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 2px;
-    background: linear-gradient(to right, #34d399, transparent);
-    opacity: 0.7;
-    border-radius: 99px 99px 0 0;
-  }
-  .close-btn-green:hover {
-    background: rgba(52,211,153,0.14) !important;
-    transform: scale(1.04);
-  }
-
-  .compare-select-btn { transition: all 0.2s ease; cursor: pointer; }
-  .compare-select-btn:hover {
-    border-color: rgba(52,211,153,0.5) !important;
-    background: rgba(52,211,153,0.10) !important;
-  }
-  .compare-select-btn.selected {
-    border-color: rgba(52,211,153,0.6) !important;
-    background: rgba(52,211,153,0.12) !important;
-  }
-
-  .history-item { transition: background 0.15s; cursor: pointer; }
-  .history-item:hover { background: rgba(52,211,153,0.06) !important; }
-
   textarea { resize: none; scrollbar-width: none; }
   textarea::-webkit-scrollbar { display: none; }
 `;
@@ -178,20 +131,21 @@ const AnimatedOrb = () => {
   const [idx, setIdx] = useState(0);
   const [show, setShow] = useState(true);
 
-  const ORB_LABELS: { icon: React.ReactNode; text: string }[] = [
-    { icon: <Bolt size={11} color="#34d399" strokeWidth={2.5} />, text: "INSTANT" },
-    { icon: <Search size={11} color="#34d399" strokeWidth={2.5} />, text: "DISCOVER" },
-    { icon: <Link2 size={11} color="#34d399" strokeWidth={2.5} />, text: "INTEGRATE" },
-    { icon: <Shield size={11} color="#34d399" strokeWidth={2.5} />, text: "SECURE" },
-    { icon: <Radio size={11} color="#34d399" strokeWidth={2.5} />, text: "REAL-TIME" },
-    { icon: <Brain size={11} color="#34d399" strokeWidth={2.5} />, text: "INTELLIGENT" },
+  const WORDS = [
+    "Endpoints",
+    "Docs",
+    "Usage",
+    "Auth",
+    "Requests",
+    "Response",
+    "Integration",
   ];
 
   useEffect(() => {
     const id = setInterval(() => {
       setShow(false);
       setTimeout(() => {
-        setIdx((i) => (i + 1) % ORB_LABELS.length);
+        setIdx((i) => (i + 1) % WORDS.length);
         setShow(true);
       }, 280);
     }, 2200);
@@ -199,45 +153,48 @@ const AnimatedOrb = () => {
   }, []);
 
   return (
-    <div className="animate-float" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-      <div style={{ position: "relative", width: "110px", height: "110px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{
-          position: "absolute", inset: "-12px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(52,211,153,0.16) 0%, transparent 70%)",
-          filter: "blur(12px)",
-        }} />
-        <div style={{
-          position: "absolute", inset: "10px", borderRadius: "50%",
-          background: "radial-gradient(circle at 32% 28%, #a7f3d0, #10b981 40%, #065f46 80%)",
-          animation: "orbGlow 3.5s ease-in-out infinite",
-        }} />
-        <div style={{
-          position: "absolute",
-          top: "22%", left: "24%", width: "28%", height: "20%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)",
-        }} />
+    <div className="animate-float flex flex-col items-center gap-4">
+      {/* Orb */}
+      <div className="relative w-[110px] h-[110px] flex items-center justify-center">
+        {/* Outer glow */}
+        <div className="absolute -inset-3 rounded-full bg-radial from-mora-green/16 to-transparent blur-xl" />
+        {/* Core gradient */}
+        <div
+          className="absolute inset-[10px] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle at 32% 28%, #a7f3d0, #10b981 40%, #065f46 80%)",
+            animation: "orbGlow 3.5s ease-in-out infinite",
+          }}
+        />
+        {/* Highlight */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: "22%",
+            left: "24%",
+            width: "28%",
+            height: "20%",
+            background:
+              "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)",
+          }}
+        />
+        {/* Data pings */}
         {[0, 1, 2].map((i) => (
-          <div key={i} style={{
-            position: "absolute",
-            width: "5px", height: "5px", borderRadius: "50%",
-            background: "rgba(52,211,153,0.8)",
-            top: `${[18, 72, 50][i]}%`,
-            left: `${[72, 20, 78][i]}%`,
-            animation: `dataPing 2.4s ease-out ${i * 0.8}s infinite`,
-          }} />
+          <div
+            key={i}
+            className="absolute w-[5px] h-[5px] rounded-full bg-mora-green/80"
+            style={{
+              top: `${[18, 72, 50][i]}%`,
+              left: `${[72, 20, 78][i]}%`,
+              animation: `dataPing 2.4s ease-out ${i * 0.8}s infinite`,
+            }}
+          />
         ))}
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: "120px", justifyContent: "center", height: "28px" }}>
+        {/* Rotating word inside the orb */}
         {show && (
-          <span className="word-in" style={{
-            display: "flex", alignItems: "center", gap: "5px",
-            fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em",
-            color: "rgba(52,211,153,0.85)",
-          }}>
-            {ORB_LABELS[idx].icon}
-            {ORB_LABELS[idx].text}
+          <span className="word-in absolute inset-0 flex items-center justify-center text-xs font-semibold text-mora-green">
+            {WORDS[idx]}
           </span>
         )}
       </div>
@@ -247,55 +204,58 @@ const AnimatedOrb = () => {
 
 // ─── TypingIndicator ──────────────────────────────────────────────────────────
 const TypingIndicator = () => (
-  <div style={{
-    display: "flex", alignItems: "center", gap: "8px",
-    padding: "10px 16px", borderRadius: "18px 18px 18px 4px",
-    background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
-    backdropFilter: "blur(16px)", width: "fit-content",
-  }}>
-    <div style={{ position: "relative", width: "14px", height: "14px" }}>
-      <div style={{
-        position: "absolute", inset: "3px", borderRadius: "50%",
-        background: "radial-gradient(circle, #6ee7b7, #10b981)",
-      }} />
+  <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl rounded-bl bg-white/5 border border-white/10 backdrop-blur-xl w-fit">
+    <div className="relative w-3.5 h-3.5">
+      <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-mora-green/80 to-mora-green" />
     </div>
-    <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>
+    <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-mora-green/60">
       Thinking
     </span>
-    <div style={{ display: "flex", gap: "3px", alignItems: "flex-end", paddingBottom: "1px" }}>
+    <div className="flex gap-0.5 items-end pb-px">
       {[0, 1, 2].map((i) => (
-        <span key={i} style={{
-          display: "inline-block", width: "4px", height: "4px", borderRadius: "50%",
-          background: "#34d399",
-          animation: `typingBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-        }} />
+        <span
+          key={i}
+          className="inline-block w-1 h-1 rounded-full bg-mora-green"
+          style={{
+            animation: `typingBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
+          }}
+        />
       ))}
     </div>
   </div>
 );
 
 // ─── MessagePill ──────────────────────────────────────────────────────────────
-const MessagePill = ({ role, content }: { role: "user" | "assistant"; content: string }) => {
+const MessagePill = ({
+  role,
+  content,
+}: {
+  role: "user" | "assistant";
+  content: string;
+}) => {
   const isUser = role === "user";
   return (
-    <div style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start", padding: "0 4px" }}>
+    <div
+      className={`flex ${isUser ? "justify-end" : "justify-start"} px-1`}
+    >
       {!isUser && (
-        <div style={{
-          flexShrink: 0, width: "24px", height: "24px", borderRadius: "50%",
-          marginRight: "8px", marginTop: "4px",
-          background: "radial-gradient(circle at 35% 30%, #6ee7b7, #059669)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
+        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-mora-green/80 to-mora-green flex items-center justify-center mr-2 mt-1">
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
-      <div className={isUser ? "glass-pill-user" : "glass-pill-ai"} style={{
-        maxWidth: "82%", padding: "10px 16px",
-        borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-        fontSize: "13px", lineHeight: "1.65", fontWeight: 450,
-        color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.80)",
-        wordBreak: "break-word", whiteSpace: "pre-wrap",
-      }}>
+      <div
+        className={`${
+          isUser ? "glass-pill-user" : "glass-pill-ai"
+        } max-w-[82%] px-4 py-2.5 text-[13px] leading-relaxed font-medium break-words whitespace-pre-wrap`}
+        style={{
+          borderRadius: isUser
+            ? "18px 18px 4px 18px"
+            : "18px 18px 18px 4px",
+          color: isUser
+            ? "rgba(236,253,245,0.92)"
+            : "rgba(255,255,255,0.80)",
+        }}
+      >
         {content}
       </div>
     </div>
@@ -303,52 +263,69 @@ const MessagePill = ({ role, content }: { role: "user" | "assistant"; content: s
 };
 
 // ─── ClearModal ───────────────────────────────────────────────────────────────
-const ClearModal = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => (
-  <div style={{
-    position: "fixed", inset: 0, zIndex: 60,
-    display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: "32px",
-    background: "rgba(0,0,0,0.72)", backdropFilter: "blur(12px)",
-  }}>
-    <div className="slide-up" style={{
-      width: "88%", maxWidth: "320px", borderRadius: "24px", padding: "24px",
-      background: "rgba(6,16,11,0.98)", border: "1px solid rgba(52,211,153,0.12)",
-      boxShadow: "0 24px 64px rgba(0,0,0,0.70)",
-    }}>
-      <div style={{
-        width: "40px", height: "40px", borderRadius: "14px",
-        background: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)",
-        display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px",
-      }}>
+const ClearModal = ({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+}) => (
+  <div
+    className="fixed inset-0 z-60 flex items-end justify-center pb-8 bg-black/70 backdrop-blur-xl"
+    onClick={onCancel}
+  >
+    <div
+      className="slide-up w-[88%] max-w-[320px] rounded-3xl p-6 bg-[#060F0B] border border-mora-green/10 shadow-2xl"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-4">
         <Trash2 size={16} color="#f87171" />
       </div>
-      <p style={{ fontSize: "15px", fontWeight: 700, color: "white", marginBottom: "6px" }}>
+      <p className="text-[15px] font-bold text-white mb-1.5">
         Clear chat history?
       </p>
-      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.32)", lineHeight: "1.6", marginBottom: "20px" }}>
+      <p className="text-xs text-white/30 leading-relaxed mb-5">
         This will permanently remove all messages for this API session.
       </p>
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button onClick={onCancel} className="glass-btn" style={{
-          flex: 1, padding: "10px", borderRadius: "14px",
-          fontSize: "13px", fontWeight: 600, color: "rgba(255,255,255,0.45)", cursor: "pointer",
-        }}>Cancel</button>
-        <button onClick={onConfirm} style={{
-          flex: 1, padding: "10px", borderRadius: "14px", fontSize: "13px", fontWeight: 600,
-          background: "rgba(239,68,68,0.75)", color: "white", border: "none", cursor: "pointer",
-        }}>Clear</button>
+      <div className="flex gap-2">
+        <button
+          onClick={onCancel}
+          className="flex-1 py-2.5 rounded-2xl text-[13px] font-semibold bg-white/5 border border-white/10 text-white/40 hover:bg-white/10 transition"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onConfirm}
+          className="flex-1 py-2.5 rounded-2xl text-[13px] font-semibold bg-red-500/80 text-white hover:bg-red-500 transition"
+        >
+          Clear
+        </button>
       </div>
     </div>
   </div>
 );
 
 // ─── HistoryModal ─────────────────────────────────────────────────────────────
-type HistoryEntry = { apiId: string; title: string; preview: string; ts: number };
+type HistoryEntry = {
+  apiId: string;
+  title: string;
+  preview: string;
+  ts: number;
+};
 
-const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (apiId: string) => void }) => {
+const HistoryModal = ({
+  onClose,
+  onSelect,
+}: {
+  onClose: () => void;
+  onSelect: (apiId: string) => void;
+}) => {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
-    const keys = Object.keys(localStorage).filter((k) => k.startsWith("apives_chat_"));
+    const keys = Object.keys(localStorage).filter((k) =>
+      k.startsWith("apives_chat_")
+    );
     const result: HistoryEntry[] = [];
     keys.forEach((key) => {
       try {
@@ -368,86 +345,67 @@ const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (a
   }, []);
 
   return (
-    <div style={{
-      position: "fixed", inset: 0, zIndex: 60,
-      display: "flex", alignItems: "flex-end", justifyContent: "center",
-      background: "rgba(0,0,0,0.75)", backdropFilter: "blur(14px)",
-    }} onClick={onClose}>
-      <div className="slide-up" onClick={(e) => e.stopPropagation()} style={{
-        width: "100%", maxWidth: "480px",
-        borderRadius: "24px 24px 0 0",
-        background: "rgba(5,14,9,0.99)",
-        border: "1px solid rgba(52,211,153,0.12)", borderBottom: "none",
-        boxShadow: "0 -12px 60px rgba(0,0,0,0.6)",
-        maxHeight: "72vh", display: "flex", flexDirection: "column",
-      }}>
-        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
-          <div style={{ width: "36px", height: "3px", borderRadius: "99px", background: "rgba(255,255,255,0.12)" }} />
+    <div
+      className="fixed inset-0 z-60 flex items-end justify-center bg-black/75 backdrop-blur-xl"
+      onClick={onClose}
+    >
+      <div
+        className="slide-up w-full max-w-[480px] rounded-t-3xl bg-[#050E09] border border-mora-green/10 border-b-0 shadow-[0_-12px_60px_rgba(0,0,0,0.6)] max-h-[72vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-center pt-3">
+          <div className="w-9 h-1 rounded-full bg-white/10" />
         </div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px 12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{
-              width: "32px", height: "32px", borderRadius: "10px",
-              background: "rgba(52,211,153,0.09)", border: "1px solid rgba(52,211,153,0.18)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
-              <Clock size={14} color="#34d399" />
+        <div className="flex items-center justify-between px-5 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-mora-green/10 border border-mora-green/20 flex items-center justify-center">
+              <Clock size={14} className="text-mora-green" />
             </div>
-            <span style={{ fontSize: "15px", fontWeight: 700, color: "white" }}>
+            <span className="text-[15px] font-bold text-white">
               Recent Chats
             </span>
           </div>
-          <button onClick={onClose} className="glass-btn" style={{
-            width: "30px", height: "30px", borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-          }}>
-            <X size={12} color="rgba(255,255,255,0.45)" />
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+          >
+            <X size={12} className="text-white/40" />
           </button>
         </div>
-        <div style={{ overflowY: "auto", padding: "0 12px 24px", flex: 1 }}>
+        <div className="overflow-y-auto px-3 pb-6 flex-1">
           {entries.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "40px 20px" }}>
-              <div style={{
-                width: "48px", height: "48px", borderRadius: "16px", margin: "0 auto 12px",
-                background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.14)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <History size={20} color="rgba(52,211,153,0.5)" />
+            <div className="text-center py-10 px-5">
+              <div className="w-12 h-12 rounded-2xl bg-mora-green/10 border border-mora-green/15 mx-auto mb-3 flex items-center justify-center">
+                <History size={20} className="text-mora-green/50" />
               </div>
-              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.28)", lineHeight: 1.6 }}>
-                No chat history yet.<br />Start a conversation to see it here.
+              <p className="text-[13px] text-white/30 leading-relaxed">
+                No chat history yet.
+                <br />
+                Start a conversation to see it here.
               </p>
             </div>
           ) : (
             entries.map((e) => (
-              <div key={e.apiId} className="history-item" onClick={() => onSelect(e.apiId)} style={{
-                padding: "12px 14px", borderRadius: "14px",
-                border: "1px solid rgba(255,255,255,0.05)",
-                marginBottom: "6px",
-                display: "flex", alignItems: "center", gap: "12px",
-              }}>
-                <div style={{
-                  flexShrink: 0, width: "36px", height: "36px", borderRadius: "10px",
-                  background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.13)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <Sparkles size={14} color="#34d399" />
+              <div
+                key={e.apiId}
+                onClick={() => onSelect(e.apiId)}
+                className="flex items-center gap-3 p-3 rounded-2xl border border-white/5 mb-1.5 cursor-pointer hover:bg-mora-green/5 transition"
+              >
+                <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-mora-green/10 border border-mora-green/15 flex items-center justify-center">
+                  <Sparkles size={14} className="text-mora-green" />
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{
-                    fontSize: "13px", fontWeight: 600, color: "rgba(255,255,255,0.85)", marginBottom: "2px",
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold text-white/85 truncate mb-0.5">
                     {e.title}
                   </p>
-                  <p style={{
-                    fontSize: "11px", color: "rgba(255,255,255,0.28)",
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
+                  <p className="text-[11px] text-white/30 truncate">
                     {e.preview}
                   </p>
                 </div>
-                <ChevronRight size={14} color="rgba(52,211,153,0.35)" style={{ flexShrink: 0 }} />
+                <ChevronRight
+                  size={14}
+                  className="text-mora-green/40 flex-shrink-0"
+                />
               </div>
             ))
           )}
@@ -458,7 +416,12 @@ const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (a
 };
 
 // ─── CompareModal ─────────────────────────────────────────────────────────────
-type ApiOption = { _id: string; name: string; category?: string; description?: string };
+type ApiOption = {
+  _id: string;
+  name: string;
+  category?: string;
+  description?: string;
+};
 
 const CompareModal = ({
   onClose,
@@ -496,12 +459,14 @@ const CompareModal = ({
   };
 
   const handleCompare = async () => {
-    if (!isLoggedIn) { onNeedLogin(); return; }
+    if (!isLoggedIn) {
+      onNeedLogin();
+      return;
+    }
     if (!selectedA || !selectedB) return;
     setLoadingCompare(true);
     try {
       const prompt = `Compare these two APIs in detail:\n\nAPI A: ${selectedA.name}\n${selectedA.description || ""}\n\nAPI B: ${selectedB.name}\n${selectedB.description || ""}\n\nGive a structured comparison covering:\n1. Primary Use Case\n2. Key Features\n3. Authentication\n4. Rate Limits and Pricing\n5. Developer Experience\n6. Best For (who should use each)\n7. Verdict\n\nBe concise but comprehensive.`;
-
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -527,106 +492,94 @@ const CompareModal = ({
 
   return (
     <div
-      style={{
-        position: "fixed", inset: 0, zIndex: 60,
-        display: "flex", alignItems: "flex-end", justifyContent: "center",
-        background: "rgba(0,0,0,0.80)", backdropFilter: "blur(14px)",
-      }}
+      className="fixed inset-0 z-60 flex items-end justify-center bg-black/80 backdrop-blur-xl"
       onClick={!picking ? onClose : undefined}
     >
       <div
-        className="slide-up"
+        className="slide-up w-full max-w-[480px] rounded-t-3xl bg-[#050E09] border border-mora-green/15 border-b-0 shadow-[0_-12px_60px_rgba(0,0,0,0.65)] max-h-[88vh] flex flex-col pb-[env(safe-area-inset-bottom,20px)]"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%", maxWidth: "480px",
-          borderRadius: "24px 24px 0 0",
-          background: "rgba(5,14,9,0.99)",
-          border: "1px solid rgba(52,211,153,0.14)", borderBottom: "none",
-          boxShadow: "0 -12px 60px rgba(0,0,0,0.65)",
-          maxHeight: "88vh", display: "flex", flexDirection: "column",
-          paddingBottom: "env(safe-area-inset-bottom, 20px)",
-        }}
       >
-        {/* Handle */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
-          <div style={{ width: "36px", height: "3px", borderRadius: "99px", background: "rgba(255,255,255,0.12)" }} />
+        <div className="flex justify-center pt-3">
+          <div className="w-9 h-1 rounded-full bg-white/10" />
         </div>
-
-        {/* Header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px 0" }}>
+        <div className="flex items-center justify-between px-5 pt-4 pb-0">
           <div>
-            <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(52,211,153,0.50)", marginBottom: "3px" }}>
+            <p className="text-[10px] font-bold tracking-[0.14em] uppercase text-mora-green/50 mb-0.5">
               AI-Powered
             </p>
-            <h3 style={{ fontSize: "18px", fontWeight: 800, color: "white" }}>
-              Compare APIs
-            </h3>
+            <h3 className="text-lg font-extrabold text-white">Compare APIs</h3>
           </div>
-          <button onClick={onClose} className="glass-btn" style={{
-            width: "32px", height: "32px", borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-          }}>
-            <X size={13} color="rgba(255,255,255,0.45)" />
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10"
+          >
+            <X size={13} className="text-white/40" />
           </button>
         </div>
-
-        <div style={{ overflowY: "auto", flex: 1, padding: "16px 20px 0" }}>
+        <div className="overflow-y-auto flex-1 px-5 pt-4">
           {!result && (
             <>
-              {/* Selector row */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 40px 1fr", gap: "8px", alignItems: "center", marginBottom: "16px" }}>
-                {/* A */}
+              <div className="grid grid-cols-[1fr_40px_1fr] gap-2 items-center mb-4">
                 <button
-                  className={`compare-select-btn ${selectedA ? "selected" : ""}`}
-                  onClick={() => { setPicking("A"); setSearch(""); }}
-                  style={{
-                    padding: "14px 12px", borderRadius: "16px", textAlign: "left",
-                    background: selectedA ? "rgba(52,211,153,0.10)" : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${selectedA ? "rgba(52,211,153,0.50)" : "rgba(255,255,255,0.10)"}`,
-                    minHeight: "72px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "4px",
+                  onClick={() => {
+                    setPicking("A");
+                    setSearch("");
                   }}
+                  className={`p-3.5 rounded-2xl text-left border transition-all ${
+                    selectedA
+                      ? "bg-mora-green/10 border-mora-green/50"
+                      : "bg-white/5 border-white/10"
+                  }`}
                 >
-                  <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>API A</span>
-                  {selectedA
-                    ? <span style={{ fontSize: "13px", fontWeight: 700, color: "#a7f3d0" }}>{selectedA.name}</span>
-                    : <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>Tap to select</span>
-                  }
+                  <span className="text-[9px] font-bold tracking-[0.14em] uppercase text-mora-green/60">
+                    API A
+                  </span>
+                  {selectedA ? (
+                    <span className="text-[13px] font-bold text-mora-green block mt-1">
+                      {selectedA.name}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-white/25 block mt-1">
+                      Tap to select
+                    </span>
+                  )}
                 </button>
-
-                {/* VS */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{
-                    width: "32px", height: "32px", borderRadius: "50%",
-                    background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.20)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    <span style={{ fontSize: "9px", fontWeight: 900, color: "#34d399", letterSpacing: "0.05em" }}>VS</span>
+                <div className="flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-mora-green/10 border border-mora-green/20 flex items-center justify-center">
+                    <span className="text-[9px] font-black text-mora-green tracking-wider">
+                      VS
+                    </span>
                   </div>
                 </div>
-
-                {/* B */}
                 <button
-                  className={`compare-select-btn ${selectedB ? "selected" : ""}`}
-                  onClick={() => { setPicking("B"); setSearch(""); }}
-                  style={{
-                    padding: "14px 12px", borderRadius: "16px", textAlign: "left",
-                    background: selectedB ? "rgba(52,211,153,0.10)" : "rgba(255,255,255,0.03)",
-                    border: `1px solid ${selectedB ? "rgba(52,211,153,0.50)" : "rgba(255,255,255,0.10)"}`,
-                    minHeight: "72px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "4px",
+                  onClick={() => {
+                    setPicking("B");
+                    setSearch("");
                   }}
+                  className={`p-3.5 rounded-2xl text-left border transition-all ${
+                    selectedB
+                      ? "bg-mora-green/10 border-mora-green/50"
+                      : "bg-white/5 border-white/10"
+                  }`}
                 >
-                  <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>API B</span>
-                  {selectedB
-                    ? <span style={{ fontSize: "13px", fontWeight: 700, color: "#a7f3d0" }}>{selectedB.name}</span>
-                    : <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>Tap to select</span>
-                  }
+                  <span className="text-[9px] font-bold tracking-[0.14em] uppercase text-mora-green/60">
+                    API B
+                  </span>
+                  {selectedB ? (
+                    <span className="text-[13px] font-bold text-mora-green block mt-1">
+                      {selectedB.name}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-white/25 block mt-1">
+                      Tap to select
+                    </span>
+                  )}
                 </button>
               </div>
 
-              {/* Search / Picker */}
               {picking && (
-                <div style={{ marginBottom: "16px" }}>
-                  <p style={{ fontSize: "11px", fontWeight: 600, color: "rgba(52,211,153,0.6)", marginBottom: "8px", letterSpacing: "0.06em" }}>
+                <div className="mb-4">
+                  <p className="text-[11px] font-semibold text-mora-green/60 mb-2 tracking-wider">
                     Select API {picking}
                   </p>
                   <input
@@ -634,16 +587,11 @@ const CompareModal = ({
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search Apives library..."
-                    style={{
-                      width: "100%", padding: "10px 14px", borderRadius: "12px",
-                      background: "rgba(255,255,255,0.05)", border: "1px solid rgba(52,211,153,0.22)",
-                      color: "white", fontSize: "13px", outline: "none",
-                      caretColor: "#34d399", marginBottom: "8px",
-                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-mora-green/20 text-white text-[13px] outline-none caret-mora-green mb-2"
                   />
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxHeight: "180px", overflowY: "auto" }}>
+                  <div className="flex flex-col gap-1 max-h-[180px] overflow-y-auto">
                     {filtered.length === 0 ? (
-                      <p style={{ textAlign: "center", padding: "20px", fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>
+                      <p className="text-center py-5 text-xs text-white/25">
                         No APIs found
                       </p>
                     ) : (
@@ -651,18 +599,13 @@ const CompareModal = ({
                         <button
                           key={api._id}
                           onClick={() => selectApi(api)}
-                          style={{
-                            padding: "10px 14px", borderRadius: "10px", textAlign: "left",
-                            background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
-                            color: "rgba(255,255,255,0.80)", fontSize: "13px", cursor: "pointer",
-                            transition: "background 0.15s",
-                          }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(52,211,153,0.09)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+                          className="px-3.5 py-2.5 rounded-xl text-left bg-white/5 border border-white/10 text-white/80 text-[13px] hover:bg-mora-green/10 transition"
                         >
-                          <span style={{ fontWeight: 600 }}>{api.name}</span>
+                          <span className="font-semibold">{api.name}</span>
                           {api.category && (
-                            <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.30)", marginLeft: "8px" }}>{api.category}</span>
+                            <span className="text-[11px] text-white/30 ml-2">
+                              {api.category}
+                            </span>
                           )}
                         </button>
                       ))
@@ -671,29 +614,18 @@ const CompareModal = ({
                 </div>
               )}
 
-              {/* Compare button */}
               <button
                 onClick={handleCompare}
                 disabled={!canCompare || loadingCompare}
-                style={{
-                  width: "100%", padding: "14px", borderRadius: "16px",
-                  fontSize: "14px", fontWeight: 700,
-                  background: canCompare ? "rgba(52,211,153,0.18)" : "rgba(255,255,255,0.06)",
-                  color: canCompare ? "#34d399" : "rgba(255,255,255,0.20)",
-                  border: canCompare ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(255,255,255,0.08)",
-                  cursor: canCompare ? "pointer" : "default",
-                  boxShadow: canCompare ? "0 0 18px rgba(52,211,153,0.12)" : "none",
-                  transition: "all 0.2s", marginBottom: "20px",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                }}
+                className={`w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all mb-5 ${
+                  canCompare
+                    ? "bg-mora-green/15 border border-mora-green/30 text-mora-green shadow-[0_0_18px_rgba(52,211,153,0.12)] cursor-pointer"
+                    : "bg-white/5 border border-white/10 text-white/20 cursor-default"
+                }`}
               >
                 {loadingCompare ? (
                   <>
-                    <div style={{
-                      width: "14px", height: "14px",
-                      border: "2px solid rgba(52,211,153,0.2)", borderTopColor: "#34d399",
-                      borderRadius: "50%", animation: "orbSpin 0.8s linear infinite",
-                    }} />
+                    <div className="w-3.5 h-3.5 border-2 border-mora-green/20 border-t-mora-green rounded-full animate-[orbSpin_0.8s_linear_infinite]" />
                     Comparing...
                   </>
                 ) : (
@@ -706,35 +638,27 @@ const CompareModal = ({
             </>
           )}
 
-          {/* Result */}
           {result && (
-            <div style={{ paddingBottom: "20px" }}>
-              <div style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                padding: "10px 14px", borderRadius: "12px",
-                background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.15)",
-                marginBottom: "14px",
-              }}>
-                <span style={{ fontSize: "11px", fontWeight: 700, color: "#a7f3d0" }}>{selectedA?.name}</span>
-                <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.25)" }}>vs</span>
-                <span style={{ fontSize: "11px", fontWeight: 700, color: "#a7f3d0" }}>{selectedB?.name}</span>
+            <div className="pb-5">
+              <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-mora-green/10 border border-mora-green/15 mb-3.5">
+                <span className="text-[11px] font-bold text-mora-green">
+                  {selectedA?.name}
+                </span>
+                <span className="text-[10px] text-white/25">vs</span>
+                <span className="text-[11px] font-bold text-mora-green">
+                  {selectedB?.name}
+                </span>
               </div>
-              <div style={{
-                padding: "16px", borderRadius: "16px",
-                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)",
-                fontSize: "12px", lineHeight: "1.8", color: "rgba(255,255,255,0.75)",
-                whiteSpace: "pre-wrap", marginBottom: "14px",
-              }}>
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs leading-relaxed text-white/75 whitespace-pre-wrap mb-3.5">
                 {result}
               </div>
               <button
-                onClick={() => { setResult(null); setSelectedA(null); setSelectedB(null); }}
-                style={{
-                  width: "100%", padding: "12px", borderRadius: "14px",
-                  fontSize: "13px", fontWeight: 600,
-                  background: "rgba(52,211,153,0.09)", border: "1px solid rgba(52,211,153,0.20)",
-                  color: "#6ee7b7", cursor: "pointer", marginBottom: "8px",
+                onClick={() => {
+                  setResult(null);
+                  setSelectedA(null);
+                  setSelectedB(null);
                 }}
+                className="w-full py-3 rounded-2xl text-[13px] font-semibold bg-mora-green/10 border border-mora-green/20 text-mora-green hover:bg-mora-green/15 transition mb-2"
               >
                 Compare Another
               </button>
@@ -747,13 +671,20 @@ const CompareModal = ({
 };
 
 // ─── MicButton ────────────────────────────────────────────────────────────────
-const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
+const MicButton = ({
+  onTranscript,
+  disabled,
+}: {
+  onTranscript: (t: string) => void;
+  disabled: boolean;
+}) => {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
   const toggle = useCallback(() => {
     const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Speech recognition is not supported in this browser.");
       return;
@@ -782,20 +713,18 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
     <button
       onClick={toggle}
       disabled={disabled}
-      className={listening ? "mic-active" : ""}
+      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+        listening
+          ? "bg-red-500/20 border border-red-500/50 mic-active"
+          : "bg-white/5 border border-white/10"
+      }`}
       title={listening ? "Listening… tap to stop" : "Voice input"}
-      style={{
-        width: "32px", height: "32px", borderRadius: "50%",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: listening ? "rgba(239,68,68,0.18)" : "rgba(255,255,255,0.05)",
-        border: listening ? "1px solid rgba(239,68,68,0.45)" : "1px solid rgba(255,255,255,0.09)",
-        cursor: "pointer", transition: "all 0.2s",
-      }}
     >
-      {listening
-        ? <MicOff size={13} color="#f87171" />
-        : <Mic size={13} color="rgba(255,255,255,0.40)" />
-      }
+      {listening ? (
+        <MicOff size={13} color="#f87171" />
+      ) : (
+        <Mic size={13} className="text-white/40" />
+      )}
     </button>
   );
 };
@@ -833,57 +762,47 @@ const ClaudeInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (hasText && !disabled) {
-        if (!isLoggedIn) { onNeedLogin(); return; }
+        if (!isLoggedIn) {
+          onNeedLogin();
+          return;
+        }
         onSend();
       }
     }
   };
 
-  const handleFocus = () => {
-    if (!isLoggedIn) onNeedLogin();
+  const handleSendClick = () => {
+    if (!isLoggedIn) {
+      onNeedLogin();
+      return;
+    }
+    onSend();
   };
 
   return (
-    <div className="glass-input" style={{ borderRadius: "22px" }}>
+    <div className="glass-input rounded-[22px]">
       <textarea
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKey}
-        onFocus={handleFocus}
         placeholder={placeholder}
         rows={1}
-        style={{
-          width: "100%", background: "transparent",
-          color: "rgba(255,255,255,0.85)", fontSize: "14px",
-          lineHeight: "1.6", fontWeight: 450, outline: "none",
-          padding: "14px 20px 6px", fontFamily: "inherit", caretColor: "#34d399",
-        }}
+        className="w-full bg-transparent text-white/85 text-sm leading-relaxed font-medium outline-none px-5 pt-3.5 pb-1.5 font-inherit caret-mora-green"
       />
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
+      <div className="flex items-center justify-between px-3 pb-2.5">
         <MicButton
           onTranscript={(t) => onChange(value + (value ? " " : "") + t)}
           disabled={disabled}
         />
         <button
-          onClick={() => {
-            if (!isLoggedIn) { onNeedLogin(); return; }
-            onSend();
-          }}
+          onClick={handleSendClick}
           disabled={!hasText || disabled}
-          style={{
-            width: "32px", height: "32px", borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: hasText ? "pointer" : "default",
-            background: hasText
-              ? "rgba(52,211,153,0.22)"
-              : "rgba(255,255,255,0.06)",
-            border: hasText
-              ? "1px solid rgba(52,211,153,0.40)"
-              : "1px solid rgba(255,255,255,0.08)",
-            boxShadow: hasText ? "0 0 14px rgba(52,211,153,0.25)" : "none",
-            transition: "all 0.2s ease",
-          }}
+          className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+            hasText
+              ? "bg-mora-green/20 border border-mora-green/40 shadow-[0_0_14px_rgba(52,211,153,0.25)] cursor-pointer"
+              : "bg-white/5 border border-white/10 cursor-default"
+          }`}
         >
           <ArrowUp
             size={14}
@@ -906,22 +825,23 @@ const AskApivesPage = () => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-useEffect(() => {
-  const checkAuth = () => {
-    const token = localStorage.getItem("apives_token");
-    const user = localStorage.getItem("apives_user");
-    setIsLoggedIn(!!token || !!user);
-  };
-
-  checkAuth();
-  window.addEventListener("storage", checkAuth);
-
-  return () => window.removeEventListener("storage", checkAuth);
-}, []);
+  // Check auth on mount and listen for storage changes
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("apives_token");
+      const user = localStorage.getItem("apives_user");
+      setIsLoggedIn(!!token || !!user);
+    };
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    return () => window.removeEventListener("storage", checkAuth);
+  }, []);
 
   const [apiData, setApiData] = useState<any>(null);
   const [input, setInput] = useState("");
-  const [chat, setChat] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [chat, setChat] = useState<
+    { role: "user" | "assistant"; content: string }[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
@@ -930,19 +850,14 @@ useEffect(() => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Redirect helper — used for every auth-gated action
-  const redirectToAccess = () => {
+  // Redirect helper — only for non-logged-in users
+  const redirectToAccess = useCallback(() => {
     navigate(
       `/access?returnUrl=${encodeURIComponent(
         window.location.pathname + window.location.search
       )}`
     );
-  };
-
-  const requireLogin = (): boolean => {
-    if (!isLoggedIn) { redirectToAccess(); return false; }
-    return true;
-  };
+  }, [navigate]);
 
   // Load persisted chat
   useEffect(() => {
@@ -959,14 +874,18 @@ useEffect(() => {
     localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
     const firstUser = chat.find((m) => m.role === "user");
     if (firstUser) {
-      localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
+      localStorage.setItem(
+        `apives_chat_title_${apiId}`,
+        firstUser.content.slice(0, 60)
+      );
     }
   }, [chat, apiId]);
 
   // Fetch API data
   useEffect(() => {
     if (!apiId) return;
-    axios.get(`/api/apis/${apiId}`)
+    axios
+      .get(`/api/apis/${apiId}`)
       .then((res) => setApiData(res.data))
       .catch(() => {});
   }, [apiId]);
@@ -977,7 +896,10 @@ useEffect(() => {
   }, [chat, loading]);
 
   const sendMessage = async (overrideText?: string) => {
-    if (!requireLogin()) return;
+    if (!isLoggedIn) {
+      redirectToAccess();
+      return;
+    }
     const text = (overrideText ?? input).trim();
     if (!text) return;
 
@@ -1001,7 +923,10 @@ useEffect(() => {
     } catch {
       setChat((prev) => [
         ...prev,
-        { role: "assistant", content: "Unable to fetch response. Please try again." },
+        {
+          role: "assistant",
+          content: "Unable to fetch response. Please try again.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -1028,13 +953,19 @@ useEffect(() => {
 
       {/* Modals */}
       {showClearModal && (
-        <ClearModal onConfirm={clearChat} onCancel={() => setShowClearModal(false)} />
+        <ClearModal
+          onConfirm={clearChat}
+          onCancel={() => setShowClearModal(false)}
+        />
       )}
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
           isLoggedIn={isLoggedIn}
-          onNeedLogin={() => { setShowCompareModal(false); redirectToAccess(); }}
+          onNeedLogin={() => {
+            setShowCompareModal(false);
+            redirectToAccess();
+          }}
         />
       )}
       {showHistoryModal && (
@@ -1047,116 +978,72 @@ useEffect(() => {
         />
       )}
 
-      <div
-        className="page-in"
-        style={{
-          display: "flex", flexDirection: "column", height: "100dvh",
-          overflow: "hidden", background: "#060D0A", color: "white",
-          fontFamily: "inherit", position: "relative",
-        }}
-      >
+      <div className="page-in flex flex-col h-dvh overflow-hidden bg-[#060D0A] text-white font-inherit relative">
         {/* Ambient background */}
-        <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
-          <div style={{
-            position: "absolute", top: "-100px", left: "-80px",
-            width: "380px", height: "380px", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }} />
-          <div style={{
-            position: "absolute", bottom: "-80px", right: "-80px",
-            width: "320px", height: "320px", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(5,150,105,0.08) 0%, transparent 70%)",
-            filter: "blur(70px)",
-          }} />
-          <div style={{
-            position: "absolute", inset: 0, opacity: 0.016,
-            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }} />
+        <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+          <div className="absolute -top-[100px] -left-[80px] w-[380px] h-[380px] rounded-full bg-radial from-mora-green/12 to-transparent blur-[60px]" />
+          <div className="absolute -bottom-[80px] -right-[80px] w-[320px] h-[320px] rounded-full bg-radial from-mora-green/8 to-transparent blur-[70px]" />
+          <div
+            className="absolute inset-0 opacity-[0.016]"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
         </div>
 
         {/* ── HEADER ── */}
-        <div style={{
-          position: "relative", zIndex: 20, flexShrink: 0,
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          paddingLeft: "16px", paddingRight: "16px",
-          paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)",
-          paddingBottom: "14px",
-          background: "rgba(6,13,10,0.95)", backdropFilter: "blur(28px)",
-          WebkitBackdropFilter: "blur(28px)",
-          borderBottom: "1px solid rgba(52,211,153,0.07)",
-        }}>
+        <div className="relative z-20 flex-shrink-0 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top,0px)+14px)] pb-3.5 bg-[#060D0A]/95 backdrop-blur-3xl border-b border-mora-green/10">
           {/* Left */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="close-btn-green"
-              style={{
-                width: "36px", height: "36px", borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                backdropFilter: "blur(12px)", cursor: "pointer",
-              }}
+              className="w-9 h-9 rounded-full bg-mora-green/10 border border-mora-green/20 flex items-center justify-center hover:bg-mora-green/15 transition"
             >
-              <X size={15} color="#34d399" />
+              <X size={15} className="text-mora-green" />
             </button>
             <div>
-              <p style={{
-                fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)",
-                lineHeight: 1.2, letterSpacing: "-0.01em",
-              }}>
+              <p className="text-[15px] font-extrabold text-white/95 leading-tight tracking-tight">
                 Ask Apives AI
               </p>
-              <p style={{
-                fontSize: "10px", fontWeight: 500, letterSpacing: "0.04em",
-                color: "rgba(52,211,153,0.48)", marginTop: "1px",
-              }}>
+              <p className="text-[10px] font-medium tracking-wider text-mora-green/50 mt-0.5">
                 Enterprise API Intelligence
               </p>
             </div>
           </div>
 
           {/* Right */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="flex items-center gap-2">
             {isLoggedIn && (
               <button
                 onClick={() => setShowHistoryModal(true)}
-                className="glass-btn"
-                style={{
-                  width: "36px", height: "36px", borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                }}
+                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
                 title="Chat history"
               >
-                <History size={14} color="rgba(255,255,255,0.40)" />
+                <History size={14} className="text-white/40" />
               </button>
             )}
             {hasHistory && (
               <button
                 onClick={() => setShowClearModal(true)}
-                className="glass-btn"
-                style={{
-                  width: "36px", height: "36px", borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                }}
+                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
               >
-                <Trash2 size={14} color="rgba(255,255,255,0.30)" />
+                <Trash2 size={14} className="text-white/30" />
               </button>
             )}
             <button
               onClick={() => {
-                if (!requireLogin()) return;
+                if (!isLoggedIn) {
+                  redirectToAccess();
+                  return;
+                }
                 setShowCompareModal(true);
               }}
-              style={{
-                width: "36px", height: "36px", borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(52,211,153,0.10)", border: "1px solid rgba(52,211,153,0.22)",
-                cursor: "pointer", transition: "all 0.2s",
-              }}
+              className="w-9 h-9 rounded-full bg-mora-green/10 border border-mora-green/20 flex items-center justify-center hover:bg-mora-green/15 transition"
               title="Compare APIs"
             >
-              <GitCompare size={14} color="#34d399" />
+              <GitCompare size={14} className="text-mora-green" />
             </button>
           </div>
         </div>
@@ -1164,70 +1051,51 @@ useEffect(() => {
         {/* ── CHAT AREA ── */}
         <div
           ref={scrollRef}
-          className="chat-scroll"
-          style={{ position: "relative", zIndex: 10, flex: 1, overflowY: "auto", padding: "16px 0", minHeight: 0 }}
+          className="chat-scroll relative z-10 flex-1 overflow-y-auto py-4 min-h-0"
         >
           {/* Empty state */}
           {chat.length === 0 && (
-            <div style={{
-              display: "flex", flexDirection: "column", alignItems: "center",
-              justifyContent: "center", minHeight: "100%",
-              padding: "32px 24px 8px", textAlign: "center",
-            }}>
+            <div className="flex flex-col items-center justify-center min-h-full px-6 py-8 text-center">
               <AnimatedOrb />
 
               {/* Hero text */}
-              <h2 style={{
-                fontSize: "18px", fontWeight: 900,
-                marginTop: "20px", marginBottom: "6px", lineHeight: 1.2,
-                letterSpacing: "-0.02em",
-              }}>
+              <h2 className="text-lg font-black mt-5 mb-1.5 leading-tight tracking-tight">
                 The API Intelligence
                 <br />
-                <span style={{ color: "#34d399" }}>you deserve</span>
+                <span className="text-mora-green">you deserve</span>
               </h2>
 
-              <p style={{
-                fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
-                maxWidth: "220px", marginBottom: "20px",
-              }}>
-                Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
+              <p className="text-[11px] text-white/30 leading-relaxed max-w-[220px] mb-5">
+                Deep API analysis and instant answers on endpoints, auth, rate
+                limits, and integration guidance.
               </p>
 
-              {/* API context pill — shown when apiId / apiName is present */}
+              {/* API context pill */}
               {displayName && (
-                <div style={{
-                  marginBottom: "16px", padding: "8px 20px", borderRadius: "999px",
-                  fontSize: "12px", fontWeight: 600, maxWidth: "280px", textAlign: "center",
-                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(52,211,153,0.30)",
-                  color: "rgba(52,211,153,0.75)", display: "inline-flex", alignItems: "center", gap: "8px",
-                }}>
-                  <span style={{
-                    width: "6px", height: "6px", borderRadius: "50%",
-                    background: "#34d399", flexShrink: 0,
-                    boxShadow: "0 0 6px rgba(52,211,153,0.60)",
-                  }} />
+                <div className="mb-4 px-5 py-2 rounded-full text-xs font-semibold max-w-[280px] text-center bg-white/5 border border-mora-green/30 text-mora-green/75 inline-flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-mora-green flex-shrink-0 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
                   {displayName}
                 </div>
               )}
               {displayName && (
-                <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.25)", marginBottom: "20px" }}>
+                <p className="text-[11px] text-white/25 mb-5">
                   Ask anything about this API…
                 </p>
               )}
 
               {/* API Breakdown — without description */}
               {apiData && (
-                <div style={{ width: "100%", maxWidth: "340px" }}>
-                  <ApiBreakdown api={{ ...apiData, description: undefined }} />
+                <div className="w-full max-w-[340px]">
+                  <ApiBreakdown
+                    api={{ ...apiData, description: undefined }}
+                  />
                 </div>
               )}
 
               {/* Suggested Prompts */}
-              <div style={{ width: "100%", maxWidth: "340px", marginTop: "20px" }}>
+              <div className="w-full max-w-[340px] mt-5">
                 <SuggestedPrompts
                   onClick={(text: string) => {
-                    if (!requireLogin()) return;
                     sendMessage(text);
                   }}
                 />
@@ -1236,33 +1104,24 @@ useEffect(() => {
           )}
 
           {/* Messages */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "0 12px" }}>
+          <div className="flex flex-col gap-2.5 px-3">
             {chat.map((msg, i) => (
               <div key={i} className="msg-enter">
                 <MessagePill role={msg.role} content={msg.content} />
               </div>
             ))}
             {loading && (
-              <div className="msg-enter" style={{ display: "flex", justifyContent: "flex-start", paddingLeft: "8px" }}>
+              <div className="msg-enter flex justify-start pl-2">
                 <TypingIndicator />
               </div>
             )}
           </div>
-          <div ref={bottomRef} style={{ height: "8px" }} />
+          <div ref={bottomRef} className="h-2" />
         </div>
 
         {/* ── INPUT AREA ── */}
-        <div style={{
-          position: "relative", zIndex: 20, flexShrink: 0,
-          padding: "8px 16px",
-          paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
-          background: "rgba(6,13,10,0.97)",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-        }}>
-          <div
-            className="shim-line"
-            style={{ height: "1px", borderRadius: "99px", marginBottom: "10px", opacity: 0.45 }}
-          />
+        <div className="relative z-20 flex-shrink-0 px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom,16px))] bg-[#060D0A]/97 border-t border-white/5">
+          <div className="shim-line h-px rounded-full mb-2.5 opacity-45" />
 
           <ClaudeInput
             value={input}
@@ -1274,10 +1133,7 @@ useEffect(() => {
             placeholder={inputPlaceholder}
           />
 
-          <p style={{
-            textAlign: "center", fontSize: "10px",
-            color: "rgba(255,255,255,0.10)", marginTop: "8px", letterSpacing: "0.03em",
-          }}>
+          <p className="text-center text-[10px] text-white/10 mt-2 tracking-wider">
             Powered by Apives AI · Results may vary
           </p>
         </div>
