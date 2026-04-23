@@ -38,7 +38,7 @@ const STYLES = `
 
   @keyframes floatOrb {
     0%,100% { transform: translateY(0px); }
-    50%      { transform: translateY(-7px); }
+    50%      { transform: translateY(-12px); }
   }
   .animate-float { animation: floatOrb 4s ease-in-out infinite; }
 
@@ -64,14 +64,14 @@ const STYLES = `
     100% { background-position: 200% center; }
   }
   .shim-line {
-    background: linear-gradient(90deg, transparent 0%, rgba(52,211,153,0.25) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(52,211,153,0.35) 50%, transparent 100%);
     background-size: 200% auto;
     animation: shimLine 2.5s linear infinite;
   }
 
   @keyframes orbGlow {
-    0%,100% { box-shadow: 0 0 28px rgba(52,211,153,0.38), inset 0 2px 10px rgba(255,255,255,0.16); }
-    50%      { box-shadow: 0 0 48px rgba(52,211,153,0.60), inset 0 2px 12px rgba(255,255,255,0.22); }
+    0%,100% { box-shadow: 0 0 30px rgba(52,211,153,0.4), 0 0 60px rgba(52,211,153,0.2), inset 0 2px 10px rgba(255,255,255,0.16); }
+    50%      { box-shadow: 0 0 50px rgba(52,211,153,0.6), 0 0 80px rgba(52,211,153,0.3), inset 0 2px 12px rgba(255,255,255,0.22); }
   }
 
   @keyframes dataPing {
@@ -97,10 +97,33 @@ const STYLES = `
   }
 
   @keyframes greenPulse {
-    0%,100% { opacity: 0.4; transform: scale(1); }
-    50%     { opacity: 0.8; transform: scale(1.05); }
+    0%,100% { opacity: 0.3; transform: scale(1); }
+    50%     { opacity: 0.6; transform: scale(1.1); }
   }
-  .green-pulse { animation: greenPulse 3s ease-in-out infinite; }
+  .green-pulse { animation: greenPulse 4s ease-in-out infinite; }
+
+  @keyframes greenFloat {
+    0%,100% { transform: translateY(0px) rotate(0deg); }
+    33%     { transform: translateY(-10px) rotate(1deg); }
+    66%     { transform: translateY(5px) rotate(-1deg); }
+  }
+  .green-float { animation: greenFloat 8s ease-in-out infinite; }
+
+  @keyframes borderGlow {
+    0%,100% { border-color: rgba(52,211,153,0.1); }
+    50%     { border-color: rgba(52,211,153,0.3); }
+  }
+  .border-glow { animation: borderGlow 3s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer-bg {
+    background: linear-gradient(90deg, transparent, rgba(52,211,153,0.05), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
 
   .glass-pill-user {
     background: rgba(52,211,153,0.09);
@@ -113,14 +136,14 @@ const STYLES = `
     backdrop-filter: blur(16px);
   }
   .glass-input {
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.03);
     border: 1px solid rgba(52,211,153,0.18);
     backdrop-filter: blur(20px);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: all 0.3s ease;
   }
   .glass-input:focus-within {
-    border-color: rgba(52,211,153,0.38);
-    box-shadow: 0 0 0 3px rgba(52,211,153,0.07);
+    border-color: rgba(52,211,153,0.45);
+    box-shadow: 0 0 25px rgba(52,211,153,0.1), 0 0 0 3px rgba(52,211,153,0.05);
   }
   textarea { resize: none; scrollbar-width: none; }
   textarea::-webkit-scrollbar { display: none; }
@@ -155,16 +178,22 @@ const AnimatedOrb = () => {
   return (
     <div className="animate-float flex flex-col items-center gap-4">
       {/* Orb */}
-      <div className="relative w-[110px] h-[110px] flex items-center justify-center">
-        {/* Outer glow */}
-        <div className="absolute -inset-3 rounded-full bg-mora-green/16 blur-xl" />
+      <div className="relative w-[120px] h-[120px] flex items-center justify-center">
+        {/* Outer glow rings */}
+        <div className="absolute -inset-6 rounded-full bg-mora-green/8 blur-2xl green-pulse" />
+        <div className="absolute -inset-3 rounded-full bg-mora-green/15 blur-xl" />
+        
         {/* Core gradient */}
         <div
-          className="absolute inset-[10px] rounded-full bg-gradient-to-br from-mora-green to-emerald-600"
+          className="absolute inset-[8px] rounded-full bg-gradient-to-br from-mora-green to-emerald-600"
           style={{
             animation: "orbGlow 3.5s ease-in-out infinite",
           }}
         />
+        
+        {/* Inner shimmer */}
+        <div className="absolute inset-[10px] rounded-full shimmer-bg" />
+        
         {/* Highlight */}
         <div
           className="absolute rounded-full"
@@ -174,14 +203,15 @@ const AnimatedOrb = () => {
             width: "28%",
             height: "20%",
             background:
-              "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)",
+              "radial-gradient(circle, rgba(255,255,255,0.6), transparent 70%)",
           }}
         />
+        
         {/* Data pings */}
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="absolute w-[5px] h-[5px] rounded-full bg-white/80"
+            className="absolute w-[5px] h-[5px] rounded-full bg-white/90"
             style={{
               top: `${[18, 72, 50][i]}%`,
               left: `${[72, 20, 78][i]}%`,
@@ -189,9 +219,10 @@ const AnimatedOrb = () => {
             }}
           />
         ))}
+        
         {/* Rotating word inside the orb */}
         {show && (
-          <span className="word-in absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
+          <span className="word-in absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow-lg">
             {WORDS[idx]}
           </span>
         )}
@@ -202,7 +233,7 @@ const AnimatedOrb = () => {
 
 // ─── TypingIndicator ──────────────────────────────────────────────────────────
 const TypingIndicator = () => (
-  <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl rounded-bl bg-white/5 border border-white/10 backdrop-blur-xl w-fit">
+  <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl rounded-bl bg-white/5 border border-mora-green/10 backdrop-blur-xl w-fit">
     <div className="relative w-3.5 h-3.5">
       <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-mora-green to-emerald-600" />
     </div>
@@ -235,7 +266,7 @@ const MessagePill = ({
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} px-1`}>
       {!isUser && (
-        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-mora-green to-emerald-600 flex items-center justify-center mr-2 mt-1">
+        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-mora-green to-emerald-600 flex items-center justify-center mr-2 mt-1 shadow-lg shadow-mora-green/20">
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
@@ -346,7 +377,7 @@ const HistoryModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-center pt-3">
-          <div className="w-9 h-1 rounded-full bg-white/10" />
+          <div className="w-9 h-1 rounded-full bg-mora-green/30" />
         </div>
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2.5">
@@ -417,11 +448,9 @@ type ApiOption = {
 
 const CompareModal = ({
   onClose,
-  isLoggedIn,
   onNeedLogin,
 }: {
   onClose: () => void;
-  isLoggedIn: boolean;
   onNeedLogin: () => void;
 }) => {
   const [apis, setApis] = useState<ApiOption[]>([]);
@@ -451,10 +480,14 @@ const CompareModal = ({
   };
 
   const handleCompare = async () => {
-    if (!isLoggedIn) {
+    // Check login
+    const token = localStorage.getItem("apives_token");
+    const user = localStorage.getItem("apives_user");
+    if (!token && !user) {
       onNeedLogin();
       return;
     }
+    
     if (!selectedA || !selectedB) return;
     setLoadingCompare(true);
     try {
@@ -537,8 +570,8 @@ const CompareModal = ({
                   )}
                 </button>
                 <div className="flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-mora-green to-emerald-600 border border-mora-green/30 flex items-center justify-center shadow-lg shadow-mora-green/20">
-                    <span className="text-[9px] font-black text-white tracking-wider">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-mora-green to-emerald-600 border-2 border-mora-green/30 flex items-center justify-center shadow-lg shadow-mora-green/30">
+                    <span className="text-[10px] font-black text-white tracking-wider">
                       VS
                     </span>
                   </div>
@@ -611,7 +644,7 @@ const CompareModal = ({
                 disabled={!canCompare || loadingCompare}
                 className={`w-full py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all mb-5 ${
                   canCompare
-                    ? "bg-mora-green/15 border border-mora-green/30 text-mora-green shadow-[0_0_18px_rgba(52,211,153,0.12)] cursor-pointer"
+                    ? "bg-gradient-to-r from-mora-green/20 to-emerald-600/20 border border-mora-green/40 text-mora-green shadow-[0_0_25px_rgba(52,211,153,0.15)] cursor-pointer hover:shadow-[0_0_35px_rgba(52,211,153,0.25)]"
                     : "bg-white/5 border border-white/10 text-white/20 cursor-default"
                 }`}
               >
@@ -726,7 +759,6 @@ const ClaudeInput = ({
   onChange,
   onSend,
   disabled,
-  isLoggedIn,
   onNeedLogin,
   placeholder,
 }: {
@@ -734,7 +766,6 @@ const ClaudeInput = ({
   onChange: (v: string) => void;
   onSend: () => void;
   disabled: boolean;
-  isLoggedIn: boolean;
   onNeedLogin: () => void;
   placeholder: string;
 }) => {
@@ -753,7 +784,9 @@ const ClaudeInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (hasText && !disabled) {
-        if (!isLoggedIn) {
+        const token = localStorage.getItem("apives_token");
+        const user = localStorage.getItem("apives_user");
+        if (!token && !user) {
           onNeedLogin();
           return;
         }
@@ -763,7 +796,9 @@ const ClaudeInput = ({
   };
 
   const handleSendClick = () => {
-    if (!isLoggedIn) {
+    const token = localStorage.getItem("apives_token");
+    const user = localStorage.getItem("apives_user");
+    if (!token && !user) {
       onNeedLogin();
       return;
     }
@@ -772,7 +807,7 @@ const ClaudeInput = ({
   };
 
   return (
-    <div className="glass-input rounded-[22px]">
+    <div className="glass-input rounded-[22px] border-glow">
       <textarea
         ref={textareaRef}
         value={value}
@@ -792,7 +827,7 @@ const ClaudeInput = ({
           disabled={!hasText || disabled}
           className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
             hasText
-              ? "bg-mora-green/20 border border-mora-green/40 shadow-[0_0_14px_rgba(52,211,153,0.25)] cursor-pointer"
+              ? "bg-gradient-to-br from-mora-green/30 to-emerald-600/30 border border-mora-green/50 shadow-[0_0_15px_rgba(52,211,153,0.3)] cursor-pointer hover:shadow-[0_0_25px_rgba(52,211,153,0.4)]"
               : "bg-white/5 border border-white/10 cursor-default"
           }`}
         >
@@ -815,26 +850,23 @@ const AskApivesPage = () => {
   const apiId = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
+  // SIMPLE & RELIABLE AUTH CHECK
+  const getLoginStatus = () => {
+    return !!(localStorage.getItem("apives_token") || localStorage.getItem("apives_user"));
+  };
 
-  // Check auth on mount - CRITICAL FIX
+  const [isLoggedIn, setIsLoggedIn] = useState(getLoginStatus);
+
+  // Update auth state on mount and storage changes
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("apives_token");
-      const user = localStorage.getItem("apives_user");
-      const loggedIn = !!(token || user);
-      setIsLoggedIn(loggedIn);
-      setAuthChecked(true);
+    setIsLoggedIn(getLoginStatus());
+    
+    const handleStorageChange = () => {
+      setIsLoggedIn(getLoginStatus());
     };
     
-    // Check immediately
-    checkAuth();
-    
-    // Also listen for storage changes
-    window.addEventListener("storage", checkAuth);
-    
-    return () => window.removeEventListener("storage", checkAuth);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const [apiData, setApiData] = useState<any>(null);
@@ -850,28 +882,18 @@ const AskApivesPage = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // CRITICAL FIX: Check login status before every action
-  const checkLoginAndRedirect = useCallback((): boolean => {
-    // Re-check localStorage directly every time
-    const token = localStorage.getItem("apives_token");
-    const user = localStorage.getItem("apives_user");
-    const loggedIn = !!(token || user);
-    
-    // Update state if needed
-    if (loggedIn !== isLoggedIn) {
-      setIsLoggedIn(loggedIn);
-    }
-    
-    if (!loggedIn) {
+  // SIMPLE REDIRECT - Only if NOT logged in
+  const redirectToAccess = useCallback(() => {
+    if (!getLoginStatus()) {
       navigate(
         `/access?returnUrl=${encodeURIComponent(
           window.location.pathname + window.location.search
         )}`
       );
-      return false;
+      return true; // Return true if redirected
     }
-    return true;
-  }, [navigate, isLoggedIn]);
+    return false; // Return false if logged in
+  }, [navigate]);
 
   // Load persisted chat
   useEffect(() => {
@@ -910,8 +932,11 @@ const AskApivesPage = () => {
   }, [chat, loading]);
 
   const sendMessage = async (overrideText?: string) => {
-    // CRITICAL FIX: Always check login directly before sending
-    if (!checkLoginAndRedirect()) return;
+    // SIMPLE CHECK - Only redirect if NOT logged in
+    if (!getLoginStatus()) {
+      redirectToAccess();
+      return;
+    }
     
     const text = (overrideText ?? input).trim();
     if (!text) return;
@@ -954,7 +979,6 @@ const AskApivesPage = () => {
 
   const hasHistory = chat.length > 0;
 
-  // Derive display name from URL param or fetched data
   const displayName = apiName || apiData?.name || null;
   const inputPlaceholder = displayName
     ? `Ask anything about ${displayName}...`
@@ -974,10 +998,9 @@ const AskApivesPage = () => {
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
-          isLoggedIn={isLoggedIn}
           onNeedLogin={() => {
             setShowCompareModal(false);
-            checkLoginAndRedirect();
+            redirectToAccess();
           }}
         />
       )}
@@ -992,33 +1015,36 @@ const AskApivesPage = () => {
       )}
 
       <div className="page-in flex flex-col h-dvh overflow-hidden bg-[#060D0A] text-white font-inherit relative">
-        {/* Ambient background with green layout effects */}
+        {/* Rich green ambient background */}
         <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-          {/* Main green glow */}
-          <div className="absolute -top-[100px] -left-[80px] w-[380px] h-[380px] rounded-full bg-mora-green/12 blur-[60px] green-pulse" />
+          {/* Top left main glow */}
+          <div className="absolute -top-[150px] -left-[100px] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-mora-green/15 via-mora-green/8 to-transparent blur-[80px] green-float" />
           
-          {/* Secondary green glow */}
-          <div className="absolute -bottom-[80px] -right-[80px] w-[320px] h-[320px] rounded-full bg-mora-green/8 blur-[70px]" />
+          {/* Bottom right glow */}
+          <div className="absolute -bottom-[100px] -right-[80px] w-[400px] h-[400px] rounded-full bg-gradient-to-tl from-emerald-600/10 via-mora-green/5 to-transparent blur-[70px] green-float" style={{ animationDelay: "-4s" }} />
           
-          {/* Top right subtle green accent */}
-          <div className="absolute top-[20%] -right-[40px] w-[200px] h-[200px] rounded-full bg-mora-green/5 blur-[50px]" />
+          {/* Center ambient */}
+          <div className="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-r from-mora-green/5 via-mora-green/3 to-transparent blur-[100px] green-pulse" />
           
-          {/* Center ambient glow */}
-          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-mora-green/3 via-emerald-600/3 to-transparent blur-[80px]" />
+          {/* Top right accent */}
+          <div className="absolute top-[10%] right-[10%] w-[200px] h-[200px] rounded-full bg-mora-green/8 blur-[60px] green-pulse" style={{ animationDelay: "-2s" }} />
           
-          {/* Grid pattern */}
+          {/* Bottom left subtle */}
+          <div className="absolute bottom-[20%] left-[5%] w-[250px] h-[250px] rounded-full bg-emerald-600/5 blur-[80px] green-float" style={{ animationDelay: "-6s" }} />
+          
+          {/* Grid pattern with green dots */}
           <div
-            className="absolute inset-0 opacity-[0.016]"
+            className="absolute inset-0 opacity-[0.02]"
             style={{
               backgroundImage:
-                "radial-gradient(circle, rgba(52,211,153,0.9) 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
+                "radial-gradient(circle, rgba(52,211,153,0.8) 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
             }}
           />
         </div>
 
         {/* ── HEADER ── */}
-        <div className="relative z-20 flex-shrink-0 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top,0px)+14px)] pb-3.5 bg-[#060D0A]/95 backdrop-blur-3xl">
+        <div className="relative z-20 flex-shrink-0 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top,0px)+14px)] pb-3.5 bg-[#060D0A]/80 backdrop-blur-3xl">
           {/* Left */}
           <div className="flex items-center gap-3">
             <button
@@ -1031,7 +1057,7 @@ const AskApivesPage = () => {
               <p className="text-[15px] font-extrabold text-white/95 leading-tight tracking-tight">
                 Ask Apives AI
               </p>
-              <p className="text-[10px] font-medium tracking-wider text-mora-green/50 mt-0.5">
+              <p className="text-[10px] font-medium tracking-wider text-mora-green/60 mt-0.5">
                 Enterprise API Intelligence
               </p>
             </div>
@@ -1058,14 +1084,16 @@ const AskApivesPage = () => {
             )}
             <button
               onClick={() => {
-                if (!checkLoginAndRedirect()) return;
+                if (!getLoginStatus()) {
+                  redirectToAccess();
+                  return;
+                }
                 setShowCompareModal(true);
               }}
-              className="w-9 h-9 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all relative group"
+              className="w-9 h-9 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all"
               title="Compare APIs"
             >
-              <GitCompare size={14} className="text-mora-green group-hover:text-mora-green/80 transition-colors" />
-              <div className="absolute inset-0 rounded-full bg-mora-green/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <GitCompare size={14} className="text-mora-green" />
             </button>
           </div>
         </div>
@@ -1084,7 +1112,9 @@ const AskApivesPage = () => {
               <h2 className="text-lg font-black mt-5 mb-1.5 leading-tight tracking-tight">
                 The API Intelligence
                 <br />
-                <span className="text-mora-green">you deserve</span>
+                <span className="bg-gradient-to-r from-mora-green to-emerald-400 bg-clip-text text-transparent">
+                  you deserve
+                </span>
               </h2>
 
               <p className="text-[11px] text-white/30 leading-relaxed max-w-[220px] mb-5">
@@ -1094,8 +1124,8 @@ const AskApivesPage = () => {
 
               {/* API context pill */}
               {displayName && (
-                <div className="mb-4 px-5 py-2 rounded-full text-xs font-semibold max-w-[280px] text-center bg-mora-green/10 border border-mora-green/30 text-mora-green inline-flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-mora-green flex-shrink-0 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
+                <div className="mb-4 px-5 py-2 rounded-full text-xs font-semibold max-w-[280px] text-center bg-mora-green/10 border border-mora-green/30 text-mora-green inline-flex items-center gap-2 shadow-lg shadow-mora-green/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-mora-green flex-shrink-0 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
                   {displayName}
                 </div>
               )}
@@ -1105,7 +1135,7 @@ const AskApivesPage = () => {
                 </p>
               )}
 
-              {/* API Breakdown — without description */}
+              {/* API Breakdown */}
               {apiData && (
                 <div className="w-full max-w-[340px]">
                   <ApiBreakdown
@@ -1142,20 +1172,19 @@ const AskApivesPage = () => {
         </div>
 
         {/* ── INPUT AREA ── */}
-        <div className="relative z-20 flex-shrink-0 px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom,16px))] bg-[#060D0A]/97 border-t border-mora-green/10">
-          <div className="shim-line h-px rounded-full mb-2.5 opacity-45" />
+        <div className="relative z-20 flex-shrink-0 px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom,16px))] bg-gradient-to-t from-[#060D0A] via-[#060D0A]/98 to-[#060D0A]/80 backdrop-blur-xl border-t border-mora-green/10">
+          <div className="shim-line h-px rounded-full mb-2.5 opacity-50" />
 
           <ClaudeInput
             value={input}
             onChange={setInput}
             onSend={() => sendMessage()}
             disabled={loading}
-            isLoggedIn={isLoggedIn}
-            onNeedLogin={() => checkLoginAndRedirect()}
+            onNeedLogin={redirectToAccess}
             placeholder={inputPlaceholder}
           />
 
-          <p className="text-center text-[10px] text-white/10 mt-2 tracking-wider">
+          <p className="text-center text-[10px] text-mora-green/15 mt-2 tracking-wider">
             Powered by Apives AI · Results may vary
           </p>
         </div>
