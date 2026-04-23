@@ -782,14 +782,20 @@ const CompareModal = ({
               </button>
             </div>
           )}
-        </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 // ─── MicButton ────────────────────────────────────────────────────────────────
-const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
+type MicButtonProps = {
+  onTranscript: (t: string) => void;
+  disabled: boolean;
+};
+
+const MicButton = ({ onTranscript, disabled }: MicButtonProps) => {
+
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
@@ -843,6 +849,16 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
 };
 
 // ─── ClaudeInput ──────────────────────────────────────────────────────────────
+type ClaudeInputProps = {
+  value: string;
+  onChange: (v: string) => void;
+  onSend: () => void;
+  disabled: boolean;
+  isLoggedIn: boolean;
+  onNeedLogin: () => void;
+  placeholder: string;
+};
+
 const ClaudeInput = ({
   value,
   onChange,
@@ -851,15 +867,8 @@ const ClaudeInput = ({
   isLoggedIn,
   onNeedLogin,
   placeholder,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  onSend: () => void;
-  disabled: boolean;
-  isLoggedIn: boolean;
-  onNeedLogin: () => void;
-  placeholder: string;
-}) => {
+}: ClaudeInputProps) => {
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasText = value.trim().length > 0;
 
