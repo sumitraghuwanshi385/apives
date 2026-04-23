@@ -417,6 +417,7 @@ const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (a
             <X size={12} color="rgba(255,255,255,0.45)" />
           </button>
         </div>
+
         <div style={{ overflowY: "auto", padding: "0 12px 24px", flex: 1 }}>
           {entries.length === 0 ? (
             <div style={{ textAlign: "center", padding: "40px 20px" }}>
