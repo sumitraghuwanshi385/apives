@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
+const askAiRoute = require("./routes/askAi");
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
@@ -151,6 +152,7 @@ app.use("/api/apis", apiRoutes);
 app.use("/api/sponsor", sponsorRoutes);
 app.use("/api/usecases", usecaseRoutes);
 app.use("/api/runner", runnerRoutes);
+app.use("/api/ask-ai", askAiRoute);
 
 // ================= DATABASE =================
 const DB_URI = process.env.MONGO_URI;
