@@ -96,6 +96,12 @@ const STYLES = `
     to { transform: rotate(360deg); }
   }
 
+  @keyframes greenPulse {
+    0%,100% { opacity: 0.4; transform: scale(1); }
+    50%     { opacity: 0.8; transform: scale(1.05); }
+  }
+  .green-pulse { animation: greenPulse 3s ease-in-out infinite; }
+
   .glass-pill-user {
     background: rgba(52,211,153,0.09);
     border: 1px solid rgba(52,211,153,0.20);
@@ -175,7 +181,7 @@ const AnimatedOrb = () => {
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="absolute w-[5px] h-[5px] rounded-full bg-mora-green/80"
+            className="absolute w-[5px] h-[5px] rounded-full bg-white/80"
             style={{
               top: `${[18, 72, 50][i]}%`,
               left: `${[72, 20, 78][i]}%`,
@@ -344,7 +350,7 @@ const HistoryModal = ({
         </div>
         <div className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-mora-green/10 border border-mora-green/20 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-mora-green/15 border border-mora-green/30 flex items-center justify-center">
               <Clock size={14} className="text-mora-green" />
             </div>
             <span className="text-[15px] font-bold text-white">
@@ -353,7 +359,7 @@ const HistoryModal = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+            className="w-8 h-8 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all"
           >
             <X size={12} className="text-white/40" />
           </button>
@@ -361,8 +367,8 @@ const HistoryModal = ({
         <div className="overflow-y-auto px-3 pb-6 flex-1">
           {entries.length === 0 ? (
             <div className="text-center py-10 px-5">
-              <div className="w-12 h-12 rounded-2xl bg-mora-green/10 border border-mora-green/15 mx-auto mb-3 flex items-center justify-center">
-                <History size={20} className="text-mora-green/50" />
+              <div className="w-12 h-12 rounded-2xl bg-mora-green/15 border border-mora-green/25 mx-auto mb-3 flex items-center justify-center">
+                <History size={20} className="text-mora-green" />
               </div>
               <p className="text-[13px] text-white/30 leading-relaxed">
                 No chat history yet.
@@ -375,9 +381,9 @@ const HistoryModal = ({
               <div
                 key={e.apiId}
                 onClick={() => onSelect(e.apiId)}
-                className="flex items-center gap-3 p-3 rounded-2xl border border-white/5 mb-1.5 cursor-pointer hover:bg-mora-green/5 transition"
+                className="flex items-center gap-3 p-3 rounded-2xl border border-white/5 mb-1.5 cursor-pointer hover:bg-mora-green/8 transition"
               >
-                <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-mora-green/10 border border-mora-green/15 flex items-center justify-center">
+                <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-mora-green/15 border border-mora-green/25 flex items-center justify-center">
                   <Sparkles size={14} className="text-mora-green" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -486,7 +492,7 @@ const CompareModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-center pt-3">
-          <div className="w-9 h-1 rounded-full bg-white/10" />
+          <div className="w-9 h-1 rounded-full bg-mora-green/30" />
         </div>
         <div className="flex items-center justify-between px-5 pt-4 pb-0">
           <div>
@@ -497,7 +503,7 @@ const CompareModal = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+            className="w-8 h-8 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all"
           >
             <X size={13} className="text-white/40" />
           </button>
@@ -513,7 +519,7 @@ const CompareModal = ({
                   }}
                   className={`p-3.5 rounded-2xl text-left border transition-all ${
                     selectedA
-                      ? "bg-mora-green/10 border-mora-green/50"
+                      ? "bg-mora-green/15 border-mora-green/50"
                       : "bg-white/5 border-white/10"
                   }`}
                 >
@@ -531,8 +537,8 @@ const CompareModal = ({
                   )}
                 </button>
                 <div className="flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full bg-mora-green/10 border border-mora-green/20 flex items-center justify-center">
-                    <span className="text-[9px] font-black text-mora-green tracking-wider">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-mora-green to-emerald-600 border border-mora-green/30 flex items-center justify-center shadow-lg shadow-mora-green/20">
+                    <span className="text-[9px] font-black text-white tracking-wider">
                       VS
                     </span>
                   </div>
@@ -544,7 +550,7 @@ const CompareModal = ({
                   }}
                   className={`p-3.5 rounded-2xl text-left border transition-all ${
                     selectedB
-                      ? "bg-mora-green/10 border-mora-green/50"
+                      ? "bg-mora-green/15 border-mora-green/50"
                       : "bg-white/5 border-white/10"
                   }`}
                 >
@@ -761,6 +767,7 @@ const ClaudeInput = ({
       onNeedLogin();
       return;
     }
+    if (!hasText || disabled) return;
     onSend();
   };
 
@@ -809,16 +816,24 @@ const AskApivesPage = () => {
   const apiName = searchParams.get("apiName");
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
-  // Check auth on mount and listen for storage changes
+  // Check auth on mount - CRITICAL FIX
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("apives_token");
       const user = localStorage.getItem("apives_user");
-      setIsLoggedIn(!!token || !!user);
+      const loggedIn = !!(token || user);
+      setIsLoggedIn(loggedIn);
+      setAuthChecked(true);
     };
+    
+    // Check immediately
     checkAuth();
+    
+    // Also listen for storage changes
     window.addEventListener("storage", checkAuth);
+    
     return () => window.removeEventListener("storage", checkAuth);
   }, []);
 
@@ -835,14 +850,28 @@ const AskApivesPage = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Redirect helper — only for non-logged-in users
-  const redirectToAccess = useCallback(() => {
-    navigate(
-      `/access?returnUrl=${encodeURIComponent(
-        window.location.pathname + window.location.search
-      )}`
-    );
-  }, [navigate]);
+  // CRITICAL FIX: Check login status before every action
+  const checkLoginAndRedirect = useCallback((): boolean => {
+    // Re-check localStorage directly every time
+    const token = localStorage.getItem("apives_token");
+    const user = localStorage.getItem("apives_user");
+    const loggedIn = !!(token || user);
+    
+    // Update state if needed
+    if (loggedIn !== isLoggedIn) {
+      setIsLoggedIn(loggedIn);
+    }
+    
+    if (!loggedIn) {
+      navigate(
+        `/access?returnUrl=${encodeURIComponent(
+          window.location.pathname + window.location.search
+        )}`
+      );
+      return false;
+    }
+    return true;
+  }, [navigate, isLoggedIn]);
 
   // Load persisted chat
   useEffect(() => {
@@ -881,10 +910,9 @@ const AskApivesPage = () => {
   }, [chat, loading]);
 
   const sendMessage = async (overrideText?: string) => {
-    if (!isLoggedIn) {
-      redirectToAccess();
-      return;
-    }
+    // CRITICAL FIX: Always check login directly before sending
+    if (!checkLoginAndRedirect()) return;
+    
     const text = (overrideText ?? input).trim();
     if (!text) return;
 
@@ -949,7 +977,7 @@ const AskApivesPage = () => {
           isLoggedIn={isLoggedIn}
           onNeedLogin={() => {
             setShowCompareModal(false);
-            redirectToAccess();
+            checkLoginAndRedirect();
           }}
         />
       )}
@@ -964,15 +992,26 @@ const AskApivesPage = () => {
       )}
 
       <div className="page-in flex flex-col h-dvh overflow-hidden bg-[#060D0A] text-white font-inherit relative">
-        {/* Ambient background */}
+        {/* Ambient background with green layout effects */}
         <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-          <div className="absolute -top-[100px] -left-[80px] w-[380px] h-[380px] rounded-full bg-mora-green/12 blur-[60px]" />
+          {/* Main green glow */}
+          <div className="absolute -top-[100px] -left-[80px] w-[380px] h-[380px] rounded-full bg-mora-green/12 blur-[60px] green-pulse" />
+          
+          {/* Secondary green glow */}
           <div className="absolute -bottom-[80px] -right-[80px] w-[320px] h-[320px] rounded-full bg-mora-green/8 blur-[70px]" />
+          
+          {/* Top right subtle green accent */}
+          <div className="absolute top-[20%] -right-[40px] w-[200px] h-[200px] rounded-full bg-mora-green/5 blur-[50px]" />
+          
+          {/* Center ambient glow */}
+          <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-mora-green/3 via-emerald-600/3 to-transparent blur-[80px]" />
+          
+          {/* Grid pattern */}
           <div
             className="absolute inset-0 opacity-[0.016]"
             style={{
               backgroundImage:
-                "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+                "radial-gradient(circle, rgba(52,211,153,0.9) 1px, transparent 1px)",
               backgroundSize: "28px 28px",
             }}
           />
@@ -1019,16 +1058,14 @@ const AskApivesPage = () => {
             )}
             <button
               onClick={() => {
-                if (!isLoggedIn) {
-                  redirectToAccess();
-                  return;
-                }
+                if (!checkLoginAndRedirect()) return;
                 setShowCompareModal(true);
               }}
-              className="w-9 h-9 rounded-full bg-mora-green/10 border border-mora-green/20 flex items-center justify-center hover:bg-mora-green/15 transition"
+              className="w-9 h-9 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all relative group"
               title="Compare APIs"
             >
-              <GitCompare size={14} className="text-mora-green" />
+              <GitCompare size={14} className="text-mora-green group-hover:text-mora-green/80 transition-colors" />
+              <div className="absolute inset-0 rounded-full bg-mora-green/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             </button>
           </div>
         </div>
@@ -1057,7 +1094,7 @@ const AskApivesPage = () => {
 
               {/* API context pill */}
               {displayName && (
-                <div className="mb-4 px-5 py-2 rounded-full text-xs font-semibold max-w-[280px] text-center bg-white/5 border border-mora-green/30 text-mora-green/75 inline-flex items-center gap-2">
+                <div className="mb-4 px-5 py-2 rounded-full text-xs font-semibold max-w-[280px] text-center bg-mora-green/10 border border-mora-green/30 text-mora-green inline-flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-mora-green flex-shrink-0 shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
                   {displayName}
                 </div>
@@ -1105,7 +1142,7 @@ const AskApivesPage = () => {
         </div>
 
         {/* ── INPUT AREA ── */}
-        <div className="relative z-20 flex-shrink-0 px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom,16px))] bg-[#060D0A]/97 border-t border-white/5">
+        <div className="relative z-20 flex-shrink-0 px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom,16px))] bg-[#060D0A]/97 border-t border-mora-green/10">
           <div className="shim-line h-px rounded-full mb-2.5 opacity-45" />
 
           <ClaudeInput
@@ -1114,7 +1151,7 @@ const AskApivesPage = () => {
             onSend={() => sendMessage()}
             disabled={loading}
             isLoggedIn={isLoggedIn}
-            onNeedLogin={redirectToAccess}
+            onNeedLogin={() => checkLoginAndRedirect()}
             placeholder={inputPlaceholder}
           />
 
