@@ -1157,7 +1157,7 @@ useEffect(() => {
 >
   <History size={14} color="rgba(255,255,255,0.40)" />
 </button>
-            )}
+            
             {hasHistory && (
               <button
                 onClick={() => setShowClearModal(true)}
