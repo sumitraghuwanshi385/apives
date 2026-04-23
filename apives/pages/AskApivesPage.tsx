@@ -1137,33 +1137,44 @@ useEffect(() => {
         }}>
           {/* Left */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <button
-              onClick={() => navigate(-1)}
-              className="close-btn-green"
-              style={{
-                width: "36px", height: "36px", borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                backdropFilter: "blur(12px)", cursor: "pointer",
-              }}
-            >
-              <X size={15} color="#34d399" />
-            </button>
+  <button
+    onClick={() => navigate(-1)}
+    className="close-btn-green"
+    style={{
+      width: "36px",
+      height: "36px",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      backdropFilter: "blur(12px)",
+      cursor: "pointer",
+    }}
+  >
+    <X size={15} color="#34d399" />
+  </button>
+
+  <div>
+    <p style={{
+      fontSize: "15px",
+      fontWeight: 800,
+      color: "rgba(255,255,255,0.93)",
+      lineHeight: 1.2,
+      letterSpacing: "-0.01em",
+    }}>
+      Ask Apives AI
+    </p>
+    <p style={{
+      fontSize: "10px",
+      fontWeight: 500,
+      letterSpacing: "0.04em",
+      color: "rgba(52,211,153,0.48)",
+      marginTop: "1px",
+    }}>
+      API Intelligence Assistant
+    </p>
+  </div>
 </div>
-            <div>
-              <p style={{
-                fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)",
-                lineHeight: 1.2, letterSpacing: "-0.01em",
-              }}>
-                Ask Apives AI
-              </p>
-              <p style={{
-                fontSize: "10px", fontWeight: 500, letterSpacing: "0.04em",
-                color: "rgba(52,211,153,0.48)", marginTop: "1px",
-              }}>
-                API Intelligence Assistant
-              </p>
-            </div>
-          </div>
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
