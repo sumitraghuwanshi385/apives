@@ -1148,6 +1148,7 @@ useEffect(() => {
             >
               <X size={15} color="#34d399" />
             </button>
+</div>
             <div>
               <p style={{
                 fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)",
@@ -1236,14 +1237,22 @@ useEffect(() => {
 
               {/* Hero text */}
               <h2 style={{
-                fontSize: "18px", fontWeight: 900,
-                marginTop: "20px", marginBottom: "6px", lineHeight: 1.2,
-                letterSpacing: "-0.02em",
-              }}>
-                The API Intelligence
-                <br />
-                <span style={{ color: "#34d399" }}>you deserve</span>
-              </h2>
+  fontSize: "26px",
+  fontWeight: 900,
+  marginTop: "20px",
+  marginBottom: "8px",
+  lineHeight: 1.2,
+  letterSpacing: "-0.02em",
+}}>
+  The API Intelligence
+  <br />
+  <span style={{
+    color: "#22c55e", // MORE GREEN
+    textShadow: "0 0 12px rgba(34,197,94,0.5)"
+  }}>
+    You Deserve
+  </span>
+</h2>
 
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
