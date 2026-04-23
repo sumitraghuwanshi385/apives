@@ -22,7 +22,7 @@ import { SubmitApi } from './pages/SubmitApi';
 import { FreshApis } from './pages/FreshApis';
 import { PopularApis } from './pages/PopularApis';
 import { OnboardingPage } from './pages/Onboarding';
-import { AskApivesAI } from './pages/AskApivesAI';
+import { AskApivesAI } from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
 
 import {
