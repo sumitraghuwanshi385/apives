@@ -833,15 +833,11 @@ const ClaudeInput = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (hasText && !disabled) {
-        if (!isLoggedIn) { onNeedLogin(); return; }
         onSend();
       }
     }
   };
 
-  const handleFocus = () => {
-    if (!isLoggedIn) onNeedLogin();
-  };
 
   return (
     <div className="glass-input" style={{ borderRadius: "22px" }}>
@@ -850,7 +846,6 @@ const ClaudeInput = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKey}
-        onFocus={handleFocus}
         placeholder={placeholder}
         rows={1}
         style={{
@@ -867,7 +862,6 @@ const ClaudeInput = ({
         />
         <button
           onClick={() => {
-            if (!isLoggedIn) { onNeedLogin(); return; }
             onSend();
           }}
           disabled={!hasText || disabled}
@@ -944,6 +938,30 @@ useEffect(() => {
     return true;
   };
 
+useEffect(() => {
+  const hideGlobalLayout = () => {
+    const nav = document.querySelector("nav");
+    const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+
+    if (nav) nav.style.display = "none";
+    if (header) header.style.display = "none";
+    if (footer) footer.style.display = "none";
+  };
+
+  hideGlobalLayout();
+
+  return () => {
+    const nav = document.querySelector("nav");
+    const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+
+    if (nav) nav.style.display = "";
+    if (header) header.style.display = "";
+    if (footer) footer.style.display = "";
+  };
+}, []);
+
   // Load persisted chat
   useEffect(() => {
     if (!apiId) return;
@@ -977,7 +995,6 @@ useEffect(() => {
   }, [chat, loading]);
 
   const sendMessage = async (overrideText?: string) => {
-    if (!requireLogin()) return;
     const text = (overrideText ?? input).trim();
     if (!text) return;
 
@@ -1118,18 +1135,28 @@ useEffect(() => {
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {isLoggedIn && (
-              <button
-                onClick={() => setShowHistoryModal(true)}
-                className="glass-btn"
-                style={{
-                  width: "36px", height: "36px", borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                }}
-                title="Chat history"
-              >
-                <History size={14} color="rgba(255,255,255,0.40)" />
-              </button>
+            <button
+  onClick={() => {
+    if (!isLoggedIn) {
+      redirectToAccess();
+      return;
+    }
+    setShowHistoryModal(true);
+  }}
+  className="glass-btn"
+  style={{
+    width: "36px",
+    height: "36px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+  }}
+  title="Chat history"
+>
+  <History size={14} color="rgba(255,255,255,0.40)" />
+</button>
             )}
             {hasHistory && (
               <button
@@ -1227,7 +1254,7 @@ useEffect(() => {
               <div style={{ width: "100%", maxWidth: "340px", marginTop: "20px" }}>
                 <SuggestedPrompts
                   onClick={(text: string) => {
-                    if (!requireLogin()) return;
+                    
                     sendMessage(text);
                   }}
                 />
