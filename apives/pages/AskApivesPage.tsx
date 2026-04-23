@@ -13,12 +13,6 @@ import {
   Clock,
   ChevronRight,
   Zap,
-  Shield,
-  Search,
-  Link2,
-  Radio,
-  Brain,
-  Bolt,
 } from "lucide-react";
 import ApiBreakdown from "../components/ai/ApiBreakdown";
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
@@ -157,13 +151,11 @@ const AnimatedOrb = () => {
       {/* Orb */}
       <div className="relative w-[110px] h-[110px] flex items-center justify-center">
         {/* Outer glow */}
-        <div className="absolute -inset-3 rounded-full bg-radial from-mora-green/16 to-transparent blur-xl" />
+        <div className="absolute -inset-3 rounded-full bg-mora-green/16 blur-xl" />
         {/* Core gradient */}
         <div
-          className="absolute inset-[10px] rounded-full"
+          className="absolute inset-[10px] rounded-full bg-gradient-to-br from-mora-green to-emerald-600"
           style={{
-            background:
-              "radial-gradient(circle at 32% 28%, #a7f3d0, #10b981 40%, #065f46 80%)",
             animation: "orbGlow 3.5s ease-in-out infinite",
           }}
         />
@@ -193,7 +185,7 @@ const AnimatedOrb = () => {
         ))}
         {/* Rotating word inside the orb */}
         {show && (
-          <span className="word-in absolute inset-0 flex items-center justify-center text-xs font-semibold text-mora-green">
+          <span className="word-in absolute inset-0 flex items-center justify-center text-xs font-semibold text-white">
             {WORDS[idx]}
           </span>
         )}
@@ -206,7 +198,7 @@ const AnimatedOrb = () => {
 const TypingIndicator = () => (
   <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl rounded-bl bg-white/5 border border-white/10 backdrop-blur-xl w-fit">
     <div className="relative w-3.5 h-3.5">
-      <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-mora-green/80 to-mora-green" />
+      <div className="absolute inset-0.5 rounded-full bg-gradient-to-br from-mora-green to-emerald-600" />
     </div>
     <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-mora-green/60">
       Thinking
@@ -235,11 +227,9 @@ const MessagePill = ({
 }) => {
   const isUser = role === "user";
   return (
-    <div
-      className={`flex ${isUser ? "justify-end" : "justify-start"} px-1`}
-    >
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} px-1`}>
       {!isUser && (
-        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-mora-green/80 to-mora-green flex items-center justify-center mr-2 mt-1">
+        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-mora-green to-emerald-600 flex items-center justify-center mr-2 mt-1">
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
@@ -248,12 +238,8 @@ const MessagePill = ({
           isUser ? "glass-pill-user" : "glass-pill-ai"
         } max-w-[82%] px-4 py-2.5 text-[13px] leading-relaxed font-medium break-words whitespace-pre-wrap`}
         style={{
-          borderRadius: isUser
-            ? "18px 18px 4px 18px"
-            : "18px 18px 18px 4px",
-          color: isUser
-            ? "rgba(236,253,245,0.92)"
-            : "rgba(255,255,255,0.80)",
+          borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+          color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.80)",
         }}
       >
         {content}
@@ -511,7 +497,7 @@ const CompareModal = ({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10"
+            className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
           >
             <X size={13} className="text-white/40" />
           </button>
@@ -683,8 +669,7 @@ const MicButton = ({
 
   const toggle = useCallback(() => {
     const SpeechRecognition =
-      (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Speech recognition is not supported in this browser.");
       return;
@@ -981,8 +966,8 @@ const AskApivesPage = () => {
       <div className="page-in flex flex-col h-dvh overflow-hidden bg-[#060D0A] text-white font-inherit relative">
         {/* Ambient background */}
         <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-          <div className="absolute -top-[100px] -left-[80px] w-[380px] h-[380px] rounded-full bg-radial from-mora-green/12 to-transparent blur-[60px]" />
-          <div className="absolute -bottom-[80px] -right-[80px] w-[320px] h-[320px] rounded-full bg-radial from-mora-green/8 to-transparent blur-[70px]" />
+          <div className="absolute -top-[100px] -left-[80px] w-[380px] h-[380px] rounded-full bg-mora-green/12 blur-[60px]" />
+          <div className="absolute -bottom-[80px] -right-[80px] w-[320px] h-[320px] rounded-full bg-mora-green/8 blur-[70px]" />
           <div
             className="absolute inset-0 opacity-[0.016]"
             style={{
@@ -994,14 +979,14 @@ const AskApivesPage = () => {
         </div>
 
         {/* ── HEADER ── */}
-        <div className="relative z-20 flex-shrink-0 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top,0px)+14px)] pb-3.5 bg-[#060D0A]/95 backdrop-blur-3xl border-b border-mora-green/10">
+        <div className="relative z-20 flex-shrink-0 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top,0px)+14px)] pb-3.5 bg-[#060D0A]/95 backdrop-blur-3xl">
           {/* Left */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate(-1)}
-              className="w-9 h-9 rounded-full bg-mora-green/10 border border-mora-green/20 flex items-center justify-center hover:bg-mora-green/15 transition"
+              className="w-9 h-9 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all"
             >
-              <X size={15} className="text-mora-green" />
+              <X size={15} className="text-white/60" />
             </button>
             <div>
               <p className="text-[15px] font-extrabold text-white/95 leading-tight tracking-tight">
@@ -1018,7 +1003,7 @@ const AskApivesPage = () => {
             {isLoggedIn && (
               <button
                 onClick={() => setShowHistoryModal(true)}
-                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+                className="w-9 h-9 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all"
                 title="Chat history"
               >
                 <History size={14} className="text-white/40" />
@@ -1027,7 +1012,7 @@ const AskApivesPage = () => {
             {hasHistory && (
               <button
                 onClick={() => setShowClearModal(true)}
-                className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+                className="w-9 h-9 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center hover:bg-white/10 hover:scale-105 transition-all"
               >
                 <Trash2 size={14} className="text-white/30" />
               </button>
