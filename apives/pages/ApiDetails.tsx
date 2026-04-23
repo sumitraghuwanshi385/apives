@@ -296,18 +296,27 @@ if (!api) {
     onClick={() => navigate(`/ask-apives-ai?apiId=${id}`)}
     className="
       flex items-center gap-2
+
       px-4 md:px-5 py-2
+
       rounded-full
       text-[10px] md:text-xs
       font-black uppercase tracking-widest
-      bg-gradient-to-r from-red-500 to-blue-500
-      text-white
-      shadow-lg shadow-red-500/20
-      hover:scale-105 hover:shadow-blue-500/20
-      transition-all active:scale-95
+
+      bg-white/5
+      backdrop-blur-md
+      border border-white/10
+      text-slate-300
+
+      hover:bg-white/10
+      hover:text-white
+      hover:border-mora-500/40
+
+      transition-all
+      active:scale-95
     "
   >
-    <Sparkles size={14} className="opacity-90" />
+    <Sparkles size={14} className="text-mora-400" />
     Ask Apives AI
   </button>
 </div>
