@@ -14,20 +14,29 @@ import {
   ChevronRight,
   Zap,
   Shield,
-  Globe,
-  Code2,
+  Bolt,
+  Search,
+  Link2,
+  Radio,
+  Brain,
+  ArrowLeft,
 } from "lucide-react";
 
 import ApiBreakdown from "../components/ai/ApiBreakdown";
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
+// Styles
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
   body { font-family: 'DM Sans', -apple-system, sans-serif; }
+
+  /* Hide site footer on this page */
+  body > footer,
+  #root > footer,
+  footer { display: none !important; }
 
   .chat-scroll::-webkit-scrollbar { width: 3px; }
   .chat-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -79,12 +88,6 @@ const STYLES = `
     background: linear-gradient(90deg, transparent 0%, rgba(52,211,153,0.3) 50%, transparent 100%);
     background-size: 200% auto;
     animation: shimLine 2.5s linear infinite;
-  }
-
-  @keyframes pulseRing {
-    0%   { transform: scale(1); opacity: 0.6; }
-    70%  { transform: scale(1.35); opacity: 0; }
-    100% { transform: scale(1.35); opacity: 0; }
   }
 
   @keyframes orbGlow {
@@ -161,20 +164,42 @@ const STYLES = `
     cursor: pointer;
   }
   .history-item:hover { background: rgba(52,211,153,0.06) !important; }
+
+  /* Close btn green style matching mora-500 BackButton top gradient */
+  .close-btn-green {
+    position: relative;
+    overflow: hidden;
+    background: rgba(52,211,153,0.08) !important;
+    border: 1px solid rgba(52,211,153,0.20) !important;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .close-btn-green::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(to right, #34d399, transparent);
+    opacity: 0.7;
+    border-radius: 99px 99px 0 0;
+  }
+  .close-btn-green:hover {
+    background: rgba(52,211,153,0.14) !important;
+    transform: scale(1.04);
+  }
 `;
 
-// ─── Animated Orb (improved, no spinning ring or radar) ──────────────────────
+// Animated Orb - lucide icons, no emojis, no extra pill below
 const AnimatedOrb = () => {
   const [idx, setIdx] = useState(0);
   const [show, setShow] = useState(true);
 
-  const ORB_LABELS = [
-    { icon: "⚡", text: "INSTANT" },
-    { icon: "🔍", text: "DISCOVER" },
-    { icon: "🔗", text: "INTEGRATE" },
-    { icon: "🛡️", text: "SECURE" },
-    { icon: "📡", text: "REAL-TIME" },
-    { icon: "🧠", text: "INTELLIGENT" },
+  const ORB_LABELS: { icon: React.ReactNode; text: string }[] = [
+    { icon: <Bolt size={11} color="#34d399" strokeWidth={2.5} />, text: "INSTANT" },
+    { icon: <Search size={11} color="#34d399" strokeWidth={2.5} />, text: "DISCOVER" },
+    { icon: <Link2 size={11} color="#34d399" strokeWidth={2.5} />, text: "INTEGRATE" },
+    { icon: <Shield size={11} color="#34d399" strokeWidth={2.5} />, text: "SECURE" },
+    { icon: <Radio size={11} color="#34d399" strokeWidth={2.5} />, text: "REAL-TIME" },
+    { icon: <Brain size={11} color="#34d399" strokeWidth={2.5} />, text: "INTELLIGENT" },
   ];
 
   useEffect(() => {
@@ -211,7 +236,7 @@ const AnimatedOrb = () => {
           borderRadius: "50%",
           background: "radial-gradient(circle, rgba(255,255,255,0.60), transparent 70%)",
         }} />
-        {/* Data ping dots — decorative, no radar */}
+        {/* Data ping dots - decorative */}
         {[0, 1, 2].map((i) => (
           <div key={i} style={{
             position: "absolute",
@@ -224,21 +249,20 @@ const AnimatedOrb = () => {
         ))}
       </div>
 
-      {/* Rotating label below orb */}
+      {/* Rotating label below orb - lucide icon + text, no pill shape removed */}
       <div style={{
         display: "flex", alignItems: "center", gap: "6px",
-        padding: "6px 16px", borderRadius: "99px",
-        background: "rgba(52,211,153,0.08)",
-        border: "1px solid rgba(52,211,153,0.18)",
         minWidth: "120px", justifyContent: "center",
-        height: "32px",
+        height: "28px",
       }}>
         {show && (
           <span className="word-in" style={{
+            display: "flex", alignItems: "center", gap: "5px",
             fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em",
             color: "rgba(52,211,153,0.85)", fontFamily: "'Syne', sans-serif",
           }}>
-            {ORB_LABELS[idx].icon} {ORB_LABELS[idx].text}
+            {ORB_LABELS[idx].icon}
+            {ORB_LABELS[idx].text}
           </span>
         )}
       </div>
@@ -246,7 +270,7 @@ const AnimatedOrb = () => {
   );
 };
 
-// ─── Typing Indicator ─────────────────────────────────────────────────────────
+// Typing Indicator
 const TypingIndicator = () => (
   <div className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-sm w-fit glass-pill-ai">
     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -272,7 +296,7 @@ const TypingIndicator = () => (
   </div>
 );
 
-// ─── Message Pill ─────────────────────────────────────────────────────────────
+// Message Pill
 const MessagePill = ({ role, content }: { role: "user" | "assistant"; content: string }) => {
   const isUser = role === "user";
   return (
@@ -300,7 +324,7 @@ const MessagePill = ({ role, content }: { role: "user" | "assistant"; content: s
   );
 };
 
-// ─── Clear Modal ──────────────────────────────────────────────────────────────
+// Clear Modal
 const ClearModal = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => (
   <div style={{
     position: "fixed", inset: 0, zIndex: 60,
@@ -339,7 +363,7 @@ const ClearModal = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: 
   </div>
 );
 
-// ─── History Modal ────────────────────────────────────────────────────────────
+// History Modal
 type HistoryEntry = { apiId: string; title: string; preview: string; ts: number };
 
 const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (apiId: string) => void }) => {
@@ -359,7 +383,7 @@ const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (a
         const title = firstUser?.content?.slice(0, 48) || apiId;
         const last = msgs[msgs.length - 1];
         const preview = last?.content?.slice(0, 60) + "..." || "";
-        const ts = Date.now(); // approximate
+        const ts = Date.now();
         result.push({ apiId, title, preview, ts });
       } catch {}
     });
@@ -456,7 +480,7 @@ const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (a
   );
 };
 
-// ─── Compare Modal (Full functional) ─────────────────────────────────────────
+// Compare Modal
 type ApiOption = { _id: string; name: string; category?: string; description?: string };
 
 const CompareModal = ({ onClose, isLoggedIn, onNeedLogin }: {
@@ -496,24 +520,7 @@ const CompareModal = ({ onClose, isLoggedIn, onNeedLogin }: {
     setLoadingCompare(true);
     setComparing(true);
     try {
-      const prompt = `Compare these two APIs in detail:
-
-API A: ${selectedA.name}
-${selectedA.description || ""}
-
-API B: ${selectedB.name}
-${selectedB.description || ""}
-
-Give a structured comparison covering:
-1. Primary Use Case
-2. Key Features
-3. Authentication
-4. Rate Limits & Pricing
-5. Developer Experience
-6. Best For (who should use each)
-7. Verdict
-
-Be concise but comprehensive. Use markdown-style formatting.`;
+      const prompt = `Compare these two APIs in detail:\n\nAPI A: ${selectedA.name}\n${selectedA.description || ""}\n\nAPI B: ${selectedB.name}\n${selectedB.description || ""}\n\nGive a structured comparison covering:\n1. Primary Use Case\n2. Key Features\n3. Authentication\n4. Rate Limits and Pricing\n5. Developer Experience\n6. Best For (who should use each)\n7. Verdict\n\nBe concise but comprehensive. Use markdown-style formatting.`;
 
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
@@ -573,7 +580,6 @@ Be concise but comprehensive. Use markdown-style formatting.`;
         </div>
 
         <div style={{ overflowY: "auto", flex: 1, padding: "16px 20px 0" }}>
-          {/* API A + B selectors */}
           {!result && (
             <>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 40px 1fr", gap: "8px", alignItems: "center", marginBottom: "16px" }}>
@@ -682,7 +688,7 @@ Be concise but comprehensive. Use markdown-style formatting.`;
                 {loadingCompare ? (
                   <>
                     <div style={{ width: "14px", height: "14px", border: "2px solid rgba(2,44,34,0.3)", borderTopColor: "#022c22", borderRadius: "50%", animation: "orbSpin 0.8s linear infinite" }} />
-                    Comparing…
+                    Comparing...
                   </>
                 ) : (
                   <>
@@ -731,7 +737,7 @@ Be concise but comprehensive. Use markdown-style formatting.`;
   );
 };
 
-// ─── Login Guard Modal ────────────────────────────────────────────────────────
+// Login Guard Modal
 const LoginGuardModal = ({ onClose, onLogin }: { onClose: () => void; onLogin: () => void }) => (
   <div style={{
     position: "fixed", inset: 0, zIndex: 70,
@@ -775,7 +781,7 @@ const LoginGuardModal = ({ onClose, onLogin }: { onClose: () => void; onLogin: (
   </div>
 );
 
-// ─── Mic Button with real speech recognition ──────────────────────────────────
+// Mic Button
 const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -812,7 +818,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
       onClick={toggle}
       disabled={disabled}
       className={listening ? "mic-active" : ""}
-      title={listening ? "Listening… tap to stop" : "Voice input"}
+      title={listening ? "Listening... tap to stop" : "Voice input"}
       style={{
         width: "32px", height: "32px", borderRadius: "50%",
         display: "flex", alignItems: "center", justifyContent: "center",
@@ -829,7 +835,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
   );
 };
 
-// ─── Chat Input ───────────────────────────────────────────────────────────────
+// Chat Input
 const ClaudeInput = ({
   value, onChange, onSend, disabled, isLoggedIn, onNeedLogin,
 }: {
@@ -872,7 +878,7 @@ const ClaudeInput = ({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKey}
         onFocus={handleFocus}
-        placeholder="Ask anything about this API…"
+        placeholder="Ask anything about this API..."
         rows={1}
         style={{
           width: "100%", background: "transparent",
@@ -906,40 +912,12 @@ const ClaudeInput = ({
   );
 };
 
-// ─── API Feature Cards (replaces old orb words) ───────────────────────────────
-const ApiFeatureCards = () => {
-  const features = [
-    { icon: <Globe size={14} color="#34d399" />, title: "REST & GraphQL", desc: "Modern API architectures supported" },
-    { icon: <Zap size={14} color="#34d399" />, title: "Real-time Docs", desc: "Live endpoint exploration" },
-    { icon: <Code2 size={14} color="#34d399" />, title: "Code Examples", desc: "Ready-to-use snippets" },
-    { icon: <Shield size={14} color="#34d399" />, title: "Auth Guides", desc: "OAuth, API keys & more" },
-  ];
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", width: "100%", maxWidth: "320px", marginTop: "16px" }}>
-      {features.map((f, i) => (
-        <div key={i} style={{
-          padding: "12px", borderRadius: "14px",
-          background: "rgba(52,211,153,0.04)", border: "1px solid rgba(52,211,153,0.10)",
-          display: "flex", flexDirection: "column", gap: "6px",
-        }}>
-          <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "rgba(52,211,153,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {f.icon}
-          </div>
-          <p style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.80)", fontFamily: "'Syne', sans-serif" }}>{f.title}</p>
-          <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", lineHeight: 1.5 }}>{f.desc}</p>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// Main Page
 const AskApivesPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const apiId = searchParams.get("apiId");
 
-  // Auth check — adjust this to your actual auth mechanism
   const isLoggedIn = !!localStorage.getItem("apives_token") || !!localStorage.getItem("apives_user");
 
   const [apiData, setApiData] = useState<any>(null);
@@ -973,7 +951,6 @@ const AskApivesPage = () => {
   useEffect(() => {
     if (!apiId) return;
     localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
-    // Save history entry title
     if (chat.length > 0) {
       const firstUser = chat.find((m) => m.role === "user");
       if (firstUser) {
@@ -993,7 +970,7 @@ const AskApivesPage = () => {
   // Context pill
   useEffect(() => {
     if (apiData && chat.length === 0) {
-      setContextPrompt(`Exploring ${apiData.name || "this API"} — what would you like to know?`);
+      setContextPrompt(`Exploring ${apiData.name || "this API"}`);
     }
   }, [apiData]);
 
@@ -1062,7 +1039,7 @@ const AskApivesPage = () => {
         overflow: "hidden", background: "#060D0A", color: "white",
         fontFamily: "'DM Sans', -apple-system, sans-serif", position: "relative",
       }}>
-        {/* ── Ambient background ── */}
+        {/* Ambient background */}
         <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
           <div style={{
             position: "absolute", top: "-100px", left: "-80px",
@@ -1084,29 +1061,41 @@ const AskApivesPage = () => {
           }} />
         </div>
 
-        {/* ─────────── HEADER ─────────── */}
+        {/* HEADER - fixed at top, z-index 20 */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "space-between",
           paddingLeft: "16px", paddingRight: "16px",
           paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)",
           paddingBottom: "14px",
-          background: "rgba(6,13,10,0.92)", backdropFilter: "blur(28px)",
+          background: "rgba(6,13,10,0.95)", backdropFilter: "blur(28px)",
           WebkitBackdropFilter: "blur(28px)",
           borderBottom: "1px solid rgba(52,211,153,0.07)",
         }}>
-          {/* Left */}
+          {/* Left: mora-themed close button + title */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <button onClick={() => navigate(-1)} style={{
-              width: "36px", height: "36px", borderRadius: "50%",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)",
-              backdropFilter: "blur(12px)", cursor: "pointer", transition: "background 0.2s",
-            }}>
-              <X size={15} color="rgba(255,255,255,0.55)" />
+            {/*
+              Close button styled after BackButton's mora-500 green theme:
+              - green-tinted background
+              - top gradient line from mora-500 (#34d399) to transparent
+              - green border
+            */}
+            <button
+              onClick={() => navigate(-1)}
+              className="close-btn-green"
+              style={{
+                width: "36px", height: "36px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                backdropFilter: "blur(12px)", cursor: "pointer",
+              }}
+            >
+              <X size={15} color="#34d399" />
             </button>
             <div>
-              <p style={{ fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)", lineHeight: 1.2, letterSpacing: "-0.01em", fontFamily: "'Syne', sans-serif" }}>
+              <p style={{
+                fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)",
+                lineHeight: 1.2, letterSpacing: "-0.01em", fontFamily: "'Syne', sans-serif",
+              }}>
                 Ask Apives AI
               </p>
               <p style={{ fontSize: "10px", fontWeight: 500, letterSpacing: "0.04em", color: "rgba(52,211,153,0.48)", marginTop: "1px" }}>
@@ -1117,7 +1106,6 @@ const AskApivesPage = () => {
 
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {/* History — only when logged in */}
             {isLoggedIn && (
               <button
                 onClick={() => setShowHistoryModal(true)}
@@ -1133,7 +1121,6 @@ const AskApivesPage = () => {
                 <Trash2 size={14} color="rgba(255,255,255,0.30)" />
               </button>
             )}
-            {/* Compare — no pulse animation */}
             <button
               onClick={() => {
                 if (!isLoggedIn) { setShowLoginGuard(true); return; }
@@ -1152,39 +1139,24 @@ const AskApivesPage = () => {
           </div>
         </div>
 
-        {/* ─────────── API PILL ─────────── */}
-        {apiData && (
-          <div style={{ position: "relative", zIndex: 10, flexShrink: 0, display: "flex", justifyContent: "center", padding: "12px 20px 0" }}>
-            <div className="green-glow" style={{
-              display: "flex", alignItems: "center", gap: "8px",
-              padding: "6px 16px", borderRadius: "99px",
-              background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.20)",
-              backdropFilter: "blur(12px)",
-            }}>
-              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#34d399", flexShrink: 0 }} />
-              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.02em", color: "#6ee7b7", fontFamily: "'Syne', sans-serif" }}>
-                {apiData.name}
-              </span>
-              {apiData.category && (
-                <>
-                  <span style={{ color: "rgba(255,255,255,0.18)", fontSize: "10px" }}>·</span>
-                  <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", fontWeight: 500 }}>{apiData.category}</span>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ─────────── CHAT SCROLL AREA ─────────── */}
+        {/* CHAT SCROLL AREA - starts directly after header, no pill between */}
         <div ref={scrollRef} className="chat-scroll" style={{ position: "relative", zIndex: 10, flex: 1, overflowY: "auto", padding: "16px 0", minHeight: 0 }}>
           {/* Empty State */}
           {chat.length === 0 && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100%", padding: "24px 24px 8px", textAlign: "center" }}>
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "center",
+              justifyContent: "center", minHeight: "100%",
+              padding: "32px 24px 8px", textAlign: "center",
+            }}>
               <AnimatedOrb />
 
+              {/*
+                Title: Syne (font-display equivalent), smaller than before (was 22px now 18px),
+                using the green gradient theme from the page's mora-500 color system
+              */}
               <h2 style={{
-                fontSize: "22px", fontWeight: 900, color: "white",
-                marginTop: "24px", marginBottom: "8px", lineHeight: 1.25,
+                fontSize: "18px", fontWeight: 900, color: "white",
+                marginTop: "20px", marginBottom: "6px", lineHeight: 1.2,
                 letterSpacing: "-0.02em", fontFamily: "'Syne', sans-serif",
               }}>
                 The API Intelligence
@@ -1197,15 +1169,19 @@ const AskApivesPage = () => {
                 </span>
               </h2>
 
-              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.30)", lineHeight: 1.75, maxWidth: "230px", marginBottom: "20px" }}>
-                Deep API analysis, instant answers on endpoints, authentication, rate limits, and seamless integration guidance — all in one place.
+              {/* Single clean description line, no box, no em/en dashes */}
+              <p style={{
+                fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
+                maxWidth: "220px", marginBottom: "20px",
+              }}>
+                Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
-              {/* Context pill */}
+              {/* Context pill - shown only when API is loaded */}
               {contextPrompt && (
                 <div style={{
-                  marginBottom: "16px", padding: "10px 18px", borderRadius: "18px",
-                  fontSize: "12px", fontWeight: 500, maxWidth: "300px", textAlign: "center",
+                  marginBottom: "16px", padding: "8px 16px", borderRadius: "18px",
+                  fontSize: "11px", fontWeight: 500, maxWidth: "280px", textAlign: "center",
                   background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.15)",
                   color: "rgba(52,211,153,0.70)",
                 }}>
@@ -1213,15 +1189,12 @@ const AskApivesPage = () => {
                 </div>
               )}
 
-              {/* API Breakdown */}
+              {/* API Breakdown without description field */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
                   <ApiBreakdown api={{ ...apiData, description: undefined }} />
                 </div>
               )}
-
-              {/* Feature cards */}
-              <ApiFeatureCards />
 
               {/* Suggested Prompts */}
               <div style={{ width: "100%", maxWidth: "340px", marginTop: "20px" }}>
@@ -1249,7 +1222,7 @@ const AskApivesPage = () => {
           <div ref={bottomRef} style={{ height: "8px" }} />
         </div>
 
-        {/* ─────────── INPUT AREA ─────────── */}
+        {/* INPUT AREA */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           padding: "8px 16px",
