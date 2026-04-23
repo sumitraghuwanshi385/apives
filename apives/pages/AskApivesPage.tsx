@@ -1,52 +1,57 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import {
   X,
   Trash2,
   GitCompare,
   Mic,
+  MicOff,
   ArrowUp,
   Sparkles,
+  History,
+  Clock,
+  ChevronRight,
+  Zap,
+  Shield,
+  Globe,
+  Code2,
 } from "lucide-react";
 
 import ApiBreakdown from "../components/ai/ApiBreakdown";
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 
-// ─── All styles ───────────────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+  body { font-family: 'DM Sans', -apple-system, sans-serif; }
 
   .chat-scroll::-webkit-scrollbar { width: 3px; }
   .chat-scroll::-webkit-scrollbar-track { background: transparent; }
   .chat-scroll::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.15); border-radius: 99px; }
 
   @keyframes msgSlide {
-    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   .msg-enter { animation: msgSlide 0.32s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 
   @keyframes floatOrb {
-    0%,100% { transform: translateY(0px) scale(1) rotate(0deg); }
-    33%      { transform: translateY(-10px) scale(1.04) rotate(2deg); }
-    66%      { transform: translateY(-5px) scale(0.97) rotate(-2deg); }
+    0%,100% { transform: translateY(0px); }
+    50%      { transform: translateY(-8px); }
   }
-  .animate-float { animation: floatOrb 5s ease-in-out infinite; }
-
-  @keyframes orbSpin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-  .orb-spin { animation: orbSpin 8s linear infinite; }
+  .animate-float { animation: floatOrb 4s ease-in-out infinite; }
 
   @keyframes gradShift {
     0%,100% { background-position: 0% 50%; }
     50%      { background-position: 100% 50%; }
   }
   .grad-anim {
-    background-size: 200% 200%;
-    animation: gradShift 4s ease infinite;
+    background-size: 300% 300%;
+    animation: gradShift 5s ease infinite;
   }
 
   @keyframes typingBounce {
@@ -54,25 +59,17 @@ const STYLES = `
     30%         { transform: translateY(-5px); opacity: 1; }
   }
 
-  @keyframes pulseGreen {
-    0%   { box-shadow: 0 0 0 0 rgba(52,211,153,0.45); }
-    70%  { box-shadow: 0 0 0 10px rgba(52,211,153,0); }
-    100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); }
-  }
-  .pulse-green { animation: pulseGreen 2.2s ease-in-out infinite; }
-
   @keyframes wordFadeIn {
-    from { opacity: 0; transform: translateY(5px); }
+    from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
   .word-in { animation: wordFadeIn 0.3s ease forwards; }
-  .word-out { animation: wordFadeIn 0.3s ease reverse forwards; }
 
   @keyframes pageIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  .page-in { animation: pageIn 0.4s ease forwards; }
+  .page-in { animation: pageIn 0.35s ease forwards; }
 
   @keyframes shimLine {
     0%   { background-position: -200% center; }
@@ -84,134 +81,164 @@ const STYLES = `
     animation: shimLine 2.5s linear infinite;
   }
 
+  @keyframes pulseRing {
+    0%   { transform: scale(1); opacity: 0.6; }
+    70%  { transform: scale(1.35); opacity: 0; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+
+  @keyframes orbGlow {
+    0%,100% { box-shadow: 0 0 28px rgba(52,211,153,0.40), inset 0 2px 12px rgba(255,255,255,0.18); }
+    50%      { box-shadow: 0 0 48px rgba(52,211,153,0.65), inset 0 2px 12px rgba(255,255,255,0.25); }
+  }
+
+  @keyframes dataPing {
+    0%   { transform: scale(1); opacity: 1; }
+    70%  { transform: scale(2.2); opacity: 0; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .slide-up { animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+  @keyframes micPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+    50%     { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+  }
+  .mic-active { animation: micPulse 1.2s ease-in-out infinite; }
+
   .glass-pill-user {
-    background: rgba(52,211,153,0.10);
-    border: 1px solid rgba(52,211,153,0.22);
+    background: rgba(52,211,153,0.09);
+    border: 1px solid rgba(52,211,153,0.20);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
   }
   .glass-pill-ai {
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.08);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
   }
   .glass-input {
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(52,211,153,0.15);
+    border: 1px solid rgba(52,211,153,0.18);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .glass-input:focus-within {
-    border-color: rgba(52,211,153,0.38);
+    border-color: rgba(52,211,153,0.40);
     box-shadow: 0 0 0 3px rgba(52,211,153,0.07);
   }
   .glass-btn {
     background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.08);
     backdrop-filter: blur(12px);
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.15s;
   }
-  .glass-btn:hover { background: rgba(255,255,255,0.09); }
+  .glass-btn:hover { background: rgba(255,255,255,0.09); transform: scale(1.04); }
 
-  .green-glow { box-shadow: 0 0 16px rgba(52,211,153,0.22), 0 0 36px rgba(52,211,153,0.08); }
+  .green-glow { box-shadow: 0 0 18px rgba(52,211,153,0.22), 0 0 40px rgba(52,211,153,0.08); }
 
   textarea { resize: none; scrollbar-width: none; }
   textarea::-webkit-scrollbar { display: none; }
+
+  .compare-select-btn {
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .compare-select-btn:hover {
+    border-color: rgba(52,211,153,0.5) !important;
+    background: rgba(52,211,153,0.1) !important;
+  }
+  .compare-select-btn.selected {
+    border-color: rgba(52,211,153,0.6) !important;
+    background: rgba(52,211,153,0.12) !important;
+  }
+
+  .history-item {
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .history-item:hover { background: rgba(52,211,153,0.06) !important; }
 `;
 
-// ─── Rotating orb words ───────────────────────────────────────────────────────
-const ORB_WORDS = ["APIs", "DISCOVER", "INTEGRATE", "ASK AI", "EXPLORE", "BUILD"];
-
+// ─── Animated Orb (improved, no spinning ring or radar) ──────────────────────
 const AnimatedOrb = () => {
   const [idx, setIdx] = useState(0);
   const [show, setShow] = useState(true);
+
+  const ORB_LABELS = [
+    { icon: "⚡", text: "INSTANT" },
+    { icon: "🔍", text: "DISCOVER" },
+    { icon: "🔗", text: "INTEGRATE" },
+    { icon: "🛡️", text: "SECURE" },
+    { icon: "📡", text: "REAL-TIME" },
+    { icon: "🧠", text: "INTELLIGENT" },
+  ];
 
   useEffect(() => {
     const id = setInterval(() => {
       setShow(false);
       setTimeout(() => {
-        setIdx((i) => (i + 1) % ORB_WORDS.length);
+        setIdx((i) => (i + 1) % ORB_LABELS.length);
         setShow(true);
       }, 280);
-    }, 2400);
+    }, 2200);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <div className="relative w-32 h-32 flex items-center justify-center animate-float">
-      {/* Glow halo */}
-      <div
-        style={{
+    <div className="animate-float" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+      {/* Orb */}
+      <div style={{ position: "relative", width: "110px", height: "110px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Outer glow */}
+        <div style={{
+          position: "absolute", inset: "-12px", borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(52,211,153,0.18) 0%, transparent 70%)",
+          filter: "blur(12px)",
+        }} />
+        {/* Main sphere */}
+        <div style={{
+          position: "absolute", inset: "10px", borderRadius: "50%",
+          background: "radial-gradient(circle at 32% 28%, #a7f3d0, #10b981 40%, #065f46 80%)",
+          animation: "orbGlow 3.5s ease-in-out infinite",
+        }} />
+        {/* Shine */}
+        <div style={{
           position: "absolute",
-          inset: 0,
+          top: "22%", left: "24%", width: "28%", height: "20%",
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(52,211,153,0.32) 0%, rgba(16,185,129,0.12) 55%, transparent 75%)",
-          filter: "blur(14px)",
-        }}
-      />
-      {/* Spinning ring */}
-      <div
-        className="orb-spin"
-        style={{
-          position: "absolute",
-          inset: "4px",
-          borderRadius: "50%",
-          border: "1px solid transparent",
-          borderTopColor: "rgba(52,211,153,0.55)",
-          borderRightColor: "rgba(52,211,153,0.12)",
-        }}
-      />
-      {/* Main sphere */}
-      <div
-        style={{
-          position: "absolute",
-          inset: "12px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle at 35% 28%, #6ee7b7, #10b981 45%, #065f46 85%)",
-          boxShadow:
-            "inset 0 2px 10px rgba(255,255,255,0.22), 0 0 28px rgba(52,211,153,0.50)",
-        }}
-      />
-      {/* Shine */}
-      <div
-        style={{
-          position: "absolute",
-          top: "22%",
-          left: "26%",
-          width: "30%",
-          height: "22%",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(255,255,255,0.65), transparent 70%)",
-        }}
-      />
-      {/* Rotating word */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 10,
-        }}
-      >
+          background: "radial-gradient(circle, rgba(255,255,255,0.60), transparent 70%)",
+        }} />
+        {/* Data ping dots — decorative, no radar */}
+        {[0, 1, 2].map((i) => (
+          <div key={i} style={{
+            position: "absolute",
+            width: "5px", height: "5px", borderRadius: "50%",
+            background: "rgba(52,211,153,0.8)",
+            top: `${[18, 72, 50][i]}%`,
+            left: `${[72, 20, 78][i]}%`,
+            animation: `dataPing 2.4s ease-out ${i * 0.8}s infinite`,
+          }} />
+        ))}
+      </div>
+
+      {/* Rotating label below orb */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: "6px",
+        padding: "6px 16px", borderRadius: "99px",
+        background: "rgba(52,211,153,0.08)",
+        border: "1px solid rgba(52,211,153,0.18)",
+        minWidth: "120px", justifyContent: "center",
+        height: "32px",
+      }}>
         {show && (
-          <span
-            className="word-in"
-            style={{
-              fontSize: "8px",
-              fontWeight: 900,
-              letterSpacing: "0.22em",
-              color: "rgba(255,255,255,0.88)",
-              textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-            }}
-          >
-            {ORB_WORDS[idx]}
+          <span className="word-in" style={{
+            fontSize: "11px", fontWeight: 700, letterSpacing: "0.12em",
+            color: "rgba(52,211,153,0.85)", fontFamily: "'Syne', sans-serif",
+          }}>
+            {ORB_LABELS[idx].icon} {ORB_LABELS[idx].text}
           </span>
         )}
       </div>
@@ -221,108 +248,52 @@ const AnimatedOrb = () => {
 
 // ─── Typing Indicator ─────────────────────────────────────────────────────────
 const TypingIndicator = () => (
-  <div
-    className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-sm w-fit glass-pill-ai"
-  >
-    <div className="relative w-4 h-4 flex-shrink-0">
-      <div
-        className="absolute inset-0 rounded-full orb-spin"
-        style={{
-          background:
-            "conic-gradient(rgba(52,211,153,0.9), rgba(16,185,129,0.15), rgba(52,211,153,0.9))",
-          filter: "blur(1px)",
-        }}
-      />
-      <div
-        className="absolute rounded-full"
-        style={{ inset: "2px", background: "#060D0A", borderRadius: "50%" }}
-      />
-      <div
-        className="absolute rounded-full"
-        style={{
-          inset: "4px",
+  <div className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-sm w-fit glass-pill-ai">
+    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      <div style={{ position: "relative", width: "14px", height: "14px" }}>
+        <div style={{
+          position: "absolute", inset: "3px", borderRadius: "50%",
           background: "radial-gradient(circle, #6ee7b7, #10b981)",
-          borderRadius: "50%",
-        }}
-      />
-    </div>
-    <span
-      style={{
-        fontSize: "10px",
-        fontWeight: 700,
-        letterSpacing: "0.18em",
-        textTransform: "uppercase",
-        color: "rgba(52,211,153,0.55)",
-      }}
-    >
-      Thinking
-    </span>
-    <div className="flex gap-[3px] items-end pb-[1px]">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          style={{
-            display: "inline-block",
-            width: "4px",
-            height: "4px",
-            borderRadius: "50%",
+        }} />
+      </div>
+      <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>
+        Thinking
+      </span>
+      <div className="flex gap-[3px] items-end pb-[1px]">
+        {[0, 1, 2].map((i) => (
+          <span key={i} style={{
+            display: "inline-block", width: "4px", height: "4px", borderRadius: "50%",
             background: "#34d399",
             animation: `typingBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
-          }}
-        />
-      ))}
+          }} />
+        ))}
+      </div>
     </div>
   </div>
 );
 
 // ─── Message Pill ─────────────────────────────────────────────────────────────
-const MessagePill = ({
-  role,
-  content,
-}: {
-  role: "user" | "assistant";
-  content: string;
-}) => {
+const MessagePill = ({ role, content }: { role: "user" | "assistant"; content: string }) => {
   const isUser = role === "user";
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: isUser ? "flex-end" : "flex-start",
-        padding: "0 4px",
-      }}
-    >
+    <div style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start", padding: "0 4px" }}>
       {!isUser && (
-        <div
-          style={{
-            flexShrink: 0,
-            width: "24px",
-            height: "24px",
-            borderRadius: "50%",
-            marginRight: "8px",
-            marginTop: "4px",
-            background: "radial-gradient(circle at 35% 30%, #6ee7b7, #059669)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div style={{
+          flexShrink: 0, width: "24px", height: "24px", borderRadius: "50%",
+          marginRight: "8px", marginTop: "4px",
+          background: "radial-gradient(circle at 35% 30%, #6ee7b7, #059669)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
-      <div
-        className={isUser ? "glass-pill-user" : "glass-pill-ai"}
-        style={{
-          maxWidth: "82%",
-          padding: "10px 16px",
-          borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-          fontSize: "13px",
-          lineHeight: "1.6",
-          fontWeight: 500,
-          color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.78)",
-          wordBreak: "break-word",
-        }}
-      >
+      <div className={isUser ? "glass-pill-user" : "glass-pill-ai"} style={{
+        maxWidth: "82%", padding: "10px 16px",
+        borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+        fontSize: "13px", lineHeight: "1.65", fontWeight: 450,
+        color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.80)",
+        wordBreak: "break-word", whiteSpace: "pre-wrap",
+      }}>
         {content}
       </div>
     </div>
@@ -330,226 +301,544 @@ const MessagePill = ({
 };
 
 // ─── Clear Modal ──────────────────────────────────────────────────────────────
-const ClearModal = ({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) => (
-  <div
-    style={{
-      position: "fixed",
-      inset: 0,
-      zIndex: 60,
-      display: "flex",
-      alignItems: "flex-end",
-      justifyContent: "center",
-      paddingBottom: "32px",
-      background: "rgba(0,0,0,0.72)",
-      backdropFilter: "blur(12px)",
-    }}
-  >
-    <div
-      style={{
-        width: "88%",
-        maxWidth: "320px",
-        borderRadius: "24px",
-        padding: "24px",
-        background: "rgba(8,20,14,0.97)",
-        border: "1px solid rgba(52,211,153,0.13)",
-        boxShadow: "0 24px 64px rgba(0,0,0,0.65)",
-      }}
-    >
-      <div
-        style={{
-          width: "40px",
-          height: "40px",
-          borderRadius: "14px",
-          background: "rgba(239,68,68,0.1)",
-          border: "1px solid rgba(239,68,68,0.2)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: "16px",
-        }}
-      >
+const ClearModal = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => (
+  <div style={{
+    position: "fixed", inset: 0, zIndex: 60,
+    display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: "32px",
+    background: "rgba(0,0,0,0.72)", backdropFilter: "blur(12px)",
+  }}>
+    <div className="slide-up" style={{
+      width: "88%", maxWidth: "320px", borderRadius: "24px", padding: "24px",
+      background: "rgba(6,16,11,0.98)", border: "1px solid rgba(52,211,153,0.12)",
+      boxShadow: "0 24px 64px rgba(0,0,0,0.70)",
+    }}>
+      <div style={{
+        width: "40px", height: "40px", borderRadius: "14px",
+        background: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)",
+        display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px",
+      }}>
         <Trash2 size={16} color="#f87171" />
       </div>
-      <p style={{ fontSize: "15px", fontWeight: 700, color: "white", marginBottom: "6px" }}>
+      <p style={{ fontSize: "15px", fontWeight: 700, color: "white", marginBottom: "6px", fontFamily: "'Syne', sans-serif" }}>
         Clear chat history?
       </p>
       <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.32)", lineHeight: "1.6", marginBottom: "20px" }}>
         This will permanently remove all messages for this API session.
       </p>
       <div style={{ display: "flex", gap: "8px" }}>
-        <button
-          onClick={onCancel}
-          className="glass-btn"
-          style={{
-            flex: 1,
-            padding: "10px",
-            borderRadius: "14px",
-            fontSize: "12px",
-            fontWeight: 600,
-            color: "rgba(255,255,255,0.45)",
-            cursor: "pointer",
-          }}
-        >
-          Cancel
-        </button>
-        <button
-          onClick={onConfirm}
-          style={{
-            flex: 1,
-            padding: "10px",
-            borderRadius: "14px",
-            fontSize: "12px",
-            fontWeight: 600,
-            background: "rgba(239,68,68,0.75)",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Clear
-        </button>
+        <button onClick={onCancel} className="glass-btn" style={{
+          flex: 1, padding: "10px", borderRadius: "14px",
+          fontSize: "13px", fontWeight: 600, color: "rgba(255,255,255,0.45)", cursor: "pointer",
+        }}>Cancel</button>
+        <button onClick={onConfirm} style={{
+          flex: 1, padding: "10px", borderRadius: "14px", fontSize: "13px", fontWeight: 600,
+          background: "rgba(239,68,68,0.75)", color: "white", border: "none", cursor: "pointer",
+        }}>Clear</button>
       </div>
     </div>
   </div>
 );
 
-// ─── Compare Modal ────────────────────────────────────────────────────────────
-const CompareModal = ({ onClose }: { onClose: () => void }) => (
-  <div
-    style={{
-      position: "fixed",
-      inset: 0,
-      zIndex: 60,
-      display: "flex",
-      alignItems: "flex-end",
-      justifyContent: "center",
-      paddingBottom: "32px",
-      background: "rgba(0,0,0,0.72)",
-      backdropFilter: "blur(12px)",
-    }}
-  >
-    <div
-      style={{
-        width: "92%",
-        maxWidth: "360px",
-        borderRadius: "24px",
-        padding: "24px",
-        background: "rgba(8,20,14,0.97)",
-        border: "1px solid rgba(52,211,153,0.14)",
-        boxShadow: "0 24px 64px rgba(0,0,0,0.65)",
-      }}
-    >
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "20px" }}>
-        <div>
-          <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "rgba(52,211,153,0.5)", marginBottom: "4px" }}>
-            Feature
-          </p>
-          <h3 style={{ fontSize: "17px", fontWeight: 800, color: "white" }}>Compare APIs</h3>
+// ─── History Modal ────────────────────────────────────────────────────────────
+type HistoryEntry = { apiId: string; title: string; preview: string; ts: number };
+
+const HistoryModal = ({ onClose, onSelect }: { onClose: () => void; onSelect: (apiId: string) => void }) => {
+  const [entries, setEntries] = useState<HistoryEntry[]>([]);
+
+  useEffect(() => {
+    const keys = Object.keys(localStorage).filter((k) => k.startsWith("apives_chat_"));
+    const result: HistoryEntry[] = [];
+    keys.forEach((key) => {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return;
+        const msgs = JSON.parse(raw);
+        if (!msgs?.length) return;
+        const apiId = key.replace("apives_chat_", "");
+        const firstUser = msgs.find((m: any) => m.role === "user");
+        const title = firstUser?.content?.slice(0, 48) || apiId;
+        const last = msgs[msgs.length - 1];
+        const preview = last?.content?.slice(0, 60) + "..." || "";
+        const ts = Date.now(); // approximate
+        result.push({ apiId, title, preview, ts });
+      } catch {}
+    });
+    setEntries(result.reverse());
+  }, []);
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 60,
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+      background: "rgba(0,0,0,0.75)", backdropFilter: "blur(14px)",
+    }} onClick={onClose}>
+      <div className="slide-up" onClick={(e) => e.stopPropagation()} style={{
+        width: "100%", maxWidth: "480px",
+        borderRadius: "24px 24px 0 0",
+        background: "rgba(5,14,9,0.99)",
+        border: "1px solid rgba(52,211,153,0.12)",
+        borderBottom: "none",
+        boxShadow: "0 -12px 60px rgba(0,0,0,0.6)",
+        maxHeight: "72vh", display: "flex", flexDirection: "column",
+      }}>
+        {/* Handle */}
+        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
+          <div style={{ width: "36px", height: "3px", borderRadius: "99px", background: "rgba(255,255,255,0.12)" }} />
         </div>
-        <button
-          onClick={onClose}
-          className="glass-btn"
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-          }}
-        >
-          <X size={13} color="rgba(255,255,255,0.45)" />
-        </button>
-      </div>
-
-      {/* Visual */}
-      <div
-        style={{
-          borderRadius: "16px",
-          padding: "20px",
-          marginBottom: "16px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "16px",
-          background: "rgba(52,211,153,0.04)",
-          border: "1px solid rgba(52,211,153,0.09)",
-        }}
-      >
-        {["API A", "API B"].map((label, i) => (
-          <>
-            <div
-              key={label}
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "14px",
-                background: "rgba(52,211,153,0.07)",
-                border: "1px solid rgba(52,211,153,0.14)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span style={{ fontSize: "10px", fontWeight: 900, color: "#34d399" }}>{label}</span>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px 12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{
+              width: "32px", height: "32px", borderRadius: "10px",
+              background: "rgba(52,211,153,0.09)", border: "1px solid rgba(52,211,153,0.18)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <Clock size={14} color="#34d399" />
             </div>
-            {i === 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                {[0, 1, 2].map((j) => (
-                  <div key={j} style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-                    <div style={{ width: "10px", height: "1px", background: "rgba(52,211,153,0.35)" }} />
-                    <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "rgba(52,211,153,0.55)" }} />
-                    <div style={{ width: "10px", height: "1px", background: "rgba(52,211,153,0.35)" }} />
-                  </div>
-                ))}
+            <span style={{ fontSize: "15px", fontWeight: 800, color: "white", fontFamily: "'Syne', sans-serif" }}>
+              Recent Chats
+            </span>
+          </div>
+          <button onClick={onClose} className="glass-btn" style={{
+            width: "30px", height: "30px", borderRadius: "50%",
+            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+          }}>
+            <X size={12} color="rgba(255,255,255,0.45)" />
+          </button>
+        </div>
+        {/* List */}
+        <div style={{ overflowY: "auto", padding: "0 12px 24px", flex: 1 }}>
+          {entries.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px 20px" }}>
+              <div style={{
+                width: "48px", height: "48px", borderRadius: "16px", margin: "0 auto 12px",
+                background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.14)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <History size={20} color="rgba(52,211,153,0.5)" />
               </div>
-            )}
-          </>
-        ))}
+              <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.28)", lineHeight: 1.6 }}>
+                No chat history yet.<br />Start a conversation to see it here.
+              </p>
+            </div>
+          ) : (
+            entries.map((e) => (
+              <div key={e.apiId} className="history-item" onClick={() => onSelect(e.apiId)} style={{
+                padding: "12px 14px", borderRadius: "14px",
+                border: "1px solid rgba(255,255,255,0.05)",
+                marginBottom: "6px",
+                display: "flex", alignItems: "center", gap: "12px",
+              }}>
+                <div style={{
+                  flexShrink: 0, width: "36px", height: "36px", borderRadius: "10px",
+                  background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.13)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <Sparkles size={14} color="#34d399" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: "13px", fontWeight: 600, color: "rgba(255,255,255,0.85)", marginBottom: "2px",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {e.title}
+                  </p>
+                  <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.28)",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {e.preview}
+                  </p>
+                </div>
+                <ChevronRight size={14} color="rgba(52,211,153,0.35)" style={{ flexShrink: 0 }} />
+              </div>
+            ))
+          )}
+        </div>
       </div>
+    </div>
+  );
+};
 
-      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)", textAlign: "center", lineHeight: "1.7", marginBottom: "20px" }}>
-        Compare endpoints, pricing, rate limits, and more — side by side. Coming soon.
+// ─── Compare Modal (Full functional) ─────────────────────────────────────────
+type ApiOption = { _id: string; name: string; category?: string; description?: string };
+
+const CompareModal = ({ onClose, isLoggedIn, onNeedLogin }: {
+  onClose: () => void;
+  isLoggedIn: boolean;
+  onNeedLogin: () => void;
+}) => {
+  const [apis, setApis] = useState<ApiOption[]>([]);
+  const [search, setSearch] = useState("");
+  const [selectedA, setSelectedA] = useState<ApiOption | null>(null);
+  const [selectedB, setSelectedB] = useState<ApiOption | null>(null);
+  const [picking, setPicking] = useState<"A" | "B" | null>(null);
+  const [comparing, setComparing] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
+  const [loadingCompare, setLoadingCompare] = useState(false);
+
+  useEffect(() => {
+    axios.get("https://apives-3xrc.onrender.com/api/apis")
+      .then((r) => setApis(r.data?.apis || r.data || []))
+      .catch(() => {});
+  }, []);
+
+  const filtered = apis.filter((a) =>
+    a.name?.toLowerCase().includes(search.toLowerCase())
+  ).slice(0, 30);
+
+  const selectApi = (api: ApiOption) => {
+    if (picking === "A") setSelectedA(api);
+    else if (picking === "B") setSelectedB(api);
+    setPicking(null);
+    setSearch("");
+  };
+
+  const handleCompare = async () => {
+    if (!isLoggedIn) { onNeedLogin(); return; }
+    if (!selectedA || !selectedB) return;
+    setLoadingCompare(true);
+    setComparing(true);
+    try {
+      const prompt = `Compare these two APIs in detail:
+
+API A: ${selectedA.name}
+${selectedA.description || ""}
+
+API B: ${selectedB.name}
+${selectedB.description || ""}
+
+Give a structured comparison covering:
+1. Primary Use Case
+2. Key Features
+3. Authentication
+4. Rate Limits & Pricing
+5. Developer Experience
+6. Best For (who should use each)
+7. Verdict
+
+Be concise but comprehensive. Use markdown-style formatting.`;
+
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await res.json();
+      const text = data.content?.map((b: any) => b.text || "").join("\n") || "Comparison unavailable.";
+      setResult(text);
+    } catch {
+      setResult("Unable to compare right now. Please try again.");
+    } finally {
+      setLoadingCompare(false);
+    }
+  };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 60,
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+      background: "rgba(0,0,0,0.80)", backdropFilter: "blur(14px)",
+    }} onClick={!picking ? onClose : undefined}>
+      <div className="slide-up" onClick={(e) => e.stopPropagation()} style={{
+        width: "100%", maxWidth: "480px",
+        borderRadius: "24px 24px 0 0",
+        background: "rgba(5,14,9,0.99)",
+        border: "1px solid rgba(52,211,153,0.14)", borderBottom: "none",
+        boxShadow: "0 -12px 60px rgba(0,0,0,0.65)",
+        maxHeight: "88vh", display: "flex", flexDirection: "column",
+        paddingBottom: "env(safe-area-inset-bottom, 20px)",
+      }}>
+        {/* Handle */}
+        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
+          <div style={{ width: "36px", height: "3px", borderRadius: "99px", background: "rgba(255,255,255,0.12)" }} />
+        </div>
+
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px 0" }}>
+          <div>
+            <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(52,211,153,0.50)", marginBottom: "3px" }}>
+              AI-Powered
+            </p>
+            <h3 style={{ fontSize: "18px", fontWeight: 800, color: "white", fontFamily: "'Syne', sans-serif" }}>
+              Compare APIs
+            </h3>
+          </div>
+          <button onClick={onClose} className="glass-btn" style={{
+            width: "32px", height: "32px", borderRadius: "50%",
+            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+          }}>
+            <X size={13} color="rgba(255,255,255,0.45)" />
+          </button>
+        </div>
+
+        <div style={{ overflowY: "auto", flex: 1, padding: "16px 20px 0" }}>
+          {/* API A + B selectors */}
+          {!result && (
+            <>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 40px 1fr", gap: "8px", alignItems: "center", marginBottom: "16px" }}>
+                {/* A */}
+                <button className={`compare-select-btn ${selectedA ? "selected" : ""}`} onClick={() => { setPicking("A"); setSearch(""); }} style={{
+                  padding: "14px 12px", borderRadius: "16px", textAlign: "left",
+                  background: selectedA ? "rgba(52,211,153,0.10)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${selectedA ? "rgba(52,211,153,0.50)" : "rgba(255,255,255,0.10)"}`,
+                  minHeight: "72px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "4px",
+                }}>
+                  <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>API A</span>
+                  {selectedA ? (
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#a7f3d0" }}>{selectedA.name}</span>
+                  ) : (
+                    <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>Tap to select</span>
+                  )}
+                </button>
+
+                {/* vs */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{
+                    width: "32px", height: "32px", borderRadius: "50%",
+                    background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.20)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    <span style={{ fontSize: "9px", fontWeight: 900, color: "#34d399", letterSpacing: "0.05em" }}>VS</span>
+                  </div>
+                </div>
+
+                {/* B */}
+                <button className={`compare-select-btn ${selectedB ? "selected" : ""}`} onClick={() => { setPicking("B"); setSearch(""); }} style={{
+                  padding: "14px 12px", borderRadius: "16px", textAlign: "left",
+                  background: selectedB ? "rgba(52,211,153,0.10)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${selectedB ? "rgba(52,211,153,0.50)" : "rgba(255,255,255,0.10)"}`,
+                  minHeight: "72px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "4px",
+                }}>
+                  <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>API B</span>
+                  {selectedB ? (
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#a7f3d0" }}>{selectedB.name}</span>
+                  ) : (
+                    <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>Tap to select</span>
+                  )}
+                </button>
+              </div>
+
+              {/* Search / Picker */}
+              {picking && (
+                <div style={{ marginBottom: "16px" }}>
+                  <p style={{ fontSize: "11px", fontWeight: 600, color: "rgba(52,211,153,0.6)", marginBottom: "8px", letterSpacing: "0.06em" }}>
+                    Select API {picking}
+                  </p>
+                  <input
+                    autoFocus
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search Apives library..."
+                    style={{
+                      width: "100%", padding: "10px 14px", borderRadius: "12px",
+                      background: "rgba(255,255,255,0.05)", border: "1px solid rgba(52,211,153,0.22)",
+                      color: "white", fontSize: "13px", outline: "none",
+                      caretColor: "#34d399", marginBottom: "8px",
+                    }}
+                  />
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxHeight: "180px", overflowY: "auto" }}>
+                    {filtered.length === 0 ? (
+                      <p style={{ textAlign: "center", padding: "20px", fontSize: "12px", color: "rgba(255,255,255,0.25)" }}>
+                        No APIs found
+                      </p>
+                    ) : (
+                      filtered.map((api) => (
+                        <button key={api._id} onClick={() => selectApi(api)} style={{
+                          padding: "10px 14px", borderRadius: "10px", textAlign: "left",
+                          background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
+                          color: "rgba(255,255,255,0.80)", fontSize: "13px", cursor: "pointer",
+                          transition: "background 0.15s",
+                        }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(52,211,153,0.09)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+                        >
+                          <span style={{ fontWeight: 600 }}>{api.name}</span>
+                          {api.category && <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.30)", marginLeft: "8px" }}>{api.category}</span>}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Compare button */}
+              <button
+                onClick={handleCompare}
+                disabled={!selectedA || !selectedB || loadingCompare}
+                style={{
+                  width: "100%", padding: "14px", borderRadius: "16px",
+                  fontSize: "14px", fontWeight: 700, fontFamily: "'Syne', sans-serif",
+                  background: selectedA && selectedB
+                    ? "linear-gradient(135deg, #34d399, #059669)"
+                    : "rgba(255,255,255,0.06)",
+                  color: selectedA && selectedB ? "#022c22" : "rgba(255,255,255,0.20)",
+                  border: "none", cursor: selectedA && selectedB ? "pointer" : "default",
+                  boxShadow: selectedA && selectedB ? "0 6px 24px rgba(52,211,153,0.35)" : "none",
+                  transition: "all 0.2s", marginBottom: "20px",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                }}
+              >
+                {loadingCompare ? (
+                  <>
+                    <div style={{ width: "14px", height: "14px", border: "2px solid rgba(2,44,34,0.3)", borderTopColor: "#022c22", borderRadius: "50%", animation: "orbSpin 0.8s linear infinite" }} />
+                    Comparing…
+                  </>
+                ) : (
+                  <>
+                    <Zap size={15} />
+                    Compare with AI
+                  </>
+                )}
+              </button>
+            </>
+          )}
+
+          {/* Result */}
+          {result && (
+            <div style={{ paddingBottom: "20px" }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: "8px",
+                padding: "10px 14px", borderRadius: "12px",
+                background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.15)",
+                marginBottom: "14px",
+              }}>
+                <span style={{ fontSize: "11px", fontWeight: 700, color: "#a7f3d0" }}>{selectedA?.name}</span>
+                <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.25)" }}>vs</span>
+                <span style={{ fontSize: "11px", fontWeight: 700, color: "#a7f3d0" }}>{selectedB?.name}</span>
+              </div>
+              <div style={{
+                padding: "16px", borderRadius: "16px",
+                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)",
+                fontSize: "12px", lineHeight: "1.8", color: "rgba(255,255,255,0.75)",
+                whiteSpace: "pre-wrap", marginBottom: "14px",
+              }}>
+                {result}
+              </div>
+              <button onClick={() => { setResult(null); setSelectedA(null); setSelectedB(null); setComparing(false); }} style={{
+                width: "100%", padding: "12px", borderRadius: "14px",
+                fontSize: "13px", fontWeight: 600,
+                background: "rgba(52,211,153,0.09)", border: "1px solid rgba(52,211,153,0.20)",
+                color: "#6ee7b7", cursor: "pointer", marginBottom: "8px",
+              }}>
+                Compare Another
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Login Guard Modal ────────────────────────────────────────────────────────
+const LoginGuardModal = ({ onClose, onLogin }: { onClose: () => void; onLogin: () => void }) => (
+  <div style={{
+    position: "fixed", inset: 0, zIndex: 70,
+    display: "flex", alignItems: "center", justifyContent: "center", padding: "24px",
+    background: "rgba(0,0,0,0.80)", backdropFilter: "blur(16px)",
+  }}>
+    <div className="slide-up" style={{
+      width: "100%", maxWidth: "320px", borderRadius: "24px", padding: "28px",
+      background: "rgba(5,14,9,0.99)", border: "1px solid rgba(52,211,153,0.18)",
+      boxShadow: "0 24px 64px rgba(0,0,0,0.70)", textAlign: "center",
+    }}>
+      <div style={{
+        width: "56px", height: "56px", borderRadius: "18px", margin: "0 auto 18px",
+        background: "rgba(52,211,153,0.10)", border: "1px solid rgba(52,211,153,0.22)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <Shield size={22} color="#34d399" />
+      </div>
+      <h3 style={{ fontSize: "17px", fontWeight: 800, color: "white", marginBottom: "8px", fontFamily: "'Syne', sans-serif" }}>
+        Sign in required
+      </h3>
+      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)", lineHeight: 1.7, marginBottom: "22px" }}>
+        Please sign in to use Apives AI chat and API comparison features.
       </p>
-      <button
-        onClick={onClose}
-        style={{
-          width: "100%",
-          padding: "13px",
-          borderRadius: "14px",
-          fontSize: "13px",
-          fontWeight: 700,
-          background: "linear-gradient(135deg, #34d399, #10b981)",
-          color: "#022c22",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        Got it
+      <button onClick={onLogin} style={{
+        width: "100%", padding: "13px", borderRadius: "14px", marginBottom: "10px",
+        fontSize: "14px", fontWeight: 700, fontFamily: "'Syne', sans-serif",
+        background: "linear-gradient(135deg, #34d399, #059669)",
+        color: "#022c22", border: "none", cursor: "pointer",
+        boxShadow: "0 6px 20px rgba(52,211,153,0.35)",
+      }}>
+        Sign In
+      </button>
+      <button onClick={onClose} className="glass-btn" style={{
+        width: "100%", padding: "11px", borderRadius: "14px",
+        fontSize: "13px", fontWeight: 500, color: "rgba(255,255,255,0.40)", cursor: "pointer",
+      }}>
+        Cancel
       </button>
     </div>
   </div>
 );
 
-// ─── Claude-style Chat Input ──────────────────────────────────────────────────
+// ─── Mic Button with real speech recognition ──────────────────────────────────
+const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const toggle = useCallback(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+    if (listening) {
+      recognitionRef.current?.stop();
+      setListening(false);
+      return;
+    }
+    const rec = new SpeechRecognition();
+    rec.lang = "en-US";
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.onresult = (e: any) => {
+      const transcript = e.results[0][0].transcript;
+      onTranscript(transcript);
+      setListening(false);
+    };
+    rec.onerror = () => setListening(false);
+    rec.onend = () => setListening(false);
+    recognitionRef.current = rec;
+    rec.start();
+    setListening(true);
+  }, [listening, onTranscript]);
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={disabled}
+      className={listening ? "mic-active" : ""}
+      title={listening ? "Listening… tap to stop" : "Voice input"}
+      style={{
+        width: "32px", height: "32px", borderRadius: "50%",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: listening ? "rgba(239,68,68,0.18)" : "rgba(255,255,255,0.05)",
+        border: listening ? "1px solid rgba(239,68,68,0.45)" : "1px solid rgba(255,255,255,0.09)",
+        cursor: "pointer", transition: "all 0.2s",
+      }}
+    >
+      {listening
+        ? <MicOff size={13} color="#f87171" />
+        : <Mic size={13} color="rgba(255,255,255,0.40)" />
+      }
+    </button>
+  );
+};
+
+// ─── Chat Input ───────────────────────────────────────────────────────────────
 const ClaudeInput = ({
-  value,
-  onChange,
-  onSend,
-  disabled,
+  value, onChange, onSend, disabled, isLoggedIn, onNeedLogin,
 }: {
   value: string;
   onChange: (v: string) => void;
   onSend: () => void;
   disabled: boolean;
+  isLoggedIn: boolean;
+  onNeedLogin: () => void;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasText = value.trim().length > 0;
@@ -557,91 +846,89 @@ const ClaudeInput = ({
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        Math.min(textareaRef.current.scrollHeight, 120) + "px";
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + "px";
     }
   }, [value]);
 
   const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (hasText && !disabled) onSend();
+      if (hasText && !disabled) {
+        if (!isLoggedIn) { onNeedLogin(); return; }
+        onSend();
+      }
     }
   };
 
+  const handleFocus = () => {
+    if (!isLoggedIn) onNeedLogin();
+  };
+
   return (
-    <div
-      className="glass-input"
-      style={{ borderRadius: "22px" }}
-    >
+    <div className="glass-input" style={{ borderRadius: "22px" }}>
       <textarea
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKey}
-        placeholder="Ask about this API..."
+        onFocus={handleFocus}
+        placeholder="Ask anything about this API…"
         rows={1}
         style={{
-          width: "100%",
-          background: "transparent",
-          color: "rgba(255,255,255,0.85)",
-          fontSize: "14px",
-          lineHeight: "1.6",
-          fontWeight: 500,
-          outline: "none",
-          padding: "14px 20px 6px",
-          fontFamily: "inherit",
-          caretColor: "#34d399",
+          width: "100%", background: "transparent",
+          color: "rgba(255,255,255,0.85)", fontSize: "14px",
+          lineHeight: "1.6", fontWeight: 450, outline: "none",
+          padding: "14px 20px 6px", fontFamily: "inherit", caretColor: "#34d399",
         }}
       />
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "4px 12px 10px",
-        }}
-      >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
+        <MicButton onTranscript={(t) => onChange(value + (value ? " " : "") + t)} disabled={disabled} />
         <button
-          className="glass-btn"
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
+          onClick={() => {
+            if (!isLoggedIn) { onNeedLogin(); return; }
+            onSend();
           }}
-        >
-          <Mic size={13} color="rgba(255,255,255,0.28)" />
-        </button>
-        <button
-          onClick={onSend}
           disabled={!hasText || disabled}
           style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            width: "32px", height: "32px", borderRadius: "50%",
+            display: "flex", alignItems: "center", justifyContent: "center",
             cursor: hasText ? "pointer" : "default",
-            background: hasText
-              ? "linear-gradient(135deg, #34d399, #059669)"
-              : "rgba(255,255,255,0.06)",
+            background: hasText ? "linear-gradient(135deg, #34d399, #059669)" : "rgba(255,255,255,0.06)",
             border: hasText ? "none" : "1px solid rgba(255,255,255,0.08)",
             boxShadow: hasText ? "0 4px 14px rgba(52,211,153,0.40)" : "none",
             transition: "all 0.2s ease",
           }}
         >
-          <ArrowUp
-            size={14}
-            color={hasText ? "white" : "rgba(255,255,255,0.18)"}
-            strokeWidth={2.8}
-          />
+          <ArrowUp size={14} color={hasText ? "white" : "rgba(255,255,255,0.18)"} strokeWidth={2.8} />
         </button>
       </div>
+    </div>
+  );
+};
+
+// ─── API Feature Cards (replaces old orb words) ───────────────────────────────
+const ApiFeatureCards = () => {
+  const features = [
+    { icon: <Globe size={14} color="#34d399" />, title: "REST & GraphQL", desc: "Modern API architectures supported" },
+    { icon: <Zap size={14} color="#34d399" />, title: "Real-time Docs", desc: "Live endpoint exploration" },
+    { icon: <Code2 size={14} color="#34d399" />, title: "Code Examples", desc: "Ready-to-use snippets" },
+    { icon: <Shield size={14} color="#34d399" />, title: "Auth Guides", desc: "OAuth, API keys & more" },
+  ];
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", width: "100%", maxWidth: "320px", marginTop: "16px" }}>
+      {features.map((f, i) => (
+        <div key={i} style={{
+          padding: "12px", borderRadius: "14px",
+          background: "rgba(52,211,153,0.04)", border: "1px solid rgba(52,211,153,0.10)",
+          display: "flex", flexDirection: "column", gap: "6px",
+        }}>
+          <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "rgba(52,211,153,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {f.icon}
+          </div>
+          <p style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.80)", fontFamily: "'Syne', sans-serif" }}>{f.title}</p>
+          <p style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", lineHeight: 1.5 }}>{f.desc}</p>
+        </div>
+      ))}
     </div>
   );
 };
@@ -652,16 +939,26 @@ const AskApivesPage = () => {
   const navigate = useNavigate();
   const apiId = searchParams.get("apiId");
 
+  // Auth check — adjust this to your actual auth mechanism
+  const isLoggedIn = !!localStorage.getItem("apives_token") || !!localStorage.getItem("apives_user");
+
   const [apiData, setApiData] = useState<any>(null);
   const [input, setInput] = useState("");
   const [chat, setChat] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showLoginGuard, setShowLoginGuard] = useState(false);
   const [contextPrompt, setContextPrompt] = useState<string | null>(null);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const requireLogin = () => {
+    if (!isLoggedIn) { setShowLoginGuard(true); return false; }
+    return true;
+  };
 
   // Load chat
   useEffect(() => {
@@ -676,23 +973,27 @@ const AskApivesPage = () => {
   useEffect(() => {
     if (!apiId) return;
     localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
+    // Save history entry title
+    if (chat.length > 0) {
+      const firstUser = chat.find((m) => m.role === "user");
+      if (firstUser) {
+        localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
+      }
+    }
   }, [chat, apiId]);
 
   // Fetch API data
   useEffect(() => {
     if (!apiId) return;
-    axios
-      .get(`/api/apis/${apiId}`)
+    axios.get(`/api/apis/${apiId}`)
       .then((res) => setApiData(res.data))
       .catch(() => {});
   }, [apiId]);
 
-  // Context pill when coming from API details page
+  // Context pill
   useEffect(() => {
     if (apiData && chat.length === 0) {
-      setContextPrompt(
-        `You're exploring ${apiData.name || "this API"} — what would you like to know?`
-      );
+      setContextPrompt(`Exploring ${apiData.name || "this API"} — what would you like to know?`);
     }
   }, [apiData]);
 
@@ -702,6 +1003,7 @@ const AskApivesPage = () => {
   }, [chat, loading]);
 
   const sendMessage = async (overrideText?: string) => {
+    if (!requireLogin()) return;
     const text = (overrideText ?? input).trim();
     if (!text) return;
     setContextPrompt(null);
@@ -711,15 +1013,9 @@ const AskApivesPage = () => {
     setLoading(true);
     try {
       const res = await axios.post("/api/ask-ai", { messages: newChat, apiData });
-      setChat((prev) => [
-        ...prev,
-        { role: "assistant", content: res.data.answer },
-      ]);
+      setChat((prev) => [...prev, { role: "assistant", content: res.data.answer }]);
     } catch {
-      setChat((prev) => [
-        ...prev,
-        { role: "assistant", content: "Something went wrong. Please try again." },
-      ]);
+      setChat((prev) => [...prev, { role: "assistant", content: "Something went wrong. Please try again." }]);
     } finally {
       setLoading(false);
     }
@@ -737,172 +1033,117 @@ const AskApivesPage = () => {
     <>
       <style>{STYLES}</style>
 
-      {showClearModal && (
-        <ClearModal onConfirm={clearChat} onCancel={() => setShowClearModal(false)} />
-      )}
+      {showClearModal && <ClearModal onConfirm={clearChat} onCancel={() => setShowClearModal(false)} />}
       {showCompareModal && (
-        <CompareModal onClose={() => setShowCompareModal(false)} />
+        <CompareModal
+          onClose={() => setShowCompareModal(false)}
+          isLoggedIn={isLoggedIn}
+          onNeedLogin={() => { setShowCompareModal(false); setShowLoginGuard(true); }}
+        />
+      )}
+      {showHistoryModal && (
+        <HistoryModal
+          onClose={() => setShowHistoryModal(false)}
+          onSelect={(id) => {
+            setShowHistoryModal(false);
+            navigate(`/ask-apives?apiId=${id}`);
+          }}
+        />
+      )}
+      {showLoginGuard && (
+        <LoginGuardModal
+          onClose={() => setShowLoginGuard(false)}
+          onLogin={() => navigate("/sign-in")}
+        />
       )}
 
-      <div
-        className="page-in"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          height: "100dvh",
-          overflow: "hidden",
-          background: "#060D0A",
-          color: "white",
-          fontFamily: "'Inter', -apple-system, sans-serif",
-          position: "relative",
-        }}
-      >
+      <div className="page-in" style={{
+        display: "flex", flexDirection: "column", height: "100dvh",
+        overflow: "hidden", background: "#060D0A", color: "white",
+        fontFamily: "'DM Sans', -apple-system, sans-serif", position: "relative",
+      }}>
         {/* ── Ambient background ── */}
-        <div
-          style={{
-            pointerEvents: "none",
-            position: "fixed",
-            inset: 0,
-            zIndex: 0,
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "-80px",
-              left: "-60px",
-              width: "340px",
-              height: "340px",
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(16,185,129,0.16) 0%, transparent 70%)",
-              filter: "blur(50px)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "-60px",
-              right: "-60px",
-              width: "300px",
-              height: "300px",
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(5,150,105,0.10) 0%, transparent 70%)",
-              filter: "blur(60px)",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              opacity: 0.022,
-              backgroundImage:
-                "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
-            }}
-          />
+        <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
+          <div style={{
+            position: "absolute", top: "-100px", left: "-80px",
+            width: "380px", height: "380px", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }} />
+          <div style={{
+            position: "absolute", bottom: "-80px", right: "-80px",
+            width: "320px", height: "320px", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(5,150,105,0.09) 0%, transparent 70%)",
+            filter: "blur(70px)",
+          }} />
+          {/* Subtle grid */}
+          <div style={{
+            position: "absolute", inset: 0, opacity: 0.018,
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }} />
         </div>
 
         {/* ─────────── HEADER ─────────── */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 20,
-            flexShrink: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)",
-            paddingBottom: "14px",
-            background: "rgba(6,13,10,0.90)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            borderBottom: "1px solid rgba(52,211,153,0.07)",
-          }}
-        >
-          {/* Left: X + title */}
+        <div style={{
+          position: "relative", zIndex: 20, flexShrink: 0,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          paddingLeft: "16px", paddingRight: "16px",
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)",
+          paddingBottom: "14px",
+          background: "rgba(6,13,10,0.92)", backdropFilter: "blur(28px)",
+          WebkitBackdropFilter: "blur(28px)",
+          borderBottom: "1px solid rgba(52,211,153,0.07)",
+        }}>
+          {/* Left */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <button
-              onClick={() => navigate(-1)}
-              style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                backdropFilter: "blur(12px)",
-                cursor: "pointer",
-                transition: "background 0.2s",
-              }}
-            >
+            <button onClick={() => navigate(-1)} style={{
+              width: "36px", height: "36px", borderRadius: "50%",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.10)",
+              backdropFilter: "blur(12px)", cursor: "pointer", transition: "background 0.2s",
+            }}>
               <X size={15} color="rgba(255,255,255,0.55)" />
             </button>
             <div>
-              <p
-                style={{
-                  fontSize: "15px",
-                  fontWeight: 800,
-                  color: "rgba(255,255,255,0.92)",
-                  lineHeight: 1.2,
-                  letterSpacing: "-0.01em",
-                }}
-              >
+              <p style={{ fontSize: "15px", fontWeight: 800, color: "rgba(255,255,255,0.93)", lineHeight: 1.2, letterSpacing: "-0.01em", fontFamily: "'Syne', sans-serif" }}>
                 Ask Apives AI
               </p>
-              <p
-                style={{
-                  fontSize: "10px",
-                  fontWeight: 600,
-                  letterSpacing: "0.04em",
-                  color: "rgba(52,211,153,0.50)",
-                  marginTop: "1px",
-                }}
-              >
-                API Intelligence Assistant
+              <p style={{ fontSize: "10px", fontWeight: 500, letterSpacing: "0.04em", color: "rgba(52,211,153,0.48)", marginTop: "1px" }}>
+                Enterprise API Intelligence
               </p>
             </div>
           </div>
 
-          {/* Right: icon-only buttons */}
+          {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {hasHistory && (
+            {/* History — only when logged in */}
+            {isLoggedIn && (
               <button
-                onClick={() => setShowClearModal(true)}
+                onClick={() => setShowHistoryModal(true)}
                 className="glass-btn"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                }}
-                title="Clear chat"
+                style={{ width: "36px", height: "36px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                title="Chat history"
               >
+                <History size={14} color="rgba(255,255,255,0.40)" />
+              </button>
+            )}
+            {hasHistory && (
+              <button onClick={() => setShowClearModal(true)} className="glass-btn" style={{ width: "36px", height: "36px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                 <Trash2 size={14} color="rgba(255,255,255,0.30)" />
               </button>
             )}
+            {/* Compare — no pulse animation */}
             <button
-              onClick={() => setShowCompareModal(true)}
-              className="pulse-green"
+              onClick={() => {
+                if (!isLoggedIn) { setShowLoginGuard(true); return; }
+                setShowCompareModal(true);
+              }}
               style={{
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(52,211,153,0.10)",
-                border: "1px solid rgba(52,211,153,0.22)",
-                cursor: "pointer",
+                width: "36px", height: "36px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: "rgba(52,211,153,0.10)", border: "1px solid rgba(52,211,153,0.22)",
+                cursor: "pointer", transition: "all 0.2s",
               }}
               title="Compare APIs"
             >
@@ -913,55 +1154,21 @@ const AskApivesPage = () => {
 
         {/* ─────────── API PILL ─────────── */}
         {apiData && (
-          <div
-            style={{
-              position: "relative",
-              zIndex: 10,
-              flexShrink: 0,
-              display: "flex",
-              justifyContent: "center",
-              padding: "12px 20px 0",
-            }}
-          >
-            <div
-              className="green-glow"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "6px 16px",
-                borderRadius: "99px",
-                background: "rgba(52,211,153,0.07)",
-                border: "1px solid rgba(52,211,153,0.20)",
-                backdropFilter: "blur(12px)",
-              }}
-            >
-              <span
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  background: "#34d399",
-                  flexShrink: 0,
-                  animation: "pulseGreen 2s infinite",
-                }}
-              />
-              <span
-                style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  letterSpacing: "0.02em",
-                  color: "#6ee7b7",
-                }}
-              >
+          <div style={{ position: "relative", zIndex: 10, flexShrink: 0, display: "flex", justifyContent: "center", padding: "12px 20px 0" }}>
+            <div className="green-glow" style={{
+              display: "flex", alignItems: "center", gap: "8px",
+              padding: "6px 16px", borderRadius: "99px",
+              background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.20)",
+              backdropFilter: "blur(12px)",
+            }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#34d399", flexShrink: 0 }} />
+              <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.02em", color: "#6ee7b7", fontFamily: "'Syne', sans-serif" }}>
                 {apiData.name}
               </span>
               {apiData.category && (
                 <>
                   <span style={{ color: "rgba(255,255,255,0.18)", fontSize: "10px" }}>·</span>
-                  <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", fontWeight: 500 }}>
-                    {apiData.category}
-                  </span>
+                  <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.28)", fontWeight: 500 }}>{apiData.category}</span>
                 </>
               )}
             </div>
@@ -969,102 +1176,59 @@ const AskApivesPage = () => {
         )}
 
         {/* ─────────── CHAT SCROLL AREA ─────────── */}
-        <div
-          ref={scrollRef}
-          className="chat-scroll"
-          style={{
-            position: "relative",
-            zIndex: 10,
-            flex: 1,
-            overflowY: "auto",
-            padding: "16px 0",
-            minHeight: 0,
-          }}
-        >
+        <div ref={scrollRef} className="chat-scroll" style={{ position: "relative", zIndex: 10, flex: 1, overflowY: "auto", padding: "16px 0", minHeight: 0 }}>
           {/* Empty State */}
           {chat.length === 0 && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                minHeight: "100%",
-                padding: "24px 24px 8px",
-                textAlign: "center",
-              }}
-            >
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100%", padding: "24px 24px 8px", textAlign: "center" }}>
               <AnimatedOrb />
 
-              <h2
-                style={{
-                  fontSize: "22px",
-                  fontWeight: 900,
-                  color: "white",
-                  marginTop: "20px",
-                  marginBottom: "8px",
-                  lineHeight: 1.25,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                Ask anything about
+              <h2 style={{
+                fontSize: "22px", fontWeight: 900, color: "white",
+                marginTop: "24px", marginBottom: "8px", lineHeight: 1.25,
+                letterSpacing: "-0.02em", fontFamily: "'Syne', sans-serif",
+              }}>
+                The API Intelligence
                 <br />
-                <span
-                  className="grad-anim"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(90deg, #34d399, #10b981, #6ee7b7, #34d399)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  this API
+                <span className="grad-anim" style={{
+                  backgroundImage: "linear-gradient(90deg, #34d399, #6ee7b7, #10b981, #34d399)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                }}>
+                  you deserve
                 </span>
               </h2>
 
-              <p
-                style={{
-                  fontSize: "12px",
-                  color: "rgba(255,255,255,0.26)",
-                  lineHeight: 1.7,
-                  maxWidth: "220px",
-                  marginBottom: "24px",
-                }}
-              >
-                Understand endpoints, parameters, auth, and integration instantly.
+              <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.30)", lineHeight: 1.75, maxWidth: "230px", marginBottom: "20px" }}>
+                Deep API analysis, instant answers on endpoints, authentication, rate limits, and seamless integration guidance — all in one place.
               </p>
 
-              {/* Context pill from API details */}
+              {/* Context pill */}
               {contextPrompt && (
-                <div
-                  style={{
-                    marginBottom: "20px",
-                    padding: "10px 18px",
-                    borderRadius: "18px",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                    maxWidth: "300px",
-                    textAlign: "center",
-                    background: "rgba(52,211,153,0.07)",
-                    border: "1px solid rgba(52,211,153,0.16)",
-                    color: "rgba(52,211,153,0.70)",
-                  }}
-                >
+                <div style={{
+                  marginBottom: "16px", padding: "10px 18px", borderRadius: "18px",
+                  fontSize: "12px", fontWeight: 500, maxWidth: "300px", textAlign: "center",
+                  background: "rgba(52,211,153,0.07)", border: "1px solid rgba(52,211,153,0.15)",
+                  color: "rgba(52,211,153,0.70)",
+                }}>
                   {contextPrompt}
                 </div>
               )}
 
-              {/* API Breakdown — no description */}
+              {/* API Breakdown */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
                   <ApiBreakdown api={{ ...apiData, description: undefined }} />
                 </div>
               )}
 
+              {/* Feature cards */}
+              <ApiFeatureCards />
+
               {/* Suggested Prompts */}
-              <div style={{ width: "100%", maxWidth: "340px", marginTop: "16px" }}>
-                <SuggestedPrompts onClick={(text: string) => sendMessage(text)} />
+              <div style={{ width: "100%", maxWidth: "340px", marginTop: "20px" }}>
+                <SuggestedPrompts onClick={(text: string) => {
+                  if (!isLoggedIn) { setShowLoginGuard(true); return; }
+                  sendMessage(text);
+                }} />
               </div>
             </div>
           )}
@@ -1076,52 +1240,34 @@ const AskApivesPage = () => {
                 <MessagePill role={msg.role} content={msg.content} />
               </div>
             ))}
-
-            {/* Typing indicator */}
             {loading && (
               <div className="msg-enter" style={{ display: "flex", justifyContent: "flex-start", paddingLeft: "8px" }}>
                 <TypingIndicator />
               </div>
             )}
           </div>
-
           <div ref={bottomRef} style={{ height: "8px" }} />
         </div>
 
         {/* ─────────── INPUT AREA ─────────── */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 20,
-            flexShrink: 0,
-            padding: "8px 16px",
-            paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
-            background:
-              "linear-gradient(0deg, rgba(6,13,10,1) 60%, rgba(6,13,10,0) 100%)",
-          }}
-        >
-          {/* Top shimmer line */}
-          <div
-            className="shim-line"
-            style={{ height: "1px", borderRadius: "99px", marginBottom: "10px", opacity: 0.5 }}
-          />
+        <div style={{
+          position: "relative", zIndex: 20, flexShrink: 0,
+          padding: "8px 16px",
+          paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
+          background: "linear-gradient(0deg, rgba(6,13,10,1) 60%, rgba(6,13,10,0) 100%)",
+        }}>
+          <div className="shim-line" style={{ height: "1px", borderRadius: "99px", marginBottom: "10px", opacity: 0.5 }} />
 
           <ClaudeInput
             value={input}
             onChange={setInput}
             onSend={() => sendMessage()}
             disabled={loading}
+            isLoggedIn={isLoggedIn}
+            onNeedLogin={() => setShowLoginGuard(true)}
           />
 
-          <p
-            style={{
-              textAlign: "center",
-              fontSize: "10px",
-              color: "rgba(255,255,255,0.11)",
-              marginTop: "8px",
-              letterSpacing: "0.03em",
-            }}
-          >
+          <p style={{ textAlign: "center", fontSize: "10px", color: "rgba(255,255,255,0.10)", marginTop: "8px", letterSpacing: "0.03em" }}>
             Powered by Apives AI · Results may vary
           </p>
         </div>
