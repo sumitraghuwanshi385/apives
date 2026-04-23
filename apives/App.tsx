@@ -22,6 +22,7 @@ import { SubmitApi } from './pages/SubmitApi';
 import { FreshApis } from './pages/FreshApis';
 import { PopularApis } from './pages/PopularApis';
 import { OnboardingPage } from './pages/Onboarding';
+import { AskApivesAI } from './pages/AskApivesAI';
 import SerpApiOffer from "./pages/SerpApiOffer";
 
 import {
@@ -67,6 +68,7 @@ return (
 <Route path="/build/image-generation" element={<BuildImageGeneration />} />
     <Route path="/submit" element={<SubmitApi />} />    
     <Route path="/api/:id" element={<ApiDetails />} />    
+<Route path="/ask-apives-ai" element={<AskApivesAI />} />
     <Route path="/provider" element={<ProviderDashboard />} />    
     <Route path="/access" element={<AccessPage />} />    
     <Route path="/fresh" element={<FreshApis />} />    
