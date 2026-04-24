@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
 const askAiRoute = require("./routes/askAi");
+const compareAI = require("./routes/compare");
+const geminiAI = require("./routes/gemini");
+
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
@@ -153,6 +156,8 @@ app.use("/api/sponsor", sponsorRoutes);
 app.use("/api/usecases", usecaseRoutes);
 app.use("/api/runner", runnerRoutes);
 app.use("/api/ask-ai", askAiRoute);
+app.use("/api/ai/compare", compareAI);
+app.use("/api/gemini", geminiAI);
 
 // ================= DATABASE =================
 const DB_URI = process.env.MONGO_URI;
