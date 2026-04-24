@@ -1284,8 +1284,7 @@ border: "1px solid rgba(34,197,94,0.5)",
           You Deserve
         </span>
       </h2>
-    </div>
-  )}
+    
 
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
