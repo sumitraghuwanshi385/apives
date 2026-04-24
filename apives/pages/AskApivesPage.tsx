@@ -591,7 +591,7 @@ export const AnimatedOrb = () => {
 
   return (
     <>
-      <style>{STYLES}</style>
+      <style>{ROBOT_STYLES}</style>
 
       {/* Outer floating wrapper */}
       <div className="robot-float" style={{
@@ -701,35 +701,6 @@ export const AnimatedOrb = () => {
               animationDelay: `${i * 0.8}s`,
             }} />
           ))}
-        </div>
-
-        {/* ── "Ask Apives AI" label ── */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
-          <div style={{
-            display: "flex", alignItems: "center", gap: "7px",
-            padding: "5px 16px 5px 10px",
-            borderRadius: "99px",
-            background: "rgba(2,44,22,0.80)",
-            border: "1px solid rgba(34,197,94,0.25)",
-            backdropFilter: "blur(16px)",
-          }}>
-            <div style={{
-              width: "5px", height: "5px", borderRadius: "50%",
-              background: "#4ade80",
-              boxShadow: "0 0 6px #4ade80",
-              animation: "statusBlink 1s step-end infinite",
-            }} />
-            <span style={{
-              fontSize: "13px", fontWeight: 800,
-              letterSpacing: "-0.01em",
-              color: "rgba(255,255,255,0.92)",
-            }}>
-              Ask Apives AI
-            </span>
-          </div>
-
-          {/* Rotating capability chip */}
-          <LabelChip icon={ORB_LABELS[idx].icon} text={ORB_LABELS[idx].text} visible={show} />
         </div>
       </div>
     </>
@@ -1561,7 +1532,7 @@ useEffect(() => {
 
   return (
     <>
-      <style>{STYLES}</style>
+      <style>{GLOBAL_STYLES}</style>
 
       {/* Modals */}
       {showClearModal && (
