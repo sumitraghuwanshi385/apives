@@ -532,16 +532,19 @@ const AskApivesPage = () => {
 
   // ── FIX 1: Single source of truth — NO state, NO polling, NO interval ──────
   const isValidUser = (): boolean => {
-    try {
-      const token = localStorage.getItem("apives_token");
-      const user = localStorage.getItem("apives_user");
-      if (!token || !user) return false;
-      JSON.parse(user);
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  try {
+    const data = localStorage.getItem("mora_user");
+
+    if (!data) return false;
+
+    const parsed = JSON.parse(data);
+
+    // 🔥 IMPORTANT: token check
+    return !!parsed?.token;
+  } catch {
+    return false;
+  }
+};
 
   const redirectToAccess = () => {
     navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`);
