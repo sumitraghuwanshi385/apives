@@ -1637,6 +1637,7 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
   </button>
 
   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+  {/* Logo */}
   <img
     src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
     alt="Apives"
@@ -1646,17 +1647,34 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
     }}
   />
 
-  <span
-    style={{
-      fontSize: "11px",
-      fontWeight: 600,
-      color: "rgba(255,255,255,0.85)",
-      letterSpacing: "0.04em",
-    }}
-  >
-    Apives Assistant
-  </span>
-</div>
+  {/* Text Column */}
+  <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+    
+    {/* Main Title */}
+    <span
+      style={{
+        fontSize: "13px",
+        fontWeight: 700,
+        color: "#22c55e",
+        letterSpacing: "0.04em",
+      }}
+    >
+      ApivesAI
+    </span>
+
+    {/* Subtitle */}
+    <span
+      style={{
+        fontSize: "10px",
+        fontWeight: 500,
+        color: "rgba(255,255,255,0.55)",
+        letterSpacing: "0.05em",
+      }}
+    >
+      AI Assistant
+    </span>
+
+  </div>
 </div>
 
           {/* Right */}
