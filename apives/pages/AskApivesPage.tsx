@@ -25,6 +25,8 @@ Plus,
 
 import ApiBreakdown from "../components/ai/ApiBreakdown";
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
+import HistoryModal from "../components/ai/HistoryModal";
+import CompareModal from "../components/ai/CompareModal";
 
 // ─── Global Styles ──────────────────────────────────────────────────────────────────
 const GLOBAL_STYLES = `
