@@ -1676,7 +1676,7 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
 
   </div>
 </div>
-
+</div>
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
