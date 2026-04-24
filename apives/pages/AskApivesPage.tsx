@@ -1432,11 +1432,13 @@ const isValidUser = () => {
   const token = localStorage.getItem("apives_token");
   const user = localStorage.getItem("apives_user");
 
-  if (!token || !user) return false;
+  if (!token) return false;
+
+  if (!user) return false;
 
   try {
-    const parsed = JSON.parse(user);
-    return !!parsed?.email; // ya id bhi chalega
+    JSON.parse(user);
+    return true; // 🔥 bas parse ho gaya = logged in
   } catch {
     return false;
   }
@@ -1463,9 +1465,13 @@ const isValidUser = () => {
   };
 
   const requireLogin = (): boolean => {
-    if (!isLoggedIn) { redirectToAccess(); return false; }
-    return true;
-  };
+  const valid = isValidUser(); // 🔥 direct check
+  if (!valid) {
+    redirectToAccess();
+    return false;
+  }
+  return true;
+};
 
 useEffect(() => {
   const hideGlobalLayout = () => {
