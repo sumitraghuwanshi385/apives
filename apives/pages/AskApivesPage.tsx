@@ -30,11 +30,10 @@ import HistoryModal from "../components/ai/HistoryModal";
 import CompareModal from "../components/ai/CompareModal";
 import AnimatedOrb from "../components/ai/AnimatedOrb";
 
-// ─── Global Styles ──────────────────────────────────────────────────────────────────
+// ─── Global Styles ───────────────────────────────────────────────────────────
 const GLOBAL_STYLES = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
-  /* Hide global Navbar + Footer on this page */
   body > nav,
   #root > nav,
   nav[data-global],
@@ -113,7 +112,6 @@ const GLOBAL_STYLES = `
     to { transform: rotate(360deg); }
   }
 
-  /* Robot typing blink */
   @keyframes robotBlink {
     0%,80%,100% { transform: scaleY(1); }
     85%          { transform: scaleY(0.08); }
@@ -192,7 +190,6 @@ const GLOBAL_STYLES = `
   textarea { resize: none; scrollbar-width: none; }
   textarea::-webkit-scrollbar { display: none; }
 
-  /* AI message action buttons */
   .ai-action-btn {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 4px 10px; border-radius: 8px;
@@ -210,38 +207,38 @@ const GLOBAL_STYLES = `
     color: rgba(34,197,94,0.80);
   }
 
-  /* API name pill glassmorphism */
+  /* FIX 3: API name pill */
   .api-name-pill {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 7px 14px 7px 10px;
+    padding: 6px 14px 6px 8px;
     border-radius: 999px;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 2px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.07);
   }
 `;
 
 // ─── Strip markdown helper ────────────────────────────────────────────────────
 function stripMarkdown(text: string): string {
   return text
-    .replace(/#{1,6}\s/g, "")           // headings
-    .replace(/\*\*(.+?)\*\*/g, "$1")    // bold
-    .replace(/\*(.+?)\*/g, "$1")        // italic
-    .replace(/`{3}[\s\S]*?`{3}/g, (m) => // code blocks - keep content
+    .replace(/#{1,6}\s/g, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/`{3}[\s\S]*?`{3}/g, (m) =>
       m.replace(/`{3}[a-z]*\n?/g, "").replace(/`{3}/g, "").trim()
     )
-    .replace(/`(.+?)`/g, "$1")          // inline code
-    .replace(/\[(.+?)\]\(.+?\)/g, "$1") // links
-    .replace(/^[-*+]\s/gm, "• ")        // bullets
-    .replace(/^\d+\.\s/gm, (m) => m)    // numbered lists keep
-    .replace(/_{2}(.+?)_{2}/g, "$1")    // underline
-    .replace(/~~(.+?)~~/g, "$1")        // strikethrough
+    .replace(/`(.+?)`/g, "$1")
+    .replace(/\[(.+?)\]\(.+?\)/g, "$1")
+    .replace(/^[-*+]\s/gm, "• ")
+    .replace(/^\d+\.\s/gm, (m) => m)
+    .replace(/_{2}(.+?)_{2}/g, "$1")
+    .replace(/~~(.+?)~~/g, "$1")
     .trim();
 }
 
-// ─── Robot TypingIndicator ─────────────────────────────────────────────────────
+// ─── Robot TypingIndicator ────────────────────────────────────────────────────
 const TypingIndicator = () => (
   <div style={{
     display: "flex", alignItems: "center", gap: "10px",
@@ -252,9 +249,7 @@ const TypingIndicator = () => (
     width: "fit-content",
     boxShadow: "0 0 20px rgba(21,128,61,0.15)",
   }}>
-    {/* mini robot face */}
     <div style={{ position: "relative", width: "22px", height: "22px", flexShrink: 0 }}>
-      {/* head */}
       <div style={{
         width: "22px", height: "22px", borderRadius: "6px",
         background: "linear-gradient(160deg, rgba(5,46,22,0.95), rgba(2,18,9,1))",
@@ -262,10 +257,8 @@ const TypingIndicator = () => (
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center", gap: "2px",
         boxShadow: "0 0 10px rgba(34,197,94,0.20)",
-        overflow: "hidden",
-        position: "relative",
+        overflow: "hidden", position: "relative",
       }}>
-        {/* eyes row */}
         <div style={{ display: "flex", gap: "3px" }}>
           {[0, 1].map((i) => (
             <div key={i} style={{
@@ -290,26 +283,19 @@ const TypingIndicator = () => (
             </div>
           ))}
         </div>
-        {/* smile */}
         <div style={{
           width: "8px", height: "2px", borderRadius: "0 0 4px 4px",
-          border: "0.8px solid rgba(34,197,94,0.50)",
-          borderTop: "none",
+          border: "0.8px solid rgba(34,197,94,0.50)", borderTop: "none",
         }} />
       </div>
     </div>
-
-    {/* label */}
     <span style={{
       fontSize: "10px", fontWeight: 700,
       letterSpacing: "0.18em", textTransform: "uppercase",
-      color: "rgba(34,197,94,0.60)",
-      fontFamily: "monospace",
+      color: "rgba(34,197,94,0.60)", fontFamily: "monospace",
     }}>
       Thinking
     </span>
-
-    {/* animated dots */}
     <div style={{ display: "flex", gap: "3px", alignItems: "flex-end", paddingBottom: "1px" }}>
       {[0, 1, 2].map((i) => (
         <span key={i} style={{
@@ -323,7 +309,7 @@ const TypingIndicator = () => (
   </div>
 );
 
-// ─── CopyButton (reusable) ────────────────────────────────────────────────────
+// ─── CopyButton ───────────────────────────────────────────────────────────────
 const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) => {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -365,7 +351,6 @@ const MessagePill = ({
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
-
       <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxWidth: "82%" }}>
         <div
           className={isUser ? "glass-pill-user" : "glass-pill-ai"}
@@ -380,8 +365,6 @@ const MessagePill = ({
         >
           {cleanContent}
         </div>
-
-        {/* Action row — only for AI messages */}
         {!isUser && (
           <div style={{ display: "flex", gap: "6px", paddingLeft: "4px" }}>
             <CopyButton text={cleanContent} />
@@ -398,57 +381,30 @@ const MessagePill = ({
   );
 };
 
-// ─── API Name Pill (Spotify-style) ────────────────────────────────────────────
-const ApiNamePill = ({
-  name,
-  iconUrl,
-  onRemove,
-}: {
-  name: string;
-  iconUrl?: string;
-  onRemove?: () => void;
-}) => (
+// ─── FIX 3: API Name Pill (Spotify-style glassmorphism) ──────────────────────
+const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   <div className="api-name-pill">
-    {/* icon / colored dot */}
-    {iconUrl ? (
+    {/* green dot indicator */}
+    <div style={{
+      width: "7px", height: "7px", borderRadius: "50%", flexShrink: 0,
+      background: "#22c55e",
+      boxShadow: "0 0 8px rgba(34,197,94,0.70)",
+    }} />
+    {iconUrl && (
       <img
         src={iconUrl}
         alt={name}
-        style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+        style={{ width: "18px", height: "18px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
       />
-    ) : (
-      <div style={{
-        width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0,
-        background: "linear-gradient(135deg, #22c55e, #15803d)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        boxShadow: "0 0 8px rgba(34,197,94,0.45)",
-      }}>
-        <Zap size={10} color="white" strokeWidth={2.5} />
-      </div>
     )}
-
     <span style={{
       fontSize: "13px", fontWeight: 700,
-      color: "rgba(255,255,255,0.88)",
+      color: "rgba(255,255,255,0.90)",
       letterSpacing: "-0.01em",
     }}>
       {name}
     </span>
-
-    {onRemove && (
-      <button
-        onClick={onRemove}
-        style={{
-          width: "16px", height: "16px", borderRadius: "50%",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          background: "rgba(255,255,255,0.10)",
-          border: "none", cursor: "pointer", flexShrink: 0,
-          transition: "background 0.15s",
-        }}
-      >
-        <X size={9} color="rgba(255,255,255,0.55)" />
-      </button>
-    )}
   </div>
 );
 
@@ -495,19 +451,20 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
         cursor: "pointer", transition: "all 0.2s",
       }}
     >
-      {listening
-        ? <MicOff size={13} color="#f87171" />
-        : <Mic size={13} color="rgba(255,255,255,0.40)" />}
+      {listening ? <MicOff size={13} color="#f87171" /> : <Mic size={13} color="rgba(255,255,255,0.40)" />}
     </button>
   );
 };
 
-// ─── ClaudeInput ──────────────────────────────────────────────────────────────
+// ─── FIX 2: ClaudeInput — NO auth check, always open ─────────────────────────
 const ClaudeInput = ({
-  value, onChange, onSend, disabled, isLoggedIn, onNeedLogin, placeholder,
+  value, onChange, onSend, disabled, placeholder,
 }: {
-  value: string; onChange: (v: string) => void; onSend: () => void;
-  disabled: boolean; isLoggedIn: boolean; onNeedLogin: () => void; placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  onSend: () => void;
+  disabled: boolean;
+  placeholder: string;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasText = value.trim().length > 0;
@@ -544,8 +501,9 @@ const ClaudeInput = ({
       />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
         <MicButton onTranscript={(t) => onChange(value + (value ? " " : "") + t)} disabled={disabled} />
+        {/* FIX 2: send always — no auth gate */}
         <button
-          onClick={() => { if (!isLoggedIn) { onNeedLogin(); return; } onSend(); }}
+          onClick={onSend}
           disabled={!hasText || disabled}
           style={{
             width: "32px", height: "32px", borderRadius: "50%",
@@ -572,31 +530,30 @@ const AskApivesPage = () => {
   const apiId = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
-  // ── FIX 1: Auth — single source of truth, no false redirects ─────────────
+  // ── FIX 1: Single source of truth — NO state, NO polling, NO interval ──────
   const isValidUser = (): boolean => {
-    const token = localStorage.getItem("apives_token");
-    const user = localStorage.getItem("apives_user");
-    if (!token || !user) return false;
-    try { JSON.parse(user); return true; } catch { return false; }
+    try {
+      const token = localStorage.getItem("apives_token");
+      const user = localStorage.getItem("apives_user");
+      if (!token || !user) return false;
+      JSON.parse(user);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isValidUser);
-
-  useEffect(() => {
-    const checkAuth = () => setIsLoggedIn(isValidUser());
-    checkAuth();
-    window.addEventListener("storage", checkAuth);
-    const interval = setInterval(checkAuth, 1500);
-    return () => { window.removeEventListener("storage", checkAuth); clearInterval(interval); };
-  }, []);
-
-  // Only redirect if genuinely not logged in — uses isLoggedIn state
   const redirectToAccess = () => {
     navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`);
   };
 
+  // FIX 1: requireLogin reads localStorage directly — zero state lag
   const requireLogin = (): boolean => {
-    if (!isLoggedIn) { redirectToAccess(); return false; }
+    const valid = isValidUser();
+    if (!valid) {
+      redirectToAccess();
+      return false;
+    }
     return true;
   };
 
@@ -662,6 +619,8 @@ const AskApivesPage = () => {
     }
   }, [chat, loading]);
 
+  // FIX 2: sendMessage — NO auth check, always allowed
+  // FIX 4: system prompt added to force specific answers
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text) return;
@@ -671,8 +630,24 @@ const AskApivesPage = () => {
     setInput("");
     setLoading(true);
 
+    // FIX 4: inject system message for specific, non-generic responses
+    const apiContext = apiData
+      ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}. Description: ${apiData.description || "N/A"}.`
+      : "The user is asking about APIs in general.";
+
+    const messagesWithSystem = [
+      {
+        role: "system",
+        content: `You are an expert API assistant on Apives. Answer specifically and precisely based on the user's exact question. ${apiContext} Avoid generic or vague responses. Each answer must be unique, detailed, and directly relevant to what was asked.`,
+      },
+      ...newChat,
+    ];
+
     try {
-      const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", { messages: newChat, apiData });
+      const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
+        messages: messagesWithSystem,
+        apiData,
+      });
       setChat((prev) => [...prev, { role: "assistant", content: res.data.answer }]);
     } catch {
       try {
@@ -686,9 +661,8 @@ const AskApivesPage = () => {
     }
   };
 
-  // FIX 3: New Chat — saves existing chat in history, resets current
+  // New Chat — keeps history, resets state
   const startNewChat = () => {
-    // existing chat already persisted via useEffect — just clear state
     setChat([]);
     setInput("");
   };
@@ -697,7 +671,6 @@ const AskApivesPage = () => {
   const regenerateLast = () => {
     const lastUserMsg = [...chat].reverse().find((m) => m.role === "user");
     if (!lastUserMsg) return;
-    // remove last assistant message
     setChat((prev) => {
       const idx = [...prev].reverse().findIndex((m) => m.role === "assistant");
       if (idx === -1) return prev;
@@ -707,6 +680,7 @@ const AskApivesPage = () => {
     sendMessage(lastUserMsg.content);
   };
 
+  // FIX 3: displayName derived reliably from URL param OR fetched apiData
   const displayName = apiName || apiData?.name || null;
   const inputPlaceholder = displayName
     ? `Ask anything about ${displayName}...`
@@ -720,7 +694,7 @@ const AskApivesPage = () => {
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
-          isLoggedIn={isLoggedIn}
+          isLoggedIn={isValidUser()}
           onNeedLogin={() => { setShowCompareModal(false); redirectToAccess(); }}
         />
       )}
@@ -793,10 +767,10 @@ const AskApivesPage = () => {
 
           {/* Right: history, new chat, compare */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {/* FIX 1: only show history if logged in, uses isLoggedIn state */}
+            {/* FIX 1: reads localStorage directly at click time — no stale state */}
             <button
               onClick={() => {
-                if (!isLoggedIn) { redirectToAccess(); return; }
+                if (!requireLogin()) return;
                 setShowHistoryModal(true);
               }}
               className="glass-btn"
@@ -809,7 +783,7 @@ const AskApivesPage = () => {
               <History size={14} color="rgba(255,255,255,0.40)" />
             </button>
 
-            {/* FIX 3: New Chat button replaces Clear */}
+            {/* New Chat */}
             <button
               onClick={startNewChat}
               className="glass-btn"
@@ -822,10 +796,10 @@ const AskApivesPage = () => {
               <Plus size={15} color="rgba(255,255,255,0.40)" />
             </button>
 
-            {/* FIX 1: uses isLoggedIn state directly */}
+            {/* FIX 1: reads localStorage directly at click time */}
             <button
               onClick={() => {
-                if (!isLoggedIn) { redirectToAccess(); return; }
+                if (!requireLogin()) return;
                 setShowCompareModal(true);
               }}
               style={{
@@ -850,22 +824,25 @@ const AskApivesPage = () => {
             position: "relative", zIndex: 10,
             flex: 1, overflowY: "auto",
             WebkitOverflowScrolling: "touch" as any,
-            paddingTop: "16px", paddingBottom: "120px",
+            paddingTop: "12px", paddingBottom: "120px",
             minHeight: 0,
           }}
         >
-          {/* Empty state */}
+          {/* FIX 5: Tighter empty state padding */}
           {chat.length === 0 && (
             <div style={{
               display: "flex", flexDirection: "column",
               alignItems: "center", justifyContent: "center",
-              minHeight: "100%", padding: "32px 24px 8px", textAlign: "center",
+              minHeight: "100%",
+              padding: "16px 24px 8px", // FIX 5: reduced from 32px
+              textAlign: "center",
             }}>
               <AnimatedOrb />
 
               <h2 style={{
                 fontSize: "26px", fontWeight: 900,
-                marginTop: "20px", marginBottom: "8px",
+                marginTop: "14px", // FIX 5: reduced from 20px
+                marginBottom: "6px", // FIX 5: reduced from 8px
                 lineHeight: 1.2, letterSpacing: "-0.02em",
               }}>
                 The API Intelligence
@@ -877,14 +854,15 @@ const AskApivesPage = () => {
 
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
-                maxWidth: "220px", marginBottom: "20px",
+                maxWidth: "220px",
+                marginBottom: "12px", // FIX 5: reduced from 20px
               }}>
                 Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
-              {/* FIX 2: API Name Pill — Spotify style glassmorphism */}
+              {/* FIX 3: API Name Pill — placed right below orb area, shows reliably */}
               {displayName && (
-                <div style={{ marginBottom: "16px" }}>
+                <div style={{ marginBottom: "8px" }}> {/* FIX 5: reduced from 16px */}
                   <ApiNamePill
                     name={displayName}
                     iconUrl={apiData?.logo || apiData?.icon || undefined}
@@ -892,12 +870,15 @@ const AskApivesPage = () => {
                 </div>
               )}
               {displayName && (
-                <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.25)", marginBottom: "20px" }}>
+                <p style={{
+                  fontSize: "11px", color: "rgba(255,255,255,0.22)",
+                  marginBottom: "12px", // FIX 5: reduced from 20px
+                }}>
                   Ask anything about this API...
                 </p>
               )}
 
-              {/* FIX 4: ApiBreakdown — upgraded, description always shown */}
+              {/* ApiBreakdown */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
                   <UpgradedApiBreakdown api={apiData} />
@@ -905,8 +886,13 @@ const AskApivesPage = () => {
               )}
 
               {/* Suggested Prompts */}
-              <div style={{ width: "100%", maxWidth: "340px", marginTop: "20px" }}>
-                <SuggestedPrompts onClick={(text: string) => { sendMessage(text); }} />
+              <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}> {/* FIX 5: reduced from 20px */}
+                <SuggestedPrompts
+                  onClick={(text: string) => {
+                    // FIX 2: no auth check — anyone can use suggested prompts
+                    sendMessage(text);
+                  }}
+                />
               </div>
             </div>
           )}
@@ -941,13 +927,12 @@ const AskApivesPage = () => {
           paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
           background: "rgba(6,13,10,0.97)",
         }}>
+          {/* FIX 2: no isLoggedIn / onNeedLogin props — chat is fully open */}
           <ClaudeInput
             value={input}
             onChange={setInput}
             onSend={() => sendMessage()}
             disabled={loading}
-            isLoggedIn={isLoggedIn}
-            onNeedLogin={redirectToAccess}
             placeholder={inputPlaceholder}
           />
           <p style={{
@@ -962,7 +947,7 @@ const AskApivesPage = () => {
   );
 };
 
-// ─── FIX 4: Upgraded ApiBreakdown (inline, rich glass cards) ──────────────────
+// ─── UpgradedApiBreakdown ─────────────────────────────────────────────────────
 const UpgradedApiBreakdown = ({ api }: { api: any }) => {
   if (!api) return null;
 
@@ -1002,16 +987,16 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
       content: api.auth,
       type: "badge" as const,
     },
-  ].filter(Boolean) as Array<{ key: string; label: string; icon: React.ReactNode; content: any; type: "text" | "list" | "code" | "badge" }>;
+  ].filter(Boolean) as Array<{
+    key: string; label: string; icon: React.ReactNode;
+    content: any; type: "text" | "list" | "code" | "badge";
+  }>;
 
   if (!sections.length) return null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-      {/* Header */}
-      <div style={{
-        display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px",
-      }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
         <div style={{ height: "1px", flex: 1, background: "rgba(34,197,94,0.15)" }} />
         <span style={{
           fontSize: "9px", fontWeight: 700, letterSpacing: "0.18em",
@@ -1023,21 +1008,13 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
       </div>
 
       {sections.map((s) => (
-        <div
-          key={s.key}
-          style={{
-            padding: "12px 14px",
-            borderRadius: "14px",
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(34,197,94,0.10)",
-            backdropFilter: "blur(12px)",
-            textAlign: "left",
-          }}
-        >
-          {/* Section label */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: "5px", marginBottom: "8px",
-          }}>
+        <div key={s.key} style={{
+          padding: "12px 14px", borderRadius: "14px",
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(34,197,94,0.10)",
+          backdropFilter: "blur(12px)", textAlign: "left",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "8px" }}>
             {s.icon}
             <span style={{
               fontSize: "9px", fontWeight: 800, letterSpacing: "0.14em",
@@ -1047,12 +1024,8 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
             </span>
           </div>
 
-          {/* Content */}
           {s.type === "text" && (
-            <p style={{
-              fontSize: "12px", lineHeight: 1.7,
-              color: "rgba(255,255,255,0.60)", fontWeight: 400,
-            }}>
+            <p style={{ fontSize: "12px", lineHeight: 1.7, color: "rgba(255,255,255,0.60)", fontWeight: 400 }}>
               {s.content}
             </p>
           )}
