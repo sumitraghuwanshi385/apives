@@ -12,6 +12,7 @@ import {
   Sparkles,
   History,
   Clock,
+Plus,
   ChevronRight,
   Zap,
   Shield,
@@ -1501,11 +1502,16 @@ useEffect(() => {
   useEffect(() => {
   if (!scrollRef.current) return;
 
-  const isNearBottom =
-    scrollRef.current.scrollHeight - scrollRef.current.scrollTop - scrollRef.current.clientHeight < 120;
+  const el = scrollRef.current;
 
-  if (isNearBottom) {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // only auto scroll if already near bottom
+  const distanceFromBottom =
+    el.scrollHeight - el.scrollTop - el.clientHeight;
+
+  if (distanceFromBottom < 100) {
+    requestAnimationFrame(() => {
+      el.scrollTop = el.scrollHeight;
+    });
   }
 }, [chat, loading]);
 
@@ -1630,26 +1636,27 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
     <X size={15} className="text-white/60" />
   </button>
 
-  <div>
-    <p style={{
-      fontSize: "15px",
-      fontWeight: 800,
-      color: "rgba(255,255,255,0.93)",
-      lineHeight: 1.2,
-      letterSpacing: "-0.01em",
-    }}>
-      Ask Apives AI
-    </p>
-    <p style={{
-      fontSize: "10px",
-      fontWeight: 500,
+  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+  <img
+    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
+    alt="Apives"
+    style={{
+      height: "22px",
+      objectFit: "contain",
+    }}
+  />
+
+  <span
+    style={{
+      fontSize: "11px",
+      fontWeight: 600,
+      color: "rgba(255,255,255,0.85)",
       letterSpacing: "0.04em",
-      color: "#16a34a",
-      marginTop: "1px",
-    }}>
-      API Intelligence Assistant
-    </p>
-  </div>
+    }}
+  >
+    Apives Assistant
+  </span>
+</div>
 </div>
 
           {/* Right */}
@@ -1677,37 +1684,85 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
   <History size={14} color="rgba(255,255,255,0.40)" />
 </button>
             
-            {hasHistory && (
-              <button
-                onClick={() => setShowClearModal(true)}
-                className="glass-btn"
-                style={{
-                  width: "36px", height: "36px", borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                }}
-              >
-                <Trash2 size={14} color="rgba(255,255,255,0.30)" />
-              </button>
-            )}
-            <button
-              onClick={() => {
-                if (!requireLogin()) return;
-                setShowCompareModal(true);
-              }}
-              style={{
-                width: "36px", height: "36px", borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(34,197,94,0.18)",
-border: "1px solid rgba(34,197,94,0.5)",
-                cursor: "pointer", transition: "all 0.2s",
-              }}
-              title="Compare APIs"
-            >
-              <GitCompare size={14} color="#4ade80"/>
-            </button>
-          </div>
-        </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+  
+  {/* 🆕 NEW CHAT BUTTON */}
+  <button
+    onClick={() => {
+      // clear current chat
+      setChat([]);
+      setInput("");
 
+      if (apiId) {
+        localStorage.removeItem(`apives_chat_${apiId}`);
+      }
+
+      // scroll top
+      scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }}
+    className="glass-btn"
+    style={{
+      width: "36px",
+      height: "36px",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+    }}
+    title="New Chat"
+  >
+    
+  <Plus size={16} color="#22c55e" />
+  </button>
+
+  {/* 📜 HISTORY (CENTER FEEL) */}
+  <button
+    onClick={() => {
+      if (!isLoggedIn) {
+        redirectToAccess();
+        return;
+      }
+      setShowHistoryModal(true);
+    }}
+    className="glass-btn"
+    style={{
+      width: "36px",
+      height: "36px",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+    }}
+    title="Chat history"
+  >
+    <History size={14} color="rgba(255,255,255,0.40)" />
+  </button>
+
+  {/* ⚡ COMPARE */}
+  <button
+    onClick={() => {
+      if (!requireLogin()) return;
+      setShowCompareModal(true);
+    }}
+    style={{
+      width: "36px",
+      height: "36px",
+      borderRadius: "50%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "rgba(34,197,94,0.18)",
+      border: "1px solid rgba(34,197,94,0.5)",
+      cursor: "pointer",
+    }}
+    title="Compare APIs"
+  >
+    <GitCompare size={14} color="#4ade80" />
+  </button>
+
+</div>
         {/* ── CHAT AREA ── */}
         <div
   ref={scrollRef}
@@ -1718,13 +1773,9 @@ border: "1px solid rgba(34,197,94,0.5)",
   flex: 1,
   overflowY: "auto",
   WebkitOverflowScrolling: "touch",
-
-  paddingBottom: "80px",
-  padding: "16px 0",
+  paddingTop: "16px",
+  paddingBottom: "120px",
   minHeight: 0,
-  scrollPaddingBottom: "80px",
-
-  marginBottom: "-10px" 
 }}
 >
 
