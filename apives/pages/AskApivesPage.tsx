@@ -1636,36 +1636,39 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
     <X size={15} className="text-white/60" />
   </button>
 
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-  
-  {/* Logo + Text vertical */}
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1 }}>
-    
-    {/* Logo */}
-    <img
-      src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-      alt="Apives"
-      style={{
-        height: "22px",
-        objectFit: "contain",
-      }}
-    />
+  <div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center", // ✅ center align
+    justifyContent: "center",
+    gap: "4px",
+    transform: "translateX(-6px)", // 🔥 slight left adjust (tune -4 to -8 if needed)
+  }}
+>
+  {/* Logo */}
+  <img
+    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
+    alt="Apives"
+    style={{
+      height: "22px",
+      objectFit: "contain",
+    }}
+  />
 
-    {/* Subtitle under logo */}
-    <span
-      style={{
-        fontSize: "9px",
-        fontWeight: 500,
-        color: "rgba(255,255,255,0.55)",
-        letterSpacing: "0.06em",
-        marginTop: "2px",
-      }}
-    >
-      AI Assistant
-    </span>
-
-  </div>
-
+  {/* AI Assistant text */}
+  <span
+    style={{
+      fontSize: "11px",
+      fontWeight: 700,
+      fontFamily: "Inter, system-ui, sans-serif", // 🔥 same modern font feel
+      letterSpacing: "-0.01em",
+      color: "rgba(255,255,255,0.75)",
+      textAlign: "center",
+    }}
+  >
+    AI Assistant
+  </span>
 </div>
 </div>
 
