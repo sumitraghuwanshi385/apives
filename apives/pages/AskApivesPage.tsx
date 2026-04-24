@@ -977,20 +977,28 @@ const CompareModal = ({
     try {
       const prompt = `Compare these two APIs in detail:\n\nAPI A: ${selectedA.name}\n${selectedA.description || ""}\n\nAPI B: ${selectedB.name}\n${selectedB.description || ""}\n\nGive a structured comparison covering:\n1. Primary Use Case\n2. Key Features\n3. Authentication\n4. Rate Limits and Pricing\n5. Developer Experience\n6. Best For (who should use each)\n7. Verdict\n\nBe concise but comprehensive.`;
 
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
-        }),
-      });
-      const data = await res.json();
-      const text =
-        data.content?.map((b: any) => b.text || "").join("\n") ||
-        "Comparison unavailable.";
-      setResult(text);
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_OPENAI_API_KEY",
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "user", content: prompt }
+    ],
+  }),
+});
+
+const data = await res.json();
+
+const text =
+  data.choices?.[0]?.message?.content ||
+  "Comparison unavailable.";
+
+setResult(text);
+
     } catch {
       setResult("Unable to compare right now. Please try again.");
     } finally {
@@ -1374,18 +1382,22 @@ const ClaudeInput = ({
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: hasText ? "pointer" : "default",
             background: hasText
-              ? "rgba(52,211,153,0.22)"
-              : "rgba(255,255,255,0.06)",
-            border: hasText
-              ? "1px solid rgba(52,211,153,0.40)"
-              : "1px solid rgba(255,255,255,0.08)",
-            boxShadow: hasText ? "0 0 14px rgba(52,211,153,0.25)" : "none",
+  ? "rgba(21,128,61,0.35)"
+  : "rgba(255,255,255,0.06)",
+
+border: hasText
+  ? "1px solid rgba(21,128,61,0.7)"
+  : "1px solid rgba(255,255,255,0.08)",
+
+boxShadow: hasText
+  ? "0 0 18px rgba(21,128,61,0.5)"
+  : "none",
             transition: "all 0.2s ease",
           }}
         >
           <ArrowUp
             size={14}
-            color={hasText ? "#34d399" : "rgba(255,255,255,0.18)"}
+            color={hasText ? "#22c55e" : "rgba(255,255,255,0.18)"}
             strokeWidth={2.8}
           />
         </button>
@@ -1495,8 +1507,15 @@ useEffect(() => {
 
   // Auto scroll
   useEffect(() => {
+  if (!scrollRef.current) return;
+
+  const isNearBottom =
+    scrollRef.current.scrollHeight - scrollRef.current.scrollTop - scrollRef.current.clientHeight < 120;
+
+  if (isNearBottom) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chat, loading]);
+  }
+}, [chat, loading]);
 
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
