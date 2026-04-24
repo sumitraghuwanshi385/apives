@@ -30,7 +30,8 @@ import HistoryModal from "../components/ai/HistoryModal";
 import CompareModal from "../components/ai/CompareModal";
 import AnimatedOrb from "../components/ai/AnimatedOrb";
 
-// ─── Global Styles ───────────────────────────────────────────────────────────
+// ─── Global Styles ────────────────────────────────────────────────────────────
+// UNCHANGED from original
 const GLOBAL_STYLES = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
@@ -207,7 +208,6 @@ const GLOBAL_STYLES = `
     color: rgba(34,197,94,0.80);
   }
 
-  /* FIX 3: API name pill */
   .api-name-pill {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 6px 14px 6px 8px;
@@ -218,9 +218,19 @@ const GLOBAL_STYLES = `
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.07);
   }
+
+  /* ── FIX 1: "Your Selected API" label above pill ── */
+  @keyframes selectedPillIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .selected-api-label {
+    animation: selectedPillIn 0.35s ease forwards;
+  }
 `;
 
-// ─── Strip markdown helper ────────────────────────────────────────────────────
+// ─── Strip markdown helper ─────────────────────────────────────────────────────
+// UNCHANGED
 function stripMarkdown(text: string): string {
   return text
     .replace(/#{1,6}\s/g, "")
@@ -238,7 +248,23 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-// ─── Robot TypingIndicator ────────────────────────────────────────────────────
+// ─── FIX 3: Smart intent detection ───────────────────────────────────────────
+// Returns true if message is API-related (should show breakdown)
+function isApiRelatedQuery(text: string): boolean {
+  const normalized = text.toLowerCase();
+  const apiKeywords = [
+    "api", "endpoint", "endpoints", "auth", "authentication", "token",
+    "request", "response", "parameter", "params", "integrate", "integration",
+    "sdk", "webhook", "rate limit", "base url", "http", "rest", "graphql",
+    "header", "key", "secret", "curl", "fetch", "axios", "postman",
+    "usage", "how to use", "how do i use", "example", "documentation",
+    "docs", "method", "get", "post", "put", "delete", "patch",
+  ];
+  return apiKeywords.some((kw) => normalized.includes(kw));
+}
+
+// ─── Robot TypingIndicator ─────────────────────────────────────────────────────
+// UNCHANGED
 const TypingIndicator = () => (
   <div style={{
     display: "flex", alignItems: "center", gap: "10px",
@@ -310,6 +336,7 @@ const TypingIndicator = () => (
 );
 
 // ─── CopyButton ───────────────────────────────────────────────────────────────
+// UNCHANGED
 const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) => {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -328,6 +355,7 @@ const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) 
 };
 
 // ─── MessagePill ──────────────────────────────────────────────────────────────
+// UNCHANGED
 const MessagePill = ({
   role, content, onRegenerate,
 }: {
@@ -381,10 +409,9 @@ const MessagePill = ({
   );
 };
 
-// ─── FIX 3: API Name Pill (Spotify-style glassmorphism) ──────────────────────
+// ─── FIX 3: ApiNamePill — UNCHANGED, no modifications ─────────────────────────
 const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   <div className="api-name-pill">
-    {/* green dot indicator */}
     <div style={{
       width: "7px", height: "7px", borderRadius: "50%", flexShrink: 0,
       background: "#22c55e",
@@ -408,7 +435,7 @@ const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   </div>
 );
 
-// ─── MicButton ────────────────────────────────────────────────────────────────
+// ─── FIX 4: MicButton — FIXED: continuous mode + proper transcript append ─────
 const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -416,25 +443,59 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
   const toggle = useCallback(() => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
     if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser.");
+      alert("Speech recognition is not supported in this browser. Try Chrome or Edge.");
       return;
     }
+
+    // If already listening — stop
     if (listening) {
-      recognitionRef.current?.stop();
+      try { recognitionRef.current?.stop(); } catch {}
       setListening(false);
       return;
     }
+
+    // Create fresh instance each time (avoids stale state bugs)
     const rec = new SpeechRecognition();
     rec.lang = "en-US";
-    rec.interimResults = false;
+    rec.continuous = false;       // single utterance — cleaner UX
+    rec.interimResults = false;   // only final results
     rec.maxAlternatives = 1;
-    rec.onresult = (e: any) => { onTranscript(e.results[0][0].transcript); setListening(false); };
-    rec.onerror = () => setListening(false);
-    rec.onend = () => setListening(false);
+
+    rec.onstart = () => {
+      setListening(true);
+    };
+
+    rec.onresult = (e: any) => {
+      try {
+        const transcript = e.results[0][0].transcript;
+        if (transcript && transcript.trim()) {
+          // FIX 4: append transcript — works correctly
+          onTranscript(transcript.trim());
+        }
+      } catch (err) {
+        console.error("[MicButton] onresult error:", err);
+      }
+    };
+
+    rec.onerror = (e: any) => {
+      console.error("[MicButton] Speech error:", e.error);
+      setListening(false);
+    };
+
+    rec.onend = () => {
+      setListening(false);
+    };
+
     recognitionRef.current = rec;
-    rec.start();
-    setListening(true);
+
+    try {
+      rec.start();
+    } catch (err) {
+      console.error("[MicButton] start() error:", err);
+      setListening(false);
+    }
   }, [listening, onTranscript]);
 
   return (
@@ -456,7 +517,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
   );
 };
 
-// ─── FIX 2: ClaudeInput — NO auth check, always open ─────────────────────────
+// ─── ClaudeInput — UNCHANGED except MicButton onTranscript fix ───────────────
 const ClaudeInput = ({
   value, onChange, onSend, disabled, placeholder,
 }: {
@@ -500,8 +561,11 @@ const ClaudeInput = ({
         }}
       />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
-        <MicButton onTranscript={(t) => onChange(value + (value ? " " : "") + t)} disabled={disabled} />
-        {/* FIX 2: send always — no auth gate */}
+        {/* FIX 4: transcript appended correctly with space */}
+        <MicButton
+          onTranscript={(t) => onChange((value.trim() ? value.trim() + " " : "") + t)}
+          disabled={disabled}
+        />
         <button
           onClick={onSend}
           disabled={!hasText || disabled}
@@ -527,30 +591,25 @@ const AskApivesPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const apiId = searchParams.get("apiId");
+  const apiId   = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
-  // ── FIX 1: Single source of truth — NO state, NO polling, NO interval ──────
+  // UNCHANGED auth logic
   const isValidUser = (): boolean => {
-  try {
-    const data = localStorage.getItem("mora_user");
-
-    if (!data) return false;
-
-    const parsed = JSON.parse(data);
-
-    // 🔥 IMPORTANT: token check
-    return !!parsed?.token;
-  } catch {
-    return false;
-  }
-};
+    try {
+      const data = localStorage.getItem("mora_user");
+      if (!data) return false;
+      const parsed = JSON.parse(data);
+      return !!parsed?.token;
+    } catch {
+      return false;
+    }
+  };
 
   const redirectToAccess = () => {
     navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`);
   };
 
-  // FIX 1: requireLogin reads localStorage directly — zero state lag
   const requireLogin = (): boolean => {
     const valid = isValidUser();
     if (!valid) {
@@ -570,7 +629,7 @@ const AskApivesPage = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Hide global layout
+  // Hide global layout — UNCHANGED
   useEffect(() => {
     const nav = document.querySelector("nav") as HTMLElement | null;
     const header = document.querySelector("header") as HTMLElement | null;
@@ -585,7 +644,7 @@ const AskApivesPage = () => {
     };
   }, []);
 
-  // Load persisted chat
+  // Load persisted chat — UNCHANGED
   useEffect(() => {
     if (!apiId) return;
     try {
@@ -594,7 +653,7 @@ const AskApivesPage = () => {
     } catch {}
   }, [apiId]);
 
-  // Persist chat
+  // Persist chat — UNCHANGED
   useEffect(() => {
     if (!apiId) return;
     localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
@@ -604,7 +663,7 @@ const AskApivesPage = () => {
     }
   }, [chat, apiId]);
 
-  // Fetch API data
+  // Fetch API data — UNCHANGED
   useEffect(() => {
     if (!apiId) return;
     axios.get(`/api/apis/${apiId}`)
@@ -612,7 +671,7 @@ const AskApivesPage = () => {
       .catch(() => {});
   }, [apiId]);
 
-  // Auto scroll
+  // Auto scroll — UNCHANGED
   useEffect(() => {
     if (!scrollRef.current) return;
     const el = scrollRef.current;
@@ -622,8 +681,10 @@ const AskApivesPage = () => {
     }
   }, [chat, loading]);
 
-  // FIX 2: sendMessage — NO auth check, always allowed
-  // FIX 4: system prompt added to force specific answers
+  // ─────────────────────────────────────────────────────────────────────────────
+  // FIX 2: sendMessage — proper error handling, no silent failures
+  // FIX 3: smart system prompt based on query intent
+  // ─────────────────────────────────────────────────────────────────────────────
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text) return;
@@ -633,44 +694,82 @@ const AskApivesPage = () => {
     setInput("");
     setLoading(true);
 
-    // FIX 4: inject system message for specific, non-generic responses
+    // FIX 3: detect intent — only inject API breakdown instruction when relevant
+    const isApiQuery = isApiRelatedQuery(text);
     const apiContext = apiData
-      ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}. Description: ${apiData.description || "N/A"}.`
+      ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
       : "The user is asking about APIs in general.";
 
+    // FIX 2 + FIX 3: smart system prompt
+    const systemPrompt = isApiQuery
+      ? `You are an elite API expert on Apives — like Stripe Docs + Postman AI combined. ${apiContext}
+
+The user asked an API-related question. Respond with depth and intelligence. Vary your structure naturally based on the question — don't always use the same format.
+
+Guidelines:
+- Lead with a precise, direct answer (2–3 lines)
+- Then provide relevant depth: usage, code examples, parameters, auth, edge cases — but only what's actually needed for THIS question
+- Use real code snippets (curl, JS fetch, or relevant language) when helpful
+- Be comprehensive but never repetitive
+- Tight spacing — no large empty gaps between sections
+- Tone: expert, clear, confident — like a senior engineer pair-programming with them`
+      : `You are a smart, friendly AI assistant on Apives. Answer naturally and conversationally. Be helpful, concise, and human. Don't force API structure onto non-API questions.`;
+
     const messagesWithSystem = [
-      {
-        role: "system",
-        content: `You are an expert API assistant on Apives. Answer specifically and precisely based on the user's exact question. ${apiContext} Avoid generic or vague responses. Each answer must be unique, detailed, and directly relevant to what was asked.`,
-      },
+      { role: "system", content: systemPrompt },
       ...newChat,
     ];
 
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
         messages: messagesWithSystem,
-        apiData,
+        apiData: isApiQuery ? apiData : undefined,
       });
-      setChat((prev) => [...prev, { role: "assistant", content: res.data.answer }]);
-    } catch {
+
+      // FIX 2: always check res.data.answer exists
+      const answer = res.data?.answer;
+      if (answer && typeof answer === "string" && answer.trim()) {
+        setChat((prev) => [...prev, { role: "assistant", content: answer }]);
+      } else {
+        throw new Error("Empty answer from primary AI");
+      }
+    } catch (primaryErr) {
+      console.error("[AskApives] Primary AI failed:", primaryErr);
+
+      // FIX 2: fallback to gemini
       try {
-        const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", { prompt: text });
-        setChat((prev) => [...prev, { role: "assistant", content: geminiRes.data.result }]);
-      } catch {
-        setChat((prev) => [...prev, { role: "assistant", content: "All AI services are down. Try again later." }]);
+        const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", {
+          prompt: text,
+        });
+        const geminiAnswer = geminiRes.data?.result || geminiRes.data?.answer;
+        if (geminiAnswer && typeof geminiAnswer === "string" && geminiAnswer.trim()) {
+          setChat((prev) => [...prev, { role: "assistant", content: geminiAnswer }]);
+        } else {
+          throw new Error("Empty answer from Gemini fallback");
+        }
+      } catch (fallbackErr) {
+        console.error("[AskApives] Gemini fallback failed:", fallbackErr);
+        // FIX 2: always show something — never silent failure
+        setChat((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: "Both AI services are temporarily unavailable. Please check your internet connection and try again in a moment.",
+          },
+        ]);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  // New Chat — keeps history, resets state
+  // New Chat — UNCHANGED
   const startNewChat = () => {
     setChat([]);
     setInput("");
   };
 
-  // Regenerate last AI response
+  // Regenerate last AI response — UNCHANGED
   const regenerateLast = () => {
     const lastUserMsg = [...chat].reverse().find((m) => m.role === "user");
     if (!lastUserMsg) return;
@@ -683,7 +782,6 @@ const AskApivesPage = () => {
     sendMessage(lastUserMsg.content);
   };
 
-  // FIX 3: displayName derived reliably from URL param OR fetched apiData
   const displayName = apiName || apiData?.name || null;
   const inputPlaceholder = displayName
     ? `Ask anything about ${displayName}...`
@@ -693,7 +791,7 @@ const AskApivesPage = () => {
     <>
       <style>{GLOBAL_STYLES}</style>
 
-      {/* Modals */}
+      {/* Modals — UNCHANGED */}
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
@@ -718,7 +816,7 @@ const AskApivesPage = () => {
           fontFamily: "inherit", position: "relative",
         }}
       >
-        {/* Ambient dot grid */}
+        {/* Ambient dot grid — UNCHANGED */}
         <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
           <div style={{
             position: "absolute", inset: 0, opacity: 0.016,
@@ -727,7 +825,7 @@ const AskApivesPage = () => {
           }} />
         </div>
 
-        {/* ── HEADER ── */}
+        {/* ── HEADER — UNCHANGED ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -738,7 +836,6 @@ const AskApivesPage = () => {
           WebkitBackdropFilter: "blur(28px)",
           borderBottom: "1px solid rgba(34,197,94,0.08)",
         }}>
-          {/* Left: close + logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <button
               onClick={() => navigate(-1)}
@@ -768,14 +865,9 @@ const AskApivesPage = () => {
             </div>
           </div>
 
-          {/* Right: history, new chat, compare */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {/* FIX 1: reads localStorage directly at click time — no stale state */}
             <button
-              onClick={() => {
-                if (!requireLogin()) return;
-                setShowHistoryModal(true);
-              }}
+              onClick={() => { if (!requireLogin()) return; setShowHistoryModal(true); }}
               className="glass-btn"
               style={{
                 width: "36px", height: "36px", borderRadius: "50%",
@@ -786,7 +878,6 @@ const AskApivesPage = () => {
               <History size={14} color="rgba(255,255,255,0.40)" />
             </button>
 
-            {/* New Chat */}
             <button
               onClick={startNewChat}
               className="glass-btn"
@@ -799,12 +890,8 @@ const AskApivesPage = () => {
               <Plus size={15} color="rgba(255,255,255,0.40)" />
             </button>
 
-            {/* FIX 1: reads localStorage directly at click time */}
             <button
-              onClick={() => {
-                if (!requireLogin()) return;
-                setShowCompareModal(true);
-              }}
+              onClick={() => { if (!requireLogin()) return; setShowCompareModal(true); }}
               style={{
                 width: "36px", height: "36px", borderRadius: "50%",
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -831,21 +918,20 @@ const AskApivesPage = () => {
             minHeight: 0,
           }}
         >
-          {/* FIX 5: Tighter empty state padding */}
           {chat.length === 0 && (
             <div style={{
               display: "flex", flexDirection: "column",
               alignItems: "center", justifyContent: "center",
               minHeight: "100%",
-              padding: "16px 24px 8px", // FIX 5: reduced from 32px
+              padding: "16px 24px 8px",
               textAlign: "center",
             }}>
               <AnimatedOrb />
 
               <h2 style={{
                 fontSize: "26px", fontWeight: 900,
-                marginTop: "14px", // FIX 5: reduced from 20px
-                marginBottom: "6px", // FIX 5: reduced from 8px
+                marginTop: "14px",
+                marginBottom: "6px",
                 lineHeight: 1.2, letterSpacing: "-0.02em",
               }}>
                 The API Intelligence
@@ -858,49 +944,72 @@ const AskApivesPage = () => {
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
                 maxWidth: "220px",
-                marginBottom: "12px", // FIX 5: reduced from 20px
+                marginBottom: "12px",
               }}>
                 Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
-              {/* FIX 3: API Name Pill — placed right below orb area, shows reliably */}
+              {/* ── FIX 1: "Your Selected API" label — added ABOVE existing pill ── */}
               {displayName && (
-                <div style={{ marginBottom: "8px" }}> {/* FIX 5: reduced from 16px */}
+                <div
+                  className="selected-api-label"
+                  style={{
+                    marginBottom: "5px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "3px 12px",
+                    borderRadius: "999px",
+                    background: "rgba(34,197,94,0.06)",
+                    border: "1px solid rgba(34,197,94,0.18)",
+                    fontSize: "9px",
+                    fontWeight: 700,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase" as const,
+                    color: "rgba(34,197,94,0.70)",
+                    boxShadow: "0 0 8px rgba(34,197,94,0.08)",
+                  }}
+                >
+                  Your Selected API
+                </div>
+              )}
+
+              {/* EXISTING API name pill — UNTOUCHED */}
+              {displayName && (
+                <div style={{ marginBottom: "8px" }}>
                   <ApiNamePill
                     name={displayName}
                     iconUrl={apiData?.logo || apiData?.icon || undefined}
                   />
                 </div>
               )}
+
               {displayName && (
                 <p style={{
                   fontSize: "11px", color: "rgba(255,255,255,0.22)",
-                  marginBottom: "12px", // FIX 5: reduced from 20px
+                  marginBottom: "12px",
                 }}>
                   Ask anything about this API...
                 </p>
               )}
 
-              {/* ApiBreakdown */}
+              {/* ApiBreakdown — UNCHANGED */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
                   <UpgradedApiBreakdown api={apiData} />
                 </div>
               )}
 
-              {/* Suggested Prompts */}
-              <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}> {/* FIX 5: reduced from 20px */}
+              {/* Suggested Prompts — UNCHANGED */}
+              <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}>
                 <SuggestedPrompts
-                  onClick={(text: string) => {
-                    // FIX 2: no auth check — anyone can use suggested prompts
-                    sendMessage(text);
-                  }}
+                  onClick={(text: string) => { sendMessage(text); }}
                 />
               </div>
             </div>
           )}
 
-          {/* Messages */}
+          {/* Messages — UNCHANGED */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "0 12px" }}>
             {chat.map((msg, i) => {
               const isLastAssistant = msg.role === "assistant" && i === chat.length - 1;
@@ -923,14 +1032,13 @@ const AskApivesPage = () => {
           <div ref={bottomRef} style={{ height: "8px" }} />
         </div>
 
-        {/* ── INPUT AREA ── */}
+        {/* ── INPUT AREA — UNCHANGED ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           padding: "8px 16px",
           paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
           background: "rgba(6,13,10,0.97)",
         }}>
-          {/* FIX 2: no isLoggedIn / onNeedLogin props — chat is fully open */}
           <ClaudeInput
             value={input}
             onChange={setInput}
@@ -950,7 +1058,8 @@ const AskApivesPage = () => {
   );
 };
 
-// ─── UpgradedApiBreakdown ─────────────────────────────────────────────────────
+// ─── UpgradedApiBreakdown ──────────────────────────────────────────────────────
+// FIX 5: tightened spacing — reduced gap, padding, marginBottom throughout
 const UpgradedApiBreakdown = ({ api }: { api: any }) => {
   if (!api) return null;
 
@@ -998,8 +1107,8 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
   if (!sections.length) return null;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}> {/* FIX 5: gap 8→6 */}
+      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}> {/* FIX 5: mb 4→2 */}
         <div style={{ height: "1px", flex: 1, background: "rgba(34,197,94,0.15)" }} />
         <span style={{
           fontSize: "9px", fontWeight: 700, letterSpacing: "0.18em",
@@ -1012,12 +1121,13 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
 
       {sections.map((s) => (
         <div key={s.key} style={{
-          padding: "12px 14px", borderRadius: "14px",
+          padding: "9px 12px",           // FIX 5: was 12px 14px
+          borderRadius: "12px",          // FIX 5: was 14px (slightly tighter)
           background: "rgba(255,255,255,0.03)",
           border: "1px solid rgba(34,197,94,0.10)",
           backdropFilter: "blur(12px)", textAlign: "left",
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "6px" }}> {/* FIX 5: mb 8→6 */}
             {s.icon}
             <span style={{
               fontSize: "9px", fontWeight: 800, letterSpacing: "0.14em",
@@ -1028,13 +1138,13 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
           </div>
 
           {s.type === "text" && (
-            <p style={{ fontSize: "12px", lineHeight: 1.7, color: "rgba(255,255,255,0.60)", fontWeight: 400 }}>
+            <p style={{ fontSize: "12px", lineHeight: 1.6, color: "rgba(255,255,255,0.60)", fontWeight: 400, margin: 0 }}> {/* FIX 5: lh 1.7→1.6, margin:0 */}
               {s.content}
             </p>
           )}
 
           {s.type === "list" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}> {/* FIX 5: gap 5→4 */}
               {(s.content as string[]).slice(0, 5).map((item: string, i: number) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
                   <div style={{
@@ -1055,14 +1165,16 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
           {s.type === "code" && (
             <div>
               <div style={{
-                padding: "10px 12px", borderRadius: "10px",
+                padding: "8px 10px",    // FIX 5: was 10px 12px
+                borderRadius: "8px",    // FIX 5: was 10px
                 background: "rgba(0,0,0,0.35)",
                 border: "1px solid rgba(34,197,94,0.08)",
-                marginBottom: "8px", overflow: "auto",
+                marginBottom: "6px",    // FIX 5: was 8px
+                overflow: "auto",
               }}>
                 <pre style={{
                   fontSize: "10px", color: "rgba(34,197,94,0.75)",
-                  fontFamily: "monospace", lineHeight: 1.6,
+                  fontFamily: "monospace", lineHeight: 1.55,  // FIX 5: was 1.6
                   margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-all",
                 }}>
                   {s.content}
