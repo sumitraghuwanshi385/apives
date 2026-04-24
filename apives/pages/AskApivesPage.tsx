@@ -907,7 +907,7 @@ title="Compare APIs"
               {/* API Breakdown — without description */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
-                  <ApiBreakdown api={{ ...apiData, description: undefined }} />
+                  <ApiBreakdown api={apiData} />
                 </div>
               )}
 
