@@ -1837,12 +1837,8 @@ border: "1px solid rgba(34,197,94,0.5)",
           padding: "8px 16px",
           paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
           background: "rgba(6,13,10,0.97)",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
+          borderTop: "none",
         }}>
-          <div
-            className="shim-line"
-            style={{ height: "1px", borderRadius: "99px", marginBottom: "10px", opacity: 0.45 }}
-          />
 
           <ClaudeInput
             value={input}
