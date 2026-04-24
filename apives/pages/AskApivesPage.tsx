@@ -1565,10 +1565,10 @@ useEffect(() => {
       {
         role: "assistant",
         content: "All AI services are down. Try again later.",
-      },
+      }
     ]);
-  }
-}
+  
+
     } finally {
       setLoading(false);
     }
