@@ -1528,19 +1528,47 @@ useEffect(() => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
-        messages: newChat,
-        apiData,
-      });
-      setChat((prev) => [
-        ...prev,
-        { role: "assistant", content: res.data.answer },
-      ]);
-    } catch {
-      setChat((prev) => [
-        ...prev,
-        { role: "assistant", content: "Unable to fetch response. Please try again." },
-      ]);
+  // 🔥 PRIMARY: GROQ
+  const res = await axios.post(
+    "https://apives-3xrc.onrender.com/api/ask-ai",
+    {
+      messages: newChat,
+      apiData,
+    }
+  );
+
+  setChat((prev) => [
+    ...prev,
+    { role: "assistant", content: res.data.answer },
+  ]);
+
+} catch (err) {
+  console.log("⚠️ Groq failed → switching to Gemini");
+
+  try {
+    // 🤖 FALLBACK: GEMINI
+    const geminiRes = await axios.post(
+      "https://apives-3xrc.onrender.com/api/gemini",
+      {
+        prompt: text,
+      }
+    );
+
+    setChat((prev) => [
+      ...prev,
+      { role: "assistant", content: geminiRes.data.result },
+    ]);
+
+  } catch (err2) {
+    setChat((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        content: "All AI services are down. Try again later.",
+      },
+    ]);
+  }
+}
     } finally {
       setLoading(false);
     }
