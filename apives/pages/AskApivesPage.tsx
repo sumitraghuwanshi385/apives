@@ -1761,7 +1761,7 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
   >
     <GitCompare size={14} color="#4ade80" />
   </button>
-
+</div>
 </div>
         {/* ── CHAT AREA ── */}
         <div
