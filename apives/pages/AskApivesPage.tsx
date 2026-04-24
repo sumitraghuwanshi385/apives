@@ -977,27 +977,19 @@ const CompareModal = ({
     try {
       const prompt = `Compare these two APIs in detail:\n\nAPI A: ${selectedA.name}\n${selectedA.description || ""}\n\nAPI B: ${selectedB.name}\n${selectedB.description || ""}\n\nGive a structured comparison covering:\n1. Primary Use Case\n2. Key Features\n3. Authentication\n4. Rate Limits and Pricing\n5. Developer Experience\n6. Best For (who should use each)\n7. Verdict\n\nBe concise but comprehensive.`;
 
-      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      const res = await fetch("/api/ai/compare", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "Authorization": "Bearer YOUR_OPENAI_API_KEY",
   },
   body: JSON.stringify({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "user", content: prompt }
-    ],
+    prompt: prompt,
   }),
 });
 
 const data = await res.json();
 
-const text =
-  data.choices?.[0]?.message?.content ||
-  "Comparison unavailable.";
-
-setResult(text);
+setResult(data.result);
 
     } catch {
       setResult("Unable to compare right now. Please try again.");
@@ -1721,16 +1713,19 @@ border: "1px solid rgba(34,197,94,0.5)",
   ref={scrollRef}
   className="chat-scroll"
   style={{
-    position: "relative",
-    zIndex: 10,
-    flex: 1,
-    overflowY: "auto",
-    WebkitOverflowScrolling: "touch",
-    paddingBottom: "120px",
-    padding: "16px 0",
-    minHeight: 0,
-    scrollPaddingBottom: "120px"
-  }}
+  position: "relative",
+  zIndex: 10,
+  flex: 1,
+  overflowY: "auto",
+  WebkitOverflowScrolling: "touch",
+
+  paddingBottom: "80px",
+  padding: "16px 0",
+  minHeight: 0,
+  scrollPaddingBottom: "80px",
+
+  marginBottom: "-10px" 
+}}
 >
 
   {/* ✅ EMPTY STATE FIX */}
