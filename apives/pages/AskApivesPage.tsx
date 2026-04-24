@@ -1140,7 +1140,7 @@ useEffect(() => {
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
   <button
     onClick={() => navigate(-1)}
-    className="close-btn-green"
+    className="glass-btn"
     style={{
       width: "36px",
       height: "36px",
@@ -1152,7 +1152,7 @@ useEffect(() => {
       cursor: "pointer",
     }}
   >
-    <X size={15} color="#34d399" />
+    <X size={15} className="text-white/60" />
   </button>
 
   <div>
