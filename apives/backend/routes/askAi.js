@@ -23,7 +23,7 @@ const callGroq = async (messages, apiData) => {
   return axios.post(
     "https://api.groq.com/openai/v1/chat/completions",
     {
-      model: "mixtral-8x7b-32768",
+      model: "llama-3.3-70b-versatile",
       temperature: 0.7,
       messages: [
         {
