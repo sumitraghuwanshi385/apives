@@ -1414,9 +1414,19 @@ const AskApivesPage = () => {
 
 useEffect(() => {
   const checkAuth = () => {
-    const token = localStorage.getItem("apives_token");
-    const user = localStorage.getItem("apives_user");
-    setIsLoggedIn(!!token || !!user);
+    try {
+      const token = localStorage.getItem("apives_token");
+      const user = localStorage.getItem("apives_user");
+
+      if (!token || !user) {
+        setIsLoggedIn(false);
+        return;
+      }
+
+      setIsLoggedIn(true);
+    } catch {
+      setIsLoggedIn(false);
+    }
   };
 
   checkAuth();
@@ -1679,9 +1689,11 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
   onClick={() => {
-if (!isLoggedIn) {
-redirectToAccess();
-return;
+const token = localStorage.getItem("apives_token");
+
+if (!token) {
+  redirectToAccess();
+  return;
 }
 setShowHistoryModal(true);
 }}
