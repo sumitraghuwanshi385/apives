@@ -978,19 +978,22 @@ const CompareModal = ({
     try {
       const prompt = `Compare these two APIs in detail:\n\nAPI A: ${selectedA.name}\n${selectedA.description || ""}\n\nAPI B: ${selectedB.name}\n${selectedB.description || ""}\n\nGive a structured comparison covering:\n1. Primary Use Case\n2. Key Features\n3. Authentication\n4. Rate Limits and Pricing\n5. Developer Experience\n6. Best For (who should use each)\n7. Verdict\n\nBe concise but comprehensive.`;
 
-      const res = await fetch("https://apives-3xrc.onrender.com/api/ai/compare", {
+      const res = await fetch("https://apives-3xrc.onrender.com/api/chat", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    prompt: prompt,
+    mode: "compare",
+    messages: [
+      { role: "user", content: prompt }
+    ]
   }),
 });
 
 const data = await res.json();
 
-setResult(data.result);
+setResult(data.answer);
 
     } catch {
       setResult("Unable to compare right now. Please try again.");
@@ -1528,10 +1531,11 @@ useEffect(() => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
-        messages: newChat,
-        apiData,
-      });
+      const res = await axios.post("https://apives-3xrc.onrender.com/api/chat", {
+  messages: newChat,
+  apiData,
+  mode: "ask"
+});
       setChat((prev) => [
         ...prev,
         { role: "assistant", content: res.data.answer },
