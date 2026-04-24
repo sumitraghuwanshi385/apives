@@ -293,7 +293,13 @@ if (!api) {
 {/* 🤖 RIGHT - ASK AI BUTTON */}
 <div className="absolute top-16 md:top-24 right-4 lg:right-8 z-30">
   <button
-    onClick={() => navigate(`/ask-apives-ai?apiId=${id}`)}
+    onClick={() => {
+      if (!api?.name || !id) return;
+
+      navigate(
+        `/ask-apives-ai?apiId=${id}&apiName=${encodeURIComponent(api.name)}`
+      );
+    }}
     className="
       flex items-center gap-2
 
