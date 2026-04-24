@@ -209,7 +209,7 @@ const AnimatedOrb = () => {
         }} />
         <div style={{
           position: "absolute", inset: "10px", borderRadius: "50%",
-          background: "radial-gradient(circle at 32% 28%, #a7f3d0, #10b981 40%, #065f46 80%)",
+          background: "radial-gradient(circle at 32% 28%, #4ade80, #22c55e 40%, #166534 80%)",
           animation: "orbGlow 3.5s ease-in-out infinite",
         }} />
 
