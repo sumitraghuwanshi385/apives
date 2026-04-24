@@ -1564,7 +1564,7 @@ useEffect(() => {
       ...prev,
       {
         role: "assistant",
-        content: "All AI services are down. Try again later.",
+        content: "All AI services are down. Try again later."
       }
     ]);
   
