@@ -978,22 +978,19 @@ const CompareModal = ({
     try {
       const prompt = `Compare these two APIs in detail:\n\nAPI A: ${selectedA.name}\n${selectedA.description || ""}\n\nAPI B: ${selectedB.name}\n${selectedB.description || ""}\n\nGive a structured comparison covering:\n1. Primary Use Case\n2. Key Features\n3. Authentication\n4. Rate Limits and Pricing\n5. Developer Experience\n6. Best For (who should use each)\n7. Verdict\n\nBe concise but comprehensive.`;
 
-      const res = await fetch("https://apives-3xrc.onrender.com/api/chat", {
+      const res = await fetch("https://apives-3xrc.onrender.com/api/ai/compare", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    mode: "compare",
-    messages: [
-      { role: "user", content: prompt }
-    ]
+    prompt: prompt,
   }),
 });
 
 const data = await res.json();
 
-setResult(data.answer);
+setResult(data.result);
 
     } catch {
       setResult("Unable to compare right now. Please try again.");
@@ -1414,19 +1411,9 @@ const AskApivesPage = () => {
 
 useEffect(() => {
   const checkAuth = () => {
-    try {
-      const token = localStorage.getItem("apives_token");
-      const user = localStorage.getItem("apives_user");
-
-      if (!token || !user) {
-        setIsLoggedIn(false);
-        return;
-      }
-
-      setIsLoggedIn(true);
-    } catch {
-      setIsLoggedIn(false);
-    }
+    const token = localStorage.getItem("apives_token");
+    const user = localStorage.getItem("apives_user");
+    setIsLoggedIn(!!token || !!user);
   };
 
   checkAuth();
@@ -1541,11 +1528,10 @@ useEffect(() => {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://apives-3xrc.onrender.com/api/chat", {
-  messages: newChat,
-  apiData,
-  mode: "ask"
-});
+      const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
+        messages: newChat,
+        apiData,
+      });
       setChat((prev) => [
         ...prev,
         { role: "assistant", content: res.data.answer },
@@ -1689,11 +1675,9 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
   onClick={() => {
-const token = localStorage.getItem("apives_token");
-
-if (!token) {
-  redirectToAccess();
-  return;
+if (!isLoggedIn) {
+redirectToAccess();
+return;
 }
 setShowHistoryModal(true);
 }}
