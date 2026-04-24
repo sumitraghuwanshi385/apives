@@ -1515,65 +1515,67 @@ useEffect(() => {
   }
 }, [chat, loading]);
 
-  const sendMessage = async (overrideText?: string) => {
-    const text = (overrideText ?? input).trim();
-    if (!text) return;
+  const sendMessage = async (overrideText) => {
+  const text = (overrideText ?? input).trim();
+  if (!text) return;
 
-    const newChat: { role: "user" | "assistant"; content: string }[] = [
-      ...chat,
-      { role: "user", content: text },
-    ];
-    setChat(newChat);
-    setInput("");
-    setLoading(true);
+  const newChat = [
+    ...chat,
+    { role: "user", content: text },
+  ];
 
-    try {
-  // 🔥 PRIMARY: GROQ
-  const res = await axios.post(
-    "https://apives-3xrc.onrender.com/api/ask-ai",
-    {
-      messages: newChat,
-      apiData,
-    }
-  );
-
-  setChat((prev) => [
-    ...prev,
-    { role: "assistant", content: res.data.answer },
-  ]);
-
-} catch (err) {
-  console.log("⚠️ Groq failed → switching to Gemini");
+  setChat(newChat);
+  setInput("");
+  setLoading(true);
 
   try {
-    // 🤖 FALLBACK: GEMINI
-    const geminiRes = await axios.post(
-      "https://apives-3xrc.onrender.com/api/gemini",
+    // 🔥 PRIMARY: GROQ
+    const res = await axios.post(
+      "https://apives-3xrc.onrender.com/api/ask-ai",
       {
-        prompt: text,
+        messages: newChat,
+        apiData,
       }
     );
 
     setChat((prev) => [
       ...prev,
-      { role: "assistant", content: geminiRes.data.result },
+      { role: "assistant", content: res.data.answer },
     ]);
 
-  } catch (err2) {
-    setChat((prev) => [
-      ...prev,
-      {
-        role: "assistant",
-        content: "All AI services are down. Try again later."
-      }
-    ]);
-  
+  } catch (err) {
+    console.log("⚠️ Groq failed → switching to Gemini");
 
-    } finally {
-      setLoading(false);
+    try {
+      // 🤖 FALLBACK: GEMINI
+      const geminiRes = await axios.post(
+        "https://apives-3xrc.onrender.com/api/gemini",
+        {
+          prompt: text,
+        }
+      );
+
+      setChat((prev) => [
+        ...prev,
+        { role: "assistant", content: geminiRes.data.result },
+      ]);
+
+    } catch (err2) {
+      setChat((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "All AI services are down. Try again later.",
+        },
+      ]);
     }
-  };
+  } finally {
+    // ✅ ALWAYS RUNS
+    setLoading(false);
+  }
+};
 
+    
   const clearChat = () => {
     setChat([]);
     if (apiId) localStorage.removeItem(`apives_chat_${apiId}`);
