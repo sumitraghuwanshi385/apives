@@ -21,7 +21,7 @@ const callGroq = async (messages, apiData) => {
   return axios.post(
     "https://api.groq.com/openai/v1/chat/completions",
     {
-      model: "llama3-8b-8192",
+      model: "1lama-3.3-70b-versatile",
       temperature: 0.7,
       messages: [
         {
@@ -59,7 +59,7 @@ const callOpenRouter = async (messages) => {
   return axios.post(
     "https://openrouter.ai/api/v1/chat/completions",
     {
-      model: "mistralai/mistral-7b-instruct",
+      model: "deepseek/deepseek-chat:free",
       messages,
     },
     {
