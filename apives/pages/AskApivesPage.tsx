@@ -1637,46 +1637,39 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
   </button>
 
   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-  {/* Logo */}
-  <img
-    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-    alt="Apives"
-    style={{
-      height: "22px",
-      objectFit: "contain",
-    }}
-  />
-
-  {/* Text Column */}
-  <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
+  
+  {/* Logo + Text vertical */}
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1 }}>
     
-    {/* Main Title */}
-    <span
+    {/* Logo */}
+    <img
+      src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
+      alt="Apives"
       style={{
-        fontSize: "13px",
-        fontWeight: 700,
-        color: "#22c55e",
-        letterSpacing: "0.04em",
+        height: "22px",
+        objectFit: "contain",
       }}
-    >
-      ApivesAI
-    </span>
+    />
 
-    {/* Subtitle */}
+    {/* Subtitle under logo */}
     <span
       style={{
-        fontSize: "10px",
+        fontSize: "9px",
         fontWeight: 500,
         color: "rgba(255,255,255,0.55)",
-        letterSpacing: "0.05em",
+        letterSpacing: "0.06em",
+        marginTop: "2px",
       }}
     >
       AI Assistant
     </span>
 
   </div>
+
 </div>
 </div>
+
+
           {/* Right */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
