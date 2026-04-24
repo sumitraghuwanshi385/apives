@@ -1110,7 +1110,9 @@ useEffect(() => {
         className="page-in"
         style={{
           display: "flex", flexDirection: "column", height: "100dvh",
-          overflow: "hidden", background: "#060D0A", color: "white",
+minHeight: "100dvh",
+overflow: "hidden",
+paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: "white",
           fontFamily: "inherit", position: "relative",
         }}
       >
@@ -1222,29 +1224,38 @@ useEffect(() => {
               style={{
                 width: "36px", height: "36px", borderRadius: "50%",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(52,211,153,0.10)", border: "1px solid rgba(52,211,153,0.22)",
+                background: "rgba(34,197,94,0.18)",
+border: "1px solid rgba(34,197,94,0.5)",
                 cursor: "pointer", transition: "all 0.2s",
               }}
               title="Compare APIs"
             >
-              <GitCompare size={14} color="#34d399" />
+              <GitCompare size={14} color="#4ade80"/>
             </button>
           </div>
         </div>
 
         {/* ── CHAT AREA ── */}
         <div
-          ref={scrollRef}
-          className="chat-scroll"
-          style={{ position: "relative", zIndex: 10, flex: 1, overflowY: "auto", padding: "16px 0", minHeight: 0 }}
-        >
-          {/* Empty state */}
-          {chat.length === 0 && (
-            <div style={{
-              display: "flex", flexDirection: "column", alignItems: "center",
-              justifyContent: "center", minHeight: "100%",
-              padding: "32px 24px 8px", textAlign: "center",
-            }}>
+  ref={scrollRef}
+  className="chat-scroll"
+  style={{
+    position: "relative",
+    zIndex: 10,
+    flex: 1,
+    overflowY: "auto",
+    WebkitOverflowScrolling: "touch",
+
+    // 🔥 FIXED
+    paddingBottom: "120px",
+
+    padding: "16px 0",
+    minHeight: 0,
+
+    // 🔥 EXTRA SAFETY (important)
+    scrollPaddingBottom: "120px"
+  }}
+>
               <AnimatedOrb />
 
               {/* Hero text */}
