@@ -180,12 +180,12 @@ const AnimatedOrb = () => {
   const [show, setShow] = useState(true);
 
   const ORB_LABELS: { icon: React.ReactNode; text: string }[] = [
-    { icon: <Bolt size={11} color="#34d399" strokeWidth={2.5} />, text: "INSTANT" },
-    { icon: <Search size={11} color="#34d399" strokeWidth={2.5} />, text: "DISCOVER" },
-    { icon: <Link2 size={11} color="#34d399" strokeWidth={2.5} />, text: "INTEGRATE" },
-    { icon: <Shield size={11} color="#34d399" strokeWidth={2.5} />, text: "SECURE" },
-    { icon: <Radio size={11} color="#34d399" strokeWidth={2.5} />, text: "REAL-TIME" },
-    { icon: <Brain size={11} color="#34d399" strokeWidth={2.5} />, text: "INTELLIGENT" },
+    { icon: <Zap size={11} color="#ffffff" strokeWidth={2.5} />, text: "API Search" },
+    { icon: <Brain size={11} color="#ffffff" strokeWidth={2.5} />, text: "AI Analysis" },
+    { icon: <Link2 size={11} color="#ffffff" strokeWidth={2.5} />, text: "Endpoints" },
+    { icon: <Shield size={11} color="#ffffff" strokeWidth={2.5} />, text: "Auth flow" },
+    { icon: <Radio size={11} color="#ffffff" strokeWidth={2.5} />, text: "Usage" },
+    { icon: <Sparkles size={11} color="#ffffff" strokeWidth={2.5} />, text: "Responses" },
   ];
 
   useEffect(() => {
@@ -200,58 +200,110 @@ const AnimatedOrb = () => {
   }, []);
 
   return (
-    <div className="animate-float" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-      <div style={{ position: "relative", width: "110px", height: "110px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{
-          position: "absolute", inset: "-12px", borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(52,211,153,0.16) 0%, transparent 70%)",
-          filter: "blur(12px)",
-        }} />
-        <div style={{
-          position: "absolute", inset: "10px", borderRadius: "50%",
-          background: "radial-gradient(circle at 32% 28%, #4ade80, #22c55e 40%, #166534 80%)",
-          animation: "orbGlow 3.5s ease-in-out infinite",
-        }} />
-
-{show && (
-  <div className="word-in" style={{
-    position: "absolute",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    gap: "2px",
-  }}>
-    <div style={{ transform: "scale(0.8)" }}>
-      {ORB_LABELS[idx].icon}
-    </div>
-    <span style={{
-      fontSize: "9px",
-      fontWeight: 700,
-      letterSpacing: "0.08em",
-      color: "#6ee7b7"
-    }}>
-      {ORB_LABELS[idx].text}
-    </span>
-  </div>
-)}
-
-        <div style={{
-          position: "absolute",
-          top: "22%", left: "24%", width: "28%", height: "20%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)",
-        }} />
-        {[0, 1, 2].map((i) => (
-          <div key={i} style={{
+    <div
+      className="animate-float"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "16px",
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          width: "110px",
+          height: "110px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {/* outer glow */}
+        <div
+          style={{
             position: "absolute",
-            width: "5px", height: "5px", borderRadius: "50%",
-            background: "rgba(52,211,153,0.8)",
-            top: `${[18, 72, 50][i]}%`,
-            left: `${[72, 20, 78][i]}%`,
-            animation: `dataPing 2.4s ease-out ${i * 0.8}s infinite`,
-          }} />
+            inset: "-12px",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(22,163,74,0.18) 0%, transparent 70%)",
+            filter: "blur(12px)",
+          }}
+        />
+
+        {/* core orb */}
+        <div
+          style={{
+            position: "absolute",
+            inset: "10px",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle at 32% 28%, #22c55e, #16a34a 40%, #052e16 80%)",
+            animation: "orbGlow 3.5s ease-in-out infinite",
+          }}
+        />
+
+        {/* label */}
+        {show && (
+          <div
+            className="word-in"
+            style={{
+              position: "absolute",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              gap: "2px",
+            }}
+          >
+            <div style={{ transform: "scale(0.85)" }}>
+              {ORB_LABELS[idx].icon}
+            </div>
+
+            <span
+              style={{
+                fontSize: "9px",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                color: "#ffffff",
+                textShadow: "0 0 6px rgba(255,255,255,0.6)",
+              }}
+            >
+              {ORB_LABELS[idx].text}
+            </span>
+          </div>
+        )}
+
+        {/* highlight */}
+        <div
+          style={{
+            position: "absolute",
+            top: "22%",
+            left: "24%",
+            width: "28%",
+            height: "20%",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(circle, rgba(255,255,255,0.55), transparent 70%)",
+          }}
+        />
+
+        {/* particles */}
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              width: "5px",
+              height: "5px",
+              borderRadius: "50%",
+              background: "#16a34a",
+              top: `${[18, 72, 50][i]}%`,
+              left: `${[72, 20, 78][i]}%`,
+              animation: `dataPing 2.4s ease-out ${i * 0.8}s infinite`,
+            }}
+          />
         ))}
       </div>
     </div>
@@ -1171,7 +1223,7 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
       fontSize: "10px",
       fontWeight: 500,
       letterSpacing: "0.04em",
-      color: "rgba(52,211,153,0.48)",
+      color: "#16a34a",
       marginTop: "1px",
     }}>
       API Intelligence Assistant
