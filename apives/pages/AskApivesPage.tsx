@@ -1411,16 +1411,36 @@ const AskApivesPage = () => {
 
 useEffect(() => {
   const checkAuth = () => {
-    const token = localStorage.getItem("apives_token");
-    const user = localStorage.getItem("apives_user");
-    setIsLoggedIn(!!token || !!user);
+    setIsLoggedIn(isValidUser());
   };
 
   checkAuth();
+
+  // 🔥 other tabs detect
   window.addEventListener("storage", checkAuth);
 
-  return () => window.removeEventListener("storage", checkAuth);
+  // 🔥 same tab instant fix (IMPORTANT)
+  const interval = setInterval(checkAuth, 1000);
+
+  return () => {
+    window.removeEventListener("storage", checkAuth);
+    clearInterval(interval);
+  };
 }, []);
+
+const isValidUser = () => {
+  const token = localStorage.getItem("apives_token");
+  const user = localStorage.getItem("apives_user");
+
+  if (!token || !user) return false;
+
+  try {
+    const parsed = JSON.parse(user);
+    return !!parsed?.email; // ya id bhi chalega
+  } catch {
+    return false;
+  }
+};
 
   const [apiData, setApiData] = useState<any>(null);
   const [input, setInput] = useState("");
@@ -1705,11 +1725,8 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
   onClick={() => {
-if (!isLoggedIn) {
-redirectToAccess();
-return;
-}
-setShowHistoryModal(true);
+  if (!requireLogin()) return;
+  setShowHistoryModal(true);
 }}
 className="glass-btn"
 style={{
