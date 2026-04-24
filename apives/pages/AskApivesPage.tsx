@@ -1245,37 +1245,47 @@ border: "1px solid rgba(34,197,94,0.5)",
     flex: 1,
     overflowY: "auto",
     WebkitOverflowScrolling: "touch",
-
-    // 🔥 FIXED
     paddingBottom: "120px",
-
     padding: "16px 0",
     minHeight: 0,
-
-    // 🔥 EXTRA SAFETY (important)
     scrollPaddingBottom: "120px"
   }}
 >
-              <AnimatedOrb />
 
-              {/* Hero text */}
-              <h2 style={{
-  fontSize: "26px",
-  fontWeight: 900,
-  marginTop: "20px",
-  marginBottom: "8px",
-  lineHeight: 1.2,
-  letterSpacing: "-0.02em",
-}}>
-  The API Intelligence
-  <br />
-  <span style={{
-    color: "#22c55e", // MORE GREEN
-    textShadow: "0 0 12px rgba(34,197,94,0.5)"
-  }}>
-    You Deserve
-  </span>
-</h2>
+  {/* ✅ EMPTY STATE FIX */}
+  {chat.length === 0 && (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100%",
+        padding: "32px 24px 8px",
+        textAlign: "center",
+      }}
+    >
+      <AnimatedOrb />
+
+      <h2 style={{
+        fontSize: "26px",
+        fontWeight: 900,
+        marginTop: "20px",
+        marginBottom: "8px",
+        lineHeight: 1.2,
+        letterSpacing: "-0.02em",
+      }}>
+        The API Intelligence
+        <br />
+        <span style={{
+          color: "#22c55e",
+          textShadow: "0 0 12px rgba(34,197,94,0.5)"
+        }}>
+          You Deserve
+        </span>
+      </h2>
+    </div>
+  )}
 
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
