@@ -4,7 +4,6 @@ import axios from "axios";
 
 import {
   X,
-  Trash2,
   GitCompare,
   Mic,
   MicOff,
@@ -12,7 +11,7 @@ import {
   Sparkles,
   History,
   Clock,
-Plus,
+  Plus,
   ChevronRight,
   Zap,
   Shield,
@@ -20,7 +19,9 @@ Plus,
   Link2,
   Radio,
   Brain,
-  Bolt,
+  Copy,
+  RotateCcw,
+  Check,
 } from "lucide-react";
 
 import ApiBreakdown from "../components/ai/ApiBreakdown";
@@ -59,8 +60,8 @@ const GLOBAL_STYLES = `
   .animate-float { animation: floatOrb 4s ease-in-out infinite; }
 
   @keyframes typingBounce {
-    0%,60%,100% { transform: translateY(0); opacity: 0.35; }
-    30%         { transform: translateY(-5px); opacity: 1; }
+    0%,60%,100% { transform: translateY(0); opacity: 0.3; }
+    30%         { transform: translateY(-6px); opacity: 1; }
   }
 
   @keyframes wordFadeIn {
@@ -112,7 +113,16 @@ const GLOBAL_STYLES = `
     to { transform: rotate(360deg); }
   }
 
-  /* 🔥 USER MESSAGE */
+  /* Robot typing blink */
+  @keyframes robotBlink {
+    0%,80%,100% { transform: scaleY(1); }
+    85%          { transform: scaleY(0.08); }
+  }
+  @keyframes scanPulse {
+    0%,100% { opacity:0.5; transform: translateY(0); }
+    50%     { opacity:1;   transform: translateY(2px); }
+  }
+
   .glass-pill-user {
     background: rgba(21,128,61,0.18);
     border: 1px solid rgba(21,128,61,0.45);
@@ -125,7 +135,6 @@ const GLOBAL_STYLES = `
     backdrop-filter: blur(16px);
   }
 
-  /* 🔥 INPUT BOX */
   .glass-input {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(21,128,61,0.45);
@@ -146,7 +155,6 @@ const GLOBAL_STYLES = `
   }
   .glass-btn:hover { background: rgba(255,255,255,0.09); transform: scale(1.04); }
 
-  /* 🔥 CLOSE BTN */
   .close-btn-green {
     position: relative;
     overflow: hidden;
@@ -154,7 +162,6 @@ const GLOBAL_STYLES = `
     border: 1px solid rgba(21,128,61,0.45) !important;
     transition: background 0.2s, transform 0.15s;
   }
-
   .close-btn-green::before {
     content: '';
     position: absolute;
@@ -164,136 +171,286 @@ const GLOBAL_STYLES = `
     opacity: 0.8;
     border-radius: 99px 99px 0 0;
   }
-
   .close-btn-green:hover {
     background: rgba(21,128,61,0.28) !important;
     transform: scale(1.04);
   }
 
-  /* 🔥 COMPARE */
   .compare-select-btn { transition: all 0.2s ease; cursor: pointer; }
-
   .compare-select-btn:hover {
     border-color: rgba(21,128,61,0.7) !important;
     background: rgba(21,128,61,0.18) !important;
   }
-
   .compare-select-btn.selected {
     border-color: rgba(21,128,61,0.9) !important;
     background: rgba(21,128,61,0.22) !important;
   }
 
-  /* 🔥 HISTORY */
   .history-item { transition: background 0.15s; cursor: pointer; }
   .history-item:hover { background: rgba(21,128,61,0.12) !important; }
 
   textarea { resize: none; scrollbar-width: none; }
   textarea::-webkit-scrollbar { display: none; }
+
+  /* AI message action buttons */
+  .ai-action-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 8px;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.04em;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.35);
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .ai-action-btn:hover {
+    background: rgba(21,128,61,0.12);
+    border-color: rgba(21,128,61,0.35);
+    color: rgba(34,197,94,0.80);
+  }
+
+  /* API name pill glassmorphism */
+  .api-name-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px 7px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
 `;
 
-// ─── RobotAnimatedOrb ─────────────────────────────────────────────────────────────
+// ─── Strip markdown helper ────────────────────────────────────────────────────
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/#{1,6}\s/g, "")           // headings
+    .replace(/\*\*(.+?)\*\*/g, "$1")    // bold
+    .replace(/\*(.+?)\*/g, "$1")        // italic
+    .replace(/`{3}[\s\S]*?`{3}/g, (m) => // code blocks - keep content
+      m.replace(/`{3}[a-z]*\n?/g, "").replace(/`{3}/g, "").trim()
+    )
+    .replace(/`(.+?)`/g, "$1")          // inline code
+    .replace(/\[(.+?)\]\(.+?\)/g, "$1") // links
+    .replace(/^[-*+]\s/gm, "• ")        // bullets
+    .replace(/^\d+\.\s/gm, (m) => m)    // numbered lists keep
+    .replace(/_{2}(.+?)_{2}/g, "$1")    // underline
+    .replace(/~~(.+?)~~/g, "$1")        // strikethrough
+    .trim();
+}
 
-
-// ─── TypingIndicator ──────────────────────────────────────────────────────────
+// ─── Robot TypingIndicator ─────────────────────────────────────────────────────
 const TypingIndicator = () => (
   <div style={{
-    display: "flex", alignItems: "center", gap: "8px",
-    padding: "10px 16px", borderRadius: "18px 18px 18px 4px",
-    background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
-    backdropFilter: "blur(16px)", width: "fit-content",
+    display: "flex", alignItems: "center", gap: "10px",
+    padding: "10px 16px", borderRadius: "16px 16px 16px 4px",
+    background: "rgba(5,46,22,0.60)",
+    border: "1px solid rgba(21,128,61,0.35)",
+    backdropFilter: "blur(16px)",
+    width: "fit-content",
+    boxShadow: "0 0 20px rgba(21,128,61,0.15)",
   }}>
-    <div style={{ position: "relative", width: "14px", height: "14px" }}>
+    {/* mini robot face */}
+    <div style={{ position: "relative", width: "22px", height: "22px", flexShrink: 0 }}>
+      {/* head */}
       <div style={{
-        position: "absolute", inset: "3px", borderRadius: "50%",
-        background: "radial-gradient(circle, #6ee7b7, #10b981)",
-      }} />
+        width: "22px", height: "22px", borderRadius: "6px",
+        background: "linear-gradient(160deg, rgba(5,46,22,0.95), rgba(2,18,9,1))",
+        border: "1px solid rgba(34,197,94,0.45)",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", gap: "2px",
+        boxShadow: "0 0 10px rgba(34,197,94,0.20)",
+        overflow: "hidden",
+        position: "relative",
+      }}>
+        {/* eyes row */}
+        <div style={{ display: "flex", gap: "3px" }}>
+          {[0, 1].map((i) => (
+            <div key={i} style={{
+              width: "5px", height: "5px", borderRadius: "2px",
+              background: "rgba(2,44,22,0.95)",
+              border: "0.8px solid rgba(34,197,94,0.50)",
+              overflow: "hidden",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              position: "relative",
+            }}>
+              <div style={{
+                position: "absolute", inset: 0,
+                background: "rgba(2,44,22,0.99)",
+                transformOrigin: "center",
+                animation: `robotBlink 3.5s ease-in-out ${i * 0.15}s infinite`,
+              }} />
+              <div style={{
+                width: "3px", height: "3px", borderRadius: "50%",
+                background: "radial-gradient(circle at 35% 35%, #4ade80, #22c55e)",
+                position: "relative", zIndex: 2,
+              }} />
+            </div>
+          ))}
+        </div>
+        {/* smile */}
+        <div style={{
+          width: "8px", height: "2px", borderRadius: "0 0 4px 4px",
+          border: "0.8px solid rgba(34,197,94,0.50)",
+          borderTop: "none",
+        }} />
+      </div>
     </div>
-    <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(52,211,153,0.55)" }}>
+
+    {/* label */}
+    <span style={{
+      fontSize: "10px", fontWeight: 700,
+      letterSpacing: "0.18em", textTransform: "uppercase",
+      color: "rgba(34,197,94,0.60)",
+      fontFamily: "monospace",
+    }}>
       Thinking
     </span>
+
+    {/* animated dots */}
     <div style={{ display: "flex", gap: "3px", alignItems: "flex-end", paddingBottom: "1px" }}>
       {[0, 1, 2].map((i) => (
         <span key={i} style={{
-          display: "inline-block", width: "4px", height: "4px", borderRadius: "50%",
-          background: "#34d399",
-          animation: `typingBounce 1.2s ease-in-out ${i * 0.2}s infinite`,
+          display: "inline-block", width: "5px", height: "5px", borderRadius: "50%",
+          background: `rgba(34,197,94,${0.4 + i * 0.2})`,
+          boxShadow: `0 0 6px rgba(34,197,94,${0.3 + i * 0.2})`,
+          animation: `typingBounce 1.1s ease-in-out ${i * 0.18}s infinite`,
         }} />
       ))}
     </div>
   </div>
 );
 
+// ─── CopyButton (reusable) ────────────────────────────────────────────────────
+const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) => {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
+  return (
+    <button className="ai-action-btn" onClick={copy}>
+      {copied ? <Check size={10} /> : <Copy size={10} />}
+      {copied ? "Copied" : label}
+    </button>
+  );
+};
+
 // ─── MessagePill ──────────────────────────────────────────────────────────────
-const MessagePill = ({ role, content }: { role: "user" | "assistant"; content: string }) => {
+const MessagePill = ({
+  role, content, onRegenerate,
+}: {
+  role: "user" | "assistant";
+  content: string;
+  onRegenerate?: () => void;
+}) => {
   const isUser = role === "user";
+  const cleanContent = isUser ? content : stripMarkdown(content);
+
   return (
     <div style={{ display: "flex", justifyContent: isUser ? "flex-end" : "flex-start", padding: "0 4px" }}>
       {!isUser && (
         <div style={{
           flexShrink: 0, width: "24px", height: "24px", borderRadius: "50%",
           marginRight: "8px", marginTop: "4px",
-          background: "radial-gradient(circle at 35% 30%, #6ee7b7, #059669)",
+          background: "radial-gradient(circle at 35% 30%, #4ade80, #15803d)",
           display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 0 10px rgba(34,197,94,0.35)",
         }}>
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
-      <div className={isUser ? "glass-pill-user" : "glass-pill-ai"} style={{
-        maxWidth: "82%", padding: "10px 16px",
-        borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-        fontSize: "13px", lineHeight: "1.65", fontWeight: 450,
-        color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.80)",
-        wordBreak: "break-word", whiteSpace: "pre-wrap",
-      }}>
-        {content}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxWidth: "82%" }}>
+        <div
+          className={isUser ? "glass-pill-user" : "glass-pill-ai"}
+          style={{
+            padding: "10px 16px",
+            borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+            fontSize: "13px", lineHeight: "1.70", fontWeight: 450,
+            color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.82)",
+            wordBreak: "break-word", whiteSpace: "pre-wrap",
+            fontFamily: "'Apives Display', -apple-system, sans-serif",
+          }}
+        >
+          {cleanContent}
+        </div>
+
+        {/* Action row — only for AI messages */}
+        {!isUser && (
+          <div style={{ display: "flex", gap: "6px", paddingLeft: "4px" }}>
+            <CopyButton text={cleanContent} />
+            {onRegenerate && (
+              <button className="ai-action-btn" onClick={onRegenerate}>
+                <RotateCcw size={10} />
+                Regenerate
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-// ─── ClearModal ───────────────────────────────────────────────────────────────
-const ClearModal = ({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) => (
-  <div style={{
-    position: "fixed", inset: 0, zIndex: 60,
-    display: "flex", alignItems: "flex-end", justifyContent: "center", paddingBottom: "32px",
-    background: "rgba(0,0,0,0.72)", backdropFilter: "blur(12px)",
-  }}>
-    <div className="slide-up" style={{
-      width: "88%", maxWidth: "320px", borderRadius: "24px", padding: "24px",
-      background: "rgba(6,16,11,0.98)", border: "1px solid rgba(52,211,153,0.12)",
-      boxShadow: "0 24px 64px rgba(0,0,0,0.70)",
-    }}>
+// ─── API Name Pill (Spotify-style) ────────────────────────────────────────────
+const ApiNamePill = ({
+  name,
+  iconUrl,
+  onRemove,
+}: {
+  name: string;
+  iconUrl?: string;
+  onRemove?: () => void;
+}) => (
+  <div className="api-name-pill">
+    {/* icon / colored dot */}
+    {iconUrl ? (
+      <img
+        src={iconUrl}
+        alt={name}
+        style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+      />
+    ) : (
       <div style={{
-        width: "40px", height: "40px", borderRadius: "14px",
-        background: "rgba(239,68,68,0.10)", border: "1px solid rgba(239,68,68,0.20)",
-        display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px",
+        width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0,
+        background: "linear-gradient(135deg, #22c55e, #15803d)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        boxShadow: "0 0 8px rgba(34,197,94,0.45)",
       }}>
-        <Trash2 size={16} color="#f87171" />
+        <Zap size={10} color="white" strokeWidth={2.5} />
       </div>
-      <p style={{ fontSize: "15px", fontWeight: 700, color: "white", marginBottom: "6px" }}>
-        Clear chat history?
-      </p>
-      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.32)", lineHeight: "1.6", marginBottom: "20px" }}>
-        This will permanently remove all messages for this API session.
-      </p>
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button onClick={onCancel} className="glass-btn" style={{
-          flex: 1, padding: "10px", borderRadius: "14px",
-          fontSize: "13px", fontWeight: 600, color: "rgba(255,255,255,0.45)", cursor: "pointer",
-        }}>Cancel</button>
-        <button onClick={onConfirm} style={{
-          flex: 1, padding: "10px", borderRadius: "14px", fontSize: "13px", fontWeight: 600,
-          background: "rgba(239,68,68,0.75)", color: "white", border: "none", cursor: "pointer",
-        }}>Clear</button>
-      </div>
-    </div>
+    )}
+
+    <span style={{
+      fontSize: "13px", fontWeight: 700,
+      color: "rgba(255,255,255,0.88)",
+      letterSpacing: "-0.01em",
+    }}>
+      {name}
+    </span>
+
+    {onRemove && (
+      <button
+        onClick={onRemove}
+        style={{
+          width: "16px", height: "16px", borderRadius: "50%",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(255,255,255,0.10)",
+          border: "none", cursor: "pointer", flexShrink: 0,
+          transition: "background 0.15s",
+        }}
+      >
+        <X size={9} color="rgba(255,255,255,0.55)" />
+      </button>
+    )}
   </div>
 );
-
-// ─── HistoryModal ─────────────────────────────────────────────────────────────
-
-// ─── CompareModal ─────────────────────────────────────────────────────────────
-
 
 // ─── MicButton ────────────────────────────────────────────────────────────────
 const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
@@ -316,10 +473,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
     rec.lang = "en-US";
     rec.interimResults = false;
     rec.maxAlternatives = 1;
-    rec.onresult = (e: any) => {
-      onTranscript(e.results[0][0].transcript);
-      setListening(false);
-    };
+    rec.onresult = (e: any) => { onTranscript(e.results[0][0].transcript); setListening(false); };
     rec.onerror = () => setListening(false);
     rec.onend = () => setListening(false);
     recognitionRef.current = rec;
@@ -343,29 +497,17 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
     >
       {listening
         ? <MicOff size={13} color="#f87171" />
-        : <Mic size={13} color="rgba(255,255,255,0.40)" />
-      }
+        : <Mic size={13} color="rgba(255,255,255,0.40)" />}
     </button>
   );
 };
 
 // ─── ClaudeInput ──────────────────────────────────────────────────────────────
 const ClaudeInput = ({
-  value,
-  onChange,
-  onSend,
-  disabled,
-  isLoggedIn,
-  onNeedLogin,
-  placeholder,
+  value, onChange, onSend, disabled, isLoggedIn, onNeedLogin, placeholder,
 }: {
-  value: string;
-  onChange: (v: string) => void;
-  onSend: () => void;
-  disabled: boolean;
-  isLoggedIn: boolean;
-  onNeedLogin: () => void;
-  placeholder: string;
+  value: string; onChange: (v: string) => void; onSend: () => void;
+  disabled: boolean; isLoggedIn: boolean; onNeedLogin: () => void; placeholder: string;
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasText = value.trim().length > 0;
@@ -373,20 +515,16 @@ const ClaudeInput = ({
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        Math.min(textareaRef.current.scrollHeight, 120) + "px";
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + "px";
     }
   }, [value]);
 
   const handleKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (hasText && !disabled) {
-        onSend();
-      }
+      if (hasText && !disabled) onSend();
     }
   };
-
 
   return (
     <div className="glass-input" style={{ borderRadius: "22px" }}>
@@ -405,38 +543,21 @@ const ClaudeInput = ({
         }}
       />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
-        <MicButton
-          onTranscript={(t) => onChange(value + (value ? " " : "") + t)}
-          disabled={disabled}
-        />
+        <MicButton onTranscript={(t) => onChange(value + (value ? " " : "") + t)} disabled={disabled} />
         <button
-          onClick={() => {
-            onSend();
-          }}
+          onClick={() => { if (!isLoggedIn) { onNeedLogin(); return; } onSend(); }}
           disabled={!hasText || disabled}
           style={{
             width: "32px", height: "32px", borderRadius: "50%",
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: hasText ? "pointer" : "default",
-            background: hasText
-  ? "rgba(21,128,61,0.35)"
-  : "rgba(255,255,255,0.06)",
-
-border: hasText
-  ? "1px solid rgba(21,128,61,0.7)"
-  : "1px solid rgba(255,255,255,0.08)",
-
-boxShadow: hasText
-  ? "0 0 18px rgba(21,128,61,0.5)"
-  : "none",
+            background: hasText ? "rgba(21,128,61,0.35)" : "rgba(255,255,255,0.06)",
+            border: hasText ? "1px solid rgba(21,128,61,0.7)" : "1px solid rgba(255,255,255,0.08)",
+            boxShadow: hasText ? "0 0 18px rgba(21,128,61,0.5)" : "none",
             transition: "all 0.2s ease",
           }}
         >
-          <ArrowUp
-            size={14}
-            color={hasText ? "#22c55e" : "rgba(255,255,255,0.18)"}
-            strokeWidth={2.8}
-          />
+          <ArrowUp size={14} color={hasText ? "#22c55e" : "rgba(255,255,255,0.18)"} strokeWidth={2.8} />
         </button>
       </div>
     </div>
@@ -451,95 +572,58 @@ const AskApivesPage = () => {
   const apiId = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-useEffect(() => {
-  const checkAuth = () => {
-    setIsLoggedIn(isValidUser());
+  // ── FIX 1: Auth — single source of truth, no false redirects ─────────────
+  const isValidUser = (): boolean => {
+    const token = localStorage.getItem("apives_token");
+    const user = localStorage.getItem("apives_user");
+    if (!token || !user) return false;
+    try { JSON.parse(user); return true; } catch { return false; }
   };
 
-  checkAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isValidUser);
 
-  // 🔥 other tabs detect
-  window.addEventListener("storage", checkAuth);
+  useEffect(() => {
+    const checkAuth = () => setIsLoggedIn(isValidUser());
+    checkAuth();
+    window.addEventListener("storage", checkAuth);
+    const interval = setInterval(checkAuth, 1500);
+    return () => { window.removeEventListener("storage", checkAuth); clearInterval(interval); };
+  }, []);
 
-  // 🔥 same tab instant fix (IMPORTANT)
-  const interval = setInterval(checkAuth, 1000);
-
-  return () => {
-    window.removeEventListener("storage", checkAuth);
-    clearInterval(interval);
+  // Only redirect if genuinely not logged in — uses isLoggedIn state
+  const redirectToAccess = () => {
+    navigate(`/access?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`);
   };
-}, []);
 
-const isValidUser = () => {
-  const token = localStorage.getItem("apives_token");
-  const user = localStorage.getItem("apives_user");
-
-  if (!token) return false;
-
-  if (!user) return false;
-
-  try {
-    JSON.parse(user);
-    return true; // 🔥 bas parse ho gaya = logged in
-  } catch {
-    return false;
-  }
-};
+  const requireLogin = (): boolean => {
+    if (!isLoggedIn) { redirectToAccess(); return false; }
+    return true;
+  };
 
   const [apiData, setApiData] = useState<any>(null);
   const [input, setInput] = useState("");
   const [chat, setChat] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showClearModal, setShowClearModal] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Redirect helper — used for every auth-gated action
-  const redirectToAccess = () => {
-    navigate(
-      `/access?returnUrl=${encodeURIComponent(
-        window.location.pathname + window.location.search
-      )}`
-    );
-  };
-
-  const requireLogin = (): boolean => {
-  const valid = isValidUser(); // 🔥 direct check
-  if (!valid) {
-    redirectToAccess();
-    return false;
-  }
-  return true;
-};
-
-useEffect(() => {
-  const hideGlobalLayout = () => {
-    const nav = document.querySelector("nav");
-    const header = document.querySelector("header");
-    const footer = document.querySelector("footer");
-
+  // Hide global layout
+  useEffect(() => {
+    const nav = document.querySelector("nav") as HTMLElement | null;
+    const header = document.querySelector("header") as HTMLElement | null;
+    const footer = document.querySelector("footer") as HTMLElement | null;
     if (nav) nav.style.display = "none";
     if (header) header.style.display = "none";
     if (footer) footer.style.display = "none";
-  };
-
-  hideGlobalLayout();
-
-  return () => {
-    const nav = document.querySelector("nav");
-    const header = document.querySelector("header");
-    const footer = document.querySelector("footer");
-
-    if (nav) nav.style.display = "";
-    if (header) header.style.display = "";
-    if (footer) footer.style.display = "";
-  };
-}, []);
+    return () => {
+      if (nav) nav.style.display = "";
+      if (header) header.style.display = "";
+      if (footer) footer.style.display = "";
+    };
+  }, []);
 
   // Load persisted chat
   useEffect(() => {
@@ -570,91 +654,59 @@ useEffect(() => {
 
   // Auto scroll
   useEffect(() => {
-  if (!scrollRef.current) return;
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distanceFromBottom < 100) {
+      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+    }
+  }, [chat, loading]);
 
-  const el = scrollRef.current;
+  const sendMessage = async (overrideText?: string) => {
+    const text = (overrideText ?? input).trim();
+    if (!text) return;
 
-  // only auto scroll if already near bottom
-  const distanceFromBottom =
-    el.scrollHeight - el.scrollTop - el.clientHeight;
-
-  if (distanceFromBottom < 100) {
-    requestAnimationFrame(() => {
-      el.scrollTop = el.scrollHeight;
-    });
-  }
-}, [chat, loading]);
-
-  const sendMessage = async (overrideText) => {
-  const text = (overrideText ?? input).trim();
-  if (!text) return;
-
-  const newChat = [
-    ...chat,
-    { role: "user", content: text },
-  ];
-
-  setChat(newChat);
-  setInput("");
-  setLoading(true);
-
-  try {
-    // 🔥 PRIMARY: GROQ
-    const res = await axios.post(
-      "https://apives-3xrc.onrender.com/api/ask-ai",
-      {
-        messages: newChat,
-        apiData,
-      }
-    );
-
-    setChat((prev) => [
-      ...prev,
-      { role: "assistant", content: res.data.answer },
-    ]);
-
-  } catch (err) {
-    console.log("⚠️ Groq failed → switching to Gemini");
+    const newChat = [...chat, { role: "user" as const, content: text }];
+    setChat(newChat);
+    setInput("");
+    setLoading(true);
 
     try {
-      // 🤖 FALLBACK: GEMINI
-      const geminiRes = await axios.post(
-        "https://apives-3xrc.onrender.com/api/gemini",
-        {
-          prompt: text,
-        }
-      );
-
-      setChat((prev) => [
-        ...prev,
-        { role: "assistant", content: geminiRes.data.result },
-      ]);
-
-    } catch (err2) {
-      setChat((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "All AI services are down. Try again later.",
-        },
-      ]);
+      const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", { messages: newChat, apiData });
+      setChat((prev) => [...prev, { role: "assistant", content: res.data.answer }]);
+    } catch {
+      try {
+        const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", { prompt: text });
+        setChat((prev) => [...prev, { role: "assistant", content: geminiRes.data.result }]);
+      } catch {
+        setChat((prev) => [...prev, { role: "assistant", content: "All AI services are down. Try again later." }]);
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    // ✅ ALWAYS RUNS
-    setLoading(false);
-  }
-};
-
-    
-  const clearChat = () => {
-    setChat([]);
-    if (apiId) localStorage.removeItem(`apives_chat_${apiId}`);
-    setShowClearModal(false);
   };
 
-  const hasHistory = chat.length > 0;
+  // FIX 3: New Chat — saves existing chat in history, resets current
+  const startNewChat = () => {
+    // existing chat already persisted via useEffect — just clear state
+    setChat([]);
+    setInput("");
+  };
 
-  // Derive display name from URL param or fetched data
+  // Regenerate last AI response
+  const regenerateLast = () => {
+    const lastUserMsg = [...chat].reverse().find((m) => m.role === "user");
+    if (!lastUserMsg) return;
+    // remove last assistant message
+    setChat((prev) => {
+      const idx = [...prev].reverse().findIndex((m) => m.role === "assistant");
+      if (idx === -1) return prev;
+      const realIdx = prev.length - 1 - idx;
+      return prev.slice(0, realIdx);
+    });
+    sendMessage(lastUserMsg.content);
+  };
+
   const displayName = apiName || apiData?.name || null;
   const inputPlaceholder = displayName
     ? `Ask anything about ${displayName}...`
@@ -665,9 +717,6 @@ useEffect(() => {
       <style>{GLOBAL_STYLES}</style>
 
       {/* Modals */}
-      {showClearModal && (
-        <ClearModal onConfirm={clearChat} onCancel={() => setShowClearModal(false)} />
-      )}
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
@@ -678,27 +727,22 @@ useEffect(() => {
       {showHistoryModal && (
         <HistoryModal
           onClose={() => setShowHistoryModal(false)}
-          onSelect={(id) => {
-            setShowHistoryModal(false);
-            navigate(`/ask-apives?apiId=${id}`);
-          }}
+          onSelect={(id) => { setShowHistoryModal(false); navigate(`/ask-apives?apiId=${id}`); }}
         />
       )}
 
       <div
         className="page-in"
         style={{
-          display: "flex", flexDirection: "column", height: "100dvh",
-minHeight: "100dvh",
-overflow: "hidden",
-paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: "white",
+          display: "flex", flexDirection: "column",
+          height: "100dvh", minHeight: "100dvh", overflow: "hidden",
+          paddingBottom: "env(keyboard-inset-height, 0px)",
+          background: "#060D0A", color: "white",
           fontFamily: "inherit", position: "relative",
         }}
       >
-        {/* Ambient background */}
+        {/* Ambient dot grid */}
         <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
-          
-          
           <div style={{
             position: "absolute", inset: 0, opacity: 0.016,
             backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
@@ -715,165 +759,121 @@ paddingBottom: "env(keyboard-inset-height, 0px)", background: "#060D0A", color: 
           paddingBottom: "14px",
           background: "rgba(6,13,10,0.95)", backdropFilter: "blur(28px)",
           WebkitBackdropFilter: "blur(28px)",
-          borderBottom: "1px solid rgba(52,211,153,0.07)",
+          borderBottom: "1px solid rgba(34,197,94,0.08)",
         }}>
-          {/* Left */}
+          {/* Left: close + logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-  <button
-    onClick={() => navigate(-1)}
-    className="glass-btn"
-    style={{
-      width: "36px",
-      height: "36px",
-      borderRadius: "50%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      backdropFilter: "blur(12px)",
-      cursor: "pointer",
-    }}
-  >
-    <X size={15} className="text-white/60" />
-  </button>
-
-  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-  
-  {/* Logo + Text vertical */}
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1 }}>
-    
-    {/* Logo */}
-    <img
-      src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-      alt="Apives"
-      style={{
-        height: "22px",
-        objectFit: "contain",
-      }}
-    />
-
-    {/* Subtitle under logo */}
-    <span
-  style={{
-    fontSize: "9px",
-    fontWeight: 500,
-    color: "rgba(255,255,255,0.55)",
-    letterSpacing: "0.06em",
-    marginTop: "2px",
-    fontFamily: "inherit",
-  }}
->
-  AI Assistant
-</span>
-
-  </div>
-
-</div>
-</div>
-
-
-          {/* Right */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <button
-  onClick={() => {
-  if (!requireLogin()) return;
-  setShowHistoryModal(true);
-}}
-className="glass-btn"
-style={{
-width: "36px",
-height: "36px",
-borderRadius: "50%",
-display: "flex",
-alignItems: "center",
-justifyContent: "center",
-cursor: "pointer",
-}}
-title="Chat history"
+              onClick={() => navigate(-1)}
+              className="glass-btn"
+              style={{
+                width: "36px", height: "36px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                backdropFilter: "blur(12px)", cursor: "pointer",
+              }}
+            >
+              <X size={15} className="text-white/60" />
+            </button>
 
-> 
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", lineHeight: 1 }}>
+              <img
+                src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
+                alt="Apives"
+                style={{ height: "22px", objectFit: "contain" }}
+              />
+              <span style={{
+                fontSize: "9px", fontWeight: 500,
+                color: "rgba(255,255,255,0.55)", letterSpacing: "0.06em",
+                marginTop: "2px",
+              }}>
+                AI Assistant
+              </span>
+            </div>
+          </div>
 
-  <History size={14} color="rgba(255,255,255,0.40)" />  
-</button>  {hasHistory && (  
-          <button  
-            onClick={() => setShowClearModal(true)}  
-            className="glass-btn"  
-            style={{  
-              width: "36px", height: "36px", borderRadius: "50%",  
-              display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",  
-            }}  
-          >  
-            <Trash2 size={14} color="rgba(255,255,255,0.30)" />  
-          </button>  
-        )}  
-        <button  
-          onClick={() => {  
-            if (!requireLogin()) return;  
-            setShowCompareModal(true);  
-          }}  
-          style={{  
-            width: "36px", height: "36px", borderRadius: "50%",  
-            display: "flex", alignItems: "center", justifyContent: "center",  
-            background: "rgba(34,197,94,0.18)",
+          {/* Right: history, new chat, compare */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {/* FIX 1: only show history if logged in, uses isLoggedIn state */}
+            <button
+              onClick={() => {
+                if (!isLoggedIn) { redirectToAccess(); return; }
+                setShowHistoryModal(true);
+              }}
+              className="glass-btn"
+              style={{
+                width: "36px", height: "36px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+              }}
+              title="Chat history"
+            >
+              <History size={14} color="rgba(255,255,255,0.40)" />
+            </button>
 
-border: "1px solid rgba(34,197,94,0.5)",
-cursor: "pointer", transition: "all 0.2s",
-}}
-title="Compare APIs"
->
-<GitCompare size={14} color="#4ade80"/>
-</button>
-</div>
-</div>
+            {/* FIX 3: New Chat button replaces Clear */}
+            <button
+              onClick={startNewChat}
+              className="glass-btn"
+              style={{
+                width: "36px", height: "36px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+              }}
+              title="New chat"
+            >
+              <Plus size={15} color="rgba(255,255,255,0.40)" />
+            </button>
+
+            {/* FIX 1: uses isLoggedIn state directly */}
+            <button
+              onClick={() => {
+                if (!isLoggedIn) { redirectToAccess(); return; }
+                setShowCompareModal(true);
+              }}
+              style={{
+                width: "36px", height: "36px", borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: "rgba(34,197,94,0.18)",
+                border: "1px solid rgba(34,197,94,0.5)",
+                cursor: "pointer", transition: "all 0.2s",
+              }}
+              title="Compare APIs"
+            >
+              <GitCompare size={14} color="#4ade80" />
+            </button>
+          </div>
+        </div>
 
         {/* ── CHAT AREA ── */}
         <div
-  ref={scrollRef}
-  className="chat-scroll"
-  style={{
-  position: "relative",
-  zIndex: 10,
-  flex: 1,
-  overflowY: "auto",
-  WebkitOverflowScrolling: "touch",
-  paddingTop: "16px",
-  paddingBottom: "120px",
-  minHeight: 0,
-}}
->
+          ref={scrollRef}
+          className="chat-scroll"
+          style={{
+            position: "relative", zIndex: 10,
+            flex: 1, overflowY: "auto",
+            WebkitOverflowScrolling: "touch" as any,
+            paddingTop: "16px", paddingBottom: "120px",
+            minHeight: 0,
+          }}
+        >
+          {/* Empty state */}
+          {chat.length === 0 && (
+            <div style={{
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              minHeight: "100%", padding: "32px 24px 8px", textAlign: "center",
+            }}>
+              <AnimatedOrb />
 
-  {/* ✅ EMPTY STATE FIX */}
-  {chat.length === 0 && (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100%",
-        padding: "32px 24px 8px",
-        textAlign: "center",
-      }}
-    >
-      <AnimatedOrb />
-
-      <h2 style={{
-        fontSize: "26px",
-        fontWeight: 900,
-        marginTop: "20px",
-        marginBottom: "8px",
-        lineHeight: 1.2,
-        letterSpacing: "-0.02em",
-      }}>
-        The API Intelligence
-        <br />
-        <span style={{
-          color: "#22c55e",
-          textShadow: "0 0 12px rgba(34,197,94,0.5)"
-        }}>
-          You Deserve
-        </span>
-      </h2>
-    
+              <h2 style={{
+                fontSize: "26px", fontWeight: 900,
+                marginTop: "20px", marginBottom: "8px",
+                lineHeight: 1.2, letterSpacing: "-0.02em",
+              }}>
+                The API Intelligence
+                <br />
+                <span style={{ color: "#22c55e", textShadow: "0 0 12px rgba(34,197,94,0.5)" }}>
+                  You Deserve
+                </span>
+              </h2>
 
               <p style={{
                 fontSize: "11px", color: "rgba(255,255,255,0.28)", lineHeight: 1.7,
@@ -882,54 +882,49 @@ title="Compare APIs"
                 Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
-              {/* API context pill — shown when apiId / apiName is present */}
+              {/* FIX 2: API Name Pill — Spotify style glassmorphism */}
               {displayName && (
-                <div style={{
-                  marginBottom: "16px", padding: "8px 20px", borderRadius: "999px",
-                  fontSize: "12px", fontWeight: 600, maxWidth: "280px", textAlign: "center",
-                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(52,211,153,0.30)",
-                  color: "rgba(52,211,153,0.75)", display: "inline-flex", alignItems: "center", gap: "8px",
-                }}>
-                  <span style={{
-                    width: "6px", height: "6px", borderRadius: "50%",
-                    background: "#34d399", flexShrink: 0,
-                    boxShadow: "0 0 6px rgba(52,211,153,0.60)",
-                  }} />
-                  {displayName}
+                <div style={{ marginBottom: "16px" }}>
+                  <ApiNamePill
+                    name={displayName}
+                    iconUrl={apiData?.logo || apiData?.icon || undefined}
+                  />
                 </div>
               )}
               {displayName && (
                 <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.25)", marginBottom: "20px" }}>
-                  Ask anything about this API…
+                  Ask anything about this API...
                 </p>
               )}
 
-              {/* API Breakdown — without description */}
+              {/* FIX 4: ApiBreakdown — upgraded, description always shown */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
-                  <ApiBreakdown api={apiData} />
+                  <UpgradedApiBreakdown api={apiData} />
                 </div>
               )}
 
               {/* Suggested Prompts */}
               <div style={{ width: "100%", maxWidth: "340px", marginTop: "20px" }}>
-                <SuggestedPrompts
-                  onClick={(text: string) => {
-                    
-                    sendMessage(text);
-                  }}
-                />
+                <SuggestedPrompts onClick={(text: string) => { sendMessage(text); }} />
               </div>
             </div>
           )}
 
           {/* Messages */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "0 12px" }}>
-            {chat.map((msg, i) => (
-              <div key={i} className="msg-enter">
-                <MessagePill role={msg.role} content={msg.content} />
-              </div>
-            ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "0 12px" }}>
+            {chat.map((msg, i) => {
+              const isLastAssistant = msg.role === "assistant" && i === chat.length - 1;
+              return (
+                <div key={i} className="msg-enter">
+                  <MessagePill
+                    role={msg.role}
+                    content={msg.content}
+                    onRegenerate={isLastAssistant ? regenerateLast : undefined}
+                  />
+                </div>
+              );
+            })}
             {loading && (
               <div className="msg-enter" style={{ display: "flex", justifyContent: "flex-start", paddingLeft: "8px" }}>
                 <TypingIndicator />
@@ -945,9 +940,7 @@ title="Compare APIs"
           padding: "8px 16px",
           paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
           background: "rgba(6,13,10,0.97)",
-          borderTop: "none",
         }}>
-
           <ClaudeInput
             value={input}
             onChange={setInput}
@@ -957,7 +950,6 @@ title="Compare APIs"
             onNeedLogin={redirectToAccess}
             placeholder={inputPlaceholder}
           />
-
           <p style={{
             textAlign: "center", fontSize: "10px",
             color: "rgba(255,255,255,0.10)", marginTop: "8px", letterSpacing: "0.03em",
@@ -967,6 +959,159 @@ title="Compare APIs"
         </div>
       </div>
     </>
+  );
+};
+
+// ─── FIX 4: Upgraded ApiBreakdown (inline, rich glass cards) ──────────────────
+const UpgradedApiBreakdown = ({ api }: { api: any }) => {
+  if (!api) return null;
+
+  const sections = [
+    api.description && {
+      key: "description",
+      label: "About",
+      icon: <Sparkles size={11} color="#4ade80" />,
+      content: api.description,
+      type: "text" as const,
+    },
+    api.endpoints?.length && {
+      key: "endpoints",
+      label: "Endpoints",
+      icon: <Link2 size={11} color="#4ade80" />,
+      content: api.endpoints,
+      type: "list" as const,
+    },
+    api.params?.length && {
+      key: "params",
+      label: "Parameters",
+      icon: <Radio size={11} color="#4ade80" />,
+      content: api.params,
+      type: "list" as const,
+    },
+    api.example && {
+      key: "example",
+      label: "Example",
+      icon: <Zap size={11} color="#4ade80" />,
+      content: typeof api.example === "string" ? api.example : JSON.stringify(api.example, null, 2),
+      type: "code" as const,
+    },
+    api.auth && {
+      key: "auth",
+      label: "Auth",
+      icon: <Shield size={11} color="#4ade80" />,
+      content: api.auth,
+      type: "badge" as const,
+    },
+  ].filter(Boolean) as Array<{ key: string; label: string; icon: React.ReactNode; content: any; type: "text" | "list" | "code" | "badge" }>;
+
+  if (!sections.length) return null;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+      {/* Header */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px",
+      }}>
+        <div style={{ height: "1px", flex: 1, background: "rgba(34,197,94,0.15)" }} />
+        <span style={{
+          fontSize: "9px", fontWeight: 700, letterSpacing: "0.18em",
+          textTransform: "uppercase", color: "rgba(34,197,94,0.45)",
+        }}>
+          API Details
+        </span>
+        <div style={{ height: "1px", flex: 1, background: "rgba(34,197,94,0.15)" }} />
+      </div>
+
+      {sections.map((s) => (
+        <div
+          key={s.key}
+          style={{
+            padding: "12px 14px",
+            borderRadius: "14px",
+            background: "rgba(255,255,255,0.03)",
+            border: "1px solid rgba(34,197,94,0.10)",
+            backdropFilter: "blur(12px)",
+            textAlign: "left",
+          }}
+        >
+          {/* Section label */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: "5px", marginBottom: "8px",
+          }}>
+            {s.icon}
+            <span style={{
+              fontSize: "9px", fontWeight: 800, letterSpacing: "0.14em",
+              textTransform: "uppercase", color: "rgba(34,197,94,0.55)",
+            }}>
+              {s.label}
+            </span>
+          </div>
+
+          {/* Content */}
+          {s.type === "text" && (
+            <p style={{
+              fontSize: "12px", lineHeight: 1.7,
+              color: "rgba(255,255,255,0.60)", fontWeight: 400,
+            }}>
+              {s.content}
+            </p>
+          )}
+
+          {s.type === "list" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+              {(s.content as string[]).slice(0, 5).map((item: string, i: number) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+                  <div style={{
+                    width: "4px", height: "4px", borderRadius: "50%", flexShrink: 0,
+                    background: "rgba(34,197,94,0.50)",
+                  }} />
+                  <span style={{
+                    fontSize: "11px", color: "rgba(255,255,255,0.55)",
+                    fontFamily: "monospace", wordBreak: "break-all",
+                  }}>
+                    {item}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {s.type === "code" && (
+            <div>
+              <div style={{
+                padding: "10px 12px", borderRadius: "10px",
+                background: "rgba(0,0,0,0.35)",
+                border: "1px solid rgba(34,197,94,0.08)",
+                marginBottom: "8px", overflow: "auto",
+              }}>
+                <pre style={{
+                  fontSize: "10px", color: "rgba(34,197,94,0.75)",
+                  fontFamily: "monospace", lineHeight: 1.6,
+                  margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-all",
+                }}>
+                  {s.content}
+                </pre>
+              </div>
+              <CopyButton text={s.content} label="Copy example" />
+            </div>
+          )}
+
+          {s.type === "badge" && (
+            <span style={{
+              display: "inline-flex", alignItems: "center", gap: "5px",
+              padding: "3px 10px", borderRadius: "99px",
+              background: "rgba(34,197,94,0.10)",
+              border: "1px solid rgba(34,197,94,0.22)",
+              fontSize: "11px", fontWeight: 600,
+              color: "rgba(134,239,172,0.85)",
+            }}>
+              <Shield size={9} color="#4ade80" />
+              {s.content}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
   );
 };
 
