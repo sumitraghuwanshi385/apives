@@ -40,7 +40,7 @@ const GLOBAL_STYLES = `
 
   .chat-scroll::-webkit-scrollbar { width: 3px; }
   .chat-scroll::-webkit-scrollbar-track { background: transparent; }
-  .chat-scroll::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.15); border-radius: 99px; }
+  .chat-scroll::-webkit-scrollbar-thumb { background: rgba(21,128,61,0.25); border-radius: 99px; }
 
   @keyframes msgSlide {
     from { opacity: 0; transform: translateY(10px) scale(0.98); }
@@ -76,14 +76,14 @@ const GLOBAL_STYLES = `
     100% { background-position: 200% center; }
   }
   .shim-line {
-    background: linear-gradient(90deg, transparent 0%, rgba(52,211,153,0.25) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(21,128,61,0.25) 50%, transparent 100%);
     background-size: 200% auto;
     animation: shimLine 2.5s linear infinite;
   }
 
   @keyframes orbGlow {
-    0%,100% { box-shadow: 0 0 28px rgba(52,211,153,0.38), inset 0 2px 10px rgba(255,255,255,0.16); }
-    50%      { box-shadow: 0 0 48px rgba(52,211,153,0.60), inset 0 2px 12px rgba(255,255,255,0.22); }
+    0%,100% { box-shadow: 0 0 28px rgba(21,128,61,0.45), inset 0 2px 10px rgba(255,255,255,0.16); }
+    50%      { box-shadow: 0 0 48px rgba(21,128,61,0.75), inset 0 2px 12px rgba(255,255,255,0.22); }
   }
 
   @keyframes dataPing {
@@ -108,26 +108,32 @@ const GLOBAL_STYLES = `
     to { transform: rotate(360deg); }
   }
 
+  /* 🔥 USER MESSAGE */
   .glass-pill-user {
-    background: rgba(52,211,153,0.09);
-    border: 1px solid rgba(52,211,153,0.20);
+    background: rgba(21,128,61,0.18);
+    border: 1px solid rgba(21,128,61,0.45);
     backdrop-filter: blur(16px);
   }
+
   .glass-pill-ai {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
     backdrop-filter: blur(16px);
   }
+
+  /* 🔥 INPUT BOX */
   .glass-input {
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(52,211,153,0.18);
+    border: 1px solid rgba(21,128,61,0.45);
     backdrop-filter: blur(20px);
     transition: border-color 0.2s, box-shadow 0.2s;
   }
+
   .glass-input:focus-within {
-    border-color: rgba(52,211,153,0.38);
-    box-shadow: 0 0 0 3px rgba(52,211,153,0.07);
+    border-color: rgba(21,128,61,0.9);
+    box-shadow: 0 0 0 3px rgba(21,128,61,0.18);
   }
+
   .glass-btn {
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
@@ -136,39 +142,46 @@ const GLOBAL_STYLES = `
   }
   .glass-btn:hover { background: rgba(255,255,255,0.09); transform: scale(1.04); }
 
+  /* 🔥 CLOSE BTN */
   .close-btn-green {
     position: relative;
     overflow: hidden;
-    background: rgba(52,211,153,0.08) !important;
-    border: 1px solid rgba(52,211,153,0.20) !important;
+    background: rgba(21,128,61,0.15) !important;
+    border: 1px solid rgba(21,128,61,0.45) !important;
     transition: background 0.2s, transform 0.15s;
   }
+
   .close-btn-green::before {
     content: '';
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 2px;
-    background: linear-gradient(to right, #34d399, transparent);
-    opacity: 0.7;
+    background: linear-gradient(to right, #22c55e, transparent);
+    opacity: 0.8;
     border-radius: 99px 99px 0 0;
   }
+
   .close-btn-green:hover {
-    background: rgba(52,211,153,0.14) !important;
+    background: rgba(21,128,61,0.28) !important;
     transform: scale(1.04);
   }
 
+  /* 🔥 COMPARE */
   .compare-select-btn { transition: all 0.2s ease; cursor: pointer; }
+
   .compare-select-btn:hover {
-    border-color: rgba(52,211,153,0.5) !important;
-    background: rgba(52,211,153,0.10) !important;
-  }
-  .compare-select-btn.selected {
-    border-color: rgba(52,211,153,0.6) !important;
-    background: rgba(52,211,153,0.12) !important;
+    border-color: rgba(21,128,61,0.7) !important;
+    background: rgba(21,128,61,0.18) !important;
   }
 
+  .compare-select-btn.selected {
+    border-color: rgba(21,128,61,0.9) !important;
+    background: rgba(21,128,61,0.22) !important;
+  }
+
+  /* 🔥 HISTORY */
   .history-item { transition: background 0.15s; cursor: pointer; }
-  .history-item:hover { background: rgba(52,211,153,0.06) !important; }
+  .history-item:hover { background: rgba(21,128,61,0.12) !important; }
 
   textarea { resize: none; scrollbar-width: none; }
   textarea::-webkit-scrollbar { display: none; }
