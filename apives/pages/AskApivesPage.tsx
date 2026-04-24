@@ -25,8 +25,8 @@ import {
 import ApiBreakdown from "../components/ai/ApiBreakdown";
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
-const STYLES = `
+// ─── Global Styles ──────────────────────────────────────────────────────────────────
+const GLOBAL_STYLES = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
   /* Hide global Navbar + Footer on this page */
@@ -174,9 +174,9 @@ const STYLES = `
   textarea::-webkit-scrollbar { display: none; }
 `;
 
-// ─── AnimatedOrb ─────────────────────────────────────────────────────────────
+// ─── RobotAnimatedOrb ─────────────────────────────────────────────────────────────
 
-const STYLES = `
+const ROBOT_STYLES = `
   @keyframes orbGlow {
     0%,100% { box-shadow: 0 0 32px rgba(34,197,94,0.45), 0 0 64px rgba(34,197,94,0.18); }
     50%      { box-shadow: 0 0 56px rgba(34,197,94,0.70), 0 0 100px rgba(34,197,94,0.28); }
