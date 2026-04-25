@@ -682,7 +682,10 @@ axios.get(`/api/apis/${apiId}`)
 
     if (api) {
       setApiData(api);
-      setDebugInfo("✅ API Loaded: " + (api?.name || "NO NAME"));
+      setDebugInfo(
+  "✅ API Loaded: " +
+  (api?.name || api?.title || api?.apiName || "NO NAME")
+);
     } else {
       setDebugInfo("❌ API empty response");
     }
@@ -741,7 +744,10 @@ axios.get(`/api/apis/${apiId}`)
     setInput("");
     setLoading(true);
 
-setDebugInfo("📤 Sending with API: " + (apiData?.name || "NULL"));
+setDebugInfo(
+  "📤 Sending with API: " +
+  (apiData?.name || apiData?.title || apiData?.apiName || "NULL")
+);
 
     const isApiQuery = isApiRelatedQuery(text);
 const apiContext = apiData
@@ -873,7 +879,12 @@ Rules:
     sendMessage(lastUserMsg.content);
   };
 
-  const displayName = apiData?.name || apiName || null;
+  const displayName =
+  apiData?.name ||
+  apiData?.title ||
+  apiData?.apiName ||
+  apiName ||
+  null;
   const inputPlaceholder = displayName
     ? `Ask anything about ${displayName}...`
     : "Ask anything about any API...";
