@@ -60,24 +60,21 @@ const ApivesAIHighlight = () => {
           {/* TEXT */}
           <div className="flex flex-col">
 
-            {/* 🔥 LOGO INSTEAD OF TEXT */}
             <img
               src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
               alt="Apives AI"
               className="h-5 md:h-6 object-contain"
             />
 
-            {/* DESCRIPTION */}
             <p className="
               mt-1.5
               text-slate-300
               text-[11px] md:text-sm
               leading-snug
-            ">         
-The API Intelligence You Deserve — Discover and Understand APIs Faster.
+            ">
+              The API Intelligence You Deserve — Discover and understand APIs faster.
             </p>
 
-            {/* CTA */}
             <span className="
               mt-2
               text-[10px]
@@ -96,3 +93,5 @@ The API Intelligence You Deserve — Discover and Understand APIs Faster.
     </div>
   );
 };
+
+export default ApivesAIHighlight;
