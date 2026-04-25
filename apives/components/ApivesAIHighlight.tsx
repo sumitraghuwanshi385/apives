@@ -62,13 +62,13 @@ export const ApivesAIHighlight = () => {
           </div>
 
           {/* TEXT */}
-          <div className="flex flex-col">
+          <div className="flex flex-col items-start text-left w-full">
 
             {/* ✅ LOGO REPLACED */}
             <img
               src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
               alt="Apives AI"
-              className="h-5 md:h-6 object-contain mb-1"            
+              className="h-5 md:h-6 object-contain mb-1 self-start"       
             />
 
             {/* ✅ TEXT SMALL + DOWN */}
