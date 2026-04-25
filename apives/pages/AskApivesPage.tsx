@@ -698,27 +698,46 @@ const AskApivesPage = () => {
 
     // Only load history if user is logged in
     if (userId) {
-      try {
-        const prefix = `apives_chat_${userId}_${apiId}_`;
-        const keys = Object.keys(localStorage).filter((k) => k.startsWith(prefix));
+  try {
+    const prefix = `apives_chat_${userId}_${apiId}_`;
 
-        if (keys.length > 0) {
-          const latestKey = keys.sort().reverse()[0];
-          const saved = localStorage.getItem(latestKey);
+    // 👉 CASE 1: specific chatId from history click
+    if (chatIdFromUrl) {
+      const key = `${prefix}${chatIdFromUrl}`;
+      const saved = localStorage.getItem(key);
 
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              setChat(parsed);
-              const restoredId = latestKey.replace(prefix, "");
-              setChatId(restoredId);
-            }
-          }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setChat(parsed);
+          setChatId(chatIdFromUrl);
+          return;
         }
-      } catch (err) {
-        console.error("[AskApives] History load failed:", err);
       }
     }
+
+    // 👉 CASE 2: fallback → latest chat
+    const keys = Object.keys(localStorage).filter((k) =>
+      k.startsWith(prefix)
+    );
+
+    if (keys.length > 0) {
+      const latestKey = keys.sort().reverse()[0];
+      const saved = localStorage.getItem(latestKey);
+
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setChat(parsed);
+          const restoredId = latestKey.replace(prefix, "");
+          setChatId(restoredId);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[AskApives] History load failed:", err);
+  }
+}
 
     // Fetch API metadata
     axios
