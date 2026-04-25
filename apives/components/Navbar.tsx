@@ -147,25 +147,28 @@ return (
         </Link>    
       )}
 
-{/* 🤖 Mobile Apives AI Icon */}
+{/* 🤖 Mobile Apives AI */}
 <button
-onClick={() => navigate('/ask-apives')}
-className="
-md:hidden
-w-7 h-7 md:w-10 md:h-10
-flex items-center justify-center
-rounded-full
-border
-bg-white/[0.05]
-backdrop-blur-[20px]
-border-white/20
-text-mora-400
-hover:bg-mora-500/20
-active:scale-90
-transition-all
-"
+  onClick={() => {
+    setIsOpen(false);   // ✅ IMPORTANT (menu close)
+    navigate("/ask-apives"); // ✅ FIX NAV
+  }}
+  className="
+  md:hidden
+  w-7 h-7 md:w-10 md:h-10
+  flex items-center justify-center
+  rounded-full
+  border
+  bg-white/[0.05]
+  backdrop-blur-[20px]
+  border-white/20
+  text-white   /* ✅ WHITE ICON */
+  hover:bg-white/[0.1]
+  active:scale-90
+  transition-all
+  "
 >
-  <Bot size={14} className="md:w-5 md:h-5" />
+  <Bot size={15} className="md:w-5 md:h-5" />
 </button>
 
 
@@ -215,7 +218,14 @@ transition-all
 <MobileNavLink to="/sponsorship" icon={Handshake} onClick={() => setIsOpen(false)}>
   Sponsorship
 </MobileNavLink>
-<MobileNavLink to="/ask-apives" icon={Bot} onClick={() => setIsOpen(false)}>
+<MobileNavLink
+  to="/ask-apives"
+  icon={Bot}
+  onClick={() => {
+    setIsOpen(false);
+    navigate("/ask-apives"); // ✅ FIX NAV
+  }}
+>
   ApivesAI
 </MobileNavLink>
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
