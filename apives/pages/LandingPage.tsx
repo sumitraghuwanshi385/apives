@@ -202,11 +202,11 @@ const OfferSlider = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate("/offers/serpapi")}
-                  className="relative text-[10px] px-4 py-1.5 rounded-full bg-white text-black font-bold uppercase"
-                >
-                  Claim
-                </button>
+  onClick={() => navigate("/offers/serpapi")}
+  className="relative text-[10px] px-4 py-1.5 rounded-full bg-white text-black font-bold uppercase"
+>
+  Claim
+</button>
 
               </div>
             </div>
@@ -250,7 +250,7 @@ const OfferSlider = () => {
 
                   <div>
                     <p className="text-mora-400 text-[12px] font-bold">
-                      Apives AI
+                      ApivesAI
                     </p>
                     <p className="text-[10px] text-slate-400">
                       The API Intelligence You Deserve
