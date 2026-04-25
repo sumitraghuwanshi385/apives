@@ -9,7 +9,7 @@ import {
   Image as ImageIcon, Clock, Database, AlignLeft,
   Code, ArrowRight, Zap, Wifi, Calendar,
   Trophy, DollarSign, X, FileJson, ListFilter,
-  TextQuote, Gauge, ShieldAlert, Key, Info,Share2, Sparkles
+  TextQuote, Gauge, ShieldAlert, Key, Info,Share2, Bot
 } from 'lucide-react';
 import { Skeleton } from '../components/Skeleton';
 import { BackButton } from '../components/BackButton';
@@ -293,38 +293,53 @@ if (!api) {
 {/* 🤖 RIGHT - ASK AI BUTTON */}
 <div className="absolute top-16 md:top-24 right-4 lg:right-8 z-30">
   <button
-    onClick={() => {
-      if (!api?.name || !id) return;
+  onClick={() => {
+    if (!api?.name || !id) return;
 
-      navigate(
-        `/ask-apives-ai?apiId=${id}&apiName=${encodeURIComponent(api.name)}`
-      );
-    }}
-    className="
-      flex items-center gap-2
+    navigate(
+      `/ask-apives-ai?apiId=${id}&apiName=${encodeURIComponent(api.name)}`
+    );
+  }}
+  className="
+    group
+    relative
+    flex items-center gap-2
 
-      px-4 md:px-5 py-2
+    px-4 md:px-5 py-2
 
-      rounded-full
-      text-[10px] md:text-xs
-      font-black uppercase tracking-widest
+    rounded-full
+    text-[10px] md:text-xs
+    font-black uppercase tracking-widest
 
-      bg-white/5
-      backdrop-blur-md
-      border border-white/10
-      text-slate-300
+    bg-gradient-to-r from-mora-500/10 via-mora-500/5 to-transparent
+    backdrop-blur-xl
 
-      hover:bg-white/10
-      hover:text-white
-      hover:border-mora-500/40
+    border border-mora-500/30
+    text-white
 
-      transition-all
-      active:scale-95
-    "
-  >
-    <Sparkles size={14} className="text-mora-400" />
-    Ask Apives AI
-  </button>
+    shadow-[0_0_20px_rgba(34,197,94,0.15)]
+
+    hover:shadow-[0_0_25px_rgba(34,197,94,0.35)]
+    hover:border-mora-500/60
+    hover:bg-mora-500/10
+
+    transition-all
+    active:scale-95
+  "
+>
+  {/* 🔥 Glow dot */}
+  <span className="w-1.5 h-1.5 rounded-full bg-mora-400 shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+
+  {/* 🤖 Bot Icon */}
+  <Bot
+    size={14}
+    className="text-mora-400 group-hover:scale-110 transition-transform"
+  />
+
+  <span className="tracking-[0.15em]">
+    AskApivesAI
+  </span>
+</button>
 </div>
 
     <div className="relative border-b border-white/5 pt-10 pb-4 md:pt-16 md:pb-6">
