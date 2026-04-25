@@ -1,3 +1,4 @@
+
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
@@ -32,7 +33,6 @@ import AnimatedOrb from "../components/ai/AnimatedOrb";
 const API_BASE = "https://apives-3xrc.onrender.com";
 
 // ─── Global Styles ────────────────────────────────────────────────────────────
-// UNCHANGED from original
 const GLOBAL_STYLES = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
@@ -220,7 +220,7 @@ const GLOBAL_STYLES = `
     box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.07);
   }
 
-  /* ── FIX 1: "Your Selected API" label above pill ── */
+  /* ── "Your Selected API" label above pill ── */
   @keyframes selectedPillIn {
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -228,10 +228,26 @@ const GLOBAL_STYLES = `
   .selected-api-label {
     animation: selectedPillIn 0.35s ease forwards;
   }
+
+  /* ── API remove close button ── */
+  .api-remove-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.35);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+  .api-remove-btn:hover {
+    background: rgba(239,68,68,0.30);
+    border-color: rgba(239,68,68,0.60);
+    transform: scale(1.1);
+  }
 `;
 
 // ─── Strip markdown helper ─────────────────────────────────────────────────────
-// UNCHANGED
 function stripMarkdown(text: string): string {
   return text
     .replace(/#{1,6}\s/g, "")
@@ -249,8 +265,7 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-// ─── FIX 3: Smart intent detection ───────────────────────────────────────────
-// Returns true if message is API-related (should show breakdown)
+// ─── Smart intent detection ───────────────────────────────────────────────────
 function isApiRelatedQuery(text: string): boolean {
   const normalized = text.toLowerCase();
   const apiKeywords = [
@@ -265,7 +280,6 @@ function isApiRelatedQuery(text: string): boolean {
 }
 
 // ─── Robot TypingIndicator ─────────────────────────────────────────────────────
-// UNCHANGED
 const TypingIndicator = () => (
   <div style={{
     display: "flex", alignItems: "center", gap: "10px",
@@ -337,7 +351,6 @@ const TypingIndicator = () => (
 );
 
 // ─── CopyButton ───────────────────────────────────────────────────────────────
-// UNCHANGED
 const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) => {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -356,7 +369,6 @@ const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) 
 };
 
 // ─── MessagePill ──────────────────────────────────────────────────────────────
-// UNCHANGED
 const MessagePill = ({
   role, content, onRegenerate,
 }: {
@@ -410,7 +422,7 @@ const MessagePill = ({
   );
 };
 
-// ─── FIX 3: ApiNamePill — UNCHANGED, no modifications ─────────────────────────
+// ─── ApiNamePill ──────────────────────────────────────────────────────────────
 const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   <div className="api-name-pill">
     <div style={{
@@ -436,7 +448,7 @@ const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   </div>
 );
 
-// ─── FIX 4: MicButton — FIXED: continuous mode + proper transcript append ─────
+// ─── MicButton ────────────────────────────────────────────────────────────────
 const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -450,29 +462,24 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
       return;
     }
 
-    // If already listening — stop
     if (listening) {
       try { recognitionRef.current?.stop(); } catch {}
       setListening(false);
       return;
     }
 
-    // Create fresh instance each time (avoids stale state bugs)
     const rec = new SpeechRecognition();
     rec.lang = "en-US";
-    rec.continuous = false;       // single utterance — cleaner UX
-    rec.interimResults = false;   // only final results
+    rec.continuous = false;
+    rec.interimResults = false;
     rec.maxAlternatives = 1;
 
-    rec.onstart = () => {
-      setListening(true);
-    };
+    rec.onstart = () => { setListening(true); };
 
     rec.onresult = (e: any) => {
       try {
         const transcript = e.results[0][0].transcript;
         if (transcript && transcript.trim()) {
-          // FIX 4: append transcript — works correctly
           onTranscript(transcript.trim());
         }
       } catch (err) {
@@ -485,9 +492,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
       setListening(false);
     };
 
-    rec.onend = () => {
-      setListening(false);
-    };
+    rec.onend = () => { setListening(false); };
 
     recognitionRef.current = rec;
 
@@ -518,7 +523,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
   );
 };
 
-// ─── ClaudeInput — UNCHANGED except MicButton onTranscript fix ───────────────
+// ─── ClaudeInput ──────────────────────────────────────────────────────────────
 const ClaudeInput = ({
   value, onChange, onSend, disabled, placeholder,
 }: {
@@ -562,7 +567,6 @@ const ClaudeInput = ({
         }}
       />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
-        {/* FIX 4: transcript appended correctly with space */}
         <MicButton
           onTranscript={(t) => onChange((value.trim() ? value.trim() + " " : "") + t)}
           disabled={disabled}
@@ -595,7 +599,7 @@ const AskApivesPage = () => {
   const apiId   = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
-  // UNCHANGED auth logic
+  // ── Auth helpers ──────────────────────────────────────────────────────────
   const isValidUser = (): boolean => {
     try {
       const data = localStorage.getItem("mora_user");
@@ -613,131 +617,140 @@ const AskApivesPage = () => {
 
   const requireLogin = (): boolean => {
     const valid = isValidUser();
-    if (!valid) {
-      redirectToAccess();
-      return false;
-    }
+    if (!valid) { redirectToAccess(); return false; }
     return true;
   };
 
-  const [apiData, setApiData] = useState<any>(null);
-  const [input, setInput] = useState("");
-  const [chat, setChat] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
-  const [loading, setLoading] = useState(false);
+  // ── State ─────────────────────────────────────────────────────────────────
+  const [apiData, setApiData]               = useState<any>(null);
+  const [input, setInput]                   = useState("");
+  const [chat, setChat]                     = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [loading, setLoading]               = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+
+  // ── FIX 1: unique chatId per session ─────────────────────────────────────
+  const [chatId, setChatId] = useState(() => Date.now().toString());
+
+  // ── FIX 3: API active control ─────────────────────────────────────────────
+  const [isApiActive, setIsApiActive] = useState(true);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Hide global layout — UNCHANGED
+  // ── Hide global layout ────────────────────────────────────────────────────
   useEffect(() => {
-    const nav = document.querySelector("nav") as HTMLElement | null;
+    const nav    = document.querySelector("nav")    as HTMLElement | null;
     const header = document.querySelector("header") as HTMLElement | null;
     const footer = document.querySelector("footer") as HTMLElement | null;
-    if (nav) nav.style.display = "none";
+    if (nav)    nav.style.display    = "none";
     if (header) header.style.display = "none";
     if (footer) footer.style.display = "none";
     return () => {
-      if (nav) nav.style.display = "";
+      if (nav)    nav.style.display    = "";
       if (header) header.style.display = "";
       if (footer) footer.style.display = "";
     };
   }, []);
 
-  
-const prevApiRef = useRef<string | null>(null);
+  // ── Load API data + latest chat on apiId change ───────────────────────────
+  const prevApiRef = useRef<string | null>(null);
 
-useEffect(() => {
-  if (!apiId) return;
+  useEffect(() => {
+    if (!apiId) return;
 
-  const isNewApi = prevApiRef.current !== apiId;
-  prevApiRef.current = apiId;
+    const isNewApi = prevApiRef.current !== apiId;
+    prevApiRef.current = apiId;
 
-  // 🧼 reset only necessary state
-  setApiData(null);
-  setInput("");
+    setApiData(null);
+    setInput("");
 
-  // 🔄 reset chat only when API actually changes
-  if (isNewApi) {
-    setChat([]);
-  }
+    // ── FIX 4: restore API mode when navigating back ──────────────────────
+    setIsApiActive(true);
 
-  
-  try {
-    const saved = localStorage.getItem(`apives_chat_${apiId}`);
-
-    if (saved) {
-      const parsed = JSON.parse(saved);
-
-      if (Array.isArray(parsed)) {
-        setChat(parsed);
-      } else {
-        localStorage.removeItem(`apives_chat_${apiId}`);
-      }
+    if (isNewApi) {
+      // Generate a fresh chatId for the new API session
+      const newSessionId = Date.now().toString();
+      setChatId(newSessionId);
+      setChat([]);
     }
-  } catch (err) {
-    console.error("History load failed:", err);
-  }
 
-  axios
-    .get(`${API_BASE}/api/apis/${apiId}`)
-    .then((res) => {
-      const api = res.data?.data || res.data;
-
-      if (api && typeof api === "object") {
-        setApiData(api);
-      } else {
-        console.error("Invalid API response:", res.data);
-      }
-    })
-    .catch((err) => {
-      console.error("API fetch failed:", err);
-    });
-
-}, [apiId]);
-
-
-useEffect(() => {
-  if (!apiId || chat.length === 0) return;
-
-  try {
-    // save full chat
-    localStorage.setItem(
-      `apives_chat_${apiId}`,
-      JSON.stringify(chat)
-    );
-
-    // save title (first user message)
-    const firstUser = chat.find((m) => m.role === "user");
-
-    if (firstUser) {
-      localStorage.setItem(
-        `apives_chat_title_${apiId}`,
-        firstUser.content.slice(0, 60)
+    // ── FIX 1: load LATEST chat for this apiId ────────────────────────────
+    try {
+      const keys = Object.keys(localStorage).filter((k) =>
+        k.startsWith(`apives_chat_${apiId}_`)
       );
+
+      if (keys.length > 0) {
+        const latestKey = keys.sort().reverse()[0];
+        const saved = localStorage.getItem(latestKey);
+
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setChat(parsed);
+            // Restore chatId from key so saves continue on same session
+            const restoredId = latestKey.replace(`apives_chat_${apiId}_`, "");
+            setChatId(restoredId);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("History load failed:", err);
     }
-  } catch (err) {
-    console.error("Chat save failed:", err);
-  }
-}, [chat, apiId]);
 
+    axios
+      .get(`${API_BASE}/api/apis/${apiId}`)
+      .then((res) => {
+        const api = res.data?.data || res.data;
+        if (api && typeof api === "object") {
+          setApiData(api);
+        } else {
+          console.error("Invalid API response:", res.data);
+        }
+      })
+      .catch((err) => {
+        console.error("API fetch failed:", err);
+      });
 
-useEffect(() => {
-  const el = scrollRef.current;
-  if (!el) return;
+  }, [apiId]);
 
-  const isNearBottom =
-    el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+  // ── FIX 1: save chat using unique key apives_chat_{apiId}_{chatId} ────────
+  useEffect(() => {
+    if (!apiId || chat.length === 0) return;
 
-  if (isNearBottom) {
-    requestAnimationFrame(() => {
-      el.scrollTop = el.scrollHeight;
-    });
-  }
-}, [chat, loading]);
+    try {
+      // Save full chat under unique key
+      localStorage.setItem(
+        `apives_chat_${apiId}_${chatId}`,
+        JSON.stringify(chat)
+      );
 
+      // Save title (first user message)
+      const firstUser = chat.find((m) => m.role === "user");
+      if (firstUser) {
+        localStorage.setItem(
+          `apives_chat_title_${apiId}_${chatId}`,
+          firstUser.content.slice(0, 60)
+        );
+      }
+    } catch (err) {
+      console.error("Chat save failed:", err);
+    }
+  }, [chat, apiId, chatId]);
 
+  // ── Auto-scroll ───────────────────────────────────────────────────────────
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+    if (isNearBottom) {
+      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+    }
+  }, [chat, loading]);
+
+  // ── Send message ──────────────────────────────────────────────────────────
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text) return;
@@ -747,15 +760,17 @@ useEffect(() => {
     setInput("");
     setLoading(true);
 
-
     const isApiQuery = isApiRelatedQuery(text);
-const apiContext = apiData
-  ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
-  : "The user is asking about APIs in general.";
 
-    // FIX 2 + FIX 3: smart system prompt — always names the selected API
+    // ── FIX 5: conditional API context injection ──────────────────────────
+    const useApiMode = apiData && isApiActive;
 
-const systemPrompt = `
+    const apiContext = useApiMode
+      ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
+      : "The user is asking about APIs in general.";
+
+    const systemPrompt = useApiMode
+      ? `
 You are Apives AI.
 
 You are helping a developer.
@@ -770,37 +785,37 @@ Rules:
 IMPORTANT:
 The user has selected an API.
 
-${
-  apiData
-    ? `Selected API: "${apiData.name}"
+Selected API: "${apiData.name}"
 Description: ${apiData.description || "N/A"}
 Category: ${apiData.category || "N/A"}
 
 You MUST ALWAYS answer based on this API.
 Never say "unknown API".
 Never ignore this API.
-`
-    : "User is asking generally about APIs."
-}
 
 STYLE:
 - Talk like real developer
 - No documentation style
 - No headings like Usage, Parameters
 - Explain naturally
+`
+      : `
+You are Apives AI, an intelligent assistant helping developers understand and work with APIs.
+
+Rules:
+- Answer naturally in a conversational, developer-friendly way
+- No rigid documentation-style structure
+- Be practical and direct
+- Use code examples inline when helpful
 `;
 
+    const messagesWithSystem: { role: string; content: string }[] = [
+      { role: "system", content: systemPrompt },
 
-    // Always inject full apiData as a second system message so AI has complete context
-    const messagesWithSystem = [
-  {
-    role: "system",
-    content: systemPrompt
-  },
-
-  ...(apiData ? [{
-    role: "system",
-    content: `You MUST use this API for all answers.
+      // Only inject API JSON context when API mode is active
+      ...(useApiMode ? [{
+        role: "system",
+        content: `You MUST use this API for all answers.
 
 Selected API JSON:
 ${JSON.stringify({
@@ -808,26 +823,24 @@ ${JSON.stringify({
   category: apiData?.category,
   description: apiData?.description?.slice(0, 300)
 })}
-  
 
 Rules:
 - This API is ALWAYS defined
 - Never say unknown API
 - Always use this API name: ${apiData.name}
 - Every answer must relate to this API
-`
-  }] : []),
+`,
+      }] : []),
 
-  ...newChat
-];
+      ...newChat,
+    ];
 
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
         messages: messagesWithSystem,
-        apiData: apiData || null,
+        apiData: useApiMode ? apiData : null,
       });
 
-      // FIX 2: always check res.data.answer exists
       const answer = res.data?.answer;
       if (answer && typeof answer === "string" && answer.trim()) {
         setChat((prev) => [...prev, { role: "assistant", content: answer }]);
@@ -837,7 +850,6 @@ Rules:
     } catch (primaryErr) {
       console.error("[AskApives] Primary AI failed:", primaryErr);
 
-      // FIX 2: fallback to gemini
       try {
         const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", {
           prompt: text,
@@ -850,7 +862,6 @@ Rules:
         }
       } catch (fallbackErr) {
         console.error("[AskApives] Gemini fallback failed:", fallbackErr);
-        // FIX 2: always show something — never silent failure
         setChat((prev) => [
           ...prev,
           {
@@ -864,13 +875,15 @@ Rules:
     }
   };
 
-  // New Chat — UNCHANGED
+  // ── FIX 1: New chat — generates fresh chatId ──────────────────────────────
   const startNewChat = () => {
+    const newId = Date.now().toString();
+    setChatId(newId);
     setChat([]);
     setInput("");
   };
 
-  // Regenerate last AI response — UNCHANGED
+  // ── Regenerate last AI response ───────────────────────────────────────────
   const regenerateLast = () => {
     const lastUserMsg = [...chat].reverse().find((m) => m.role === "user");
     if (!lastUserMsg) return;
@@ -883,21 +896,30 @@ Rules:
     sendMessage(lastUserMsg.content);
   };
 
+  // ── FIX 3: Remove selected API handler ───────────────────────────────────
+  const removeSelectedApi = () => {
+    setApiData(null);
+    setIsApiActive(false);
+  };
+
+  // ── Derived values ────────────────────────────────────────────────────────
   const displayName =
-  apiData?.name ||
-  apiData?.title ||
-  apiData?.apiName ||
-  apiName ||
-  null;
-  const inputPlaceholder = displayName
+    apiData?.name ||
+    apiData?.title ||
+    apiData?.apiName ||
+    apiName ||
+    null;
+
+  const inputPlaceholder = displayName && isApiActive
     ? `Ask anything about ${displayName}...`
     : "Ask anything about any API...";
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
 
-      {/* Modals — UNCHANGED */}
+      {/* Modals */}
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
@@ -912,17 +934,18 @@ Rules:
         />
       )}
 
+      {/* ── FIX 2: Main container — removed keyboard-inset-height black gap ── */}
       <div
         className="page-in"
         style={{
           display: "flex", flexDirection: "column",
           height: "100dvh", minHeight: "100dvh", overflow: "hidden",
-          paddingBottom: "env(keyboard-inset-height, 0px)",
+          paddingBottom: "0px",
           background: "#060D0A", color: "white",
           fontFamily: "inherit", position: "relative",
         }}
       >
-        {/* Ambient dot grid — UNCHANGED */}
+        {/* Ambient dot grid */}
         <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
           <div style={{
             position: "absolute", inset: 0, opacity: 0.016,
@@ -931,7 +954,7 @@ Rules:
           }} />
         </div>
 
-        {/* ── HEADER — UNCHANGED ── */}
+        {/* ── HEADER ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -1012,7 +1035,7 @@ Rules:
           </div>
         </div>
 
-        {/* ── CHAT AREA ── */}
+        {/* ── FIX 2: CHAT AREA — paddingBottom fixed to 140px ── */}
         <div
           ref={scrollRef}
           className="chat-scroll"
@@ -1020,7 +1043,7 @@ Rules:
             position: "relative", zIndex: 10,
             flex: 1, overflowY: "auto",
             WebkitOverflowScrolling: "touch" as any,
-            paddingTop: "12px", paddingBottom: "120px",
+            paddingTop: "12px", paddingBottom: "140px",
             minHeight: 0,
           }}
         >
@@ -1055,8 +1078,8 @@ Rules:
                 Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
-              {/* ── FIX 1: "Your Selected API" label — added ABOVE existing pill ── */}
-              {displayName && (
+              {/* ── FIX 3: Show "Your Selected API" label + pill ONLY when apiData && isApiActive ── */}
+              {displayName && isApiActive && (
                 <div
                   className="selected-api-label"
                   style={{
@@ -1080,17 +1103,25 @@ Rules:
                 </div>
               )}
 
-              {/* EXISTING API name pill — UNTOUCHED */}
-              {displayName && (
-                <div style={{ marginBottom: "8px" }}>
+              {/* ── FIX 3: API name pill with ❌ remove button ── */}
+              {displayName && isApiActive && (
+                <div style={{ marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px" }}>
                   <ApiNamePill
                     name={displayName}
                     iconUrl={apiData?.logo || apiData?.icon || undefined}
                   />
+                  {/* ❌ Remove API button */}
+                  <button
+                    className="api-remove-btn"
+                    onClick={removeSelectedApi}
+                    title="Remove selected API"
+                  >
+                    <X size={10} color="rgba(239,68,68,0.80)" />
+                  </button>
                 </div>
               )}
 
-              {displayName && (
+              {displayName && isApiActive && (
                 <p style={{
                   fontSize: "11px", color: "rgba(255,255,255,0.22)",
                   marginBottom: "12px",
@@ -1099,18 +1130,18 @@ Rules:
                 </p>
               )}
 
-              
-
-              {/* Suggested Prompts — UNCHANGED */}
-              <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}>
-                <SuggestedPrompts
-                  onClick={(text: string) => { sendMessage(text); }}
-                />
-              </div>
+              {/* ── FIX 3: SuggestedPrompts shown ONLY when apiData && isApiActive ── */}
+              {apiData && isApiActive && (
+                <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}>
+                  <SuggestedPrompts
+                    onClick={(text: string) => { sendMessage(text); }}
+                  />
+                </div>
+              )}
             </div>
           )}
 
-          {/* Messages — UNCHANGED */}
+          {/* Messages */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "0 12px" }}>
             {chat.map((msg, i) => {
               const isLastAssistant = msg.role === "assistant" && i === chat.length - 1;
@@ -1133,15 +1164,13 @@ Rules:
           <div ref={bottomRef} style={{ height: "8px" }} />
         </div>
 
-        {/* ── INPUT AREA — UNCHANGED ── */}
+        {/* ── FIX 2: INPUT AREA — paddingBottom uses safe-area-inset only, no keyboard gap ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           padding: "8px 16px",
-          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          paddingBottom: "max(12px, env(safe-area-inset-bottom))",
           background: "rgba(6,13,10,0.97)",
         }}>
-
-
           <ClaudeInput
             value={input}
             onChange={setInput}
@@ -1160,8 +1189,5 @@ Rules:
     </>
   );
 };
-
-// ─── UpgradedApiBreakdown ──────────────────────────────────────────────────────
-
 
 export default AskApivesPage;
