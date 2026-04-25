@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import AnimatedRobot from "../components/ai/AnimatedRobot"; // 👈 apna robot component
+import AnimatedOrb from "../components/ai/AnimatedOrb";
 
 export const ApivesAIHighlight = () => {
   const navigate = useNavigate();
