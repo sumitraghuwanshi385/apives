@@ -645,28 +645,43 @@ const AskApivesPage = () => {
 
   // Combined effect: reset state + reload chat + fetch API data when apiId changes
   useEffect(() => {
-    // Always reset to a clean slate when the selected API changes
-    setChat([]);
-    setApiData(null);
-    setInput("");
+  setChat([]);
+  setApiData(null);
+  setInput("");
 
-    if (!apiId) return;
+  if (!apiId) return;
 
-    // Load persisted chat for this specific API
-    try {
-      const saved = localStorage.getItem(`apives_chat_${apiId}`);
-      if (saved) {
+  // ✅ FIXED LOCAL STORAGE LOAD
   try {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed)) {
-      setChat(parsed);
-    } else {
-      localStorage.removeItem(`apives_chat_${apiId}`);
+    const saved = localStorage.getItem(`apives_chat_${apiId}`);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setChat(parsed);
+        } else {
+          localStorage.removeItem(`apives_chat_${apiId}`);
+        }
+      } catch {
+        localStorage.removeItem(`apives_chat_${apiId}`);
+      }
     }
-  } catch {
-    localStorage.removeItem(`apives_chat_${apiId}`);
+  } catch (err) {
+    console.error("❌ History load error:", err);
   }
-}
+
+  // ✅ FETCH API
+  axios.get(`/api/apis/${apiId}`)
+    .then((res) => {
+      if (res.data) {
+        setApiData(res.data);
+      }
+    })
+    .catch((err) => {
+      console.error("❌ API load error:", err);
+    });
+
+}, [apiId]);
 
     // Fetch full API data so AI always has it in context
     axios.get(`/api/apis/${apiId}`)
