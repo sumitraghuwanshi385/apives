@@ -645,7 +645,9 @@ const AskApivesPage = () => {
     };
   }, []);
 
-  // Combined effect: reset state + reload chat + fetch API data when apiId changes
+  // ─────────────────────────────────────────────
+// 🔁 API SWITCH + HISTORY + DATA LOAD
+// ─────────────────────────────────────────────
 const prevApiRef = useRef<string | null>(null);
 
 useEffect(() => {
@@ -654,73 +656,69 @@ useEffect(() => {
   const isNewApi = prevApiRef.current !== apiId;
   prevApiRef.current = apiId;
 
-  // ❌ REMOVE hard reset (ye hi tera main bug tha)
-  // setChat([]);
-
+  // 🧼 reset only necessary state
   setApiData(null);
   setInput("");
 
-  // ✅ Only reset chat when API actually changes
+  // 🔄 reset chat only when API actually changes
   if (isNewApi) {
     setChat([]);
   }
 
-  // =========================
-  // ✅ LOAD HISTORY (SAFE)
-  // =========================
+  // ─────────────────────────────
+  // 💾 LOAD CHAT HISTORY
+  // ─────────────────────────────
   try {
     const saved = localStorage.getItem(`apives_chat_${apiId}`);
 
     if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
 
-        if (Array.isArray(parsed)) {
-          setChat(parsed);
-        } else {
-          localStorage.removeItem(`apives_chat_${apiId}`);
-        }
-      } catch {
+      if (Array.isArray(parsed)) {
+        setChat(parsed);
+      } else {
         localStorage.removeItem(`apives_chat_${apiId}`);
       }
     }
   } catch (err) {
-    console.error("❌ History load error:", err);
+    console.error("History load failed:", err);
   }
 
-  // =========================
-  // ✅ FETCH API
-  // =========================
-  axios.get(`${API_BASE}/api/apis/${apiId}`)
+  // ─────────────────────────────
+  // 🌐 FETCH API DATA
+  // ─────────────────────────────
+  axios
+    .get(`${API_BASE}/api/apis/${apiId}`)
     .then((res) => {
-      console.log("FULL API RESPONSE:", res.data);
-
       const api = res.data?.data || res.data;
 
       if (api && typeof api === "object") {
         setApiData(api);
       } else {
-        console.error("❌ Not JSON:", res.data);
-        setDebugInfo("❌ Invalid API response (HTML aaya hai)");
+        console.error("Invalid API response:", res.data);
       }
     })
     .catch((err) => {
-      console.error("❌ API ERROR:", err);
-      setDebugInfo("❌ API load failed");
+      console.error("API fetch failed:", err);
     });
 
 }, [apiId]);
 
 
-// =========================
-// ✅ Persist chat — SAFE
-// =========================
+// ─────────────────────────────────────────────
+// 💾 SAVE CHAT (AUTO PERSIST)
+// ─────────────────────────────────────────────
 useEffect(() => {
-  if (!apiId || !chat.length) return;
+  if (!apiId || chat.length === 0) return;
 
   try {
-    localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
+    // save full chat
+    localStorage.setItem(
+      `apives_chat_${apiId}`,
+      JSON.stringify(chat)
+    );
 
+    // save title (first user message)
     const firstUser = chat.find((m) => m.role === "user");
 
     if (firstUser) {
@@ -729,25 +727,23 @@ useEffect(() => {
         firstUser.content.slice(0, 60)
       );
     }
-
   } catch (err) {
-    console.error("❌ Chat save failed:", err);
+    console.error("Chat save failed:", err);
   }
-
 }, [chat, apiId]);
 
 
-// =========================
-// ✅ Auto scroll — CLEAN
-// =========================
+// ─────────────────────────────────────────────
+// 📜 AUTO SCROLL (SMART)
+// ─────────────────────────────────────────────
 useEffect(() => {
   const el = scrollRef.current;
   if (!el) return;
 
-  const nearBottom =
+  const isNearBottom =
     el.scrollHeight - el.scrollTop - el.clientHeight < 100;
 
-  if (nearBottom) {
+  if (isNearBottom) {
     requestAnimationFrame(() => {
       el.scrollTop = el.scrollHeight;
     });
@@ -1156,7 +1152,7 @@ Rules:
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           padding: "8px 16px",
-          paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
           background: "rgba(6,13,10,0.97)",
         }}>
 
