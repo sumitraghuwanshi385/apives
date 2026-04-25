@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -96,6 +96,9 @@ return (
         <NavLink to="/sponsorship" icon={Handshake}>
   For Sponsorship
 </NavLink>   
+<NavLink to="/ask-apives" icon={Bot}>
+  ApivesAI
+</NavLink>
       </div>    
     </div>    
 
@@ -144,9 +147,9 @@ return (
         </Link>    
       )}
 
-{/* 🤝 Mobile Sponsorship Icon */}
+{/* 🤖 Mobile Apives AI Icon */}
 <button
-onClick={() => navigate('/sponsorship')}
+onClick={() => navigate('/ask-apives')}
 className="
 md:hidden
 w-7 h-7 md:w-10 md:h-10
@@ -156,13 +159,13 @@ border
 bg-white/[0.05]
 backdrop-blur-[20px]
 border-white/20
-text-slate-300
-hover:bg-white/[0.1]
+text-mora-400
+hover:bg-mora-500/20
 active:scale-90
 transition-all
 "
 >
-<Handshake size={14} className="md:w-5 md:h-5" />
+  <Bot size={14} className="md:w-5 md:h-5" />
 </button>
 
 
@@ -211,6 +214,9 @@ transition-all
       <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
 <MobileNavLink to="/sponsorship" icon={Handshake} onClick={() => setIsOpen(false)}>
   Sponsorship
+</MobileNavLink>
+<MobileNavLink to="/ask-apives" icon={Bot} onClick={() => setIsOpen(false)}>
+  ApivesAI
 </MobileNavLink>
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
