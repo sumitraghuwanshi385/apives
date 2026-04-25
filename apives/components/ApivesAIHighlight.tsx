@@ -66,7 +66,7 @@ export const ApivesAIHighlight = () => {
 
             {/* ✅ LOGO REPLACED */}
             <img
-              src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+              src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
               alt="Apives AI"
               className="h-5 md:h-6 object-contain"
             />
