@@ -652,64 +652,27 @@ const [debugInfo, setDebugInfo] = useState<string>("");
 
   if (!apiId) return;
 
-  // ✅ FIXED LOCAL STORAGE LOAD
   try {
     const saved = localStorage.getItem(`apives_chat_${apiId}`);
     if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setChat(parsed);
-        } else {
-          localStorage.removeItem(`apives_chat_${apiId}`);
-        }
-      } catch {
-        localStorage.removeItem(`apives_chat_${apiId}`);
-      }
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) setChat(parsed);
     }
-  } catch (err) {
-    console.error("❌ History load error:", err);
-  }
+  } catch {}
 
-  // ✅ FETCH API
   axios.get(`/api/apis/${apiId}`)
-  .then((res) => {
-    if (res.data) {
-      setApiData(res.data);
-      setDebugInfo("✅ API Loaded: " + (res.data.name || "NO NAME"));
-    } else {
-      setDebugInfo("❌ API empty response");
-    }
-  })
-  .catch((err) => {
-    setDebugInfo("❌ API load failed");
-  });
+    .then((res) => {
+      if (res.data) {
+        console.log("✅ API LOADED:", res.data);
+        setApiData(res.data);
+      }
+    })
+    .catch((err) => {
+      console.error("❌ API load error:", err);
+    });
 
 }, [apiId]);
 
-    
-  // Persist chat — UNCHANGED
-  useEffect(() => {
-  if (!apiId) return;
-
-  try {
-    // SAVE CHAT
-    localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
-
-    // SAVE TITLE
-    const firstUser = chat.find((m) => m.role === "user");
-    if (firstUser) {
-      localStorage.setItem(
-        `apives_chat_title_${apiId}`,
-        firstUser.content.slice(0, 60)
-      );
-    }
-
-  } catch (err) {
-    console.error("❌ Chat save failed:", err);
-  }
-
-}, [chat, apiId]);
 
   // Auto scroll — UNCHANGED
   useEffect(() => {
