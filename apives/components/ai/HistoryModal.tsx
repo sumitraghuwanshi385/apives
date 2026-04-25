@@ -145,18 +145,30 @@ const HistoryModal = ({
                 </button>
               )}
 
+              
+              {/* ✅ FIXED CLOSE BUTTON */}
               <button
-                onClick={() => {
-                  setSelectMode(false);
-                  setSelected([]);
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  if (selectMode) {
+                    setSelectMode(false);
+                    setSelected([]);
+                  } else {
+                    onClose();
+                  }
                 }}
                 style={{
-                  width: "32px",
-                  height: "32px",
+                  width: "34px",
+                  height: "34px",
                   borderRadius: "50%",
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(12px)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  cursor: "pointer",
                 }}
               >
                 <X size={14} color="white" />
