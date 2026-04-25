@@ -113,7 +113,6 @@ const OfferSlider = () => {
   const [currentX, setCurrentX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
-  // 🔁 AUTO SLIDE (7 sec)
   useEffect(() => {
     const t = setInterval(() => {
       setIndex((prev) => (prev + 1) % 2);
@@ -141,7 +140,7 @@ const OfferSlider = () => {
   };
 
   return (
-    <section className="relative py-5 bg-black">
+    <section className="relative pt-3 pb-2 bg-black">
 
       <div className="flex justify-center px-4">
 
@@ -160,33 +159,44 @@ const OfferSlider = () => {
             {/* ================= SERPAPI ================= */}
             <div className="w-full flex-shrink-0 px-1">
               <div className="
+                relative
                 w-full flex items-center justify-between
-                px-4 py-3
+                px-5 py-4
                 rounded-xl
                 border border-green-500/30
                 bg-green-500/10
                 backdrop-blur-md
+                overflow-hidden
               ">
 
-                <div className="flex items-center gap-2">
+                {/* GREEN GLOW */}
+                <div className="
+                  absolute inset-0
+                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.25),transparent_65%)]
+                " />
+
+                <div className="relative flex items-center gap-2">
 
                   <img
                     src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-                    className="w-6 h-6 rounded-md bg-white p-[2px]"
+                    className="w-7 h-7 rounded-md bg-white p-[2px]"
                   />
 
                   <span className="text-slate-500 text-[10px] font-bold">×</span>
 
                   <img
                     src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-                    className="w-6 h-6 object-contain"
+                    className="
+                      w-7 h-7 object-contain
+                      animate-pulse
+                    "
                   />
 
                   <div>
-                    <p className="text-green-400 text-[11px] font-bold">
+                    <p className="text-green-400 text-[12px] font-bold">
                       500 Free SerpAPI Credits
                     </p>
-                    <p className="text-[9px] text-slate-400">
+                    <p className="text-[10px] text-slate-400">
                       Limited builder access
                     </p>
                   </div>
@@ -195,7 +205,7 @@ const OfferSlider = () => {
 
                 <button
                   onClick={() => navigate("/offers/serpapi")}
-                  className="text-[10px] px-3 py-1 rounded-full bg-white text-black font-bold uppercase"
+                  className="relative text-[10px] px-4 py-1.5 rounded-full bg-white text-black font-bold uppercase"
                 >
                   Claim
                 </button>
@@ -208,7 +218,7 @@ const OfferSlider = () => {
               <div className="
                 relative
                 w-full flex items-center justify-between
-                px-4 py-3
+                px-5 py-4
                 rounded-xl
                 border border-mora-500/30
                 bg-mora-500/10
@@ -216,26 +226,35 @@ const OfferSlider = () => {
                 overflow-hidden
               ">
 
-                {/* 🟢 GREEN GLOW EFFECT */}
+                {/* GREEN AI GLOW */}
                 <div className="
                   absolute inset-0
-                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.25),transparent_60%)]
-                  opacity-70
+                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.3),transparent_65%)]
                 " />
 
                 <div className="relative flex items-center gap-2">
 
-                  {/* ✅ NEW AI LOGO */}
-                  <img
-                    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-                    className="w-7 h-7 object-contain"
-                  />
+                  {/* 🤖 ROBOTIC LOGO EFFECT */}
+                  <div className="relative">
+                    <img
+                      src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
+                      className="w-8 h-8 object-contain"
+                    />
+
+                    {/* glow ring */}
+                    <div className="
+                      absolute inset-0
+                      rounded-full
+                      border border-green-400/40
+                      animate-ping
+                    " />
+                  </div>
 
                   <div>
-                    <p className="text-mora-400 text-[11px] font-bold">
+                    <p className="text-mora-400 text-[12px] font-bold">
                       Apives AI
                     </p>
-                    <p className="text-[9px] text-slate-400">
+                    <p className="text-[10px] text-slate-400">
                       The API Intelligence You Deserve
                     </p>
                   </div>
@@ -244,7 +263,7 @@ const OfferSlider = () => {
 
                 <button
                   onClick={() => navigate("/ask-apives-ai")}
-                  className="relative text-[10px] px-3 py-1 rounded-full bg-mora-500 text-black font-bold uppercase"
+                  className="relative text-[10px] px-4 py-1.5 rounded-full bg-mora-500 text-black font-bold uppercase"
                 >
                   Try
                 </button>
@@ -256,8 +275,8 @@ const OfferSlider = () => {
         </div>
       </div>
 
-      {/* DOTS */}
-      <div className="flex justify-center gap-2 mt-3">
+      {/* DOTS (spacing reduced) */}
+      <div className="flex justify-center gap-2 mt-2">
         {[0,1].map(i => (
           <div
             key={i}
@@ -271,7 +290,6 @@ const OfferSlider = () => {
     </section>
   );
 };
-
 
 const QuickStartPlayground = () => {
 
