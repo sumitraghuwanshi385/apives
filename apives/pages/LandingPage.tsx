@@ -105,6 +105,138 @@ const RANK_BADGE_STYLES = [
 { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
 
+const OfferSlider = () => {
+  const [index, setIndex] = useState(0);
+
+  const slides = [
+    {
+      type: "serp",
+    },
+    {
+      type: "apives",
+    },
+  ];
+
+  // 🔁 auto slide every 5 sec
+  useEffect(() => {
+    const i = setInterval(() => {
+      setIndex((prev) => (prev + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(i);
+  }, []);
+
+  return (
+    <div className="relative w-full max-w-xl overflow-hidden">
+      
+      {/* SLIDER TRACK */}
+      <div
+        className="flex transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateX(-${index * 100}%)` }}
+      >
+
+        {/* ===== SLIDE 1 (SERPAPI) ===== */}
+        <div className="min-w-full px-1">
+          <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md">
+
+            <div className="flex items-center gap-3">
+              <img
+                src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+                className="w-6 h-6 rounded-lg bg-white p-[2px]"
+              />
+
+              <span className="text-slate-500 text-[10px]">×</span>
+
+              <img
+                src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+                className="w-7 h-7"
+              />
+
+              <div>
+                <p className="text-green-400 text-[11px] font-bold">
+                  Get 500 Free SerpAPI Credits
+                </p>
+                <p className="text-[9px] text-slate-400">
+                  Limited access for early builders
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => window.location.href="/offers/serpapi"}
+              className="text-[9px] px-3 py-1 rounded-full bg-white text-black font-bold"
+            >
+              Claim
+            </button>
+
+          </div>
+        </div>
+
+        {/* ===== SLIDE 2 (APIVES AI) ===== */}
+        <div className="min-w-full px-1">
+          <div className="
+            flex items-center justify-between gap-3 
+            px-4 py-3 
+            rounded-xl 
+            border border-mora-500/30 
+            bg-mora-500/10 
+            backdrop-blur-md
+          ">
+
+            <div className="flex items-center gap-3">
+
+              <img
+                src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+                className="w-7 h-7"
+              />
+
+              <div>
+                <p className="text-mora-400 text-[11px] font-bold">
+                  Apives AI
+                </p>
+
+                <p className="text-[9px] text-slate-400">
+                  The API Intelligence You Deserve
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => window.location.href="/ask-apives-ai"}
+              className="
+                text-[9px]
+                px-3 py-1
+                rounded-full
+                bg-mora-500 text-black
+                font-bold
+                hover:scale-105
+              "
+            >
+              Try
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      {/* DOTS */}
+      <div className="flex justify-center mt-2 gap-1">
+        {slides.map((_, i) => (
+          <div
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`
+              w-1.5 h-1.5 rounded-full cursor-pointer
+              ${index === i ? "bg-white" : "bg-white/30"}
+            `}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 
 const QuickStartPlayground = () => {
@@ -875,69 +1007,9 @@ return (
     </p>
   </div>
 
-  {/* OFFER BOX */}
   <div className="flex justify-center px-4">
-    <div className="
-      w-full max-w-xl 
-      flex items-center justify-between 
-      gap-2 md:gap-3   /*  mobile gap reduced */
-      px-4 py-3 
-      rounded-xl 
-      border border-green-500/30 
-      bg-green-500/10 
-      backdrop-blur-md 
-      md:shadow-[0_0_25px_rgba(34,197,94,0.2)]  /*  mobile shadow removed */
-    ">
-
-      <div className="flex items-center gap-2 md:gap-3">
-
-        <img
-          src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-          className="w-6 h-6 rounded-lg bg-white p-[2px]"
-        />
-
-        {/* ❗ X spacing reduced */}
-        <span className="text-slate-500 text-[10px] md:text-xs font-bold mx-0.5">
-          ×
-        </span>
-
-        <img
-          src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-          className="w-7 h-7 object-contain"
-        />
-
-        <div>
-          {/* 🔽 text size reduced (mobile only) */}
-          <p className="text-green-400 text-[11px] md:text-xs font-bold">
-            Get 500 Free SerpAPI Credits
-          </p>
-
-          <p className="text-[9px] md:text-[10px] text-slate-400">
-            Limited access for early builders
-          </p>
-        </div>
-
-      </div>
-
-      {/* 🔽 button reduced ~15% mobile */}
-      <button
-        onClick={() => navigate("/offers/serpapi")}
-        className="
-          text-[9px] md:text-[10px] 
-          px-2.5 md:px-3 
-          py-1 md:py-1.5 
-          rounded-full 
-          bg-white text-black 
-          font-bold uppercase tracking-widest 
-          hover:scale-105 transition-all
-        "
-      >
-        Claim
-      </button>
-
-    </div>
-  </div>
-
+  <OfferSlider />
+</div>
 </section>
 
 <section className="pt-4 md:pt-6 pb-6 bg-black">
