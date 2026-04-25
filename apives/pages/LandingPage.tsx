@@ -169,10 +169,10 @@ const OfferSlider = () => {
                 overflow-hidden
               ">
 
-                {/* GREEN GLOW */}
+                {/* 🔽 REDUCED GLOW */}
                 <div className="
                   absolute inset-0
-                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.25),transparent_65%)]
+                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.15),transparent_70%)]
                 " />
 
                 <div className="relative flex items-center gap-2">
@@ -184,12 +184,10 @@ const OfferSlider = () => {
 
                   <span className="text-slate-500 text-[10px] font-bold">×</span>
 
+                  {/* ❌ pulse removed */}
                   <img
                     src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-                    className="
-                      w-7 h-7 object-contain
-                      animate-pulse
-                    "
+                    className="w-7 h-7 object-contain"
                   />
 
                   <div>
@@ -226,26 +224,26 @@ const OfferSlider = () => {
                 overflow-hidden
               ">
 
-                {/* GREEN AI GLOW */}
+                {/* 🔽 REDUCED GLOW */}
                 <div className="
                   absolute inset-0
-                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.3),transparent_65%)]
+                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.18),transparent_70%)]
                 " />
 
                 <div className="relative flex items-center gap-2">
 
-                  {/* 🤖 ROBOTIC LOGO EFFECT */}
+                  {/* 🤖 AI LOGO */}
                   <div className="relative">
                     <img
                       src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
                       className="w-8 h-8 object-contain"
                     />
 
-                    {/* glow ring */}
+                    {/* subtle ring (unchanged) */}
                     <div className="
                       absolute inset-0
                       rounded-full
-                      border border-green-400/40
+                      border border-green-400/30
                       animate-ping
                     " />
                   </div>
@@ -275,7 +273,7 @@ const OfferSlider = () => {
         </div>
       </div>
 
-      {/* DOTS (spacing reduced) */}
+      {/* DOTS */}
       <div className="flex justify-center gap-2 mt-2">
         {[0,1].map(i => (
           <div
