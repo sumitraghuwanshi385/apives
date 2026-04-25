@@ -21,6 +21,7 @@ import {
   Copy,
   RotateCcw,
   Check,
+  Bot
 } from "lucide-react";
 
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
@@ -406,7 +407,7 @@ const MessagePill = ({
           display: "flex", alignItems: "center", justifyContent: "center",
           boxShadow: "0 0 10px rgba(34,197,94,0.35)",
         }}>
-          <Sparkles size={10} color="white" strokeWidth={2.5} />
+          <Bot size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxWidth: "82%" }}>
