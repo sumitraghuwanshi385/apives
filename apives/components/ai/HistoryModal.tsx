@@ -59,7 +59,6 @@ const HistoryModal = ({
     setEntries(result.reverse());
   };
 
-  // ✅ DELETE CONFIRMED
   const confirmDelete = () => {
     selected.forEach((id) => {
       localStorage.removeItem(`apives_chat_${id}`);
@@ -82,26 +81,35 @@ const HistoryModal = ({
 
   return (
     <>
-      {/* MAIN MODAL */}
+      {/* BACKDROP */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           zIndex: 60,
-          display: "flex",
-          alignItems: "flex-end",
-          justifyContent: "center",
           background: "rgba(0,0,0,0.75)",
           backdropFilter: "blur(14px)",
         }}
-        onClick={onClose}
+        onClick={() => {
+          if (selectMode) {
+            setSelectMode(false);
+            setSelected([]);
+          } else {
+            onClose();
+          }
+        }}
       >
+        {/* MODAL */}
         <div
           className="slide-up"
           onClick={(e) => e.stopPropagation()}
           style={{
+            position: "absolute",
+            bottom: 0,
             width: "100%",
             maxWidth: "480px",
+            left: "50%",
+            transform: "translateX(-50%)",
             borderRadius: "24px 24px 0 0",
             background: "rgba(5,14,9,0.99)",
             border: "1px solid rgba(34,197,94,0.12)",
@@ -129,10 +137,13 @@ const HistoryModal = ({
             <div style={{ display: "flex", gap: "8px" }}>
               {!selectMode && (
                 <button
-                  onClick={() => setSelectMode(true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectMode(true);
+                  }}
                   style={{
-                    width: "32px",
-                    height: "32px",
+                    width: "34px",
+                    height: "34px",
                     borderRadius: "50%",
                     background: "rgba(239,68,68,0.15)",
                     border: "1px solid rgba(239,68,68,0.4)",
@@ -145,18 +156,29 @@ const HistoryModal = ({
                 </button>
               )}
 
+              {/* ✅ FIXED CLOSE BUTTON */}
               <button
-                onClick={() => {
-                  setSelectMode(false);
-                  setSelected([]);
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  if (selectMode) {
+                    setSelectMode(false);
+                    setSelected([]);
+                  } else {
+                    onClose();
+                  }
                 }}
                 style={{
-                  width: "32px",
-                  height: "32px",
+                  width: "34px",
+                  height: "34px",
                   borderRadius: "50%",
+                  background: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(12px)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  cursor: "pointer",
                 }}
               >
                 <X size={14} color="white" />
@@ -174,7 +196,7 @@ const HistoryModal = ({
                   key={e.apiId}
                   onClick={() => {
                     if (selectMode) toggleSelect(e.apiId);
-                    else onSelect(e.apiId); // ✅ FIXED NAVIGATION
+                    else onSelect(e.apiId);
                   }}
                   style={{
                     padding: "12px",
@@ -214,7 +236,10 @@ const HistoryModal = ({
           {selectMode && selected.length > 0 && (
             <div style={{ padding: "10px" }}>
               <button
-                onClick={() => setShowConfirm(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConfirm(true);
+                }}
                 style={{
                   width: "100%",
                   padding: "10px",
@@ -232,7 +257,7 @@ const HistoryModal = ({
         </div>
       </div>
 
-      {/* 🔥 CONFIRM MODAL */}
+      {/* CONFIRM MODAL */}
       {showConfirm && (
         <div
           style={{
