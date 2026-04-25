@@ -652,27 +652,71 @@ const [debugInfo, setDebugInfo] = useState<string>("");
 
   if (!apiId) return;
 
+  // ✅ FIXED LOCAL STORAGE LOAD
   try {
     const saved = localStorage.getItem(`apives_chat_${apiId}`);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) setChat(parsed);
-    }
-  } catch {}
-
-  axios.get(`/api/apis/${apiId}`)
-    .then((res) => {
-      if (res.data) {
-        console.log("✅ API LOADED:", res.data);
-        setApiData(res.data);
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setChat(parsed);
+        } else {
+          localStorage.removeItem(`apives_chat_${apiId}`);
+        }
+      } catch {
+        localStorage.removeItem(`apives_chat_${apiId}`);
       }
-    })
-    .catch((err) => {
-      console.error("❌ API load error:", err);
-    });
+    }
+  } catch (err) {
+    console.error("❌ History load error:", err);
+  }
+
+  // ✅ FETCH API (FIXED)
+axios.get(`/api/apis/${apiId}`)
+  .then((res) => {
+
+    console.log("FULL API RESPONSE:", res.data); // 👈 DEBUG
+
+    // 🔥 FIX: handle nested response
+    const api = res.data?.data || res.data;
+
+    if (api) {
+      setApiData(api);
+      setDebugInfo("✅ API Loaded: " + (api?.name || "NO NAME"));
+    } else {
+      setDebugInfo("❌ API empty response");
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+    setDebugInfo("❌ API load failed");
+  });
 
 }, [apiId]);
 
+    
+  // Persist chat — UNCHANGED
+  useEffect(() => {
+  if (!apiId) return;
+
+  try {
+    // SAVE CHAT
+    localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
+
+    // SAVE TITLE
+    const firstUser = chat.find((m) => m.role === "user");
+    if (firstUser) {
+      localStorage.setItem(
+        `apives_chat_title_${apiId}`,
+        firstUser.content.slice(0, 60)
+      );
+    }
+
+  } catch (err) {
+    console.error("❌ Chat save failed:", err);
+  }
+
+}, [chat, apiId]);
 
   // Auto scroll — UNCHANGED
   useEffect(() => {
@@ -829,7 +873,7 @@ Rules:
     sendMessage(lastUserMsg.content);
   };
 
-  const displayName = apiName || apiData?.name || null;
+  const displayName = apiData?.name || apiName || null;
   const inputPlaceholder = displayName
     ? `Ask anything about ${displayName}...`
     : "Ask anything about any API...";
