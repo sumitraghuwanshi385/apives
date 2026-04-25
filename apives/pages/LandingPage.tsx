@@ -113,10 +113,11 @@ const OfferSlider = () => {
   const [currentX, setCurrentX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
+  // 🔁 AUTO SLIDE (7 sec)
   useEffect(() => {
     const t = setInterval(() => {
       setIndex((prev) => (prev + 1) % 2);
-    }, 5000);
+    }, 7000);
     return () => clearInterval(t);
   }, []);
 
@@ -142,12 +143,6 @@ const OfferSlider = () => {
   return (
     <section className="relative py-5 bg-black">
 
-      <div className="text-center mb-3">
-        <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
-          BUILDER HIGHLIGHTS
-        </p>
-      </div>
-
       <div className="flex justify-center px-4">
 
         <div
@@ -158,35 +153,41 @@ const OfferSlider = () => {
         >
 
           <div
-            className="flex transition-transform duration-500"
+            className="flex transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${index * 100}%)` }}
           >
 
-            {/* 🔥 SERPAPI CARD */}
+            {/* ================= SERPAPI ================= */}
             <div className="w-full flex-shrink-0 px-1">
-              <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md">
+              <div className="
+                w-full flex items-center justify-between
+                px-4 py-3
+                rounded-xl
+                border border-green-500/30
+                bg-green-500/10
+                backdrop-blur-md
+              ">
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
 
                   <img
                     src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-                    className="w-7 h-7 rounded-lg bg-white p-[2px]"
+                    className="w-6 h-6 rounded-md bg-white p-[2px]"
                   />
 
                   <span className="text-slate-500 text-[10px] font-bold">×</span>
 
-                  {/* ✅ APIVES LOGO */}
                   <img
                     src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-                    className="w-8 h-8 object-contain"
+                    className="w-6 h-6 object-contain"
                   />
 
                   <div>
                     <p className="text-green-400 text-[11px] font-bold">
-                      Get 500 Free SerpAPI Credits
+                      500 Free SerpAPI Credits
                     </p>
                     <p className="text-[9px] text-slate-400">
-                      Limited access for early builders
+                      Limited builder access
                     </p>
                   </div>
 
@@ -202,16 +203,32 @@ const OfferSlider = () => {
               </div>
             </div>
 
-            {/* 🔥 APIVES AI CARD */}
+            {/* ================= APIVES AI ================= */}
             <div className="w-full flex-shrink-0 px-1">
-              <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-mora-500/30 bg-mora-500/10 backdrop-blur-md">
+              <div className="
+                relative
+                w-full flex items-center justify-between
+                px-4 py-3
+                rounded-xl
+                border border-mora-500/30
+                bg-mora-500/10
+                backdrop-blur-md
+                overflow-hidden
+              ">
 
-                <div className="flex items-center gap-3">
+                {/* 🟢 GREEN GLOW EFFECT */}
+                <div className="
+                  absolute inset-0
+                  bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.25),transparent_60%)]
+                  opacity-70
+                " />
 
-                  {/* ✅ SAME CLEAN LOGO */}
+                <div className="relative flex items-center gap-2">
+
+                  {/* ✅ NEW AI LOGO */}
                   <img
                     src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-                    className="w-8 h-8 object-contain"
+                    className="w-7 h-7 object-contain"
                   />
 
                   <div>
@@ -227,7 +244,7 @@ const OfferSlider = () => {
 
                 <button
                   onClick={() => navigate("/ask-apives-ai")}
-                  className="text-[10px] px-3 py-1 rounded-full bg-mora-500 text-black font-bold uppercase"
+                  className="relative text-[10px] px-3 py-1 rounded-full bg-mora-500 text-black font-bold uppercase"
                 >
                   Try
                 </button>
@@ -1020,7 +1037,7 @@ return (
   {/* HEADING */}
   <div className="text-center mb-3 md:mb-4">
     <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
-      EXCLUSIVE BUILDER PERK
+      APIVES EXCLUSIVE 
     </p>
   </div>
 
