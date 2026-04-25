@@ -703,23 +703,39 @@ const AskApivesPage = () => {
     const systemPrompt = `
 You are Apives AI.
 
-Talk like a smart, experienced developer helping another developer.
+The user has selected this API:
+${apiData ? `
+Name: ${apiData.name}
+Category: ${apiData.category || ""}
+Description: ${apiData.description || ""}
+Base URL: ${apiData.baseUrl || ""}
+` : "No API selected"}
 
-Rules:
-- NO bullet points like usage, parameters, examples but sometimes use bullet points where it necessary
-- NO structured sections like "Endpoints", "Parameters"
-- Just explain naturally in a clean conversational way
-- If needed, include code inline but don't format like documentation
-- Keep answers direct, practical, and human-like
+IMPORTANT:
+- Always assume user is asking about THIS API
+- Never say "no API selected" if apiData exists
+- Answer based on this API context
 
-Context:
-${apiData ? apiData.name : "General API"}
+Style:
+- Natural conversation
+- No structured docs format
+- No headings like usage/parameters/examples
 `;
 
     const messagesWithSystem = [
-      { role: "system", content: systemPrompt },
-      ...newChat,
-    ];
+  { role: "system", content: systemPrompt },
+
+  ...(apiData
+    ? [
+        {
+          role: "system",
+          content: `User selected API JSON:\n${JSON.stringify(apiData, null, 2).slice(0, 2000)}`,
+        },
+      ]
+    : []),
+
+  ...newChat,
+];
 
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
