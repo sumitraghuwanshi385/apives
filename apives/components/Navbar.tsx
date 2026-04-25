@@ -96,7 +96,7 @@ return (
         <NavLink to="/sponsorship" icon={Handshake}>
   For Sponsorship
 </NavLink>   
-<NavLink to="/ask-apives" icon={Bot}>
+<NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
 </NavLink>
       </div>    
@@ -149,7 +149,7 @@ return (
 
 {/* 🤖 Apives AI */}
 <Link
-  to="/ask-apives"
+  to="/ask-apives-ai"
   onClick={() => setIsOpen(false)}
   className="
   md:hidden
@@ -166,7 +166,7 @@ return (
   transition-all
   "
 >
-  <Bot size={15} className="md:w-5 md:h-5" />
+  <Bot size={16} className="md:w-5 md:h-5" />
 </Link>
 
 
@@ -221,7 +221,7 @@ transition-all
   icon={Bot}
   onClick={() => {
     setIsOpen(false);
-    navigate("/ask-apives"); // ✅ FIX NAV
+    navigate("/ask-apives-ai"); // ✅ FIX NAV
   }}
 >
   ApivesAI
