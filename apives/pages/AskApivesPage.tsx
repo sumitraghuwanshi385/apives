@@ -626,7 +626,6 @@ const AskApivesPage = () => {
   const [loading, setLoading] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
-const [debugInfo, setDebugInfo] = useState<string>("");
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -647,19 +646,35 @@ const [debugInfo, setDebugInfo] = useState<string>("");
   }, []);
 
   // Combined effect: reset state + reload chat + fetch API data when apiId changes
-  useEffect(() => {
-  setChat([]);
+const prevApiRef = useRef<string | null>(null);
+
+useEffect(() => {
+  if (!apiId) return;
+
+  const isNewApi = prevApiRef.current !== apiId;
+  prevApiRef.current = apiId;
+
+  // ❌ REMOVE hard reset (ye hi tera main bug tha)
+  // setChat([]);
+
   setApiData(null);
   setInput("");
 
-  if (!apiId) return;
+  // ✅ Only reset chat when API actually changes
+  if (isNewApi) {
+    setChat([]);
+  }
 
-  // ✅ FIXED LOCAL STORAGE LOAD
+  // =========================
+  // ✅ LOAD HISTORY (SAFE)
+  // =========================
   try {
     const saved = localStorage.getItem(`apives_chat_${apiId}`);
+
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+
         if (Array.isArray(parsed)) {
           setChat(parsed);
         } else {
@@ -673,43 +688,41 @@ const [debugInfo, setDebugInfo] = useState<string>("");
     console.error("❌ History load error:", err);
   }
 
- axios.get(`${API_BASE}/api/apis/${apiId}`)
-  .then((res) => {
+  // =========================
+  // ✅ FETCH API
+  // =========================
+  axios.get(`${API_BASE}/api/apis/${apiId}`)
+    .then((res) => {
+      console.log("FULL API RESPONSE:", res.data);
 
-    console.log("FULL API RESPONSE:", res.data);
+      const api = res.data?.data || res.data;
 
-    const api = res.data?.data || res.data;
-
-    if (api && typeof api === "object") {
-      setApiData(api);
-
-      setDebugInfo(
-        "✅ API Loaded: " +
-        (api?.name || api?.title || api?.apiName || "NO NAME")
-      );
-    } else {
-      console.error("❌ Not JSON:", res.data);
-      setDebugInfo("❌ Invalid API response (HTML aaya hai)");
-    }
-  })
-  .catch((err) => {
-    console.error("❌ API ERROR:", err);
-    setDebugInfo("❌ API load failed");
-  });
+      if (api && typeof api === "object") {
+        setApiData(api);
+      } else {
+        console.error("❌ Not JSON:", res.data);
+        setDebugInfo("❌ Invalid API response (HTML aaya hai)");
+      }
+    })
+    .catch((err) => {
+      console.error("❌ API ERROR:", err);
+      setDebugInfo("❌ API load failed");
+    });
 
 }, [apiId]);
 
-    
-  // Persist chat — UNCHANGED
-  useEffect(() => {
-  if (!apiId) return;
+
+// =========================
+// ✅ Persist chat — SAFE
+// =========================
+useEffect(() => {
+  if (!apiId || !chat.length) return;
 
   try {
-    // SAVE CHAT
     localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
 
-    // SAVE TITLE
     const firstUser = chat.find((m) => m.role === "user");
+
     if (firstUser) {
       localStorage.setItem(
         `apives_chat_title_${apiId}`,
@@ -723,17 +736,24 @@ const [debugInfo, setDebugInfo] = useState<string>("");
 
 }, [chat, apiId]);
 
-  // Auto scroll — UNCHANGED
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    const el = scrollRef.current;
-    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    if (distanceFromBottom < 100) {
-      requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
-    }
-  }, [chat, loading]);
 
-  // ─────────────────────────────────────────────────────────────────────────────
+// =========================
+// ✅ Auto scroll — CLEAN
+// =========================
+useEffect(() => {
+  const el = scrollRef.current;
+  if (!el) return;
+
+  const nearBottom =
+    el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+
+  if (nearBottom) {
+    requestAnimationFrame(() => {
+      el.scrollTop = el.scrollHeight;
+    });
+  }
+}, [chat, loading]);
+ ─────────────────────────────────────────────────────────────────────────────
   // FIX 2: sendMessage — proper error handling, no silent failures
   // FIX 3: smart system prompt based on query intent
   // ─────────────────────────────────────────────────────────────────────────────
@@ -746,10 +766,6 @@ const [debugInfo, setDebugInfo] = useState<string>("");
     setInput("");
     setLoading(true);
 
-setDebugInfo(
-  "📤 Sending with API: " +
-  (apiData?.name || apiData?.title || apiData?.apiName || "NULL")
-);
 
     const isApiQuery = isApiRelatedQuery(text);
 const apiContext = apiData
@@ -809,8 +825,9 @@ Selected API JSON:
 $JSON.stringify({
   name: apiData?.name,
   category: apiData?.category,
-  description: apiData?.description
+  description: apiData?.description?.slice(0, 300)
 })
+  
 
 Rules:
 - This API is ALWAYS defined
