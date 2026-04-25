@@ -4,7 +4,6 @@ import axios from "axios";
 
 import {
   X,
-  GitCompare,
   Mic,
   MicOff,
   ArrowUp,
@@ -26,26 +25,24 @@ import {
 
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 import HistoryModal from "../components/ai/HistoryModal";
-import CompareModal from "../components/ai/CompareModal";
 import AnimatedOrb from "../components/ai/AnimatedOrb";
 
 const API_BASE = "https://apives-3xrc.onrender.com";
 
-// ── FIX 1: getUserId — resolves to user id/email or "guest" ──────────────────
-function getUserId(): string {
+// ── getUserId — resolves to user id/email or null ────────────────────────────
+function getUserId(): string | null {
   try {
     const raw = localStorage.getItem("mora_user");
-    if (!raw) return "guest";
+    if (!raw) return null;
     const parsed = JSON.parse(raw);
-    // prefer _id, then id, then email — all are stable user identifiers
     const id = parsed?._id || parsed?.id || parsed?.email;
-    return id ? String(id) : "guest";
+    return id ? String(id) : null;
   } catch {
-    return "guest";
+    return null;
   }
 }
 
-// ── FIX 1: chat key builder — scoped to user + api + session ─────────────────
+// ── chat key builder — scoped to user + api + session ────────────────────────
 function buildChatKey(userId: string, apiId: string, chatId: string): string {
   return `apives_chat_${userId}_${apiId}_${chatId}`;
 }
@@ -198,16 +195,6 @@ const GLOBAL_STYLES = `
     transform: scale(1.04);
   }
 
-  .compare-select-btn { transition: all 0.2s ease; cursor: pointer; }
-  .compare-select-btn:hover {
-    border-color: rgba(21,128,61,0.7) !important;
-    background: rgba(21,128,61,0.18) !important;
-  }
-  .compare-select-btn.selected {
-    border-color: rgba(21,128,61,0.9) !important;
-    background: rgba(21,128,61,0.22) !important;
-  }
-
   .history-item { transition: background 0.15s; cursor: pointer; }
   .history-item:hover { background: rgba(21,128,61,0.12) !important; }
 
@@ -250,7 +237,6 @@ const GLOBAL_STYLES = `
     animation: selectedPillIn 0.35s ease forwards;
   }
 
-  /* ── FIX 2: Improved remove API button — pill-shaped, premium ── */
   .api-remove-btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 5px;
     padding: 5px 13px 5px 10px;
@@ -657,11 +643,13 @@ const AskApivesPage = () => {
   const [input, setInput]                   = useState("");
   const [chat, setChat]                     = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [loading, setLoading]               = useState(false);
-  const [showCompareModal, setShowCompareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [isApiActive, setIsApiActive]       = useState(true);
 
-  // FIX 4: unique chatId per session
+  // Mobile viewport height fix
+  const [vh, setVh] = useState(window.innerHeight);
+
+  // unique chatId per session
   const [chatId, setChatId] = useState<string>(() => Date.now().toString());
 
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -683,17 +671,14 @@ const AskApivesPage = () => {
     };
   }, []);
 
-  // FIX 3: Keyboard / viewport resize fix — sync height to window.innerHeight
+  // Mobile keyboard / viewport resize fix
   useEffect(() => {
-    const setVh = () => {
-      document.documentElement.style.setProperty("--real-vh", `${window.innerHeight}px`);
-    };
-    setVh();
-    window.addEventListener("resize", setVh);
-    return () => window.removeEventListener("resize", setVh);
+    const handleResize = () => setVh(window.innerHeight);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ── FIX 1 + 4: Load API data + latest user-scoped chat on apiId change ────
+  // ── Load API data + latest user-scoped chat on apiId change ──────────────
   useEffect(() => {
     if (!apiId) return;
 
@@ -706,34 +691,33 @@ const AskApivesPage = () => {
     setIsApiActive(true);
 
     if (isNewApi) {
-      // FIX 4: fresh chatId for every new API session
       const newSessionId = Date.now().toString();
       setChatId(newSessionId);
       setChat([]);
     }
 
-    // FIX 1 + 4: find all chat keys for this user + apiId, load latest
-    try {
-      const prefix = `apives_chat_${userId}_${apiId}_`;
-      const keys = Object.keys(localStorage).filter((k) => k.startsWith(prefix));
+    // Only load history if user is logged in
+    if (userId) {
+      try {
+        const prefix = `apives_chat_${userId}_${apiId}_`;
+        const keys = Object.keys(localStorage).filter((k) => k.startsWith(prefix));
 
-      if (keys.length > 0) {
-        // keys end in timestamp-based chatId — sort descending to get latest
-        const latestKey = keys.sort().reverse()[0];
-        const saved = localStorage.getItem(latestKey);
+        if (keys.length > 0) {
+          const latestKey = keys.sort().reverse()[0];
+          const saved = localStorage.getItem(latestKey);
 
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setChat(parsed);
-            // Restore chatId so subsequent saves go to same key
-            const restoredId = latestKey.replace(prefix, "");
-            setChatId(restoredId);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setChat(parsed);
+              const restoredId = latestKey.replace(prefix, "");
+              setChatId(restoredId);
+            }
           }
         }
+      } catch (err) {
+        console.error("[AskApives] History load failed:", err);
       }
-    } catch (err) {
-      console.error("[AskApives] History load failed:", err);
     }
 
     // Fetch API metadata
@@ -752,11 +736,14 @@ const AskApivesPage = () => {
       });
   }, [apiId]);
 
-  // FIX 1 + 4: Persist chat — scoped to userId + apiId + chatId
+  // Persist chat — scoped to userId + apiId + chatId
   useEffect(() => {
     if (!apiId || chat.length === 0) return;
 
     const userId = getUserId();
+
+    // Do not save for guests
+    if (!userId) return;
 
     try {
       const key = buildChatKey(userId, apiId, chatId);
@@ -897,7 +884,7 @@ Rules:
     }
   };
 
-  // FIX 4: New chat — generates fresh chatId, old chat remains in localStorage
+  // New chat — generates fresh chatId, old chat remains in localStorage
   const startNewChat = () => {
     const newId = Date.now().toString();
     setChatId(newId);
@@ -918,7 +905,7 @@ Rules:
     sendMessage(lastUserMsg.content);
   };
 
-  // FIX 2: Remove selected API — disables API mode, hides pill + prompts
+  // Remove selected API — disables API mode, hides pill + prompts
   const removeSelectedApi = () => {
     setApiData(null);
     setIsApiActive(false);
@@ -939,13 +926,6 @@ Rules:
     <>
       <style>{GLOBAL_STYLES}</style>
 
-      {showCompareModal && (
-        <CompareModal
-          onClose={() => setShowCompareModal(false)}
-          isLoggedIn={isValidUser()}
-          onNeedLogin={() => { setShowCompareModal(false); redirectToAccess(); }}
-        />
-      )}
       {showHistoryModal && (
         <HistoryModal
           onClose={() => setShowHistoryModal(false)}
@@ -953,17 +933,12 @@ Rules:
         />
       )}
 
-      {/*
-        FIX 3: height uses CSS var --real-vh synced to window.innerHeight via
-        resize listener — prevents black-space gap when mobile keyboard opens.
-        Removed keyboard-inset-height entirely. overscrollBehavior: contain
-        prevents scroll chaining that caused layout jumps.
-      */}
       <div
         className="page-in"
         style={{
           display: "flex", flexDirection: "column",
-          height: "var(--real-vh, 100dvh)",
+          height: vh,
+          minHeight: vh,
           overflow: "hidden",
           overscrollBehavior: "contain",
           paddingBottom: "0px",
@@ -1044,24 +1019,10 @@ Rules:
             >
               <Plus size={15} color="rgba(255,255,255,0.40)" />
             </button>
-
-            <button
-              onClick={() => { if (!requireLogin()) return; setShowCompareModal(true); }}
-              style={{
-                width: "36px", height: "36px", borderRadius: "50%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                background: "rgba(34,197,94,0.18)",
-                border: "1px solid rgba(34,197,94,0.5)",
-                cursor: "pointer", transition: "all 0.2s",
-              }}
-              title="Compare APIs"
-            >
-              <GitCompare size={14} color="#4ade80" />
-            </button>
           </div>
         </div>
 
-        {/* ── CHAT AREA — FIX 3: paddingBottom generous to avoid input overlap ── */}
+        {/* ── CHAT AREA ── */}
         <div
           ref={scrollRef}
           className="chat-scroll"
@@ -1130,14 +1091,12 @@ Rules:
                 </div>
               )}
 
-              {/* FIX 2: API name pill + improved remove button */}
               {displayName && isApiActive && (
                 <div style={{ marginBottom: "8px", display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
                   <ApiNamePill
                     name={displayName}
                     iconUrl={apiData?.logo || apiData?.icon || undefined}
                   />
-                  {/* FIX 2: pill-shaped, premium remove button */}
                   <button
                     className="api-remove-btn"
                     onClick={removeSelectedApi}
@@ -1192,7 +1151,7 @@ Rules:
           <div ref={bottomRef} style={{ height: "8px" }} />
         </div>
 
-        {/* ── INPUT AREA — FIX 3: uses safe-area-inset only, no keyboard gap ── */}
+        {/* ── INPUT AREA ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           padding: "8px 16px",
