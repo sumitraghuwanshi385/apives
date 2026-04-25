@@ -225,31 +225,9 @@ const GLOBAL_STYLES = `
   .selected-api-label {
     animation: selectedPillIn 0.35s ease forwards;
   }
-
-  /* ── Compare result block ── */
-  .compare-result-block {
-    background: rgba(5,46,22,0.35);
-    border: 1px solid rgba(34,197,94,0.18);
-    border-radius: 16px;
-    padding: 16px;
-    margin-top: 4px;
-  }
-  .compare-section-title {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(34,197,94,0.65);
-    margin-bottom: 6px;
-    margin-top: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .compare-section-title:first-child { margin-top: 0; }
 `;
 
-// ─── Strip markdown helper ─────────────────────────────────────────────────────
+// ─── Strip markdown helper ────────────────────────────────────────────────────
 function stripMarkdown(text: string): string {
   return text
     .replace(/#{1,6}\s/g, "")
@@ -277,35 +255,12 @@ function isApiRelatedQuery(text: string): boolean {
     "header", "key", "secret", "curl", "fetch", "axios", "postman",
     "usage", "how to use", "how do i use", "example", "documentation",
     "docs", "method", "get", "post", "put", "delete", "patch",
-    "explain", "breakdown", "details", "show me", "what is", "how does",
+    "breakdown", "explain", "details", "what is", "how does",
   ];
   return apiKeywords.some((kw) => normalized.includes(kw));
 }
 
-// ─── Build rich API context string for system prompt ─────────────────────────
-function buildApiContext(api: any): string {
-  if (!api) return "No specific API selected.";
-  const parts: string[] = [`API Name: ${api.name || "Unknown"}`];
-  if (api.category)    parts.push(`Category: ${api.category}`);
-  if (api.description) parts.push(`Description: ${api.description}`);
-  if (api.baseUrl || api.base_url) parts.push(`Base URL: ${api.baseUrl || api.base_url}`);
-  if (api.auth)        parts.push(`Authentication: ${api.auth}`);
-  if (api.endpoints?.length) {
-    parts.push(`Endpoints: ${(api.endpoints as string[]).slice(0, 8).join(", ")}`);
-  }
-  if (api.params?.length) {
-    parts.push(`Key Parameters: ${(api.params as string[]).slice(0, 6).join(", ")}`);
-  }
-  if (api.example) {
-    const ex = typeof api.example === "string" ? api.example : JSON.stringify(api.example);
-    parts.push(`Example: ${ex.slice(0, 400)}`);
-  }
-  if (api.pricing)     parts.push(`Pricing: ${api.pricing}`);
-  if (api.rateLimit || api.rate_limit) parts.push(`Rate Limit: ${api.rateLimit || api.rate_limit}`);
-  return parts.join("\n");
-}
-
-// ─── TypingIndicator ───────────────────────────────────────────────────────────
+// ─── Robot TypingIndicator ────────────────────────────────────────────────────
 const TypingIndicator = () => (
   <div style={{
     display: "flex", alignItems: "center", gap: "10px",
@@ -394,126 +349,13 @@ const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) 
   );
 };
 
-// ─── CompareResultBlock — structured comparison renderer ─────────────────────
-// FIX 4 + 5: renders comparison as clean scannable sections
-const CompareResultBlock = ({ content }: { content: string }) => {
-  // Parse the AI text into sections by common headings
-  const sectionDefs = [
-    { key: "overview",        label: "Overview",               icon: "◈" },
-    { key: "key differences", label: "Key Differences",        icon: "⟺" },
-    { key: "pros",            label: "Pros & Cons",            icon: "±" },
-    { key: "cons",            label: "Pros & Cons",            icon: "±" },
-    { key: "pros & cons",    label: "Pros & Cons",            icon: "±" },
-    { key: "use case",        label: "Use Cases",              icon: "◎" },
-    { key: "use cases",       label: "Use Cases",              icon: "◎" },
-    { key: "recommendation",  label: "Final Recommendation",  icon: "✦" },
-    { key: "final",           label: "Final Recommendation",  icon: "✦" },
-  ];
-
-  // Split raw text into labeled sections based on lines that look like headings
-  const lines = content.split("\n");
-  const sections: { label: string; icon: string; lines: string[] }[] = [];
-  let currentSection: { label: string; icon: string; lines: string[] } | null = null;
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      if (currentSection) currentSection.lines.push("");
-      continue;
-    }
-
-    // Detect section heading: line starts with #, or is SHORT + ALL-CAPS-ish + no punctuation at end
-    const isHeading =
-      /^#{1,3}\s/.test(trimmed) ||
-      (trimmed.length < 40 && /^[A-Z0-9 &:,\-–]+$/.test(trimmed)) ||
-      sectionDefs.some((s) => trimmed.toLowerCase().startsWith(s.key));
-
-    if (isHeading) {
-      const cleanLabel = trimmed.replace(/^#{1,3}\s*/, "").replace(/[:：]$/, "").trim();
-      const matched = sectionDefs.find((s) =>
-        cleanLabel.toLowerCase().includes(s.key)
-      );
-      currentSection = {
-        label: matched?.label || cleanLabel,
-        icon: matched?.icon || "▸",
-        lines: [],
-      };
-      // Deduplicate sections with same label (e.g. "pros" + "cons" both map to "Pros & Cons")
-      const existing = sections.find((s) => s.label === currentSection!.label);
-      if (existing) {
-        currentSection = existing;
-      } else {
-        sections.push(currentSection);
-      }
-    } else {
-      if (!currentSection) {
-        currentSection = { label: "Overview", icon: "◈", lines: [] };
-        sections.push(currentSection);
-      }
-      currentSection.lines.push(trimmed);
-    }
-  }
-
-  // If no sections parsed, fall back to raw plain text
-  if (sections.length === 0 || sections.every((s) => s.lines.every((l) => !l.trim()))) {
-    return (
-      <div className="compare-result-block">
-        <p style={{ fontSize: "13px", lineHeight: 1.75, color: "rgba(255,255,255,0.78)", whiteSpace: "pre-wrap", margin: 0 }}>
-          {stripMarkdown(content)}
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="compare-result-block">
-      {sections
-        .filter((s) => s.lines.some((l) => l.trim()))
-        .map((section, si) => (
-          <div key={`${section.label}-${si}`}>
-            <div className="compare-section-title">
-              <span style={{ fontSize: "11px" }}>{section.icon}</span>
-              {section.label}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {section.lines
-                .filter((l) => l.trim())
-                .map((line, li) => {
-                  const isBullet = /^[•\-*]/.test(line);
-                  const cleanLine = line.replace(/^[•\-*]\s*/, "");
-                  return (
-                    <div key={li} style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
-                      {isBullet && (
-                        <div style={{
-                          width: "4px", height: "4px", borderRadius: "50%", flexShrink: 0,
-                          background: "rgba(34,197,94,0.55)", marginTop: "8px",
-                        }} />
-                      )}
-                      <p style={{
-                        fontSize: "12.5px", lineHeight: 1.7,
-                        color: "rgba(255,255,255,0.75)", margin: 0,
-                        fontWeight: isBullet ? 400 : 450,
-                      }}>
-                        {cleanLine}
-                      </p>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        ))}
-    </div>
-  );
-};
-
 // ─── MessagePill ──────────────────────────────────────────────────────────────
 const MessagePill = ({
-  role, content, onRegenerate, isCompare,
+  role, content, onRegenerate,
 }: {
   role: "user" | "assistant";
   content: string;
   onRegenerate?: () => void;
-  isCompare?: boolean;
 }) => {
   const isUser = role === "user";
   const cleanContent = isUser ? content : stripMarkdown(content);
@@ -531,25 +373,20 @@ const MessagePill = ({
           <Sparkles size={10} color="white" strokeWidth={2.5} />
         </div>
       )}
-      <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxWidth: isCompare ? "96%" : "82%" }}>
-        {/* FIX 5: render compare content with structured block */}
-        {!isUser && isCompare ? (
-          <CompareResultBlock content={content} />
-        ) : (
-          <div
-            className={isUser ? "glass-pill-user" : "glass-pill-ai"}
-            style={{
-              padding: "10px 16px",
-              borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-              fontSize: "13px", lineHeight: "1.70", fontWeight: 450,
-              color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.82)",
-              wordBreak: "break-word", whiteSpace: "pre-wrap",
-              fontFamily: "'Apives Display', -apple-system, sans-serif",
-            }}
-          >
-            {cleanContent}
-          </div>
-        )}
+      <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxWidth: "82%" }}>
+        <div
+          className={isUser ? "glass-pill-user" : "glass-pill-ai"}
+          style={{
+            padding: "10px 16px",
+            borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+            fontSize: "13px", lineHeight: "1.70", fontWeight: 450,
+            color: isUser ? "rgba(236,253,245,0.92)" : "rgba(255,255,255,0.82)",
+            wordBreak: "break-word", whiteSpace: "pre-wrap",
+            fontFamily: "'Apives Display', -apple-system, sans-serif",
+          }}
+        >
+          {cleanContent}
+        </div>
         {!isUser && (
           <div style={{ display: "flex", gap: "6px", paddingLeft: "4px" }}>
             <CopyButton text={cleanContent} />
@@ -566,7 +403,7 @@ const MessagePill = ({
   );
 };
 
-// ─── ApiNamePill ───────────────────────────────────────────────────────────────
+// ─── ApiNamePill ──────────────────────────────────────────────────────────────
 const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   <div className="api-name-pill">
     <div style={{
@@ -735,13 +572,6 @@ const ClaudeInput = ({
   );
 };
 
-// ─── Chat message type ────────────────────────────────────────────────────────
-interface ChatMessage {
-  role: "user" | "assistant";
-  content: string;
-  isCompare?: boolean; // FIX 5: tag compare responses for structured rendering
-}
-
 // ─── AskApivesPage ────────────────────────────────────────────────────────────
 const AskApivesPage = () => {
   const [searchParams] = useSearchParams();
@@ -750,6 +580,7 @@ const AskApivesPage = () => {
   const apiId   = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
+  // ── Auth ──────────────────────────────────────────────────────────────────
   const isValidUser = (): boolean => {
     try {
       const data = localStorage.getItem("mora_user");
@@ -771,85 +602,80 @@ const AskApivesPage = () => {
     return true;
   };
 
-  const [apiData, setApiData]     = useState<any>(null);
-  const [input, setInput]         = useState("");
-  const [chat, setChat]           = useState<ChatMessage[]>([]);
-  const [loading, setLoading]     = useState(false);
+  // ── State ─────────────────────────────────────────────────────────────────
+  const [apiData, setApiData] = useState<any>(null);
+  const [input, setInput] = useState("");
+  const [chat, setChat] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
+  const [loading, setLoading] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // FIX 1: track the previously loaded apiId to detect when history switches it
-  const loadedApiIdRef = useRef<string | null>(null);
-
   // Hide global layout
   useEffect(() => {
-    const nav    = document.querySelector("nav")    as HTMLElement | null;
+    const nav = document.querySelector("nav") as HTMLElement | null;
     const header = document.querySelector("header") as HTMLElement | null;
     const footer = document.querySelector("footer") as HTMLElement | null;
-    if (nav)    nav.style.display    = "none";
+    if (nav) nav.style.display = "none";
     if (header) header.style.display = "none";
     if (footer) footer.style.display = "none";
     return () => {
-      if (nav)    nav.style.display    = "";
+      if (nav) nav.style.display = "";
       if (header) header.style.display = "";
       if (footer) footer.style.display = "";
     };
   }, []);
 
-  // FIX 1: Load chat from localStorage whenever apiId changes (history selection works correctly)
+  // ── FIX 1: History click — reset state when apiId changes ─────────────────
+  // When a user clicks a history item → navigate changes URL params → apiId
+  // changes → this effect fires, resets chat + apiData, then loads the saved
+  // conversation for the newly selected apiId.  Without the reset, stale chat
+  // from the previous session would remain on screen.
   useEffect(() => {
+    // Reset everything first so the UI is clean
+    setChat([]);
+    setApiData(null);
+    setInput("");
+
     if (!apiId) return;
 
-    // If apiId changed (history click), reset state first
-    if (loadedApiIdRef.current && loadedApiIdRef.current !== apiId) {
-      setChat([]);
-      setInput("");
-      setApiData(null);
-    }
-    loadedApiIdRef.current = apiId;
-
+    // Load saved chat for this apiId
     try {
       const saved = localStorage.getItem(`apives_chat_${apiId}`);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setChat(parsed);
-        } else {
-          setChat([]);
-        }
-      } else {
-        setChat([]);
+        if (Array.isArray(parsed)) setChat(parsed);
       }
-    } catch {
-      setChat([]);
+    } catch (err) {
+      console.error("[AskApives] Failed to load chat from localStorage:", err);
     }
-  }, [apiId]);
 
-  // Persist chat
+    // Fetch API metadata
+    axios
+      .get(`/api/apis/${apiId}`)
+      .then((res) => {
+        if (res.data) setApiData(res.data);
+      })
+      .catch((err) => {
+        console.error("[AskApives] Failed to fetch API data:", err);
+      });
+  }, [apiId]); // re-runs every time apiId changes (including from history clicks)
+
+  // Persist chat whenever it changes
   useEffect(() => {
     if (!apiId) return;
-    localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
-    const firstUser = chat.find((m) => m.role === "user");
-    if (firstUser) {
-      localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
+    try {
+      localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
+      const firstUser = chat.find((m) => m.role === "user");
+      if (firstUser) {
+        localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
+      }
+    } catch (err) {
+      console.error("[AskApives] Failed to persist chat:", err);
     }
   }, [chat, apiId]);
-
-  // FIX 2: Fetch API data — use full render URL to ensure correct base
-  useEffect(() => {
-    if (!apiId) return;
-    axios.get(`https://apives-3xrc.onrender.com/api/apis/${apiId}`)
-      .then((res) => setApiData(res.data))
-      .catch(() => {
-        // fallback to relative path
-        axios.get(`/api/apis/${apiId}`)
-          .then((res) => setApiData(res.data))
-          .catch(() => {});
-      });
-  }, [apiId]);
 
   // Auto scroll
   useEffect(() => {
@@ -861,96 +687,116 @@ const AskApivesPage = () => {
     }
   }, [chat, loading]);
 
-  // ─── FIX 2: sendMessage with proper API context ───────────────────────────
-  const sendMessage = async (overrideText?: string, opts?: { isCompare?: boolean; compareApiA?: any; compareApiB?: any }) => {
+  // ── FIX 2 + FIX 3: sendMessage — rich context, smart intent, no silent fail ─
+  const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text) return;
 
-    const userMsg: ChatMessage = { role: "user", content: text };
-    const newChat = [...chat, userMsg];
+    const newChat = [...chat, { role: "user" as const, content: text }];
     setChat(newChat);
     setInput("");
     setLoading(true);
 
-    const isApiQuery    = isApiRelatedQuery(text) || !!opts?.isCompare;
-    const isCompareMode = !!opts?.isCompare;
+    const isApiQuery = isApiRelatedQuery(text);
 
-    // FIX 2: build rich context from actual API data
-    let systemPrompt: string;
+    // ── FIX 2: Build rich API context from fetched apiData ──────────────────
+    const buildApiContext = () => {
+      if (!apiData) return "No specific API is selected — answer based on general API knowledge.";
 
-    if (isCompareMode && opts?.compareApiA && opts?.compareApiB) {
-      const contextA = buildApiContext(opts.compareApiA);
-      const contextB = buildApiContext(opts.compareApiB);
-      systemPrompt = `You are an elite API analyst on Apives. The user wants a detailed comparison of two APIs.
+      const parts: string[] = [
+        `API Name: ${apiData.name || "Unknown"}`,
+        apiData.category ? `Category: ${apiData.category}` : null,
+        apiData.description ? `Description: ${apiData.description}` : null,
+        apiData.baseUrl || apiData.base_url
+          ? `Base URL: ${apiData.baseUrl || apiData.base_url}`
+          : null,
+        apiData.auth ? `Authentication: ${apiData.auth}` : null,
+        apiData.version ? `Version: ${apiData.version}` : null,
+        apiData.endpoints?.length
+          ? `Available Endpoints: ${(apiData.endpoints as string[]).slice(0, 8).join(", ")}`
+          : null,
+        apiData.params?.length
+          ? `Key Parameters: ${(apiData.params as string[]).slice(0, 6).join(", ")}`
+          : null,
+        apiData.example
+          ? `Example: ${typeof apiData.example === "string" ? apiData.example : JSON.stringify(apiData.example)}`
+          : null,
+        apiData.rateLimit || apiData.rate_limit
+          ? `Rate Limit: ${apiData.rateLimit || apiData.rate_limit}`
+          : null,
+        apiData.pricing ? `Pricing: ${apiData.pricing}` : null,
+        apiData.tags?.length
+          ? `Tags: ${(apiData.tags as string[]).join(", ")}`
+          : null,
+      ].filter(Boolean);
 
-API A:
-${contextA}
+      return parts.join("\n");
+    };
 
-API B:
-${contextB}
+    // ── FIX 3: Dynamic system prompt based on query intent ───────────────────
+    const systemPrompt = isApiQuery
+      ? `You are an elite API expert assistant on Apives — think Stripe docs combined with a senior engineer who knows APIs inside-out.
 
-Provide a structured, developer-focused comparison with these sections:
-1. Overview — one-line summary of each API
-2. Key Differences — bullet points of the most important contrasts (auth, speed, pricing, limits, DX)
-3. Pros & Cons — for each API, 3–4 clear bullet points
-4. Use Cases — when to choose A vs B
-5. Final Recommendation — clear winner for each scenario
+The user is asking about the following API:
+${buildApiContext()}
 
-Be specific, practical, and developer-friendly. No vague marketing language.`;
-    } else if (isApiQuery && apiData) {
-      const apiContext = buildApiContext(apiData);
-      systemPrompt = `You are an elite API expert on Apives — like Stripe Docs + Postman AI combined.
+RESPOND RULES (follow strictly):
+- Give a thorough, intelligent answer tailored to THIS specific question
+- DO NOT give the same structured breakdown for every question — vary your format naturally
+- For "what is" questions: explain clearly + real-world use cases
+- For "how to use" / "integrate" questions: lead with a working code example (use curl, fetch, or axios as appropriate), then explain key params
+- For "endpoint" questions: list relevant endpoints with method, path, and what each does
+- For "auth" questions: explain the auth mechanism with an actual implementation example
+- For "error" questions: explain common errors and how to fix them
+- For "compare" questions: give honest pros/cons
+- Use real code blocks with correct syntax when showing examples
+- Keep spacing tight — no large vertical gaps
+- Tone: expert, concise, developer-friendly — like a senior engineer pair-programming
+- Length: match the complexity of the question. Simple question = short answer. Complex question = thorough answer.
+- Never say "The provided HTML content..." or reference internal implementation details`
+      : `You are a friendly, intelligent assistant on Apives. The user is asking a general or conversational question — NOT specifically about an API.
 
-Selected API context:
-${apiContext}
-
-Answer the user's question with precision and depth. Adapt your structure to the question — don't always use the same format.
-
-Guidelines:
-- Lead with a precise, direct answer (2–3 lines)
-- Include relevant depth: usage, code examples (curl or JS fetch), parameters, auth — only what's needed
-- For code: use real working snippets, not pseudocode
-- Be comprehensive but never repetitive
-- Tone: expert engineer pair-programming with the user`;
-    } else {
-      systemPrompt = `You are a smart, helpful AI assistant on Apives, an API discovery platform. Answer naturally and conversationally. Be concise and useful. Don't force API structure onto general questions.`;
-    }
+Answer naturally, helpfully, and concisely. Be human. Skip any API-specific structure unless the user explicitly asks for it. Keep it conversational and to the point.`;
 
     const messagesWithSystem = [
       { role: "system", content: systemPrompt },
-      ...newChat.map(({ role, content }) => ({ role, content })),
+      ...newChat,
     ];
 
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
         messages: messagesWithSystem,
-        apiData: isApiQuery ? (opts?.compareApiA || apiData) : undefined,
+        // FIX 2: only send full apiData for API queries — avoid irrelevant context
+        apiData: isApiQuery ? apiData : undefined,
       });
 
+      // FIX 2: validate answer exists and is non-empty
       const answer = res.data?.answer;
-      if (answer && typeof answer === "string" && answer.trim()) {
-        setChat((prev) => [
-          ...prev,
-          { role: "assistant", content: answer, isCompare: isCompareMode },
-        ]);
+      if (answer && typeof answer === "string" && answer.trim().length > 0) {
+        setChat((prev) => [...prev, { role: "assistant", content: answer }]);
       } else {
-        throw new Error("Empty answer from primary AI");
+        throw new Error(`Primary AI returned empty/invalid answer. Raw: ${JSON.stringify(res.data)}`);
       }
     } catch (primaryErr) {
       console.error("[AskApives] Primary AI failed:", primaryErr);
+
+      // FIX 2: Gemini fallback
       try {
-        const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", { prompt: text });
+        const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", {
+          prompt: isApiQuery
+            ? `${text}\n\nContext about the API being asked about:\n${buildApiContext()}`
+            : text,
+        });
+
         const geminiAnswer = geminiRes.data?.result || geminiRes.data?.answer;
-        if (geminiAnswer && typeof geminiAnswer === "string" && geminiAnswer.trim()) {
-          setChat((prev) => [
-            ...prev,
-            { role: "assistant", content: geminiAnswer, isCompare: isCompareMode },
-          ]);
+        if (geminiAnswer && typeof geminiAnswer === "string" && geminiAnswer.trim().length > 0) {
+          setChat((prev) => [...prev, { role: "assistant", content: geminiAnswer }]);
         } else {
-          throw new Error("Empty Gemini answer");
+          throw new Error("Gemini fallback returned empty answer");
         }
       } catch (fallbackErr) {
         console.error("[AskApives] Gemini fallback failed:", fallbackErr);
+        // FIX 2: never silently fail — always show something
         setChat((prev) => [
           ...prev,
           {
@@ -964,19 +810,13 @@ Guidelines:
     }
   };
 
-  // FIX 4: triggerCompare — called from CompareModal with both APIs
-  const triggerCompare = useCallback((apiA: any, apiB: any) => {
-    setShowCompareModal(false);
-    const prompt = `Compare ${apiA?.name || "API A"} vs ${apiB?.name || "API B"} in detail. Give me a comprehensive breakdown covering architecture, endpoints, authentication, pricing, rate limits, developer experience, and when to use each one.`;
-    sendMessage(prompt, { isCompare: true, compareApiA: apiA, compareApiB: apiB });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chat, apiData]);
-
+  // New Chat
   const startNewChat = () => {
     setChat([]);
     setInput("");
   };
 
+  // Regenerate last AI response
   const regenerateLast = () => {
     const lastUserMsg = [...chat].reverse().find((m) => m.role === "user");
     if (!lastUserMsg) return;
@@ -994,29 +834,33 @@ Guidelines:
     ? `Ask anything about ${displayName}...`
     : "Ask anything about any API...";
 
+  // ── FIX 1: History onSelect — navigate preserving apiName if available ─────
+  const handleHistorySelect = (id: string) => {
+    setShowHistoryModal(false);
+    // Get stored title to pass as apiName param for better UX
+    const storedTitle = localStorage.getItem(`apives_chat_title_${id}`);
+    // Navigate — the apiId change will trigger the useEffect above which resets
+    // and reloads correctly without going to the landing page
+    navigate(`/ask-apives?apiId=${id}`, { replace: false });
+  };
+
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
 
+      {/* Modals */}
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
           isLoggedIn={isValidUser()}
           onNeedLogin={() => { setShowCompareModal(false); redirectToAccess(); }}
-          // FIX 4: pass triggerCompare so CompareModal can fire AI comparison
-          onCompare={triggerCompare}
         />
       )}
-
-      {/* FIX 1: History — navigate replaces search param → useEffect reloads correct chat */}
       {showHistoryModal && (
         <HistoryModal
           onClose={() => setShowHistoryModal(false)}
-          onSelect={(id: string) => {
-            setShowHistoryModal(false);
-            // FIX 1: use replace:false so back button works; chat loads via useEffect[apiId]
-            navigate(`/ask-apives?apiId=${id}`, { replace: false });
-          }}
+          // FIX 1: use dedicated handler — no more landing page redirect
+          onSelect={handleHistorySelect}
         />
       )}
 
@@ -1132,6 +976,7 @@ Guidelines:
             minHeight: 0,
           }}
         >
+          {/* Empty state */}
           {chat.length === 0 && (
             <div style={{
               display: "flex", flexDirection: "column",
@@ -1163,6 +1008,7 @@ Guidelines:
                 Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
+              {/* "Your Selected API" label — above existing pill */}
               {displayName && (
                 <div
                   className="selected-api-label"
@@ -1187,6 +1033,7 @@ Guidelines:
                 </div>
               )}
 
+              {/* Existing API name pill — UNTOUCHED */}
               {displayName && (
                 <div style={{ marginBottom: "8px" }}>
                   <ApiNamePill
@@ -1205,12 +1052,14 @@ Guidelines:
                 </p>
               )}
 
+              {/* ApiBreakdown */}
               {apiData && (
                 <div style={{ width: "100%", maxWidth: "340px" }}>
                   <UpgradedApiBreakdown api={apiData} />
                 </div>
               )}
 
+              {/* Suggested Prompts */}
               <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}>
                 <SuggestedPrompts
                   onClick={(text: string) => { sendMessage(text); }}
@@ -1228,7 +1077,6 @@ Guidelines:
                   <MessagePill
                     role={msg.role}
                     content={msg.content}
-                    isCompare={msg.isCompare}
                     onRegenerate={isLastAssistant ? regenerateLast : undefined}
                   />
                 </div>
@@ -1269,7 +1117,7 @@ Guidelines:
   );
 };
 
-// ─── UpgradedApiBreakdown ──────────────────────────────────────────────────────
+// ─── UpgradedApiBreakdown ─────────────────────────────────────────────────────
 const UpgradedApiBreakdown = ({ api }: { api: any }) => {
   if (!api) return null;
 
@@ -1379,8 +1227,7 @@ const UpgradedApiBreakdown = ({ api }: { api: any }) => {
                 borderRadius: "8px",
                 background: "rgba(0,0,0,0.35)",
                 border: "1px solid rgba(34,197,94,0.08)",
-                marginBottom: "6px",
-                overflow: "auto",
+                marginBottom: "6px", overflow: "auto",
               }}>
                 <pre style={{
                   fontSize: "10px", color: "rgba(34,197,94,0.75)",
