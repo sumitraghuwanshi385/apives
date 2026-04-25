@@ -24,7 +24,7 @@ import {
   Check,
 } from "lucide-react";
 
-import ApiBreakdown from "../components/ai/ApiBreakdown";
+
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 import HistoryModal from "../components/ai/HistoryModal";
 import CompareModal from "../components/ai/CompareModal";
@@ -1052,13 +1052,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
                 </p>
               )}
 
-              {/* ApiBreakdown */}
-              {apiData && (
-                <div style={{ width: "100%", maxWidth: "340px" }}>
-                  <UpgradedApiBreakdown api={apiData} />
-                </div>
-              )}
-
+              
               {/* Suggested Prompts */}
               <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}>
                 <SuggestedPrompts
@@ -1118,146 +1112,5 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
 };
 
 // ─── UpgradedApiBreakdown ─────────────────────────────────────────────────────
-const UpgradedApiBreakdown = ({ api }: { api: any }) => {
-  if (!api) return null;
-
-  const sections = [
-    api.description && {
-      key: "description",
-      label: "About",
-      icon: <Sparkles size={11} color="#4ade80" />,
-      content: api.description,
-      type: "text" as const,
-    },
-    api.endpoints?.length && {
-      key: "endpoints",
-      label: "Endpoints",
-      icon: <Link2 size={11} color="#4ade80" />,
-      content: api.endpoints,
-      type: "list" as const,
-    },
-    api.params?.length && {
-      key: "params",
-      label: "Parameters",
-      icon: <Radio size={11} color="#4ade80" />,
-      content: api.params,
-      type: "list" as const,
-    },
-    api.example && {
-      key: "example",
-      label: "Example",
-      icon: <Zap size={11} color="#4ade80" />,
-      content: typeof api.example === "string" ? api.example : JSON.stringify(api.example, null, 2),
-      type: "code" as const,
-    },
-    api.auth && {
-      key: "auth",
-      label: "Auth",
-      icon: <Shield size={11} color="#4ade80" />,
-      content: api.auth,
-      type: "badge" as const,
-    },
-  ].filter(Boolean) as Array<{
-    key: string; label: string; icon: React.ReactNode;
-    content: any; type: "text" | "list" | "code" | "badge";
-  }>;
-
-  if (!sections.length) return null;
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "2px" }}>
-        <div style={{ height: "1px", flex: 1, background: "rgba(34,197,94,0.15)" }} />
-        <span style={{
-          fontSize: "9px", fontWeight: 700, letterSpacing: "0.18em",
-          textTransform: "uppercase", color: "rgba(34,197,94,0.45)",
-        }}>
-          API Details
-        </span>
-        <div style={{ height: "1px", flex: 1, background: "rgba(34,197,94,0.15)" }} />
-      </div>
-
-      {sections.map((s) => (
-        <div key={s.key} style={{
-          padding: "9px 12px",
-          borderRadius: "12px",
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(34,197,94,0.10)",
-          backdropFilter: "blur(12px)", textAlign: "left",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "6px" }}>
-            {s.icon}
-            <span style={{
-              fontSize: "9px", fontWeight: 800, letterSpacing: "0.14em",
-              textTransform: "uppercase", color: "rgba(34,197,94,0.55)",
-            }}>
-              {s.label}
-            </span>
-          </div>
-
-          {s.type === "text" && (
-            <p style={{ fontSize: "12px", lineHeight: 1.6, color: "rgba(255,255,255,0.60)", fontWeight: 400, margin: 0 }}>
-              {s.content}
-            </p>
-          )}
-
-          {s.type === "list" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              {(s.content as string[]).slice(0, 5).map((item: string, i: number) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-                  <div style={{
-                    width: "4px", height: "4px", borderRadius: "50%", flexShrink: 0,
-                    background: "rgba(34,197,94,0.50)",
-                  }} />
-                  <span style={{
-                    fontSize: "11px", color: "rgba(255,255,255,0.55)",
-                    fontFamily: "monospace", wordBreak: "break-all",
-                  }}>
-                    {item}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {s.type === "code" && (
-            <div>
-              <div style={{
-                padding: "8px 10px",
-                borderRadius: "8px",
-                background: "rgba(0,0,0,0.35)",
-                border: "1px solid rgba(34,197,94,0.08)",
-                marginBottom: "6px", overflow: "auto",
-              }}>
-                <pre style={{
-                  fontSize: "10px", color: "rgba(34,197,94,0.75)",
-                  fontFamily: "monospace", lineHeight: 1.55,
-                  margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-all",
-                }}>
-                  {s.content}
-                </pre>
-              </div>
-              <CopyButton text={s.content} label="Copy example" />
-            </div>
-          )}
-
-          {s.type === "badge" && (
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: "5px",
-              padding: "3px 10px", borderRadius: "99px",
-              background: "rgba(34,197,94,0.10)",
-              border: "1px solid rgba(34,197,94,0.22)",
-              fontSize: "11px", fontWeight: 600,
-              color: "rgba(134,239,172,0.85)",
-            }}>
-              <Shield size={9} color="#4ade80" />
-              {s.content}
-            </span>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
 
 export default AskApivesPage;
