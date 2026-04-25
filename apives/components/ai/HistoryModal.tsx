@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   X,
-  Clock,
   ChevronRight,
   Sparkles,
   Trash2,
@@ -9,6 +8,7 @@ import {
 
 type HistoryEntry = {
   apiId: string;
+  chatId: string;
   title: string;
   preview: string;
   ts: number;
@@ -19,7 +19,7 @@ const HistoryModal = ({
   onSelect,
 }: {
   onClose: () => void;
-  onSelect: (apiId: string) => void;
+  onSelect: (params: string) => void; // FIXED
 }) => {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [selectMode, setSelectMode] = useState(false);
@@ -31,39 +31,70 @@ const HistoryModal = ({
   }, []);
 
   const loadHistory = () => {
-    const keys = Object.keys(localStorage).filter((k) =>
-      k.startsWith("apives_chat_")
-    );
+    try {
+      const user = JSON.parse(localStorage.getItem("mora_user") || "{}");
+      const userId = user?.id;
 
-    const result: HistoryEntry[] = [];
+      // 🚫 block guest
+      if (!userId) {
+        setEntries([]);
+        return;
+      }
 
-    keys.forEach((key) => {
-      try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return;
+      const keys = Object.keys(localStorage).filter((k) =>
+        k.startsWith(`apives_chat_${userId}_`)
+      );
 
-        const msgs = JSON.parse(raw);
-        if (!msgs?.length) return;
+      const result: HistoryEntry[] = [];
 
-        const apiId = key.replace("apives_chat_", "");
-        const firstUser = msgs.find((m: any) => m.role === "user");
+      keys.forEach((key) => {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return;
 
-        const title = firstUser?.content?.slice(0, 48) || apiId;
-        const last = msgs[msgs.length - 1];
-        const preview = (last?.content?.slice(0, 60) ?? "") + "...";
+          const msgs = JSON.parse(raw);
+          if (!Array.isArray(msgs) || msgs.length === 0) return;
 
-        result.push({ apiId, title, preview, ts: Date.now() });
-      } catch {}
-    });
+          // ✅ parse key
+          const parts = key.split("_");
+          const apiId = parts[3];
+          const chatId = parts[4];
 
-    setEntries(result.reverse());
+          const firstUser = msgs.find((m: any) => m.role === "user");
+          const title =
+            firstUser?.content?.slice(0, 48) || "New Chat";
+
+          const last = msgs[msgs.length - 1];
+          const preview =
+            (last?.content?.slice(0, 60) ?? "") + "...";
+
+          result.push({
+            apiId,
+            chatId,
+            title,
+            preview,
+            ts: Number(chatId),
+          });
+        } catch {}
+      });
+
+      // ✅ latest first
+      result.sort((a, b) => b.ts - a.ts);
+
+      setEntries(result);
+    } catch (err) {
+      console.error("History load failed:", err);
+    }
   };
 
-  // ✅ DELETE CONFIRMED
+  // 🗑 DELETE
   const confirmDelete = () => {
+    const user = JSON.parse(localStorage.getItem("mora_user") || "{}");
+    const userId = user?.id;
+
     selected.forEach((id) => {
-      localStorage.removeItem(`apives_chat_${id}`);
-      localStorage.removeItem(`apives_chat_title_${id}`);
+      localStorage.removeItem(`apives_chat_${userId}_${id}`);
+      localStorage.removeItem(`apives_chat_title_${userId}_${id}`);
     });
 
     setSelected([]);
@@ -145,8 +176,6 @@ const HistoryModal = ({
                 </button>
               )}
 
-              
-              {/* ✅ FIXED CLOSE BUTTON */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -179,14 +208,15 @@ const HistoryModal = ({
           {/* LIST */}
           <div style={{ padding: "0 12px 20px", overflowY: "auto" }}>
             {entries.map((e) => {
-              const isSelected = selected.includes(e.apiId);
+              const id = `${e.apiId}_${e.chatId}`;
+              const isSelected = selected.includes(id);
 
               return (
                 <div
-                  key={e.apiId}
+                  key={id}
                   onClick={() => {
-                    if (selectMode) toggleSelect(e.apiId);
-                    else onSelect(e.apiId); // ✅ FIXED NAVIGATION
+                    if (selectMode) toggleSelect(id);
+                    else onSelect(`apiId=${e.apiId}&chatId=${e.chatId}`); // ✅ FIXED
                   }}
                   style={{
                     padding: "12px",
@@ -222,7 +252,7 @@ const HistoryModal = ({
             })}
           </div>
 
-          {/* DELETE BUTTON */}
+          {/* DELETE */}
           {selectMode && selected.length > 0 && (
             <div style={{ padding: "10px" }}>
               <button
@@ -244,7 +274,7 @@ const HistoryModal = ({
         </div>
       </div>
 
-      {/* 🔥 CONFIRM MODAL */}
+      {/* CONFIRM */}
       {showConfirm && (
         <div
           style={{
