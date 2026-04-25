@@ -106,137 +106,154 @@ const RANK_BADGE_STYLES = [
 ];
 
 const OfferSlider = () => {
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
 
-  const slides = [
-    {
-      type: "serp",
-    },
-    {
-      type: "apives",
-    },
-  ];
+  const [startX, setStartX] = useState(0);
+  const [currentX, setCurrentX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
-  // 🔁 auto slide every 5 sec
   useEffect(() => {
-    const i = setInterval(() => {
-      setIndex((prev) => (prev + 1) % slides.length);
+    const t = setInterval(() => {
+      setIndex((prev) => (prev + 1) % 2);
     }, 5000);
-
-    return () => clearInterval(i);
+    return () => clearInterval(t);
   }, []);
 
+  const handleTouchStart = (e) => {
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    setCurrentX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    const diff = startX - currentX;
+
+    if (diff > 50) setIndex((prev) => (prev + 1) % 2);
+    else if (diff < -50) setIndex((prev) => (prev - 1 + 2) % 2);
+
+    setIsDragging(false);
+  };
+
   return (
-    <div className="relative w-full max-w-xl overflow-hidden">
-      
-      {/* SLIDER TRACK */}
-      <div
-        className="flex transition-transform duration-700 ease-in-out"
-        style={{ transform: `translateX(-${index * 100}%)` }}
-      >
+    <section className="relative py-5 bg-black">
 
-        {/* ===== SLIDE 1 (SERPAPI) ===== */}
-        <div className="min-w-full px-1">
-          <div className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md">
+      <div className="text-center mb-3">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
+          BUILDER HIGHLIGHTS
+        </p>
+      </div>
 
-            <div className="flex items-center gap-3">
-              <img
-                src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-                className="w-6 h-6 rounded-lg bg-white p-[2px]"
-              />
+      <div className="flex justify-center px-4">
 
-              <span className="text-slate-500 text-[10px]">×</span>
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="overflow-hidden w-full max-w-xl"
+        >
 
-              <img
-                src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-                className="w-7 h-7"
-              />
+          <div
+            className="flex transition-transform duration-500"
+            style={{ transform: `translateX(-${index * 100}%)` }}
+          >
 
-              <div>
-                <p className="text-green-400 text-[11px] font-bold">
-                  Get 500 Free SerpAPI Credits
-                </p>
-                <p className="text-[9px] text-slate-400">
-                  Limited access for early builders
-                </p>
+            {/* 🔥 SERPAPI CARD */}
+            <div className="w-full flex-shrink-0 px-1">
+              <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md">
+
+                <div className="flex items-center gap-3">
+
+                  <img
+                    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+                    className="w-7 h-7 rounded-lg bg-white p-[2px]"
+                  />
+
+                  <span className="text-slate-500 text-[10px] font-bold">×</span>
+
+                  {/* ✅ APIVES LOGO */}
+                  <img
+                    src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
+                    className="w-8 h-8 object-contain"
+                  />
+
+                  <div>
+                    <p className="text-green-400 text-[11px] font-bold">
+                      Get 500 Free SerpAPI Credits
+                    </p>
+                    <p className="text-[9px] text-slate-400">
+                      Limited access for early builders
+                    </p>
+                  </div>
+
+                </div>
+
+                <button
+                  onClick={() => navigate("/offers/serpapi")}
+                  className="text-[10px] px-3 py-1 rounded-full bg-white text-black font-bold uppercase"
+                >
+                  Claim
+                </button>
+
               </div>
             </div>
 
-            <button
-              onClick={() => window.location.href="/offers/serpapi"}
-              className="text-[9px] px-3 py-1 rounded-full bg-white text-black font-bold"
-            >
-              Claim
-            </button>
+            {/* 🔥 APIVES AI CARD */}
+            <div className="w-full flex-shrink-0 px-1">
+              <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-mora-500/30 bg-mora-500/10 backdrop-blur-md">
 
-          </div>
-        </div>
+                <div className="flex items-center gap-3">
 
-        {/* ===== SLIDE 2 (APIVES AI) ===== */}
-        <div className="min-w-full px-1">
-          <div className="
-            flex items-center justify-between gap-3 
-            px-4 py-3 
-            rounded-xl 
-            border border-mora-500/30 
-            bg-mora-500/10 
-            backdrop-blur-md
-          ">
+                  {/* ✅ SAME CLEAN LOGO */}
+                  <img
+                    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
+                    className="w-8 h-8 object-contain"
+                  />
 
-            <div className="flex items-center gap-3">
+                  <div>
+                    <p className="text-mora-400 text-[11px] font-bold">
+                      Apives AI
+                    </p>
+                    <p className="text-[9px] text-slate-400">
+                      The API Intelligence You Deserve
+                    </p>
+                  </div>
 
-              <img
-                src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-                className="w-7 h-7"
-              />
+                </div>
 
-              <div>
-                <p className="text-mora-400 text-[11px] font-bold">
-                  Apives AI
-                </p>
+                <button
+                  onClick={() => navigate("/ask-apives-ai")}
+                  className="text-[10px] px-3 py-1 rounded-full bg-mora-500 text-black font-bold uppercase"
+                >
+                  Try
+                </button>
 
-                <p className="text-[9px] text-slate-400">
-                  The API Intelligence You Deserve
-                </p>
               </div>
             </div>
 
-            <button
-              onClick={() => window.location.href="/ask-apives-ai"}
-              className="
-                text-[9px]
-                px-3 py-1
-                rounded-full
-                bg-mora-500 text-black
-                font-bold
-                hover:scale-105
-              "
-            >
-              Try
-            </button>
-
           </div>
         </div>
-
       </div>
 
       {/* DOTS */}
-      <div className="flex justify-center mt-2 gap-1">
-        {slides.map((_, i) => (
+      <div className="flex justify-center gap-2 mt-3">
+        {[0,1].map(i => (
           <div
             key={i}
-            onClick={() => setIndex(i)}
-            className={`
-              w-1.5 h-1.5 rounded-full cursor-pointer
-              ${index === i ? "bg-white" : "bg-white/30"}
-            `}
+            className={`w-2 h-2 rounded-full ${
+              i === index ? "bg-mora-500" : "bg-white/20"
+            }`}
           />
         ))}
       </div>
-    </div>
+
+    </section>
   );
 };
-
 
 
 const QuickStartPlayground = () => {
