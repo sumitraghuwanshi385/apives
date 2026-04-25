@@ -806,7 +806,11 @@ STYLE:
     content: `You MUST use this API for all answers.
 
 Selected API JSON:
-${JSON.stringify(apiData, null, 2).slice(0, 2000)}
+$JSON.stringify({
+  name: apiData?.name,
+  category: apiData?.category,
+  description: apiData?.description
+})
 
 Rules:
 - This API is ALWAYS defined
