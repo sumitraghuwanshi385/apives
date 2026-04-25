@@ -21,7 +21,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
-import ApivesAIHighlight from '../components/ApivesAIHighlight';
+import { ApivesAIHighlight } from '../components/ApivesAIHighlight';
 import ApiCard from '../components/ApiCard';
 let LANDING_API_CACHE:
   | {
@@ -1185,7 +1185,7 @@ return (
           </div>
         </Link>
       ))}
-  <div className="col-span-2">
+  
 <ApivesAIHighlight />
 
     </div>
