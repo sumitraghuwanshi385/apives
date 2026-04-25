@@ -114,7 +114,7 @@ const HistoryModal = ({
             background: "rgba(5,14,9,0.99)",
             border: "1px solid rgba(34,197,94,0.12)",
             borderBottom: "none",
-            maxHeight: "72vh",
+            height: "85vh", // ✅ FIX: increased + fixed height
             display: "flex",
             flexDirection: "column",
           }}
@@ -156,7 +156,6 @@ const HistoryModal = ({
                 </button>
               )}
 
-              {/* ✅ FIXED CLOSE BUTTON */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -187,7 +186,14 @@ const HistoryModal = ({
           </div>
 
           {/* LIST */}
-          <div style={{ padding: "0 12px 20px", overflowY: "auto" }}>
+          <div
+            style={{
+              padding: "0 12px 20px",
+              overflowY: "auto",
+              flex: 1, // ✅ FIX: take remaining space
+              paddingBottom: "80px", // ✅ FIX: bottom safe spacing
+            }}
+          >
             {entries.map((e) => {
               const isSelected = selected.includes(e.apiId);
 
