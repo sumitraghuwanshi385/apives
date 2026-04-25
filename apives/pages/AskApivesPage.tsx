@@ -656,26 +656,55 @@ const AskApivesPage = () => {
     try {
       const saved = localStorage.getItem(`apives_chat_${apiId}`);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) setChat(parsed);
-      }
-    } catch {}
+  try {
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed)) {
+      setChat(parsed);
+    } else {
+      localStorage.removeItem(`apives_chat_${apiId}`);
+    }
+  } catch {
+    localStorage.removeItem(`apives_chat_${apiId}`);
+  }
+}
 
     // Fetch full API data so AI always has it in context
     axios.get(`/api/apis/${apiId}`)
-      .then((res) => { if (res.data) setApiData(res.data); })
-      .catch(() => {});
+  .then((res) => {
+    if (res.data) {
+      console.log("✅ API LOADED:", res.data); // DEBUG
+      setApiData(res.data);
+    } else {
+      console.error("❌ EMPTY API DATA");
+    }
+  })
+  .catch((err) => {
+    console.error("❌ API LOAD FAILED:", err);
+  });
   }, [apiId]);
 
   // Persist chat — UNCHANGED
   useEffect(() => {
-    if (!apiId) return;
+  if (!apiId) return;
+
+  try {
+    // SAVE CHAT
     localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
+
+    // SAVE TITLE
     const firstUser = chat.find((m) => m.role === "user");
     if (firstUser) {
-      localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
+      localStorage.setItem(
+        `apives_chat_title_${apiId}`,
+        firstUser.content.slice(0, 60)
+      );
     }
-  }, [chat, apiId]);
+
+  } catch (err) {
+    console.error("❌ Chat save failed:", err);
+  }
+
+}, [chat, apiId]);
 
   // Auto scroll — UNCHANGED
   useEffect(() => {
@@ -700,17 +729,17 @@ const AskApivesPage = () => {
     setInput("");
     setLoading(true);
 
-    // FIX 3: detect intent — only inject API breakdown instruction when relevant
     const isApiQuery = isApiRelatedQuery(text);
-    const apiContext = apiData
-      ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
-      : "The user is asking about APIs in general.";
+const apiContext = apiData
+  ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
+  : "The user is asking about APIs in general.";
 
     // FIX 2 + FIX 3: smart system prompt — always names the selected API
-    const systemPrompt = `
+
+const systemPrompt = `
 You are Apives AI.
 
-Talk like a smart, experienced developer helping another developer.
+You are helping a developer.
 
 Rules:
 - NO bullet points like usage, parameters, examples but sometimes use bullet points where it necessary
@@ -719,25 +748,54 @@ Rules:
 - If needed, include code inline but don't format like documentation
 - Keep answers direct, practical, and human-like
 
-${apiData
-  ? `IMPORTANT: The user has selected the "${apiData.name}" API. Every answer you give MUST be specific to this API. Never say "unknown API" or respond generically — you always know the API is "${apiData.name}".${apiData.description ? ` About this API: ${apiData.description}` : ""}${apiData.category ? ` Category: ${apiData.category}.` : ""}`
-  : "The user is asking about APIs in general."
+IMPORTANT:
+The user has selected an API.
+
+${
+  apiData
+    ? `Selected API: "${apiData.name}"
+Description: ${apiData.description || "N/A"}
+Category: ${apiData.category || "N/A"}
+
+You MUST ALWAYS answer based on this API.
+Never say "unknown API".
+Never ignore this API.
+`
+    : "User is asking generally about APIs."
 }
+
+STYLE:
+- Talk like real developer
+- No documentation style
+- No headings like Usage, Parameters
+- Explain naturally
 `;
+
 
     // Always inject full apiData as a second system message so AI has complete context
     const messagesWithSystem = [
-      { role: "system", content: systemPrompt },
-      ...(apiData
-        ? [
-            {
-              role: "system",
-              content: `Selected API full details (JSON):\n${JSON.stringify(apiData, null, 2).slice(0, 2000)}`,
-            },
-          ]
-        : []),
-      ...newChat,
-    ];
+  {
+    role: "system",
+    content: systemPrompt
+  },
+
+  ...(apiData ? [{
+    role: "system",
+    content: `You MUST use this API for all answers.
+
+Selected API JSON:
+${JSON.stringify(apiData, null, 2).slice(0, 2000)}
+
+Rules:
+- This API is ALWAYS defined
+- Never say unknown API
+- Always use this API name: ${apiData.name}
+- Every answer must relate to this API
+`
+  }] : []),
+
+  ...newChat
+];
 
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
