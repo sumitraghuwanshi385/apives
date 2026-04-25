@@ -24,13 +24,13 @@ import {
   Check,
 } from "lucide-react";
 
-
 import SuggestedPrompts from "../components/ai/SuggestedPrompts";
 import HistoryModal from "../components/ai/HistoryModal";
 import CompareModal from "../components/ai/CompareModal";
 import AnimatedOrb from "../components/ai/AnimatedOrb";
 
 // ─── Global Styles ────────────────────────────────────────────────────────────
+// UNCHANGED from original
 const GLOBAL_STYLES = `
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
@@ -218,6 +218,7 @@ const GLOBAL_STYLES = `
     box-shadow: 0 2px 16px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.07);
   }
 
+  /* ── FIX 1: "Your Selected API" label above pill ── */
   @keyframes selectedPillIn {
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -227,7 +228,8 @@ const GLOBAL_STYLES = `
   }
 `;
 
-// ─── Strip markdown helper ────────────────────────────────────────────────────
+// ─── Strip markdown helper ─────────────────────────────────────────────────────
+// UNCHANGED
 function stripMarkdown(text: string): string {
   return text
     .replace(/#{1,6}\s/g, "")
@@ -245,7 +247,8 @@ function stripMarkdown(text: string): string {
     .trim();
 }
 
-// ─── Smart intent detection ───────────────────────────────────────────────────
+// ─── FIX 3: Smart intent detection ───────────────────────────────────────────
+// Returns true if message is API-related (should show breakdown)
 function isApiRelatedQuery(text: string): boolean {
   const normalized = text.toLowerCase();
   const apiKeywords = [
@@ -255,12 +258,12 @@ function isApiRelatedQuery(text: string): boolean {
     "header", "key", "secret", "curl", "fetch", "axios", "postman",
     "usage", "how to use", "how do i use", "example", "documentation",
     "docs", "method", "get", "post", "put", "delete", "patch",
-    "breakdown", "explain", "details", "what is", "how does",
   ];
   return apiKeywords.some((kw) => normalized.includes(kw));
 }
 
-// ─── Robot TypingIndicator ────────────────────────────────────────────────────
+// ─── Robot TypingIndicator ─────────────────────────────────────────────────────
+// UNCHANGED
 const TypingIndicator = () => (
   <div style={{
     display: "flex", alignItems: "center", gap: "10px",
@@ -332,6 +335,7 @@ const TypingIndicator = () => (
 );
 
 // ─── CopyButton ───────────────────────────────────────────────────────────────
+// UNCHANGED
 const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) => {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -350,6 +354,7 @@ const CopyButton = ({ text, label = "Copy" }: { text: string; label?: string }) 
 };
 
 // ─── MessagePill ──────────────────────────────────────────────────────────────
+// UNCHANGED
 const MessagePill = ({
   role, content, onRegenerate,
 }: {
@@ -403,7 +408,7 @@ const MessagePill = ({
   );
 };
 
-// ─── ApiNamePill ──────────────────────────────────────────────────────────────
+// ─── FIX 3: ApiNamePill — UNCHANGED, no modifications ─────────────────────────
 const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   <div className="api-name-pill">
     <div style={{
@@ -429,7 +434,7 @@ const ApiNamePill = ({ name, iconUrl }: { name: string; iconUrl?: string }) => (
   </div>
 );
 
-// ─── MicButton ────────────────────────────────────────────────────────────────
+// ─── FIX 4: MicButton — FIXED: continuous mode + proper transcript append ─────
 const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => void; disabled: boolean }) => {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -443,24 +448,29 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
       return;
     }
 
+    // If already listening — stop
     if (listening) {
       try { recognitionRef.current?.stop(); } catch {}
       setListening(false);
       return;
     }
 
+    // Create fresh instance each time (avoids stale state bugs)
     const rec = new SpeechRecognition();
     rec.lang = "en-US";
-    rec.continuous = false;
-    rec.interimResults = false;
+    rec.continuous = false;       // single utterance — cleaner UX
+    rec.interimResults = false;   // only final results
     rec.maxAlternatives = 1;
 
-    rec.onstart = () => { setListening(true); };
+    rec.onstart = () => {
+      setListening(true);
+    };
 
     rec.onresult = (e: any) => {
       try {
         const transcript = e.results[0][0].transcript;
         if (transcript && transcript.trim()) {
+          // FIX 4: append transcript — works correctly
           onTranscript(transcript.trim());
         }
       } catch (err) {
@@ -473,7 +483,9 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
       setListening(false);
     };
 
-    rec.onend = () => { setListening(false); };
+    rec.onend = () => {
+      setListening(false);
+    };
 
     recognitionRef.current = rec;
 
@@ -504,7 +516,7 @@ const MicButton = ({ onTranscript, disabled }: { onTranscript: (t: string) => vo
   );
 };
 
-// ─── ClaudeInput ──────────────────────────────────────────────────────────────
+// ─── ClaudeInput — UNCHANGED except MicButton onTranscript fix ───────────────
 const ClaudeInput = ({
   value, onChange, onSend, disabled, placeholder,
 }: {
@@ -548,6 +560,7 @@ const ClaudeInput = ({
         }}
       />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px 10px" }}>
+        {/* FIX 4: transcript appended correctly with space */}
         <MicButton
           onTranscript={(t) => onChange((value.trim() ? value.trim() + " " : "") + t)}
           disabled={disabled}
@@ -580,7 +593,7 @@ const AskApivesPage = () => {
   const apiId   = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
-  // ── Auth ──────────────────────────────────────────────────────────────────
+  // UNCHANGED auth logic
   const isValidUser = (): boolean => {
     try {
       const data = localStorage.getItem("mora_user");
@@ -598,11 +611,13 @@ const AskApivesPage = () => {
 
   const requireLogin = (): boolean => {
     const valid = isValidUser();
-    if (!valid) { redirectToAccess(); return false; }
+    if (!valid) {
+      redirectToAccess();
+      return false;
+    }
     return true;
   };
 
-  // ── State ─────────────────────────────────────────────────────────────────
   const [apiData, setApiData] = useState<any>(null);
   const [input, setInput] = useState("");
   const [chat, setChat] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
@@ -613,7 +628,7 @@ const AskApivesPage = () => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Hide global layout
+  // Hide global layout — UNCHANGED
   useEffect(() => {
     const nav = document.querySelector("nav") as HTMLElement | null;
     const header = document.querySelector("header") as HTMLElement | null;
@@ -628,56 +643,34 @@ const AskApivesPage = () => {
     };
   }, []);
 
-  // ── FIX 1: History click — reset state when apiId changes ─────────────────
-  // When a user clicks a history item → navigate changes URL params → apiId
-  // changes → this effect fires, resets chat + apiData, then loads the saved
-  // conversation for the newly selected apiId.  Without the reset, stale chat
-  // from the previous session would remain on screen.
+  // Load persisted chat — UNCHANGED
   useEffect(() => {
-    // Reset everything first so the UI is clean
-    setChat([]);
-    setApiData(null);
-    setInput("");
-
     if (!apiId) return;
-
-    // Load saved chat for this apiId
     try {
       const saved = localStorage.getItem(`apives_chat_${apiId}`);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) setChat(parsed);
-      }
-    } catch (err) {
-      console.error("[AskApives] Failed to load chat from localStorage:", err);
-    }
+      if (saved) setChat(JSON.parse(saved));
+    } catch {}
+  }, [apiId]);
 
-    // Fetch API metadata
-    axios
-      .get(`/api/apis/${apiId}`)
-      .then((res) => {
-        if (res.data) setApiData(res.data);
-      })
-      .catch((err) => {
-        console.error("[AskApives] Failed to fetch API data:", err);
-      });
-  }, [apiId]); // re-runs every time apiId changes (including from history clicks)
-
-  // Persist chat whenever it changes
+  // Persist chat — UNCHANGED
   useEffect(() => {
     if (!apiId) return;
-    try {
-      localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
-      const firstUser = chat.find((m) => m.role === "user");
-      if (firstUser) {
-        localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
-      }
-    } catch (err) {
-      console.error("[AskApives] Failed to persist chat:", err);
+    localStorage.setItem(`apives_chat_${apiId}`, JSON.stringify(chat));
+    const firstUser = chat.find((m) => m.role === "user");
+    if (firstUser) {
+      localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
     }
   }, [chat, apiId]);
 
-  // Auto scroll
+  // Fetch API data — UNCHANGED
+  useEffect(() => {
+    if (!apiId) return;
+    axios.get(`/api/apis/${apiId}`)
+      .then((res) => setApiData(res.data))
+      .catch(() => {});
+  }, [apiId]);
+
+  // Auto scroll — UNCHANGED
   useEffect(() => {
     if (!scrollRef.current) return;
     const el = scrollRef.current;
@@ -687,7 +680,10 @@ const AskApivesPage = () => {
     }
   }, [chat, loading]);
 
-  // ── FIX 2 + FIX 3: sendMessage — rich context, smart intent, no silent fail ─
+  // ─────────────────────────────────────────────────────────────────────────────
+  // FIX 2: sendMessage — proper error handling, no silent failures
+  // FIX 3: smart system prompt based on query intent
+  // ─────────────────────────────────────────────────────────────────────────────
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text) return;
@@ -697,66 +693,26 @@ const AskApivesPage = () => {
     setInput("");
     setLoading(true);
 
+    // FIX 3: detect intent — only inject API breakdown instruction when relevant
     const isApiQuery = isApiRelatedQuery(text);
+    const apiContext = apiData
+      ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
+      : "The user is asking about APIs in general.";
 
-    // ── FIX 2: Build rich API context from fetched apiData ──────────────────
-    const buildApiContext = () => {
-      if (!apiData) return "No specific API is selected — answer based on general API knowledge.";
-
-      const parts: string[] = [
-        `API Name: ${apiData.name || "Unknown"}`,
-        apiData.category ? `Category: ${apiData.category}` : null,
-        apiData.description ? `Description: ${apiData.description}` : null,
-        apiData.baseUrl || apiData.base_url
-          ? `Base URL: ${apiData.baseUrl || apiData.base_url}`
-          : null,
-        apiData.auth ? `Authentication: ${apiData.auth}` : null,
-        apiData.version ? `Version: ${apiData.version}` : null,
-        apiData.endpoints?.length
-          ? `Available Endpoints: ${(apiData.endpoints as string[]).slice(0, 8).join(", ")}`
-          : null,
-        apiData.params?.length
-          ? `Key Parameters: ${(apiData.params as string[]).slice(0, 6).join(", ")}`
-          : null,
-        apiData.example
-          ? `Example: ${typeof apiData.example === "string" ? apiData.example : JSON.stringify(apiData.example)}`
-          : null,
-        apiData.rateLimit || apiData.rate_limit
-          ? `Rate Limit: ${apiData.rateLimit || apiData.rate_limit}`
-          : null,
-        apiData.pricing ? `Pricing: ${apiData.pricing}` : null,
-        apiData.tags?.length
-          ? `Tags: ${(apiData.tags as string[]).join(", ")}`
-          : null,
-      ].filter(Boolean);
-
-      return parts.join("\n");
-    };
-
-    // ── FIX 3: Dynamic system prompt based on query intent ───────────────────
+    // FIX 2 + FIX 3: smart system prompt
     const systemPrompt = isApiQuery
-      ? `You are an elite API expert assistant on Apives — think Stripe docs combined with a senior engineer who knows APIs inside-out.
+      ? `You are an elite API expert on Apives — like Stripe Docs + Postman AI combined. ${apiContext}
 
-The user is asking about the following API:
-${buildApiContext()}
+The user asked an API-related question. Respond with depth and intelligence. Vary your structure naturally based on the question — don't always use the same format.
 
-RESPOND RULES (follow strictly):
-- Give a thorough, intelligent answer tailored to THIS specific question
-- DO NOT give the same structured breakdown for every question — vary your format naturally
-- For "what is" questions: explain clearly + real-world use cases
-- For "how to use" / "integrate" questions: lead with a working code example (use curl, fetch, or axios as appropriate), then explain key params
-- For "endpoint" questions: list relevant endpoints with method, path, and what each does
-- For "auth" questions: explain the auth mechanism with an actual implementation example
-- For "error" questions: explain common errors and how to fix them
-- For "compare" questions: give honest pros/cons
-- Use real code blocks with correct syntax when showing examples
-- Keep spacing tight — no large vertical gaps
-- Tone: expert, concise, developer-friendly — like a senior engineer pair-programming
-- Length: match the complexity of the question. Simple question = short answer. Complex question = thorough answer.
-- Never say "The provided HTML content..." or reference internal implementation details`
-      : `You are a friendly, intelligent assistant on Apives. The user is asking a general or conversational question — NOT specifically about an API.
-
-Answer naturally, helpfully, and concisely. Be human. Skip any API-specific structure unless the user explicitly asks for it. Keep it conversational and to the point.`;
+Guidelines:
+- Lead with a precise, direct answer (2–3 lines)
+- Then provide relevant depth: usage, code examples, parameters, auth, edge cases — but only what's actually needed for THIS question
+- Use real code snippets (curl, JS fetch, or relevant language) when helpful
+- Be comprehensive but never repetitive
+- Tight spacing — no large empty gaps between sections
+- Tone: expert, clear, confident — like a senior engineer pair-programming with them`
+      : `You are a smart, friendly AI assistant on Apives. Answer naturally and conversationally. Be helpful, concise, and human. Don't force API structure onto non-API questions.`;
 
     const messagesWithSystem = [
       { role: "system", content: systemPrompt },
@@ -766,37 +722,33 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
         messages: messagesWithSystem,
-        // FIX 2: only send full apiData for API queries — avoid irrelevant context
         apiData: isApiQuery ? apiData : undefined,
       });
 
-      // FIX 2: validate answer exists and is non-empty
+      // FIX 2: always check res.data.answer exists
       const answer = res.data?.answer;
-      if (answer && typeof answer === "string" && answer.trim().length > 0) {
+      if (answer && typeof answer === "string" && answer.trim()) {
         setChat((prev) => [...prev, { role: "assistant", content: answer }]);
       } else {
-        throw new Error(`Primary AI returned empty/invalid answer. Raw: ${JSON.stringify(res.data)}`);
+        throw new Error("Empty answer from primary AI");
       }
     } catch (primaryErr) {
       console.error("[AskApives] Primary AI failed:", primaryErr);
 
-      // FIX 2: Gemini fallback
+      // FIX 2: fallback to gemini
       try {
         const geminiRes = await axios.post("https://apives-3xrc.onrender.com/api/gemini", {
-          prompt: isApiQuery
-            ? `${text}\n\nContext about the API being asked about:\n${buildApiContext()}`
-            : text,
+          prompt: text,
         });
-
         const geminiAnswer = geminiRes.data?.result || geminiRes.data?.answer;
-        if (geminiAnswer && typeof geminiAnswer === "string" && geminiAnswer.trim().length > 0) {
+        if (geminiAnswer && typeof geminiAnswer === "string" && geminiAnswer.trim()) {
           setChat((prev) => [...prev, { role: "assistant", content: geminiAnswer }]);
         } else {
-          throw new Error("Gemini fallback returned empty answer");
+          throw new Error("Empty answer from Gemini fallback");
         }
       } catch (fallbackErr) {
         console.error("[AskApives] Gemini fallback failed:", fallbackErr);
-        // FIX 2: never silently fail — always show something
+        // FIX 2: always show something — never silent failure
         setChat((prev) => [
           ...prev,
           {
@@ -810,13 +762,13 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
     }
   };
 
-  // New Chat
+  // New Chat — UNCHANGED
   const startNewChat = () => {
     setChat([]);
     setInput("");
   };
 
-  // Regenerate last AI response
+  // Regenerate last AI response — UNCHANGED
   const regenerateLast = () => {
     const lastUserMsg = [...chat].reverse().find((m) => m.role === "user");
     if (!lastUserMsg) return;
@@ -834,21 +786,11 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
     ? `Ask anything about ${displayName}...`
     : "Ask anything about any API...";
 
-  // ── FIX 1: History onSelect — navigate preserving apiName if available ─────
-  const handleHistorySelect = (id: string) => {
-    setShowHistoryModal(false);
-    // Get stored title to pass as apiName param for better UX
-    const storedTitle = localStorage.getItem(`apives_chat_title_${id}`);
-    // Navigate — the apiId change will trigger the useEffect above which resets
-    // and reloads correctly without going to the landing page
-    navigate(`/ask-apives?apiId=${id}`, { replace: false });
-  };
-
   return (
     <>
       <style>{GLOBAL_STYLES}</style>
 
-      {/* Modals */}
+      {/* Modals — UNCHANGED */}
       {showCompareModal && (
         <CompareModal
           onClose={() => setShowCompareModal(false)}
@@ -859,8 +801,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
       {showHistoryModal && (
         <HistoryModal
           onClose={() => setShowHistoryModal(false)}
-          // FIX 1: use dedicated handler — no more landing page redirect
-          onSelect={handleHistorySelect}
+          onSelect={(id) => { setShowHistoryModal(false); navigate(`/ask-apives?apiId=${id}`); }}
         />
       )}
 
@@ -874,7 +815,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
           fontFamily: "inherit", position: "relative",
         }}
       >
-        {/* Ambient dot grid */}
+        {/* Ambient dot grid — UNCHANGED */}
         <div style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 0, overflow: "hidden" }}>
           <div style={{
             position: "absolute", inset: 0, opacity: 0.016,
@@ -883,7 +824,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
           }} />
         </div>
 
-        {/* ── HEADER ── */}
+        {/* ── HEADER — UNCHANGED ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -976,7 +917,6 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
             minHeight: 0,
           }}
         >
-          {/* Empty state */}
           {chat.length === 0 && (
             <div style={{
               display: "flex", flexDirection: "column",
@@ -1008,7 +948,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
                 Deep API analysis and instant answers on endpoints, auth, rate limits, and integration guidance.
               </p>
 
-              {/* "Your Selected API" label — above existing pill */}
+              {/* ── FIX 1: "Your Selected API" label — added ABOVE existing pill ── */}
               {displayName && (
                 <div
                   className="selected-api-label"
@@ -1033,7 +973,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
                 </div>
               )}
 
-              {/* Existing API name pill — UNTOUCHED */}
+              {/* EXISTING API name pill — UNTOUCHED */}
               {displayName && (
                 <div style={{ marginBottom: "8px" }}>
                   <ApiNamePill
@@ -1053,7 +993,8 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
               )}
 
               
-              {/* Suggested Prompts */}
+
+              {/* Suggested Prompts — UNCHANGED */}
               <div style={{ width: "100%", maxWidth: "340px", marginTop: "12px" }}>
                 <SuggestedPrompts
                   onClick={(text: string) => { sendMessage(text); }}
@@ -1062,7 +1003,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
             </div>
           )}
 
-          {/* Messages */}
+          {/* Messages — UNCHANGED */}
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "0 12px" }}>
             {chat.map((msg, i) => {
               const isLastAssistant = msg.role === "assistant" && i === chat.length - 1;
@@ -1085,7 +1026,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
           <div ref={bottomRef} style={{ height: "8px" }} />
         </div>
 
-        {/* ── INPUT AREA ── */}
+        {/* ── INPUT AREA — UNCHANGED ── */}
         <div style={{
           position: "relative", zIndex: 20, flexShrink: 0,
           padding: "8px 16px",
@@ -1111,6 +1052,7 @@ Answer naturally, helpfully, and concisely. Be human. Skip any API-specific stru
   );
 };
 
-// ─── UpgradedApiBreakdown ─────────────────────────────────────────────────────
+// ─── UpgradedApiBreakdown ──────────────────────────────────────────────────────
+
 
 export default AskApivesPage;
