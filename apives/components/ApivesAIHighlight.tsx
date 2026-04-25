@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import AnimatedOrb from "../components/ai/AnimatedOrb";
+import { Bot } from "lucide-react";
 
 export const ApivesAIHighlight = () => {
   const navigate = useNavigate();
@@ -26,30 +26,52 @@ export const ApivesAIHighlight = () => {
         "
       >
 
-        {/* 🔥 SOFT GREEN GLOW */}
+        {/* 🔥 SOFT GREEN GLOW (INTENSITY REDUCED) */}
         <div className="
           absolute inset-0
           bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.12),transparent_75%)]
         " />
 
+        {/* 🤖 ROBOT ANIMATION */}
         <div className="relative flex items-center gap-4">
 
-          <div className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center overflow-hidden">
-  <div className="scale-[0.45] md:scale-[0.6] origin-center">
-    <AnimatedOrb />
-  </div>
-</div>
-          {/* TEXT */}
-          <div className="flex flex-col items-start text-left w-full">
+          <div className="relative">
 
-            {/* ✅ LOGO (THODA NICHE + TEXT KE CLOSE) */}
-            <img
-              src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-              alt="Apives AI"
-              className="h-5 md:h-6 object-contain mt-1 mb-1 self-start"
-            />
+            <div className="
+              w-12 h-12 md:w-14 md:h-14
+              rounded-xl
+              flex items-center justify-center
 
-            {/* TEXT */}
+              bg-mora-500/10
+              border border-mora-500/30
+              text-mora-400
+
+              shadow-[0_0_25px_rgba(34,197,94,0.25)]
+            ">
+              <Bot size={26} />
+            </div>
+
+            {/* pulse ring */}
+            <div className="
+              absolute inset-0
+              rounded-xl
+              border border-mora-500/30
+              animate-ping
+            " />
+
+          </div>
+
+          {/* TEXT */}  
+      <div className="flex flex-col items-start text-left w-full">  
+
+        {/* ✅ LOGO (THODA NICHE + TEXT KE CLOSE) */}  
+        <img  
+          src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"  
+          alt="Apives AI"  
+          className="h-5 md:h-6 object-contain mt-1 mb-1 self-start"  
+        />  
+
+            {/* ✅ TEXT SMALL + DOWN */}
             <p className="mt-2 text-slate-400 text-[10px] md:text-[13px] leading-snug">
               The API Intelligence You Deserve — Discover & Understand APIs Faster.
             </p>
