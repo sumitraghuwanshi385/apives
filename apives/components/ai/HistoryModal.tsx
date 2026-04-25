@@ -59,6 +59,7 @@ const HistoryModal = ({
     setEntries(result.reverse());
   };
 
+  // ✅ DELETE CONFIRMED
   const confirmDelete = () => {
     selected.forEach((id) => {
       localStorage.removeItem(`apives_chat_${id}`);
@@ -81,40 +82,31 @@ const HistoryModal = ({
 
   return (
     <>
-      {/* BACKDROP */}
+      {/* MAIN MODAL */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           zIndex: 60,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
           background: "rgba(0,0,0,0.75)",
           backdropFilter: "blur(14px)",
         }}
-        onClick={() => {
-          if (selectMode) {
-            setSelectMode(false);
-            setSelected([]);
-          } else {
-            onClose();
-          }
-        }}
+        onClick={onClose}
       >
-        {/* MODAL */}
         <div
           className="slide-up"
           onClick={(e) => e.stopPropagation()}
           style={{
-            position: "absolute",
-            bottom: 0,
             width: "100%",
             maxWidth: "480px",
-            left: "50%",
-            transform: "translateX(-50%)",
             borderRadius: "24px 24px 0 0",
             background: "rgba(5,14,9,0.99)",
             border: "1px solid rgba(34,197,94,0.12)",
             borderBottom: "none",
-            height: "85vh", // ✅ FIX: increased + fixed height
+            maxHeight: "72vh",
             display: "flex",
             flexDirection: "column",
           }}
@@ -137,13 +129,10 @@ const HistoryModal = ({
             <div style={{ display: "flex", gap: "8px" }}>
               {!selectMode && (
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectMode(true);
-                  }}
+                  onClick={() => setSelectMode(true)}
                   style={{
-                    width: "34px",
-                    height: "34px",
+                    width: "32px",
+                    height: "32px",
                     borderRadius: "50%",
                     background: "rgba(239,68,68,0.15)",
                     border: "1px solid rgba(239,68,68,0.4)",
@@ -157,27 +146,17 @@ const HistoryModal = ({
               )}
 
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  if (selectMode) {
-                    setSelectMode(false);
-                    setSelected([]);
-                  } else {
-                    onClose();
-                  }
+                onClick={() => {
+                  setSelectMode(false);
+                  setSelected([]);
                 }}
                 style={{
-                  width: "34px",
-                  height: "34px",
+                  width: "32px",
+                  height: "32px",
                   borderRadius: "50%",
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(12px)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  cursor: "pointer",
                 }}
               >
                 <X size={14} color="white" />
@@ -186,14 +165,7 @@ const HistoryModal = ({
           </div>
 
           {/* LIST */}
-          <div
-            style={{
-              padding: "0 12px 20px",
-              overflowY: "auto",
-              flex: 1, // ✅ FIX: take remaining space
-              paddingBottom: "80px", // ✅ FIX: bottom safe spacing
-            }}
-          >
+          <div style={{ padding: "0 12px 20px", overflowY: "auto" }}>
             {entries.map((e) => {
               const isSelected = selected.includes(e.apiId);
 
@@ -202,7 +174,7 @@ const HistoryModal = ({
                   key={e.apiId}
                   onClick={() => {
                     if (selectMode) toggleSelect(e.apiId);
-                    else onSelect(e.apiId);
+                    else onSelect(e.apiId); // ✅ FIXED NAVIGATION
                   }}
                   style={{
                     padding: "12px",
@@ -242,10 +214,7 @@ const HistoryModal = ({
           {selectMode && selected.length > 0 && (
             <div style={{ padding: "10px" }}>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowConfirm(true);
-                }}
+                onClick={() => setShowConfirm(true)}
                 style={{
                   width: "100%",
                   padding: "10px",
@@ -263,7 +232,7 @@ const HistoryModal = ({
         </div>
       </div>
 
-      {/* CONFIRM MODAL */}
+      {/* 🔥 CONFIRM MODAL */}
       {showConfirm && (
         <div
           style={{
