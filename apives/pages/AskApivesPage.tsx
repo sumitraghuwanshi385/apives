@@ -616,6 +616,8 @@ const AskApivesPage = () => {
   const apiId   = searchParams.get("apiId");
   const apiName = searchParams.get("apiName");
 
+const chatIdFromUrl = searchParams.get("chatId");
+
   // ── Auth helpers ──────────────────────────────────────────────────────────
   const isValidUser = (): boolean => {
     try {
@@ -948,7 +950,10 @@ Rules:
       {showHistoryModal && (
         <HistoryModal
           onClose={() => setShowHistoryModal(false)}
-          onSelect={(id) => { setShowHistoryModal(false); navigate(`/ask-apives?apiId=${id}`); }}
+          onSelect={(params) => {
+  setShowHistoryModal(false);
+  navigate(`/ask-apives?${params}`);
+}}
         />
       )}
 
