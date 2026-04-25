@@ -3,6 +3,9 @@ const prompts = [
   "Give example request",
   "What parameters are required?",
   "Best use case of this API?",
+  "What are the available endpoints?",
+  "Explain API usage step by step",
+  "What is the pricing of this API?",
 ];
 
 const SuggestedPrompts = ({ onClick }: any) => {
