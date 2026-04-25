@@ -683,21 +683,7 @@ const AskApivesPage = () => {
 
 }, [apiId]);
 
-    // Fetch full API data so AI always has it in context
-    axios.get(`/api/apis/${apiId}`)
-  .then((res) => {
-    if (res.data) {
-      console.log("✅ API LOADED:", res.data); // DEBUG
-      setApiData(res.data);
-    } else {
-      console.error("❌ EMPTY API DATA");
-    }
-  })
-  .catch((err) => {
-    console.error("❌ API LOAD FAILED:", err);
-  });
-  }, [apiId]);
-
+    
   // Persist chat — UNCHANGED
   useEffect(() => {
   if (!apiId) return;
