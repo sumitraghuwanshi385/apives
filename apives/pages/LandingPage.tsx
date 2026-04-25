@@ -1185,6 +1185,7 @@ return (
           </div>
         </Link>
       ))}
+  <div className="col-span-2">
 <ApivesAiHighlight />
 
     </div>
