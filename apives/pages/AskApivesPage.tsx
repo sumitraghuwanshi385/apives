@@ -643,13 +643,28 @@ const AskApivesPage = () => {
     };
   }, []);
 
-  // Load persisted chat — UNCHANGED
+  // Combined effect: reset state + reload chat + fetch API data when apiId changes
   useEffect(() => {
+    // Always reset to a clean slate when the selected API changes
+    setChat([]);
+    setApiData(null);
+    setInput("");
+
     if (!apiId) return;
+
+    // Load persisted chat for this specific API
     try {
       const saved = localStorage.getItem(`apives_chat_${apiId}`);
-      if (saved) setChat(JSON.parse(saved));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setChat(parsed);
+      }
     } catch {}
+
+    // Fetch full API data so AI always has it in context
+    axios.get(`/api/apis/${apiId}`)
+      .then((res) => { if (res.data) setApiData(res.data); })
+      .catch(() => {});
   }, [apiId]);
 
   // Persist chat — UNCHANGED
@@ -661,14 +676,6 @@ const AskApivesPage = () => {
       localStorage.setItem(`apives_chat_title_${apiId}`, firstUser.content.slice(0, 60));
     }
   }, [chat, apiId]);
-
-  // Fetch API data — UNCHANGED
-  useEffect(() => {
-    if (!apiId) return;
-    axios.get(`/api/apis/${apiId}`)
-      .then((res) => setApiData(res.data))
-      .catch(() => {});
-  }, [apiId]);
 
   // Auto scroll — UNCHANGED
   useEffect(() => {
@@ -699,7 +706,7 @@ const AskApivesPage = () => {
       ? `The user is asking about the "${apiData.name}" API. Category: ${apiData.category || "N/A"}.${apiData.description ? ` About: ${apiData.description}` : ""}`
       : "The user is asking about APIs in general.";
 
-    // FIX 2 + FIX 3: smart system prompt
+    // FIX 2 + FIX 3: smart system prompt — always names the selected API
     const systemPrompt = `
 You are Apives AI.
 
@@ -712,19 +719,30 @@ Rules:
 - If needed, include code inline but don't format like documentation
 - Keep answers direct, practical, and human-like
 
-Context:
-${apiData ? apiData.name : "General API"}
+${apiData
+  ? `IMPORTANT: The user has selected the "${apiData.name}" API. Every answer you give MUST be specific to this API. Never say "unknown API" or respond generically — you always know the API is "${apiData.name}".${apiData.description ? ` About this API: ${apiData.description}` : ""}${apiData.category ? ` Category: ${apiData.category}.` : ""}`
+  : "The user is asking about APIs in general."
+}
 `;
 
+    // Always inject full apiData as a second system message so AI has complete context
     const messagesWithSystem = [
       { role: "system", content: systemPrompt },
+      ...(apiData
+        ? [
+            {
+              role: "system",
+              content: `Selected API full details (JSON):\n${JSON.stringify(apiData, null, 2).slice(0, 2000)}`,
+            },
+          ]
+        : []),
       ...newChat,
     ];
 
     try {
       const res = await axios.post("https://apives-3xrc.onrender.com/api/ask-ai", {
         messages: messagesWithSystem,
-        apiData: isApiQuery ? apiData : undefined,
+        apiData: apiData || null,
       });
 
       // FIX 2: always check res.data.answer exists
