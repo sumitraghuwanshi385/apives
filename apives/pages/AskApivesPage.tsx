@@ -407,7 +407,7 @@ const MessagePill = ({
           display: "flex", alignItems: "center", justifyContent: "center",
           boxShadow: "0 0 10px rgba(34,197,94,0.35)",
         }}>
-          <Bot size={10} color="white" strokeWidth={2.5} />
+          <Bot size={13} color="white" strokeWidth={2.5} />
         </div>
       )}
       <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxWidth: "82%" }}>
