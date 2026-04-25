@@ -624,6 +624,7 @@ const AskApivesPage = () => {
   const [loading, setLoading] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
+const [debugInfo, setDebugInfo] = useState<string>("");
 
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -672,14 +673,17 @@ const AskApivesPage = () => {
 
   // ✅ FETCH API
   axios.get(`/api/apis/${apiId}`)
-    .then((res) => {
-      if (res.data) {
-        setApiData(res.data);
-      }
-    })
-    .catch((err) => {
-      console.error("❌ API load error:", err);
-    });
+  .then((res) => {
+    if (res.data) {
+      setApiData(res.data);
+      setDebugInfo("✅ API Loaded: " + (res.data.name || "NO NAME"));
+    } else {
+      setDebugInfo("❌ API empty response");
+    }
+  })
+  .catch((err) => {
+    setDebugInfo("❌ API load failed");
+  });
 
 }, [apiId]);
 
@@ -729,6 +733,8 @@ const AskApivesPage = () => {
     setChat(newChat);
     setInput("");
     setLoading(true);
+
+setDebugInfo("📤 Sending with API: " + (apiData?.name || "NULL"));
 
     const isApiQuery = isApiRelatedQuery(text);
 const apiContext = apiData
@@ -1112,6 +1118,18 @@ Rules:
           paddingBottom: "max(16px, env(safe-area-inset-bottom, 16px))",
           background: "rgba(6,13,10,0.97)",
         }}>
+
+{debugInfo && (
+  <div style={{
+    fontSize: "10px",
+    color: "#22c55e",
+    padding: "4px 12px",
+    opacity: 0.7
+  }}>
+    {debugInfo}
+  </div>
+)}
+
           <ClaudeInput
             value={input}
             onChange={setInput}
