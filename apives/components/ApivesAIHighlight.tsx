@@ -34,9 +34,10 @@ export const ApivesAIHighlight = () => {
 
         <div className="relative flex items-center gap-4">
 
-          {/* 🤖 ANIMATED ROBOT REPLACED */}
-          <div className="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
-            <AnimatedOrb />
+          <div className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
+  <div className="scale-55 md:scale-90 origin-center">
+    <AnimatedOrb />
+  </div>
           </div>
 
           {/* TEXT */}
