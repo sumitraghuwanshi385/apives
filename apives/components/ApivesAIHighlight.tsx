@@ -34,12 +34,11 @@ export const ApivesAIHighlight = () => {
 
         <div className="relative flex items-center gap-4">
 
-          <div className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
-  <div className="scale-55 md:scale-90 origin-center">
+          <div className="relative w-10 h-10 md:w-12 md:h-12 flex items-center justify-center overflow-hidden">
+  <div className="scale-[0.45] md:scale-[0.6] origin-center">
     <AnimatedOrb />
   </div>
-          </div>
-
+</div>
           {/* TEXT */}
           <div className="flex flex-col items-start text-left w-full">
 
