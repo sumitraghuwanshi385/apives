@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   X,
   Clock,
-  History,
   ChevronRight,
   Sparkles,
   Trash2,
@@ -25,6 +24,7 @@ const HistoryModal = ({
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     loadHistory();
@@ -59,8 +59,8 @@ const HistoryModal = ({
     setEntries(result.reverse());
   };
 
-  // 🔴 DELETE LOGIC
-  const deleteSelected = () => {
+  // ✅ DELETE CONFIRMED
+  const confirmDelete = () => {
     selected.forEach((id) => {
       localStorage.removeItem(`apives_chat_${id}`);
       localStorage.removeItem(`apives_chat_title_${id}`);
@@ -68,6 +68,7 @@ const HistoryModal = ({
 
     setSelected([]);
     setSelectMode(false);
+    setShowConfirm(false);
     loadHistory();
   };
 
@@ -80,204 +81,216 @@ const HistoryModal = ({
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 60,
-        display: "flex",
-        alignItems: "flex-end",
-        justifyContent: "center",
-        background: "rgba(0,0,0,0.75)",
-        backdropFilter: "blur(14px)",
-      }}
-      onClick={onClose}
-    >
+    <>
+      {/* MAIN MODAL */}
       <div
-        className="slide-up"
-        onClick={(e) => e.stopPropagation()}
         style={{
-          width: "100%",
-          maxWidth: "480px",
-          borderRadius: "24px 24px 0 0",
-          background: "rgba(5,14,9,0.99)",
-          border: "1px solid rgba(34,197,94,0.12)",
-          borderBottom: "none",
-          boxShadow: "0 -12px 60px rgba(0,0,0,0.6)",
-          maxHeight: "72vh",
+          position: "fixed",
+          inset: 0,
+          zIndex: 60,
           display: "flex",
-          flexDirection: "column",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          background: "rgba(0,0,0,0.75)",
+          backdropFilter: "blur(14px)",
         }}
+        onClick={onClose}
       >
-        {/* HANDLE */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 0" }}>
-          <div
-            style={{
-              width: "36px",
-              height: "3px",
-              borderRadius: "99px",
-              background: "rgba(255,255,255,0.12)",
-            }}
-          />
-        </div>
-
-        {/* HEADER */}
         <div
+          className="slide-up"
+          onClick={(e) => e.stopPropagation()}
           style={{
+            width: "100%",
+            maxWidth: "480px",
+            borderRadius: "24px 24px 0 0",
+            background: "rgba(5,14,9,0.99)",
+            border: "1px solid rgba(34,197,94,0.12)",
+            borderBottom: "none",
+            maxHeight: "72vh",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "16px 20px 12px",
+            flexDirection: "column",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div
-              style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "10px",
-                background: "rgba(34,197,94,0.09)",
-                border: "1px solid rgba(34,197,94,0.18)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Clock size={14} color="#22c55e" />
-            </div>
-
-            <span style={{ fontSize: "15px", fontWeight: 700, color: "white" }}>
-              Recent Chats
-            </span>
-          </div>
-
-          <div style={{ display: "flex", gap: "8px" }}>
-            {/* 🔴 CLEAR HISTORY BUTTON */}
-            <button
-              onClick={() => setSelectMode(!selectMode)}
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "rgba(239,68,68,0.15)",
-                border: "1px solid rgba(239,68,68,0.4)",
-              }}
-            >
-              <Trash2 size={13} color="#ef4444" />
-            </button>
-
-            <button
-              onClick={onClose}
-              className="glass-btn"
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <X size={12} color="rgba(255,255,255,0.45)" />
-            </button>
-          </div>
-        </div>
-
-        {/* 🔴 SELECT COUNT BAR */}
-        {selectMode && (
+          {/* HEADER */}
           <div
             style={{
-              padding: "8px 16px",
-              borderBottom: "1px solid rgba(255,255,255,0.05)",
               display: "flex",
               justifyContent: "space-between",
+              padding: "16px 20px",
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: "12px", color: "#22c55e" }}>
-              {selected.length} selected
+            <span style={{ color: "white", fontWeight: 700 }}>
+              {selectMode
+                ? `${selected.length} selected`
+                : "Recent Chats"}
             </span>
 
-            <button
-              onClick={deleteSelected}
-              style={{
-                padding: "4px 10px",
-                borderRadius: "8px",
-                background: "rgba(239,68,68,0.2)",
-                border: "1px solid rgba(239,68,68,0.4)",
-                color: "#ef4444",
-                fontSize: "11px",
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        )}
-
-        {/* LIST */}
-        <div style={{ overflowY: "auto", padding: "0 12px 24px", flex: 1 }}>
-          {entries.map((e) => {
-            const isSelected = selected.includes(e.apiId);
-
-            return (
-              <div
-                key={e.apiId}
-                className="history-item"
-                onClick={() => {
-                  if (selectMode) toggleSelect(e.apiId);
-                  else onSelect(e.apiId);
-                }}
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "14px",
-                  border: isSelected
-                    ? "1px solid rgba(34,197,94,0.5)"
-                    : "1px solid rgba(255,255,255,0.05)",
-                  marginBottom: "6px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  background: isSelected
-                    ? "rgba(34,197,94,0.1)"
-                    : "transparent",
-                }}
-              >
-                <div
+            <div style={{ display: "flex", gap: "8px" }}>
+              {!selectMode && (
+                <button
+                  onClick={() => setSelectMode(true)}
                   style={{
-                    width: "36px",
-                    height: "36px",
-                    borderRadius: "10px",
-                    background: "rgba(34,197,94,0.07)",
-                    border: "1px solid rgba(34,197,94,0.13)",
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    background: "rgba(239,68,68,0.15)",
+                    border: "1px solid rgba(239,68,68,0.4)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
                 >
+                  <Trash2 size={14} color="#ef4444" />
+                </button>
+              )}
+
+              <button
+                onClick={() => {
+                  setSelectMode(false);
+                  setSelected([]);
+                }}
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <X size={14} color="white" />
+              </button>
+            </div>
+          </div>
+
+          {/* LIST */}
+          <div style={{ padding: "0 12px 20px", overflowY: "auto" }}>
+            {entries.map((e) => {
+              const isSelected = selected.includes(e.apiId);
+
+              return (
+                <div
+                  key={e.apiId}
+                  onClick={() => {
+                    if (selectMode) toggleSelect(e.apiId);
+                    else onSelect(e.apiId); // ✅ FIXED NAVIGATION
+                  }}
+                  style={{
+                    padding: "12px",
+                    borderRadius: "12px",
+                    marginBottom: "6px",
+                    border: isSelected
+                      ? "1px solid #22c55e"
+                      : "1px solid rgba(255,255,255,0.05)",
+                    background: isSelected
+                      ? "rgba(34,197,94,0.1)"
+                      : "transparent",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
                   <Sparkles size={14} color="#22c55e" />
-                </div>
 
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: "13px", color: "white" }}>
-                    {e.title}
-                  </p>
-                  <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)" }}>
-                    {e.preview}
-                  </p>
-                </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ color: "white", fontSize: "13px" }}>
+                      {e.title}
+                    </p>
+                    <p style={{ color: "#777", fontSize: "11px" }}>
+                      {e.preview}
+                    </p>
+                  </div>
 
-                {!selectMode && (
-                  <ChevronRight size={14} color="rgba(34,197,94,0.35)" />
-                )}
-              </div>
-            );
-          })}
+                  {!selectMode && (
+                    <ChevronRight size={14} color="#22c55e" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* DELETE BUTTON */}
+          {selectMode && selected.length > 0 && (
+            <div style={{ padding: "10px" }}>
+              <button
+                onClick={() => setShowConfirm(true)}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  borderRadius: "12px",
+                  background: "rgba(239,68,68,0.2)",
+                  border: "1px solid rgba(239,68,68,0.4)",
+                  color: "#ef4444",
+                  fontWeight: 600,
+                }}
+              >
+                Delete Selected
+              </button>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+
+      {/* 🔥 CONFIRM MODAL */}
+      {showConfirm && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 70,
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "#020202",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "16px",
+              padding: "20px",
+              width: "90%",
+              maxWidth: "320px",
+              textAlign: "center",
+            }}
+          >
+            <p style={{ color: "white", marginBottom: "16px" }}>
+              Delete selected chats?
+            </p>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => setShowConfirm(false)}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  borderRadius: "10px",
+                  background: "#111",
+                  color: "white",
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={confirmDelete}
+                style={{
+                  flex: 1,
+                  padding: "10px",
+                  borderRadius: "10px",
+                  background: "#ef4444",
+                  color: "white",
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
