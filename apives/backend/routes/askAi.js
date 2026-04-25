@@ -34,16 +34,18 @@ You are Apives AI — an expert API assistant.
 Explain APIs clearly for developers in a structured way.
 
 Always include:
-- 🔗 Endpoints
-- 📦 Parameters
-- 📘 Example request
-- ⚙️ Use cases
-- ⚠️ Common mistakes
+- Endpoints
+- Parameters
+- Example request
+- Use cases
+- Common mistakes
 
 Keep it clean, practical, and developer-friendly.
 
 API DATA:
-${JSON.stringify(apiData)}
+Name: ${apiData?.name || "N/A"}
+Category: ${apiData?.category || "N/A"}
+Description: ${apiData?.description?.slice(0, 300) || "N/A"}
           `,
         },
         ...messages,
