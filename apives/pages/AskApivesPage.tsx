@@ -29,6 +29,8 @@ import HistoryModal from "../components/ai/HistoryModal";
 import CompareModal from "../components/ai/CompareModal";
 import AnimatedOrb from "../components/ai/AnimatedOrb";
 
+const API_BASE = "https://apives-3xrc.onrender.com";
+
 // ─── Global Styles ────────────────────────────────────────────────────────────
 // UNCHANGED from original
 const GLOBAL_STYLES = `
@@ -671,27 +673,27 @@ const [debugInfo, setDebugInfo] = useState<string>("");
     console.error("❌ History load error:", err);
   }
 
-  // ✅ FETCH API (FIXED)
-axios.get(`/api/apis/${apiId}`)
+ axios.get(`${API_BASE}/api/apis/${apiId}`)
   .then((res) => {
 
-    console.log("FULL API RESPONSE:", res.data); // 👈 DEBUG
+    console.log("FULL API RESPONSE:", res.data);
 
-    // 🔥 FIX: handle nested response
     const api = res.data?.data || res.data;
 
-    if (api) {
+    if (api && typeof api === "object") {
       setApiData(api);
+
       setDebugInfo(
-  "✅ API Loaded: " +
-  (api?.name || api?.title || api?.apiName || "NO NAME")
-);
+        "✅ API Loaded: " +
+        (api?.name || api?.title || api?.apiName || "NO NAME")
+      );
     } else {
-      setDebugInfo("❌ API empty response");
+      console.error("❌ Not JSON:", res.data);
+      setDebugInfo("❌ Invalid API response (HTML aaya hai)");
     }
   })
   .catch((err) => {
-    console.error(err);
+    console.error("❌ API ERROR:", err);
     setDebugInfo("❌ API load failed");
   });
 
