@@ -147,12 +147,10 @@ return (
         </Link>    
       )}
 
-{/* 🤖 Mobile Apives AI */}
-<button
-  onClick={() => {
-    setIsOpen(false);   // ✅ IMPORTANT (menu close)
-    navigate("/ask-apives"); // ✅ FIX NAV
-  }}
+{/* 🤖 Apives AI */}
+<Link
+  to="/ask-apives"
+  onClick={() => setIsOpen(false)}
   className="
   md:hidden
   w-7 h-7 md:w-10 md:h-10
@@ -162,14 +160,14 @@ return (
   bg-white/[0.05]
   backdrop-blur-[20px]
   border-white/20
-  text-white   /* ✅ WHITE ICON */
+  text-slate-300
   hover:bg-white/[0.1]
   active:scale-90
   transition-all
   "
 >
   <Bot size={15} className="md:w-5 md:h-5" />
-</button>
+</Link>
 
 
 
