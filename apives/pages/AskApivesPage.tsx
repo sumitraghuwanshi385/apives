@@ -645,9 +645,7 @@ const AskApivesPage = () => {
     };
   }, []);
 
-  // ─────────────────────────────────────────────
-// 🔁 API SWITCH + HISTORY + DATA LOAD
-// ─────────────────────────────────────────────
+  
 const prevApiRef = useRef<string | null>(null);
 
 useEffect(() => {
@@ -665,9 +663,7 @@ useEffect(() => {
     setChat([]);
   }
 
-  // ─────────────────────────────
-  // 💾 LOAD CHAT HISTORY
-  // ─────────────────────────────
+  
   try {
     const saved = localStorage.getItem(`apives_chat_${apiId}`);
 
@@ -684,9 +680,6 @@ useEffect(() => {
     console.error("History load failed:", err);
   }
 
-  // ─────────────────────────────
-  // 🌐 FETCH API DATA
-  // ─────────────────────────────
   axios
     .get(`${API_BASE}/api/apis/${apiId}`)
     .then((res) => {
@@ -705,9 +698,6 @@ useEffect(() => {
 }, [apiId]);
 
 
-// ─────────────────────────────────────────────
-// 💾 SAVE CHAT (AUTO PERSIST)
-// ─────────────────────────────────────────────
 useEffect(() => {
   if (!apiId || chat.length === 0) return;
 
@@ -733,9 +723,6 @@ useEffect(() => {
 }, [chat, apiId]);
 
 
-// ─────────────────────────────────────────────
-// 📜 AUTO SCROLL (SMART)
-// ─────────────────────────────────────────────
 useEffect(() => {
   const el = scrollRef.current;
   if (!el) return;
@@ -749,10 +736,8 @@ useEffect(() => {
     });
   }
 }, [chat, loading]);
- ─────────────────────────────────────────────────────────────────────────────
-  // FIX 2: sendMessage — proper error handling, no silent failures
-  // FIX 3: smart system prompt based on query intent
-  // ─────────────────────────────────────────────────────────────────────────────
+
+
   const sendMessage = async (overrideText?: string) => {
     const text = (overrideText ?? input).trim();
     if (!text) return;
@@ -818,11 +803,11 @@ STYLE:
     content: `You MUST use this API for all answers.
 
 Selected API JSON:
-$JSON.stringify({
+${JSON.stringify({
   name: apiData?.name,
   category: apiData?.category,
   description: apiData?.description?.slice(0, 300)
-})
+})}
   
 
 Rules:
@@ -1156,16 +1141,6 @@ Rules:
           background: "rgba(6,13,10,0.97)",
         }}>
 
-{debugInfo && (
-  <div style={{
-    fontSize: "10px",
-    color: "#22c55e",
-    padding: "4px 12px",
-    opacity: 0.7
-  }}>
-    {debugInfo}
-  </div>
-)}
 
           <ClaudeInput
             value={input}
