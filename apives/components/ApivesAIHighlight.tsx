@@ -68,12 +68,12 @@ export const ApivesAIHighlight = () => {
             <img
               src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
               alt="Apives AI"
-              className="h-5 md:h-6 object-contain"
+              className="h-5 md:h-6 object-contain mb-1"            
             />
 
             {/* ✅ TEXT SMALL + DOWN */}
             <p className="mt-2 text-slate-400 text-[10px] md:text-[13px] leading-snug">
-              The API Intelligence You Deserve — explore, compare and understand APIs instantly.
+              The API Intelligence You Deserve — Discover & Understand APIs Faster.
             </p>
 
             <span className="
