@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Bot } from "lucide-react";
 
-const ApivesAIHighlight = () => {
+export const ApivesAIHighlight = () => {
   const navigate = useNavigate();
 
   return (
@@ -72,7 +72,7 @@ const ApivesAIHighlight = () => {
               text-[11px] md:text-sm
               leading-snug
             ">
-              The API Intelligence You Deserve — Discover and understand APIs faster.
+              The API Intelligence You Deserve — Discover and Understand APIs Faster.
             </p>
 
             <span className="
@@ -93,5 +93,3 @@ const ApivesAIHighlight = () => {
     </div>
   );
 };
-
-export default ApivesAIHighlight;
