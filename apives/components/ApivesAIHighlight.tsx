@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Bot } from "lucide-react";
 
-ApivesAIHighlight = () => {
+const ApivesAIHighlight = () => {
   const navigate = useNavigate();
 
   return (
