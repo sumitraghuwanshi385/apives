@@ -1,42 +1,26 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  Search, Clock, Eye, TrendingUp, ArrowRight, X,
+  Search, Clock, ArrowRight, X,
   ChevronRight, Layers, Zap, Cpu, Code2, FileText,
   Rocket, BarChart2, BookOpen, Swords, Star, Shield,
   Webhook, DollarSign, Lock, Database, Cloud, TestTube2,
   GitBranch, Terminal, Globe, Filter, Flame, Hash,
   CheckCircle2, AlertCircle, ChevronUp, Sparkles,
   LayoutGrid, List, RefreshCw, Activity, Server,
-  Package, Wrench, Users, Blocks, Radio
+  Package, Wrench, Users, Blocks, Radio, TrendingUp
 } from "lucide-react";
-
-// ── Mora Green Design Tokens ─────────────────────────────────────────────────
-const MG = {
-  base:    "#00c27a",
-  bright:  "#00e08d",
-  dim:     "#009960",
-  glow:    "rgba(0,194,122,0.18)",
-  glowSm:  "rgba(0,194,122,0.10)",
-  glowXs:  "rgba(0,194,122,0.06)",
-  border:  "rgba(0,194,122,0.22)",
-  borderDim:"rgba(0,194,122,0.12)",
-  text:    "#00c27a",
-  badge:   "rgba(0,194,122,0.10)",
-};
 
 // ── Article Data ─────────────────────────────────────────────────────────────
 const ARTICLES = [
-  // ── API Discovery ──────────────────────────────────────────────────────────
   {
     id: 1,
     title: "How to Find Reliable APIs Faster Than Ever",
     desc: "A practical guide for developers to avoid broken APIs and save integration time across modern applications.",
     category: "API Discovery",
-    read: "5 min",
+    read: "5 min read",
     date: "May 6, 2026",
     featured: true,
-    views: "12.4K",
-    accent: MG.base,
+    accent: "#22c55e",
     Icon: Search,
     content: `## The API Discovery Problem
 
@@ -90,11 +74,10 @@ Before you write a single line of integration code:
     title: "The 7 Signals That Tell You an API Is Production-Ready",
     desc: "Before you commit to an integration, look for these specific technical and operational signals that separate mature APIs from the rest.",
     category: "API Discovery",
-    read: "6 min",
-    date: "April 30, 2026",
+    read: "6 min read",
+    date: "Apr 30, 2026",
     featured: false,
-    views: "8.2K",
-    accent: MG.base,
+    accent: "#22c55e",
     Icon: CheckCircle2,
     content: `## Not All APIs Are Equal
 
@@ -135,11 +118,10 @@ APIs maintained by teams with a dedicated DevRel or developer support presence r
     title: "How Apives Verifies Every API Before Listing",
     desc: "Inside the technical process Apives uses to test API quality, endpoints, uptime, documentation accuracy, and real-world reliability.",
     category: "API Discovery",
-    read: "4 min",
-    date: "April 21, 2026",
+    read: "4 min read",
+    date: "Apr 21, 2026",
     featured: false,
-    views: "5.8K",
-    accent: MG.base,
+    accent: "#22c55e",
     Icon: CheckCircle2,
     content: `## Why Verification Matters
 
@@ -174,16 +156,14 @@ We evaluate docs against a rubric covering endpoint coverage, parameter descript
 - No clear pricing information
 - Authentication flow that doesn't match documentation`
   },
-  // ── Search APIs ────────────────────────────────────────────────────────────
   {
     id: 4,
     title: "Best Search APIs for Modern Applications in 2026",
     desc: "Comparing the top search APIs based on speed, pricing, documentation quality, and production reliability.",
     category: "Search APIs",
-    read: "7 min",
+    read: "7 min read",
     date: "May 4, 2026",
     featured: false,
-    views: "9.1K",
     accent: "#3b82f6",
     Icon: Zap,
     content: `## Why Search APIs Matter More Than Ever
@@ -227,10 +207,9 @@ For most applications in 2026, Typesense Cloud hits the best balance of performa
     title: "Building Autocomplete That Feels Instant: A Technical Deep-Dive",
     desc: "How to architect search autocomplete using modern APIs, debouncing strategies, and client-side caching to achieve sub-100ms perceived latency.",
     category: "Search APIs",
-    read: "8 min",
-    date: "April 18, 2026",
+    read: "8 min read",
+    date: "Apr 18, 2026",
     featured: false,
-    views: "6.7K",
     accent: "#3b82f6",
     Icon: Activity,
     content: `## The Autocomplete Performance Trap
@@ -265,16 +244,14 @@ For longer result sets, stream the first 5 results immediately and lazy-load the
 
 The metric that matters isn't API response time—it's keystroke-to-suggestion latency. Measure from keyup event to first visible suggestion. Target under 150ms at P95.`
   },
-  // ── AI APIs ────────────────────────────────────────────────────────────────
   {
     id: 6,
     title: "The Developer's Guide to LLM APIs in 2026",
     desc: "A practical comparison of OpenAI, Anthropic, Google Gemini, and Mistral for production applications—latency, cost, context windows, and reliability.",
     category: "AI APIs",
-    read: "10 min",
+    read: "10 min read",
     date: "May 5, 2026",
     featured: false,
-    views: "31.4K",
     accent: "#a855f7",
     Icon: Sparkles,
     content: `## The LLM API Landscape Has Matured
@@ -322,10 +299,9 @@ Pick OpenAI if you want the safest default. Pick Anthropic if you're building ag
     title: "Streaming LLM Responses: SSE, WebSockets, and What Actually Works",
     desc: "Technical comparison of streaming approaches for LLM APIs, with benchmarks, implementation patterns, and production gotchas.",
     category: "AI APIs",
-    read: "7 min",
-    date: "April 26, 2026",
+    read: "7 min read",
+    date: "Apr 26, 2026",
     featured: false,
-    views: "14.8K",
     accent: "#a855f7",
     Icon: Radio,
     content: `## Why Streaming Matters for LLM UX
@@ -358,16 +334,14 @@ The most underappreciated production issue with LLM streaming: what happens when
 
 Streaming raw markdown tokens and rendering incrementally without flicker requires careful buffering. Process complete words or sentences before flushing to the DOM rather than rendering every individual token.`
   },
-  // ── API Security ───────────────────────────────────────────────────────────
   {
     id: 8,
     title: "API Security in 2026: The Vulnerabilities Teams Keep Shipping",
     desc: "A breakdown of the most common API security failures in production—BOLA, mass assignment, broken auth, and the fixes that actually prevent breaches.",
     category: "API Security",
-    read: "9 min",
+    read: "9 min read",
     date: "May 3, 2026",
     featured: false,
-    views: "19.6K",
     accent: "#ef4444",
     Icon: Shield,
     content: `## The OWASP API Top 10 Is Still Being Ignored
@@ -410,10 +384,9 @@ Every API response should include: Strict-Transport-Security, X-Content-Type-Opt
     title: "Rotating API Keys Safely Without Breaking Your Integrations",
     desc: "A step-by-step operational playbook for rotating API keys in production without downtime, service interruptions, or broken third-party integrations.",
     category: "API Security",
-    read: "5 min",
-    date: "April 14, 2026",
+    read: "5 min read",
+    date: "Apr 14, 2026",
     featured: false,
-    views: "7.3K",
     accent: "#ef4444",
     Icon: Lock,
     content: `## Why API Key Rotation Gets Neglected
@@ -444,22 +417,16 @@ Only after all integrations are confirmed working. Keep a 24-hour grace period i
 
 ## Automating Rotation
 
-Services like Doppler, AWS Secrets Manager, and HashiCorp Vault support automatic rotation with zero-downtime key transitions. If you're rotating manually more than twice a year, it's worth automating.
-
-## The Secret You Should Never Rotate
-
-Environment: your team's habits. Make key rotation routine, not a fire drill.`
+Services like Doppler, AWS Secrets Manager, and HashiCorp Vault support automatic rotation with zero-downtime key transitions. If you're rotating manually more than twice a year, it's worth automating.`
   },
-  // ── GraphQL ────────────────────────────────────────────────────────────────
   {
     id: 10,
     title: "REST vs GraphQL vs gRPC: Which API Style in 2026?",
     desc: "A practical breakdown of API design paradigms—when each shines, when each struggles, and how to make the right call for your use case.",
     category: "GraphQL",
-    read: "9 min",
-    date: "April 12, 2026",
+    read: "9 min read",
+    date: "Apr 12, 2026",
     featured: false,
-    views: "15.3K",
     accent: "#e91e96",
     Icon: Layers,
     content: `## Three Paradigms, One Decision
@@ -512,10 +479,9 @@ Most mature companies use all three: REST for public-facing APIs, GraphQL for th
     title: "GraphQL Subscriptions in Production: Lessons From Scaling to 1M Connections",
     desc: "What we learned running GraphQL subscriptions at scale—architecture decisions, connection management, and the pitfalls that don't show up until you have real traffic.",
     category: "GraphQL",
-    read: "8 min",
-    date: "March 28, 2026",
+    read: "8 min read",
+    date: "Mar 28, 2026",
     featured: false,
-    views: "11.2K",
     accent: "#e91e96",
     Icon: Database,
     content: `## GraphQL Subscriptions Are Powerful and Treacherous
@@ -547,16 +513,14 @@ Every subscription resolver has the same N+1 risk as query resolvers, but it fir
 
 The most common production issue: subscription resolvers that don't clean up after themselves when a client disconnects. Always return a cleanup function from your subscribe resolver.`
   },
-  // ── Webhooks ───────────────────────────────────────────────────────────────
   {
     id: 12,
     title: "Building Bulletproof Webhook Consumers",
     desc: "The complete engineering guide to receiving webhooks reliably—idempotency, signature verification, async queuing, and handling retries from third-party providers.",
     category: "Webhooks",
-    read: "8 min",
+    read: "8 min read",
     date: "May 1, 2026",
     featured: false,
-    views: "13.1K",
     accent: "#f97316",
     Icon: Webhook,
     content: `## Webhooks Are Not HTTP Requests
@@ -587,21 +551,16 @@ Use the webhook event ID as an idempotency key. Store processed event IDs. Check
 
 ## Out-of-Order Delivery
 
-Webhooks don't arrive in order. A payment.updated event can arrive before the payment.created event. Design your state machine to handle this, or use timestamps to determine canonical state.
-
-## Failure Handling
-
-If your queue fails to process an event after N retries, don't silently drop it. Dead letter queues with alerting are essential for webhook consumers in production.`
+Webhooks don't arrive in order. A payment.updated event can arrive before the payment.created event. Design your state machine to handle this, or use timestamps to determine canonical state.`
   },
   {
     id: 13,
     title: "Designing a Webhook System for Your API",
     desc: "The engineering decisions behind building a first-class webhook system—delivery guarantees, retry logic, payload design, and developer tooling.",
     category: "Webhooks",
-    read: "7 min",
-    date: "April 8, 2026",
+    read: "7 min read",
+    date: "Apr 8, 2026",
     featured: false,
-    views: "8.4K",
     accent: "#f97316",
     Icon: Server,
     content: `## Webhooks Are a Public API Contract
@@ -639,16 +598,14 @@ Great webhook DX requires:
 - CLI tool for local development (ngrok alternative built-in)
 - Event catalog documenting every event type with example payloads`
   },
-  // ── Authentication ─────────────────────────────────────────────────────────
   {
     id: 14,
     title: "OAuth 2.0 in Practice: The Flows That Actually Matter",
     desc: "A developer-focused breakdown of OAuth 2.0 flows—when to use Authorization Code, Client Credentials, and PKCE, with implementation patterns for each.",
     category: "Authentication",
-    read: "8 min",
-    date: "April 28, 2026",
+    read: "8 min read",
+    date: "Apr 28, 2026",
     featured: false,
-    views: "16.7K",
     accent: "#06b6d4",
     Icon: Lock,
     content: `## OAuth 2.0 Is Misunderstood
@@ -686,10 +643,9 @@ Access tokens should have short lifetimes (15-60 minutes). Implement silent refr
     title: "Auth APIs Compared: Clerk vs Auth0 vs Supabase Auth vs Building Your Own",
     desc: "An honest engineering analysis of managed authentication services versus rolling your own—costs, tradeoffs, migration complexity, and where each breaks down.",
     category: "Authentication",
-    read: "9 min",
-    date: "April 3, 2026",
+    read: "9 min read",
+    date: "Apr 3, 2026",
     featured: false,
-    views: "22.1K",
     accent: "#06b6d4",
     Icon: Users,
     content: `## The Build vs Buy Question for Auth
@@ -728,16 +684,14 @@ Only recommended if you have a dedicated security engineering team and a specifi
 
 For everyone else: buy, don't build.`
   },
-  // ── API Monetization ───────────────────────────────────────────────────────
   {
     id: 16,
     title: "How to Price Your API: A Practical Guide for Developer Tools",
     desc: "The pricing models used by successful API companies—per-request, per-seat, usage tiers, and hybrid approaches—with real examples and implementation advice.",
     category: "API Monetization",
-    read: "7 min",
-    date: "April 22, 2026",
+    read: "7 min read",
+    date: "Apr 22, 2026",
     featured: false,
-    views: "9.8K",
     accent: "#eab308",
     Icon: DollarSign,
     content: `## API Pricing Is Product Strategy
@@ -774,16 +728,14 @@ Combine a monthly platform fee with usage-based pricing above a base volume. Thi
 
 **Example:** $99/month includes 500K requests. $0.0002 per request above that.`
   },
-  // ── Indie Hackers ──────────────────────────────────────────────────────────
   {
     id: 17,
     title: "Top 10 Free APIs Every Indie Hacker Should Know in 2026",
     desc: "The best zero-cost, production-ready APIs for solo founders building products without burning through their runway.",
     category: "Indie Hackers",
-    read: "8 min",
-    date: "April 25, 2026",
+    read: "8 min read",
+    date: "Apr 25, 2026",
     featured: false,
-    views: "21.2K",
     accent: "#ec4899",
     Icon: Rocket,
     content: `## Building Lean With the Right APIs
@@ -834,10 +786,9 @@ Free up to 1,000 contacts. Built for SaaS—onboarding sequences, feature announ
     title: "Apives vs. RapidAPI vs. ProgrammableWeb: Which Directory Helps?",
     desc: "An honest comparison of the top API marketplaces—what each does well, where they fall short, and why verification changes everything.",
     category: "Indie Hackers",
-    read: "8 min",
+    read: "8 min read",
     date: "May 2, 2026",
     featured: false,
-    views: "18.7K",
     accent: "#ec4899",
     Icon: Swords,
     content: `## The API Directory Landscape in 2026
@@ -868,16 +819,14 @@ If you want volume, go to RapidAPI. If you want quality you can trust, use Apive
 
 The fundamental insight: a smaller catalog of verified, working APIs is more valuable than a massive catalog full of noise. Developers don't need ten thousand options. They need five great ones.`
   },
-  // ── Startups ───────────────────────────────────────────────────────────────
   {
     id: 19,
     title: "Building Faster With Better APIs: A Startup Playbook",
     desc: "Why the APIs you choose in week one determine your velocity in month six—and how to make decisions that compound over time.",
     category: "Startups",
-    read: "6 min",
-    date: "April 17, 2026",
+    read: "6 min read",
+    date: "Apr 17, 2026",
     featured: false,
-    views: "8.9K",
     accent: "#f97316",
     Icon: BarChart2,
     content: `## The Compounding Effect of API Choices
@@ -912,16 +861,14 @@ For any API you're considering, spend 30 minutes:
 - Check uptime over the last 90 days — Is it above 99.5%?
 - Find the pricing ceiling — What does it cost at 10x your current usage?`
   },
-  // ── Developer Experience ───────────────────────────────────────────────────
   {
     id: 20,
     title: "Why API Documentation So Often Fails Developers",
     desc: "The hidden, systemic problems developers face while integrating APIs—and what good documentation actually looks like.",
     category: "Developer Experience",
-    read: "6 min",
-    date: "April 29, 2026",
+    read: "6 min read",
+    date: "Apr 29, 2026",
     featured: false,
-    views: "7.3K",
     accent: "#f59e0b",
     Icon: FileText,
     content: `## The Documentation Gap
@@ -953,10 +900,9 @@ There's a persistent truth in software development: most API documentation is wr
     title: "The OpenAPI Spec Is Your Best Engineering Hire",
     desc: "Why investing in a high-quality OpenAPI specification pays dividends in generated SDKs, documentation, mocking, contract testing, and team alignment.",
     category: "Developer Experience",
-    read: "6 min",
-    date: "March 25, 2026",
+    read: "6 min read",
+    date: "Mar 25, 2026",
     featured: false,
-    views: "6.1K",
     accent: "#f59e0b",
     Icon: Code2,
     content: `## An OpenAPI Spec Is Infrastructure
@@ -985,16 +931,14 @@ The biggest unlock is spec-first: write the OpenAPI spec before writing the impl
 - **Incomplete error schemas** make the spec useless for generating error handling code.
 - **Missing examples** make the spec less useful for mock servers and docs.`
   },
-  // ── Cloud APIs ─────────────────────────────────────────────────────────────
   {
     id: 22,
     title: "AWS vs Cloudflare Workers vs Vercel Functions: Where to Run Your API",
     desc: "A practical comparison of the three dominant platforms for running API backends in 2026—cold starts, pricing at scale, developer experience, and operational complexity.",
     category: "Cloud APIs",
-    read: "8 min",
-    date: "April 15, 2026",
+    read: "8 min read",
+    date: "Apr 15, 2026",
     featured: false,
-    views: "17.4K",
     accent: "#0ea5e9",
     Icon: Cloud,
     content: `## The Platform Decision Shapes Everything
@@ -1039,16 +983,14 @@ The best developer experience in the market. Deploy your entire application—fr
 
 For latency-critical public APIs: Cloudflare Workers. For complex backend logic: AWS Lambda. For full-stack applications: Vercel.`
   },
-  // ── API Testing ────────────────────────────────────────────────────────────
   {
     id: 23,
     title: "Contract Testing Your APIs With Pact",
     desc: "How consumer-driven contract testing with Pact eliminates integration failures between services without requiring a live test environment.",
     category: "API Testing",
-    read: "7 min",
-    date: "April 5, 2026",
+    read: "7 min read",
+    date: "Apr 5, 2026",
     featured: false,
-    views: "7.8K",
     accent: "#10b981",
     Icon: TestTube2,
     content: `## The Problem With Integration Tests
@@ -1091,10 +1033,9 @@ The overhead of Pact is worth it once you have 4+ services communicating with ea
     title: "Load Testing Your API Before It Matters",
     desc: "A practical guide to load testing with k6, Artillery, and Locust—how to design meaningful test scenarios, interpret results, and fix what you find.",
     category: "API Testing",
-    read: "6 min",
-    date: "March 18, 2026",
+    read: "6 min read",
+    date: "Mar 18, 2026",
     featured: false,
-    views: "9.3K",
     accent: "#10b981",
     Icon: Activity,
     content: `## Most APIs Have Never Been Load Tested
@@ -1141,8 +1082,8 @@ const CATEGORIES = [
 ];
 
 const CATEGORY_META = {
-  "All":                 { Icon: Layers,     color: MG.base },
-  "API Discovery":       { Icon: Search,     color: MG.base },
+  "All":                 { Icon: Layers,     color: "#22c55e" },
+  "API Discovery":       { Icon: Search,     color: "#22c55e" },
   "AI APIs":             { Icon: Sparkles,   color: "#a855f7" },
   "Search APIs":         { Icon: Zap,        color: "#3b82f6" },
   "API Security":        { Icon: Shield,     color: "#ef4444" },
@@ -1162,7 +1103,7 @@ function renderInline(text) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, i) =>
     part.startsWith("**") && part.endsWith("**")
-      ? <strong key={i} className="text-zinc-200 font-semibold">{part.slice(2, -2)}</strong>
+      ? <strong key={i} style={{ color: "#e4e4e7", fontWeight: 600 }}>{part.slice(2, -2)}</strong>
       : part
   );
 }
@@ -1175,10 +1116,11 @@ function renderContent(content) {
   const flushList = key => {
     if (!listBuffer.length) return;
     elements.push(
-      <ul key={`ul-${key}`} className="my-4 space-y-2 pl-5">
+      <ul key={`ul-${key}`} style={{ margin: "12px 0 16px 0", padding: "0 0 0 16px", listStyle: "none" }}>
         {listBuffer.map((item, j) => (
-          <li key={j} className="text-zinc-400 text-sm leading-relaxed list-disc" style={{ "::marker": { color: MG.base } }}>
-            <span style={{ color: MG.dim }} className="mr-1">▸</span>{renderInline(item)}
+          <li key={j} style={{ color: "#a1a1aa", fontSize: "13.5px", lineHeight: "1.7", marginBottom: "6px", display: "flex", gap: "8px" }}>
+            <span style={{ color: "#22c55e", marginTop: "1px", flexShrink: 0 }}>›</span>
+            <span>{renderInline(item)}</span>
           </li>
         ))}
       </ul>
@@ -1190,15 +1132,14 @@ function renderContent(content) {
     if (line.startsWith("## ")) {
       flushList(i);
       elements.push(
-        <h2 key={i} className="text-lg font-bold text-white mt-10 mb-3 tracking-tight"
-          style={{ fontFamily: "'Syne', sans-serif" }}>
+        <h2 key={i} style={{ fontSize: "17px", fontWeight: 700, color: "#fafafa", marginTop: "36px", marginBottom: "10px", letterSpacing: "-0.3px", fontFamily: "inherit" }}>
           {line.slice(3)}
         </h2>
       );
     } else if (line.startsWith("### ")) {
       flushList(i);
       elements.push(
-        <h3 key={i} className="text-sm font-semibold mt-6 mb-2" style={{ color: MG.base }}>
+        <h3 key={i} style={{ fontSize: "13px", fontWeight: 600, color: "#22c55e", marginTop: "20px", marginBottom: "6px" }}>
           {line.slice(4)}
         </h3>
       );
@@ -1207,15 +1148,15 @@ function renderContent(content) {
     } else if (line.startsWith("**") && line.endsWith("**") && !line.slice(2, -2).includes("**")) {
       flushList(i);
       elements.push(
-        <p key={i} className="text-[13px] font-semibold text-zinc-200 mt-3 mb-1">{line.slice(2, -2)}</p>
+        <p key={i} style={{ fontSize: "13px", fontWeight: 600, color: "#d4d4d8", marginTop: "12px", marginBottom: "4px" }}>{line.slice(2, -2)}</p>
       );
     } else if (line.trim() === "") {
       flushList(i);
-      elements.push(<div key={i} className="h-2" />);
+      elements.push(<div key={i} style={{ height: "6px" }} />);
     } else {
       flushList(i);
       elements.push(
-        <p key={i} className="text-zinc-400 text-[13.5px] leading-[1.75]">{renderInline(line)}</p>
+        <p key={i} style={{ color: "#a1a1aa", fontSize: "13.5px", lineHeight: "1.75", margin: "4px 0" }}>{renderInline(line)}</p>
       );
     }
   });
@@ -1223,55 +1164,71 @@ function renderContent(content) {
   return elements;
 }
 
-// ── Components ───────────────────────────────────────────────────────────────
+// ── Article Card ──────────────────────────────────────────────────────────────
 function ArticleCard({ article, onClick }) {
-  const meta = CATEGORY_META[article.category] || CATEGORY_META["All"];
+  const [hovered, setHovered] = useState(false);
+
   return (
     <button
       onClick={onClick}
-      className="group w-full text-left rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 focus:outline-none"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
-        background: "rgba(255,255,255,0.025)",
-        border: "1px solid rgba(255,255,255,0.07)",
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.transform = "translateY(-2px)";
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.13)";
-        e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-        e.currentTarget.style.boxShadow = `0 8px 32px rgba(0,0,0,0.4)`;
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-        e.currentTarget.style.background = "rgba(255,255,255,0.025)";
-        e.currentTarget.style.boxShadow = "none";
+        display: "block",
+        width: "100%",
+        textAlign: "left",
+        background: hovered ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.025)",
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
+        borderRadius: "14px",
+        overflow: "hidden",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        transform: hovered ? "translateY(-1px)" : "none",
+        outline: "none",
       }}
     >
-      {/* accent bar */}
-      <div className="h-[1.5px] w-full" style={{ background: `linear-gradient(90deg, ${article.accent}, transparent 70%)` }} />
-      <div className="p-5">
-        <div className="flex items-center gap-2.5 mb-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: `${article.accent}15`, border: `1px solid ${article.accent}28` }}>
-            <article.Icon size={14} style={{ color: article.accent }} />
+      <div style={{ height: "1px", background: `linear-gradient(90deg, ${article.accent}, transparent 60%)` }} />
+      <div style={{ padding: "18px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+          <div style={{
+            width: "28px", height: "28px", borderRadius: "8px", flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: `${article.accent}18`, border: `1px solid ${article.accent}28`
+          }}>
+            <article.Icon size={13} style={{ color: article.accent }} />
           </div>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border tracking-wide"
-            style={{ color: article.accent, background: `${article.accent}10`, borderColor: `${article.accent}22` }}>
+          <span style={{
+            fontSize: "10px", fontWeight: 500, padding: "2px 8px", borderRadius: "99px",
+            color: article.accent, background: `${article.accent}12`, border: `1px solid ${article.accent}22`,
+            letterSpacing: "0.01em"
+          }}>
             {article.category}
           </span>
-          <span className="text-[10.5px] text-zinc-600 ml-auto tabular-nums">{article.date}</span>
+          <span style={{ fontSize: "10px", color: "#52525b", marginLeft: "auto" }}>{article.date}</span>
         </div>
-        <h3 className="text-[13.5px] font-semibold text-zinc-100 leading-snug mb-2 group-hover:text-white transition-colors"
-          style={{ fontFamily: "'Syne', sans-serif" }}>
+
+        <h3 style={{
+          fontSize: "13px", fontWeight: 600, color: hovered ? "#ffffff" : "#e4e4e7",
+          lineHeight: "1.45", marginBottom: "7px", letterSpacing: "-0.15px",
+          transition: "color 0.15s ease", fontFamily: "inherit"
+        }}>
           {article.title}
         </h3>
-        <p className="text-[11.5px] text-zinc-500 leading-relaxed mb-4 line-clamp-2">{article.desc}</p>
-        <div className="flex items-center gap-3 text-[11px] text-zinc-600">
-          <span className="flex items-center gap-1"><Clock size={10} />{article.read}</span>
-          <span className="flex items-center gap-1"><Eye size={10} />{article.views}</span>
-          <span className="ml-auto flex items-center gap-1 font-semibold transition-colors"
-            style={{ color: article.accent }}>
-            Read <ArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform duration-200" />
+
+        <p style={{
+          fontSize: "11.5px", color: "#52525b", lineHeight: "1.6",
+          marginBottom: "14px", display: "-webkit-box", WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical", overflow: "hidden"
+        }}>
+          {article.desc}
+        </p>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "10.5px", color: "#52525b" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <Clock size={9} />{article.read}
+          </span>
+          <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "4px", color: article.accent, fontWeight: 600 }}>
+            Read <ArrowRight size={9} style={{ transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
           </span>
         </div>
       </div>
@@ -1279,42 +1236,7 @@ function ArticleCard({ article, onClick }) {
   );
 }
 
-function TrendingCard({ article, rank, onClick }) {
-  return (
-    <button onClick={onClick}
-      className="group w-full text-left flex items-start gap-3 p-4 rounded-xl cursor-pointer transition-all duration-200 focus:outline-none"
-      style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)" }}
-      onMouseEnter={e => {
-        e.currentTarget.style.background = "rgba(255,255,255,0.045)";
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.background = "rgba(255,255,255,0.025)";
-        e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-      }}
-    >
-      <span className="text-[11px] font-bold text-zinc-700 w-5 shrink-0 mt-0.5 tabular-nums">
-        {String(rank).padStart(2, "0")}
-      </span>
-      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-        style={{ background: `${article.accent}15`, border: `1px solid ${article.accent}25` }}>
-        <article.Icon size={12} style={{ color: article.accent }} />
-      </div>
-      <div className="min-w-0">
-        <p className="text-[12px] font-semibold text-zinc-200 leading-snug mb-1 group-hover:text-white transition-colors truncate"
-          style={{ fontFamily: "'Syne', sans-serif" }}>
-          {article.title}
-        </p>
-        <div className="flex items-center gap-2 text-[10px] text-zinc-600">
-          <Eye size={9} />{article.views}
-          <span className="text-zinc-700">·</span>
-          {article.read}
-        </div>
-      </div>
-    </button>
-  );
-}
-
+// ── Article Modal ─────────────────────────────────────────────────────────────
 function ArticleModal({ article, onClose, onSelectArticle }) {
   const scrollRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -1328,7 +1250,7 @@ function ArticleModal({ article, onClose, onSelectArticle }) {
 
   const handleClose = () => {
     setVisible(false);
-    setTimeout(onClose, 220);
+    setTimeout(onClose, 200);
   };
 
   const onScroll = e => {
@@ -1337,7 +1259,9 @@ function ArticleModal({ article, onClose, onSelectArticle }) {
     setProgress(h > 0 ? (el.scrollTop / h) * 100 : 0);
   };
 
-  const related = ARTICLES.filter(a => a.id !== article.id && a.category === article.category).slice(0, 2)
+  const related = ARTICLES
+    .filter(a => a.id !== article.id && a.category === article.category)
+    .slice(0, 2)
     .concat(ARTICLES.filter(a => a.id !== article.id && a.category !== article.category).slice(0, 1));
 
   useEffect(() => {
@@ -1347,97 +1271,116 @@ function ArticleModal({ article, onClose, onSelectArticle }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-start justify-center">
+    <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
       <div
-        className="absolute inset-0 transition-opacity duration-200"
-        style={{ background: "rgba(0,0,0,0.82)", backdropFilter: "blur(12px)", opacity: visible ? 1 : 0 }}
         onClick={handleClose}
+        style={{
+          position: "absolute", inset: 0,
+          background: "rgba(0,0,0,0.75)",
+          backdropFilter: "blur(10px)",
+          opacity: visible ? 1 : 0,
+          transition: "opacity 0.2s ease"
+        }}
       />
       <div
         ref={scrollRef}
         onScroll={onScroll}
-        className="relative z-10 w-full max-w-[680px] h-screen overflow-y-auto transition-all duration-200"
         style={{
-          background: "#080e10",
-          borderLeft: "1px solid rgba(255,255,255,0.07)",
-          borderRight: "1px solid rgba(255,255,255,0.07)",
-          transform: visible ? "translateY(0)" : "translateY(20px)",
+          position: "relative", zIndex: 10,
+          width: "100%", maxWidth: "660px", height: "100vh",
+          overflowY: "auto",
+          background: "#070a0b",
+          borderLeft: "1px solid rgba(255,255,255,0.06)",
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+          transform: visible ? "translateY(0)" : "translateY(16px)",
           opacity: visible ? 1 : 0,
+          transition: "all 0.2s ease",
         }}
       >
-        {/* Progress bar */}
-        <div className="sticky top-0 h-[2px] z-30" style={{ background: "rgba(255,255,255,0.05)" }}>
-          <div className="h-full transition-[width] duration-100"
-            style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${MG.dim}, ${MG.bright})` }} />
+        {/* Progress */}
+        <div style={{ position: "sticky", top: 0, height: "2px", background: "rgba(255,255,255,0.05)", zIndex: 30 }}>
+          <div style={{
+            height: "100%", width: `${progress}%`,
+            background: "linear-gradient(90deg, #16a34a, #22c55e)",
+            transition: "width 0.1s linear"
+          }} />
         </div>
 
         {/* Header */}
-        <div className="sticky top-[2px] z-20 px-7 py-3.5 flex items-center justify-between"
-          style={{ background: "rgba(8,14,16,0.97)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border shrink-0"
-              style={{ color: article.accent, background: `${article.accent}10`, borderColor: `${article.accent}25` }}>
+        <div style={{
+          position: "sticky", top: "2px", zIndex: 20,
+          padding: "12px 24px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          background: "rgba(7,10,11,0.97)", backdropFilter: "blur(16px)",
+          borderBottom: "1px solid rgba(255,255,255,0.055)"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+            <span style={{
+              fontSize: "10px", fontWeight: 500, padding: "2px 8px", borderRadius: "99px",
+              color: article.accent, background: `${article.accent}12`, border: `1px solid ${article.accent}25`,
+              flexShrink: 0
+            }}>
               {article.category}
             </span>
-            <span className="text-[10.5px] text-zinc-600 flex items-center gap-1 shrink-0">
+            <span style={{ fontSize: "10px", color: "#52525b", display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
               <Clock size={9} />{article.read}
             </span>
-            <span className="text-zinc-700 text-xs">·</span>
-            <span className="text-[10.5px] text-zinc-600 truncate">{article.date}</span>
+            <span style={{ color: "#3f3f46" }}>·</span>
+            <span style={{ fontSize: "10px", color: "#52525b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {article.date}
+            </span>
           </div>
-          <button onClick={handleClose}
-            className="ml-3 w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 cursor-pointer"
-            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)" }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#fff"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = ""; }}
+          <button
+            onClick={handleClose}
+            style={{
+              marginLeft: "12px", width: "28px", height: "28px", borderRadius: "8px",
+              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
+              cursor: "pointer", color: "#71717a", transition: "all 0.15s ease"
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.09)"; e.currentTarget.style.color = "#d4d4d8"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#71717a"; }}
           >
-            <X size={13} className="text-zinc-400" />
+            <X size={13} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="px-7 py-8 pb-20">
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-6"
-            style={{ background: `${article.accent}15`, border: `1px solid ${article.accent}28` }}>
-            <article.Icon size={20} style={{ color: article.accent }} />
+        <div style={{ padding: "28px 24px 80px" }}>
+          <div style={{
+            width: "40px", height: "40px", borderRadius: "12px",
+            display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "20px",
+            background: `${article.accent}14`, border: `1px solid ${article.accent}25`
+          }}>
+            <article.Icon size={18} style={{ color: article.accent }} />
           </div>
-          <h1 className="text-[21px] font-bold text-white leading-tight mb-3 tracking-tight"
-            style={{ fontFamily: "'Syne', sans-serif" }}>
+
+          <h1 style={{
+            fontSize: "20px", fontWeight: 700, color: "#fafafa",
+            lineHeight: "1.3", marginBottom: "10px", letterSpacing: "-0.4px",
+            fontFamily: "inherit"
+          }}>
             {article.title}
           </h1>
-          <p className="text-zinc-500 text-[13px] leading-relaxed mb-7 pb-7"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+
+          <p style={{
+            color: "#52525b", fontSize: "13px", lineHeight: "1.65",
+            marginBottom: "24px", paddingBottom: "24px",
+            borderBottom: "1px solid rgba(255,255,255,0.055)"
+          }}>
             {article.desc}
           </p>
+
           <div>{renderContent(article.content)}</div>
 
           {/* Related */}
-          <div className="mt-12 pt-8" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-            <p className="text-[9.5px] font-semibold text-zinc-600 tracking-[0.15em] uppercase mb-4">
+          <div style={{ marginTop: "44px", paddingTop: "28px", borderTop: "1px solid rgba(255,255,255,0.055)" }}>
+            <p style={{ fontSize: "9px", fontWeight: 600, color: "#52525b", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "14px" }}>
               Continue Reading
             </p>
-            <div className="space-y-2">
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               {related.slice(0, 3).map(a => (
-                <button key={a.id}
-                  onClick={() => { onSelectArticle(a); scrollRef.current?.scrollTo(0, 0); setProgress(0); }}
-                  className="group w-full text-left flex items-center gap-3 p-3.5 rounded-xl cursor-pointer transition-all duration-200 focus:outline-none"
-                  style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)" }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.045)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.025)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
-                >
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: `${a.accent}12`, border: `1px solid ${a.accent}22` }}>
-                    <a.Icon size={12} style={{ color: a.accent }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[12px] font-semibold text-zinc-200 group-hover:text-white transition-colors leading-snug truncate"
-                      style={{ fontFamily: "'Syne', sans-serif" }}>
-                      {a.title}
-                    </p>
-                    <p className="text-[10px] text-zinc-600 mt-0.5">{a.category} · {a.read}</p>
-                  </div>
-                  <ChevronRight size={12} className="text-zinc-600 group-hover:text-zinc-400 shrink-0 transition-colors" />
-                </button>
+                <RelatedCard key={a.id} article={a} onClick={() => { onSelectArticle(a); scrollRef.current?.scrollTo(0, 0); setProgress(0); }} />
               ))}
             </div>
           </div>
@@ -1447,13 +1390,42 @@ function ArticleModal({ article, onClose, onSelectArticle }) {
   );
 }
 
-function SectionLabel({ color, label, Icon: LIcon }) {
+function RelatedCard({ article, onClick }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div className="flex items-center gap-2 mb-5">
-      <div className="w-[3px] h-[14px] rounded-full" style={{ background: color }} />
-      {LIcon && <LIcon size={11} style={{ color }} />}
-      <span className="text-[9.5px] font-semibold text-zinc-500 tracking-[0.15em] uppercase">{label}</span>
-    </div>
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: "100%", textAlign: "left",
+        display: "flex", alignItems: "center", gap: "12px",
+        padding: "12px 14px", borderRadius: "10px", cursor: "pointer",
+        background: hovered ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.025)",
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
+        transition: "all 0.15s ease", outline: "none"
+      }}
+    >
+      <div style={{
+        width: "28px", height: "28px", borderRadius: "8px", flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: `${article.accent}12`, border: `1px solid ${article.accent}22`
+      }}>
+        <article.Icon size={12} style={{ color: article.accent }} />
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          fontSize: "12px", fontWeight: 600,
+          color: hovered ? "#ffffff" : "#d4d4d8",
+          lineHeight: "1.35", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          transition: "color 0.15s", fontFamily: "inherit"
+        }}>
+          {article.title}
+        </p>
+        <p style={{ fontSize: "10px", color: "#52525b", marginTop: "2px" }}>{article.category} · {article.read}</p>
+      </div>
+      <ChevronRight size={12} style={{ color: "#52525b", flexShrink: 0 }} />
+    </button>
   );
 }
 
@@ -1462,7 +1434,7 @@ export default function ApivesBlogsPage() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [viewMode, setViewMode] = useState("grid"); // grid | list
+  const [viewMode, setViewMode] = useState("grid");
 
   const filtered = ARTICLES.filter(a => {
     const matchCat = activeCategory === "All" || a.category === activeCategory;
@@ -1475,140 +1447,151 @@ export default function ApivesBlogsPage() {
   });
 
   const featured = ARTICLES[0];
-  const trending = [...ARTICLES].sort((a, b) => {
-    const parse = v => parseFloat(v.replace("K", "")) * (v.includes("K") ? 1000 : 1);
-    return parse(b.views) - parse(a.views);
-  }).slice(0, 3);
-
   const showFeatured = activeCategory === "All" && !searchQuery;
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: #050b0d; }
-        ::-webkit-scrollbar-thumb { background: #1a2e2a; border-radius: 99px; }
-        ::-webkit-scrollbar-thumb:hover { background: ${MG.dim}; }
-        .grid-bg {
-          background-image:
-            linear-gradient(rgba(0,194,122,0.028) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,194,122,0.028) 1px, transparent 1px);
-          background-size: 40px 40px;
+        ::-webkit-scrollbar-track { background: #050708; }
+        ::-webkit-scrollbar-thumb { background: #1c2a1e; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #16a34a; }
+        .pill-scroll::-webkit-scrollbar { height: 0; display: none; }
+        input::placeholder { color: #3f3f46; }
+        input::-webkit-input-placeholder { color: #3f3f46; }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        .mg-glow { box-shadow: 0 0 40px ${MG.glow}, 0 0 80px ${MG.glowXs}; }
-        .pill-scroll::-webkit-scrollbar { height: 0; }
-        @keyframes fade-up { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-        .fade-up { animation: fade-up 0.4s ease both; }
+        .fade-up-1 { animation: fadeUp 0.4s ease both; animation-delay: 0ms; }
+        .fade-up-2 { animation: fadeUp 0.4s ease both; animation-delay: 60ms; }
+        .fade-up-3 { animation: fadeUp 0.4s ease both; animation-delay: 110ms; }
+        .fade-up-4 { animation: fadeUp 0.4s ease both; animation-delay: 150ms; }
       `}</style>
 
-      <div style={{ fontFamily: "'DM Sans', sans-serif", background: "#060c0e", minHeight: "100vh", color: "#fff" }}>
+      <div style={{ fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, sans-serif", background: "#070a0b", minHeight: "100vh", color: "#fafafa" }}>
 
         {/* ── HERO ──────────────────────────────────────────────────────── */}
-        <section className="grid-bg relative pt-16 pb-14 overflow-hidden"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.055)" }}>
-          {/* glows */}
-          <div className="absolute top-[-120px] right-[-60px] w-[500px] h-[500px] rounded-full pointer-events-none"
-            style={{ background: `radial-gradient(circle, ${MG.glowSm} 0%, transparent 65%)` }} />
-          <div className="absolute bottom-[-40px] left-[20%] w-[360px] h-[240px] rounded-full pointer-events-none"
-            style={{ background: `radial-gradient(circle, ${MG.glowXs} 0%, transparent 70%)` }} />
+        <section style={{
+          position: "relative",
+          paddingTop: "64px",
+          paddingBottom: "52px",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          overflow: "hidden"
+        }}>
+          {/* Subtle radial glow */}
+          <div style={{
+            position: "absolute", top: "-100px", right: "-80px",
+            width: "480px", height: "480px", borderRadius: "50%",
+            pointerEvents: "none",
+            background: "radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 65%)"
+          }} />
+          <div style={{
+            position: "absolute", bottom: "-60px", left: "15%",
+            width: "340px", height: "220px", borderRadius: "50%",
+            pointerEvents: "none",
+            background: "radial-gradient(circle, rgba(34,197,94,0.04) 0%, transparent 70%)"
+          }} />
 
-          <div className="max-w-[1080px] mx-auto px-6">
-            <div className="fade-up" style={{ animationDelay: "0ms" }}>
-              <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-medium mb-5"
-                style={{ borderColor: MG.borderDim, background: MG.glowXs, color: MG.text }}>
-                <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: MG.bright }} />
-                Developer Insights & API Resources
-              </div>
-            </div>
-
-            <div className="fade-up" style={{ animationDelay: "60ms" }}>
-              <h1 className="text-[clamp(30px,5vw,54px)] font-extrabold leading-[1.06] tracking-[-2px] max-w-[540px] mb-4"
-                style={{ fontFamily: "'Syne', sans-serif" }}>
+          <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "0 24px" }}>
+            <div className="fade-up-1">
+              <h1 style={{
+                fontSize: "clamp(28px,4.5vw,48px)",
+                fontWeight: 800,
+                lineHeight: 1.08,
+                letterSpacing: "-1.5px",
+                maxWidth: "520px",
+                marginBottom: "14px",
+                color: "#fafafa"
+              }}>
                 The blog for{" "}
-                <span style={{ color: MG.base }}>API-first</span>{" "}
+                <span style={{ color: "#22c55e" }}>API-first</span>{" "}
                 developers.
               </h1>
             </div>
 
-            <div className="fade-up" style={{ animationDelay: "110ms" }}>
-              <p className="text-zinc-500 text-[13.5px] max-w-[400px] leading-relaxed mb-8">
+            <div className="fade-up-2">
+              <p style={{
+                color: "#71717a",
+                fontSize: "14px",
+                maxWidth: "380px",
+                lineHeight: "1.65",
+                marginBottom: "28px",
+                fontWeight: 400
+              }}>
                 Verified guides, honest comparisons, and practical insights for building with APIs in production.
               </p>
             </div>
 
-            {/* Search + stats */}
-            <div className="fade-up flex flex-wrap items-center gap-3" style={{ animationDelay: "150ms" }}>
-              <div className="relative flex items-center">
-                <Search size={12} className="absolute left-3.5 pointer-events-none" style={{ color: MG.dim }} />
+            <div className="fade-up-3" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                <Search size={12} style={{ position: "absolute", left: "13px", color: "#22c55e", pointerEvents: "none" }} />
                 <input
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Search articles..."
-                  className="rounded-full pl-9 pr-4 py-2.5 text-[12.5px] text-white w-[230px] outline-none transition-all duration-200"
                   style={{
                     background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.09)",
-                    fontFamily: "'DM Sans', sans-serif",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: "99px",
+                    paddingLeft: "34px",
+                    paddingRight: searchQuery ? "32px" : "16px",
+                    paddingTop: "9px",
+                    paddingBottom: "9px",
+                    fontSize: "12.5px",
+                    color: "#e4e4e7",
+                    width: "220px",
+                    outline: "none",
+                    fontFamily: "inherit",
+                    transition: "border-color 0.15s, background 0.15s"
                   }}
-                  onFocus={e => { e.currentTarget.style.borderColor = MG.border; e.currentTarget.style.background = "rgba(255,255,255,0.06)"; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+                  onFocus={e => { e.currentTarget.style.borderColor = "rgba(34,197,94,0.35)"; e.currentTarget.style.background = "rgba(34,197,94,0.04)"; }}
+                  onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
                 />
                 {searchQuery && (
-                  <button onClick={() => setSearchQuery("")}
-                    className="absolute right-3 cursor-pointer"
-                    style={{ color: MG.dim }}>
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    style={{ position: "absolute", right: "12px", background: "none", border: "none", cursor: "pointer", color: "#52525b", display: "flex" }}
+                  >
                     <X size={12} />
                   </button>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 text-[11.5px] text-zinc-600">
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11.5px", color: "#52525b" }}>
                 <BookOpen size={11} />
                 <span>{ARTICLES.length} articles</span>
-                <span className="text-zinc-700">·</span>
-                <span style={{ color: MG.base }}>All verified</span>
+                <span style={{ color: "#3f3f46" }}>·</span>
+                <span style={{ color: "#22c55e" }}>All verified</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* ── CATEGORY PILLS ────────────────────────────────────────────── */}
-        <div className="sticky top-0 z-50 pill-scroll overflow-x-auto"
-          style={{ background: "rgba(6,12,14,0.97)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,255,255,0.055)" }}>
-          <div className="max-w-[1080px] mx-auto px-6">
-            <div className="flex gap-1.5 py-3 whitespace-nowrap">
+        <div
+          className="pill-scroll"
+          style={{
+            overflowX: "auto",
+            borderBottom: "1px solid rgba(255,255,255,0.05)"
+          }}
+        >
+          <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "0 24px" }}>
+            <div style={{ display: "flex", gap: "6px", padding: "12px 0", whiteSpace: "nowrap" }}>
               {CATEGORIES.map(cat => {
                 const meta = CATEGORY_META[cat];
                 const CatIcon = meta?.Icon || Layers;
                 const active = activeCategory === cat;
                 return (
-                  <button key={cat}
+                  <CategoryPill
+                    key={cat}
+                    cat={cat}
+                    CatIcon={CatIcon}
+                    active={active}
                     onClick={() => setActiveCategory(cat)}
-                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10.5px] font-medium border cursor-pointer transition-all duration-150 focus:outline-none"
-                    style={{
-                      background: active ? MG.base : "rgba(255,255,255,0.035)",
-                      color: active ? "#000" : "#6b7280",
-                      borderColor: active ? MG.base : "rgba(255,255,255,0.07)",
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                    onMouseEnter={e => {
-                      if (!active) {
-                        e.currentTarget.style.color = "#a1a1aa";
-                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!active) {
-                        e.currentTarget.style.color = "#6b7280";
-                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-                      }
-                    }}
-                  >
-                    <CatIcon size={9.5} />
-                    {cat}
-                  </button>
+                  />
                 );
               })}
             </div>
@@ -1616,165 +1599,86 @@ export default function ApivesBlogsPage() {
         </div>
 
         {/* ── MAIN CONTENT ──────────────────────────────────────────────── */}
-        <div className="max-w-[1080px] mx-auto px-6 py-12 pb-24">
+        <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "36px 24px 80px" }}>
 
-          {/* Featured article */}
+          {/* Featured */}
           {showFeatured && (
-            <div className="mb-12">
-              <SectionLabel color={MG.base} label="Featured" />
-              <button onClick={() => setSelectedArticle(featured)}
-                className="group w-full text-left rounded-2xl p-8 cursor-pointer transition-all duration-300 relative overflow-hidden focus:outline-none"
-                style={{
-                  background: `linear-gradient(135deg, ${MG.glowXs}, rgba(255,255,255,0.015))`,
-                  border: `1px solid ${MG.borderDim}`,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = MG.border;
-                  e.currentTarget.style.boxShadow = `0 0 40px ${MG.glowSm}`;
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = MG.borderDim;
-                  e.currentTarget.style.boxShadow = "none";
-                }}
-              >
-                <div className="absolute top-[-80px] right-[-80px] w-[320px] h-[320px] rounded-full pointer-events-none"
-                  style={{ background: `radial-gradient(circle, ${MG.glowXs} 0%, transparent 70%)` }} />
-
-                <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap gap-2 items-center mb-4">
-                      <span className="text-[10px] font-medium px-2.5 py-0.5 rounded-full border"
-                        style={{ color: MG.base, background: MG.glowXs, borderColor: MG.borderDim }}>
-                        {featured.category}
-                      </span>
-                      <span className="flex items-center gap-1 text-[10.5px] text-zinc-600"><Clock size={9} />{featured.read}</span>
-                      <span className="text-zinc-700">·</span>
-                      <span className="flex items-center gap-1 text-[10.5px] text-zinc-600"><Eye size={9} />{featured.views}</span>
-                      <span className="text-zinc-700">·</span>
-                      <span className="flex items-center gap-1 text-[10.5px] text-zinc-600"><Flame size={9} style={{ color: "#f97316" }} />Featured</span>
-                    </div>
-                    <h2 className="text-[clamp(17px,2.4vw,24px)] font-bold leading-snug mb-3 max-w-[500px] tracking-tight group-hover:text-white transition-colors"
-                      style={{ fontFamily: "'Syne', sans-serif" }}>
-                      {featured.title}
-                    </h2>
-                    <p className="text-zinc-500 text-[13px] leading-relaxed max-w-[480px] mb-5">{featured.desc}</p>
-                    <div className="inline-flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: MG.base }}>
-                      Read article
-                      <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform duration-200" />
-                    </div>
-                  </div>
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl shrink-0 flex items-center justify-center"
-                    style={{ background: MG.glowXs, border: `1px solid ${MG.borderDim}` }}>
-                    <featured.Icon size={40} style={{ color: MG.base, opacity: 0.65 }} />
-                  </div>
-                </div>
-              </button>
+            <div style={{ marginBottom: "40px" }}>
+              <SectionLabel color="#22c55e" label="Featured" />
+              <FeaturedCard article={featured} onClick={() => setSelectedArticle(featured)} />
             </div>
           )}
 
-          {/* Trending */}
-          {showFeatured && (
-            <div className="mb-12">
-              <SectionLabel color="#f59e0b" label="Trending" Icon={TrendingUp} />
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {trending.map((a, i) => (
-                  <TrendingCard key={a.id} article={a} rank={i + 1} onClick={() => setSelectedArticle(a)} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* All articles */}
+          {/* All Articles */}
           <div>
-            <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-              <div className="flex items-center gap-2">
-                <div className="w-[3px] h-[13px] rounded-full" style={{ background: "rgba(255,255,255,0.35)" }} />
-                <span className="text-[9.5px] font-semibold text-zinc-500 tracking-[0.15em] uppercase">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <div style={{ width: "2px", height: "12px", borderRadius: "99px", background: "rgba(255,255,255,0.25)" }} />
+                <span style={{ fontSize: "9px", fontWeight: 600, color: "#52525b", letterSpacing: "0.14em", textTransform: "uppercase" }}>
                   {searchQuery ? `Results for "${searchQuery}"` : activeCategory === "All" ? "All Articles" : activeCategory}
                 </span>
-                <span className="text-[10px] text-zinc-600 rounded-full px-2 py-0.5"
-                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                <span style={{
+                  fontSize: "10px", color: "#52525b", borderRadius: "99px",
+                  padding: "1px 8px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)"
+                }}>
                   {filtered.length}
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <button onClick={() => setViewMode("grid")}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-150"
-                  style={{
-                    background: viewMode === "grid" ? MG.base : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${viewMode === "grid" ? MG.base : "rgba(255,255,255,0.07)"}`,
-                    color: viewMode === "grid" ? "#000" : "#6b7280",
-                  }}>
-                  <LayoutGrid size={12} />
-                </button>
-                <button onClick={() => setViewMode("list")}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-150"
-                  style={{
-                    background: viewMode === "list" ? MG.base : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${viewMode === "list" ? MG.base : "rgba(255,255,255,0.07)"}`,
-                    color: viewMode === "list" ? "#000" : "#6b7280",
-                  }}>
-                  <List size={12} />
-                </button>
+
+              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                <ViewButton active={viewMode === "grid"} onClick={() => setViewMode("grid")}>
+                  <LayoutGrid size={11} />
+                </ViewButton>
+                <ViewButton active={viewMode === "list"} onClick={() => setViewMode("list")}>
+                  <List size={11} />
+                </ViewButton>
               </div>
             </div>
 
             {filtered.length === 0 ? (
-              <div className="text-center py-24">
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
-                  <AlertCircle size={22} className="text-zinc-600" />
+              <div style={{ textAlign: "center", padding: "80px 0" }}>
+                <div style={{
+                  width: "48px", height: "48px", borderRadius: "14px", margin: "0 auto 16px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)"
+                }}>
+                  <AlertCircle size={20} style={{ color: "#52525b" }} />
                 </div>
-                <p className="text-zinc-400 text-[14px] font-medium mb-1">No articles found</p>
-                <p className="text-zinc-600 text-[12.5px] mb-5">No results for "{searchQuery}"</p>
+                <p style={{ color: "#d4d4d8", fontSize: "14px", fontWeight: 500, marginBottom: "4px" }}>No articles found</p>
+                <p style={{ color: "#52525b", fontSize: "12px", marginBottom: "18px" }}>No results for "{searchQuery}"</p>
                 <button
                   onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
-                  className="inline-flex items-center gap-1.5 text-[11.5px] font-medium px-4 py-2 rounded-full cursor-pointer transition-all duration-150 border-0"
-                  style={{ background: MG.glowXs, border: `1px solid ${MG.borderDim}`, color: MG.base }}
-                  onMouseEnter={e => e.currentTarget.style.background = MG.glow}
-                  onMouseLeave={e => e.currentTarget.style.background = MG.glowXs}
+                  style={{
+                    display: "inline-flex", alignItems: "center", gap: "6px",
+                    fontSize: "11.5px", fontWeight: 500, padding: "8px 16px", borderRadius: "99px",
+                    background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)",
+                    color: "#22c55e", cursor: "pointer", fontFamily: "inherit"
+                  }}
                 >
                   <RefreshCw size={11} /> Clear filters
                 </button>
               </div>
             ) : viewMode === "grid" ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gap: "14px"
+              }}>
                 {filtered.map(a => (
                   <ArticleCard key={a.id} article={a} onClick={() => setSelectedArticle(a)} />
                 ))}
               </div>
             ) : (
-              <div className="space-y-2">
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 {filtered.map(a => (
-                  <button key={a.id} onClick={() => setSelectedArticle(a)}
-                    className="group w-full text-left flex items-center gap-4 p-4 rounded-xl cursor-pointer transition-all duration-200 focus:outline-none"
-                    style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.045)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.025)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
-                  >
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: `${a.accent}14`, border: `1px solid ${a.accent}25` }}>
-                      <a.Icon size={16} style={{ color: a.accent }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-zinc-200 group-hover:text-white transition-colors leading-snug truncate"
-                        style={{ fontFamily: "'Syne', sans-serif" }}>
-                        {a.title}
-                      </p>
-                      <p className="text-[11px] text-zinc-600 mt-0.5 truncate">{a.category} · {a.read} · {a.views} views</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[9.5px] text-zinc-600 hidden sm:block">{a.date}</span>
-                      <ArrowRight size={13} style={{ color: a.accent }} className="group-hover:translate-x-0.5 transition-transform duration-200" />
-                    </div>
-                  </button>
+                  <ListCard key={a.id} article={a} onClick={() => setSelectedArticle(a)} />
                 ))}
               </div>
             )}
           </div>
         </div>
 
-        {/* ── MODAL ─────────────────────────────────────────────────────── */}
+        {/* Modal */}
         {selectedArticle && (
           <ArticleModal
             article={selectedArticle}
@@ -1784,5 +1688,180 @@ export default function ApivesBlogsPage() {
         )}
       </div>
     </>
+  );
+}
+
+function CategoryPill({ cat, CatIcon, active, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: "5px",
+        padding: "5px 12px", borderRadius: "99px", fontSize: "10.5px", fontWeight: 500,
+        border: `1px solid ${active ? "#22c55e" : hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
+        background: active ? "#22c55e" : hovered ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
+        color: active ? "#000000" : hovered ? "#a1a1aa" : "#71717a",
+        cursor: "pointer", transition: "all 0.15s ease", outline: "none",
+        fontFamily: "inherit", whiteSpace: "nowrap"
+      }}
+    >
+      <CatIcon size={9} />
+      {cat}
+    </button>
+  );
+}
+
+function ViewButton({ active, onClick, children }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: "28px", height: "28px", borderRadius: "8px",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", transition: "all 0.15s ease", outline: "none",
+        background: active ? "#22c55e" : hovered ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.04)",
+        border: `1px solid ${active ? "#22c55e" : "rgba(255,255,255,0.06)"}`,
+        color: active ? "#000" : "#71717a",
+        fontFamily: "inherit"
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SectionLabel({ color, label, Icon: LIcon }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "16px" }}>
+      <div style={{ width: "2px", height: "13px", borderRadius: "99px", background: color, flexShrink: 0 }} />
+      {LIcon && <LIcon size={10} style={{ color }} />}
+      <span style={{ fontSize: "9px", fontWeight: 600, color: "#52525b", letterSpacing: "0.13em", textTransform: "uppercase" }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function FeaturedCard({ article, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: "100%", textAlign: "left", cursor: "pointer", outline: "none",
+        borderRadius: "16px", padding: "28px 28px 24px",
+        background: "rgba(255,255,255,0.025)",
+        border: `1px solid ${hovered ? "rgba(34,197,94,0.2)" : "rgba(34,197,94,0.1)"}`,
+        transition: "all 0.25s ease",
+        boxShadow: hovered ? "0 0 32px rgba(34,197,94,0.06)" : "none",
+        position: "relative", overflow: "hidden",
+        fontFamily: "inherit"
+      }}
+    >
+      <div style={{
+        position: "absolute", top: "-80px", right: "-60px",
+        width: "300px", height: "300px", borderRadius: "50%",
+        pointerEvents: "none",
+        background: "radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 65%)"
+      }} />
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-start", position: "relative" }}>
+        <div style={{ flex: 1, minWidth: "260px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "7px", alignItems: "center", marginBottom: "16px" }}>
+            <span style={{
+              fontSize: "10px", fontWeight: 500, padding: "2px 8px", borderRadius: "99px",
+              color: "#22c55e", background: "rgba(34,197,94,0.09)", border: "1px solid rgba(34,197,94,0.18)"
+            }}>
+              {article.category}
+            </span>
+            <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "10.5px", color: "#52525b" }}>
+              <Clock size={9} />{article.read}
+            </span>
+            <span style={{ color: "#3f3f46", fontSize: "10px" }}>·</span>
+            <span style={{ fontSize: "10.5px", color: "#52525b" }}>{article.date}</span>
+          </div>
+
+          <h2 style={{
+            fontSize: "clamp(16px,2.2vw,22px)",
+            fontWeight: 700, lineHeight: 1.25,
+            letterSpacing: "-0.4px", marginBottom: "10px",
+            color: hovered ? "#ffffff" : "#f4f4f5",
+            transition: "color 0.2s", maxWidth: "480px",
+            fontFamily: "inherit"
+          }}>
+            {article.title}
+          </h2>
+
+          <p style={{ color: "#52525b", fontSize: "13px", lineHeight: "1.6", maxWidth: "460px", marginBottom: "20px" }}>
+            {article.desc}
+          </p>
+
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: "5px",
+            fontSize: "12.5px", fontWeight: 600, color: "#22c55e"
+          }}>
+            Read article
+            <ArrowRight size={12} style={{ transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
+          </span>
+        </div>
+
+        <div style={{
+          width: "80px", height: "80px", borderRadius: "18px", flexShrink: 0,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.12)"
+        }}>
+          <article.Icon size={34} style={{ color: "#22c55e", opacity: 0.55 }} />
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function ListCard({ article, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: "100%", textAlign: "left",
+        display: "flex", alignItems: "center", gap: "14px",
+        padding: "14px 16px", borderRadius: "12px", cursor: "pointer",
+        background: hovered ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.025)",
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
+        transition: "all 0.15s ease", outline: "none", fontFamily: "inherit"
+      }}
+    >
+      <div style={{
+        width: "34px", height: "34px", borderRadius: "10px", flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: `${article.accent}12`, border: `1px solid ${article.accent}22`
+      }}>
+        <article.Icon size={14} style={{ color: article.accent }} />
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{
+          fontSize: "13px", fontWeight: 600,
+          color: hovered ? "#ffffff" : "#e4e4e7",
+          lineHeight: "1.35", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+          transition: "color 0.15s", fontFamily: "inherit"
+        }}>
+          {article.title}
+        </p>
+        <p style={{ fontSize: "10.5px", color: "#52525b", marginTop: "2px" }}>
+          {article.category} · {article.read} · {article.date}
+        </p>
+      </div>
+      <ArrowRight size={13} style={{ color: article.accent, flexShrink: 0, transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
+    </button>
   );
 }
