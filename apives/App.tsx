@@ -24,6 +24,7 @@ import { PopularApis } from './pages/PopularApis';
 import { OnboardingPage } from './pages/Onboarding';
 import AskApivesPage from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
+import Blogs from "./pages/Blogs";
 
 import {
 EnterprisePage,
@@ -80,6 +81,7 @@ return (
     <Route path="/enterprise" element={<EnterprisePage />} />    
     <Route path="/docs" element={<DocumentationPage />} />    
     <Route path="/status" element={<StatusPage />} />    
+<Route path="/blogs" element={<Blogs />} />
     <Route path="/cookies" element={<CookiesPage />} />    
     <Route path="/privacy" element={<PrivacyPage />} />    
     <Route path="/terms" element={<TermsPage />} />    
