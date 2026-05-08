@@ -137,6 +137,14 @@ text-slate-500 hover:text-white transition-all group"
           <li><Link to="/support" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Help & Support</Link></li>  
           <li><Link to="/docs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Documentation</Link></li>  
           <li><Link to="/sponsorship" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">For Sponsorship</Link></li>  
+<li>
+  <Link
+    to="/blogs"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    Blogs
+  </Link>
+</li>
           <li>  
               <button onClick={() => setIsFeedbackOpen(true)} className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors text-left">  
                   Feedback  
@@ -170,9 +178,9 @@ text-slate-500 hover:text-white transition-all group"
                 <Zap size={12} className="text-mora-500 fill-mora-500" /> Newsletter  
             </h3>  
               
-            <p className="text-[10px] md:text-[11px] text-slate-400 mb-3 leading-relaxed font-medium">  
-                New APIs in the ecosystem.  
-            </p>  
+            <p className="text-[10px] md:text-[11px] text-slate-400 mb-3 leading-relaxed font-medium">
+  Join 500+ developers & builders already subscribed to discover new APIs, tools, launches, and ecosystem updates before everyone else 🚀
+</p>  
               
             <form onSubmit={handleNewsletterSubmit} className="relative">
   <input type="hidden" name="_subject" value="New Newsletter Subscription - Apives" />
