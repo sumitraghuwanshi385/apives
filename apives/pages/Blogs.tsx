@@ -742,9 +742,25 @@ export default function ApivesBlog() {
                 <span style={{ fontSize: "11px", fontWeight: 600, color: "#22c55e", letterSpacing: "0.05em" }}>APIVES BLOG</span>
               </div>
 
-              <h1 style={{ fontFamily: "'Syne',sans-serif", fontSize: "clamp(36px,5.5vw,58px)", fontWeight: 800, lineHeight: 1.06, letterSpacing: "-2px", marginBottom: "18px", animation: "fadeUp 0.5s ease 0.05s both" }}>
+              <h1 style={{
+  fontFamily: "'Space Grotesk', sans-serif",
+  fontSize: "clamp(36px,5.5vw,58px)",
+  fontWeight: 900,
+  lineHeight: 0.98,
+  letterSpacing: "-3px",
+  marginBottom: "18px",
+  animation: "fadeUp 0.5s ease 0.05s both",
+  textTransform: "none",
+  WebkitFontSmoothing: "antialiased",
+  textRendering: "optimizeLegibility"
+}}>
                 The blog for{" "}
-                <span style={{ background: "linear-gradient(135deg,#22c55e,#4ade80)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>API-first</span>
+                <span
+style={{
+  fontFamily: "'Space Grotesk', sans-serif",
+  fontWeight: 900,
+  letterSpacing: "-3px",
+  background: "linear-gradient(135deg,#22c55e,#4ade80)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>API-first</span>
                 {" "}developers.
               </h1>
 
