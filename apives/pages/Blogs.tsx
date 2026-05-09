@@ -1,1126 +1,451 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  Search, Clock, ArrowRight, X,
-  ChevronRight, Layers, Zap, Cpu, Code2, FileText,
-  Rocket, BarChart2, BookOpen, Swords, Star, Shield,
-  Webhook, DollarSign, Lock, Database, Cloud, TestTube2,
-  GitBranch, Terminal, Globe, Filter, Flame, Hash,
-  CheckCircle2, AlertCircle, ChevronUp, Sparkles,
-  LayoutGrid, List, RefreshCw, Activity, Server,
-  Package, Wrench, Users, Blocks, Radio, TrendingUp
-} from "lucide-react";
+import { Search, Clock, ArrowRight, X, ChevronRight, ArrowUpRight, BookOpen, ExternalLink } from "lucide-react";
 
-// ── Article Data ─────────────────────────────────────────────────────────────
+// ── Real curated Unsplash images per article topic ────────────────────────────
 const ARTICLES = [
   {
     id: 1,
-    title: "How to Find Reliable APIs Faster Than Ever",
-    desc: "A practical guide for developers to avoid broken APIs and save integration time across modern applications.",
-    category: "API Discovery",
-    read: "5 min read",
+    title: "REST vs GraphQL vs gRPC: The Definitive Guide for 2026",
+    excerpt: "A deep technical breakdown of API paradigms. REST for most, GraphQL for complex data, gRPC for internal microservices—and why the answer is usually all three.",
+    tag: "API Architecture",
+    tagColor: "#22c55e",
     date: "May 6, 2026",
+    readTime: "9 min read",
+    source: "1xAPI Blog",
+    sourceUrl: "https://1xapi.com/blog/rest-vs-graphql-api-architecture-2026",
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
     featured: true,
-    accent: "#22c55e",
-    Icon: Search,
-    content: `## The API Discovery Problem
+    content: `REST, GraphQL, and gRPC aren't competing standards—they're tools with different strengths. In 2026, most mature engineering teams use all three. Choosing the right one depends on your consumers, not the hype.
 
-Every developer has been there. You find what looks like the perfect API—great docs, clean endpoints, free tier. You spend two hours integrating it into your project. Then it breaks in production. Uptime is 94%, docs are six months outdated, and rate limits aren't where they claimed.
+## REST: Still the Default for Good Reason
 
-This is the API discovery problem, and it's costing engineering teams millions of hours a year.
+REST maps naturally to HTTP semantics and is universally understood. Every language has mature client libraries, caching works out of the box, and the mental model maps directly to CRUD operations.
 
-## Why Existing Directories Fall Short
+When REST wins: public APIs consumed by many different clients, CRUD-heavy applications, and any system where HTTP caching matters. The ecosystem support from all API gateways is unmatched.
 
-Most API directories are static lists. Someone submits an API, it gets a card with a description and a link, and that's it. Nobody verifies:
-
-- Whether the API actually works right now
-- Whether the auth method described is current
-- Whether pricing has changed
-- Whether endpoints return what they claim to return
-
-Developers deserve better than that.
-
-## What Makes an API Reliable?
-
-Reliability isn't just uptime. It's a combination of five factors:
-
-**1. Uptime consistency** — Does it stay above 99.5% over 90 days, not just one week?
-
-**2. Documentation accuracy** — Are the example responses real? Are auth flows documented correctly?
-
-**3. Response time** — P95 latency matters more than average. Spikes kill UX.
-
-**4. Breaking change frequency** — How often does the API change without notice?
-
-**5. Support responsiveness** — When something breaks, is there a human on the other side?
-
-## How Apives Solves This
-
-Apives runs automated verification on every listed API. We test endpoints daily, flag inconsistencies between documentation and actual responses, and track uptime over time—not just at submission.
-
-When you search for a weather API on Apives, you see real uptime data, real response times, and verified endpoint examples.
-
-## Practical Tips for Faster Integration
-
-Before you write a single line of integration code:
-
-1. **Check the changelog** — If there isn't one, that's a red flag
-2. **Test the auth flow manually** — Before wiring it into your app
-3. **Look for community feedback** — GitHub issues tell the real story
-4. **Verify rate limits with a burst test** — Don't trust what docs say; test it
-5. **Check if there's a sandbox environment** — Production-only APIs are a liability`
-  },
-  {
-    id: 2,
-    title: "The 7 Signals That Tell You an API Is Production-Ready",
-    desc: "Before you commit to an integration, look for these specific technical and operational signals that separate mature APIs from the rest.",
-    category: "API Discovery",
-    read: "6 min read",
-    date: "Apr 30, 2026",
-    featured: false,
-    accent: "#22c55e",
-    Icon: CheckCircle2,
-    content: `## Not All APIs Are Equal
-
-The API ecosystem has thousands of options for almost every category. The difference between a good integration and a nightmare isn't just about features—it's about operational maturity.
-
-## Signal 1: A Public Status Page
-
-Any API worth integrating in production should have a public status page with historical uptime data. If they're hiding this, there's usually a reason.
-
-**What to look for:** 90-day history, incident postmortems, honest reporting of degraded performance—not just full outages.
-
-## Signal 2: Semantic Versioning With Deprecation Timelines
-
-The best APIs communicate breaking changes with at least 6 months of notice and maintain previous versions during the transition period.
-
-## Signal 3: Idempotency Support
-
-For any write operations, the API should support idempotency keys. Without this, network failures become data integrity problems.
-
-## Signal 4: Retry-After Headers
-
-When you hit a rate limit, the API should tell you exactly when to retry. A raw 429 with no context is a sign of lazy implementation.
-
-## Signal 5: Webhook Delivery Guarantees
-
-If the API offers webhooks, they should have retry logic, delivery logs, and signature verification. Webhooks without these are fire-and-forget—unreliable in production.
-
-## Signal 6: OpenAPI/Swagger Spec
-
-A machine-readable spec is proof that the team treats documentation as code. It also means you can auto-generate client SDKs, mock servers, and integration tests.
-
-## Signal 7: Dedicated Developer Relations
-
-APIs maintained by teams with a dedicated DevRel or developer support presence respond faster to issues and ship better documentation.`
-  },
-  {
-    id: 3,
-    title: "How Apives Verifies Every API Before Listing",
-    desc: "Inside the technical process Apives uses to test API quality, endpoints, uptime, documentation accuracy, and real-world reliability.",
-    category: "API Discovery",
-    read: "4 min read",
-    date: "Apr 21, 2026",
-    featured: false,
-    accent: "#22c55e",
-    Icon: CheckCircle2,
-    content: `## Why Verification Matters
-
-Any website can list APIs. The hard part—the part that actually helps developers—is knowing which ones actually work.
-
-Apives runs a multi-stage verification process on every API before it appears in the directory.
-
-## Stage 1: Endpoint Reachability
-
-The first check is simple: do the documented endpoints respond? We verify HTTP status codes, response times, SSL certificate validity, and CORS headers.
-
-## Stage 2: Authentication Verification
-
-We verify that the documented authentication method actually works with valid and invalid credentials.
-
-## Stage 3: Response Schema Validation
-
-We compare actual response schemas against what documentation claims. Any mismatch gets flagged.
-
-## Stage 4: Uptime Monitoring
-
-After passing initial verification, every API enters continuous monitoring with health checks every 5 minutes, P50/P95/P99 latency tracking, and 30-day and 90-day uptime calculations.
-
-## Stage 5: Documentation Completeness Score
-
-We evaluate docs against a rubric covering endpoint coverage, parameter descriptions, error codes, changelog presence, and code examples.
-
-## What Gets Rejected
-
-- Uptime below 99% over 30 days
-- Documentation with more than 20% inaccuracy
-- No clear pricing information
-- Authentication flow that doesn't match documentation`
-  },
-  {
-    id: 4,
-    title: "Best Search APIs for Modern Applications in 2026",
-    desc: "Comparing the top search APIs based on speed, pricing, documentation quality, and production reliability.",
-    category: "Search APIs",
-    read: "7 min read",
-    date: "May 4, 2026",
-    featured: false,
-    accent: "#3b82f6",
-    Icon: Zap,
-    content: `## Why Search APIs Matter More Than Ever
-
-Search isn't a feature anymore—it's infrastructure. Users expect instant, relevant, typo-tolerant results in every application. Building great search from scratch is a six-month project. Using the right API is a two-day integration.
-
-## Algolia
-
-Still the gold standard for developer experience. Polished dashboard, SDKs across every major language, and excellent typo tolerance. The catch: pricing scales aggressively.
-
-**Best for:** SaaS products, e-commerce, documentation search.
-**Pricing:** Free up to 10K records. Paid from $50/month.
-
-## Typesense
-
-The open-source alternative closing the gap fast. Sub-50ms at scale, self-hostable, generous cloud tier.
-
-**Best for:** Teams wanting control, indie hackers, budget-conscious startups.
-**Pricing:** Free self-hosted. Cloud from $0.000015 per search.
-
-## Meilisearch
-
-Another strong open-source contender. Prioritizes ease of setup—working search in under five minutes.
-
-**Best for:** Blogs, small apps, rapid prototypes.
-**Pricing:** Free self-hosted. Cloud from €29/month.
-
-## Elasticsearch / OpenSearch
-
-The enterprise powerhouse. Complex to operate but unmatched in flexibility.
-
-**Best for:** Enterprise, log analysis, complex data search.
-**Pricing:** Free self-hosted. AWS OpenSearch ~$0.02/hour.
-
-## The Verdict
-
-For most applications in 2026, Typesense Cloud hits the best balance of performance, pricing, and simplicity. If you need enterprise-grade support and maximum DX polish, Algolia is still king.`
-  },
-  {
-    id: 5,
-    title: "Building Autocomplete That Feels Instant: A Technical Deep-Dive",
-    desc: "How to architect search autocomplete using modern APIs, debouncing strategies, and client-side caching to achieve sub-100ms perceived latency.",
-    category: "Search APIs",
-    read: "8 min read",
-    date: "Apr 18, 2026",
-    featured: false,
-    accent: "#3b82f6",
-    Icon: Activity,
-    content: `## The Autocomplete Performance Trap
-
-Autocomplete feels simple from the outside: user types, suggestions appear. But the implementation decisions you make in week one will define whether your search feels instant or sluggish six months later.
-
-## The Core Architecture
-
-The right architecture for production autocomplete has four layers:
-
-**1. Input handling** — Debounce at 80-120ms. Too short and you're spamming your API. Too long and the UI feels unresponsive.
-
-**2. Request deduplication** — Cancel in-flight requests when a new keystroke arrives. Use AbortController.
-
-**3. Client-side cache** — Cache results for 60-120 seconds. Most repeated searches hit the cache, not your API.
-
-**4. Optimistic UI** — Show a skeleton immediately. Never show a blank state.
-
-## Debounce vs Throttle
-
-For autocomplete, debounce (wait until the user stops typing) is almost always correct. Throttle (limit to N calls per second) can cause suggestions to lag behind typing. Use debounce.
-
-## The Cache Layer
-
-A simple Map-based cache with TTL is enough for most use cases. Key by query string, store results with timestamp, evict entries older than 2 minutes.
-
-## Response Streaming
-
-For longer result sets, stream the first 5 results immediately and lazy-load the rest. This reduces perceived latency dramatically on slower connections.
-
-## Measuring Success
-
-The metric that matters isn't API response time—it's keystroke-to-suggestion latency. Measure from keyup event to first visible suggestion. Target under 150ms at P95.`
-  },
-  {
-    id: 6,
-    title: "The Developer's Guide to LLM APIs in 2026",
-    desc: "A practical comparison of OpenAI, Anthropic, Google Gemini, and Mistral for production applications—latency, cost, context windows, and reliability.",
-    category: "AI APIs",
-    read: "10 min read",
-    date: "May 5, 2026",
-    featured: false,
-    accent: "#a855f7",
-    Icon: Sparkles,
-    content: `## The LLM API Landscape Has Matured
-
-A year ago, OpenAI was essentially the only serious option for production LLM integration. In 2026, the landscape looks fundamentally different. There are now four enterprise-grade providers, each with distinct tradeoffs.
-
-## OpenAI (GPT-4o, o-series)
-
-Still the default choice for most teams. The API surface is the most battle-tested, tooling ecosystem is largest, and GPT-4o strikes an excellent balance of speed and capability.
-
-**Strengths:** Reliability, ecosystem, vision capabilities, JSON mode
-**Weaknesses:** Pricing for high-volume use cases, rate limits on new models
-**Best for:** General-purpose production applications
-
-## Anthropic (Claude Sonnet 4, Opus 4)
-
-The strongest option for long-context, instruction-following, and complex reasoning. 200K context window in production. Excellent for document processing and multi-step agentic tasks.
-
-**Strengths:** Long context, instruction following, safety
-**Weaknesses:** Slightly slower than GPT-4o at equivalent tasks
-**Best for:** Document analysis, agent frameworks, complex reasoning
-
-## Google Gemini 2.0
-
-Best-in-class for multimodal tasks. Native audio, video, and code understanding. Flash model is the fastest sub-$1 option in the market.
-
-**Strengths:** Multimodal, speed (Flash), Google ecosystem integration
-**Weaknesses:** API consistency has historically been rougher
-**Best for:** Multimodal applications, high-throughput pipelines
-
-## Mistral
-
-The European contender. Excellent for teams with data residency requirements, cost-sensitive workloads, and open-weights deployment.
-
-**Strengths:** European data residency, open weights, cost efficiency
-**Weaknesses:** Smaller ecosystem
-**Best for:** EU compliance, self-hosted deployments
-
-## Practical Decision Framework
-
-Pick OpenAI if you want the safest default. Pick Anthropic if you're building agents or processing long documents. Pick Gemini Flash if you need raw throughput at low cost. Pick Mistral if data residency matters.`
-  },
-  {
-    id: 7,
-    title: "Streaming LLM Responses: SSE, WebSockets, and What Actually Works",
-    desc: "Technical comparison of streaming approaches for LLM APIs, with benchmarks, implementation patterns, and production gotchas.",
-    category: "AI APIs",
-    read: "7 min read",
-    date: "Apr 26, 2026",
-    featured: false,
-    accent: "#a855f7",
-    Icon: Radio,
-    content: `## Why Streaming Matters for LLM UX
-
-A non-streaming LLM response with a 3-second completion time feels slow and broken. The same response streamed token-by-token feels responsive and alive. Streaming isn't optional for production LLM applications.
-
-## Server-Sent Events (SSE)
-
-SSE is the dominant pattern for LLM streaming APIs. OpenAI, Anthropic, and Google all use SSE for streaming responses.
-
-**How it works:** Single HTTP connection, server pushes newline-delimited JSON chunks, client parses and renders incrementally.
-
-**Advantages:** Simple implementation, works with standard HTTP infrastructure, automatic reconnection.
-
-**Disadvantages:** One-directional (server to client only), no bidirectional communication.
-
-## WebSockets
-
-WebSockets are bidirectional, which makes them theoretically superior for interactive LLM sessions. In practice, they're usually overkill.
-
-**When to use WebSockets:** Real-time collaborative applications, voice interfaces, scenarios requiring client-to-server streaming.
-
-**When to avoid:** Most standard chat and completion use cases. SSE handles them fine with less infrastructure complexity.
-
-## The Abort Problem
-
-The most underappreciated production issue with LLM streaming: what happens when the user navigates away mid-stream? Always implement AbortController to cancel in-flight requests and stop billing for tokens you'll never use.
-
-## Rendering Streamed Markdown
-
-Streaming raw markdown tokens and rendering incrementally without flicker requires careful buffering. Process complete words or sentences before flushing to the DOM rather than rendering every individual token.`
-  },
-  {
-    id: 8,
-    title: "API Security in 2026: The Vulnerabilities Teams Keep Shipping",
-    desc: "A breakdown of the most common API security failures in production—BOLA, mass assignment, broken auth, and the fixes that actually prevent breaches.",
-    category: "API Security",
-    read: "9 min read",
-    date: "May 3, 2026",
-    featured: false,
-    accent: "#ef4444",
-    Icon: Shield,
-    content: `## The OWASP API Top 10 Is Still Being Ignored
-
-The OWASP API Security Top 10 was first published in 2019. In 2026, engineering teams are still shipping every single vulnerability on that list. The problem isn't awareness—it's prioritization. Security feels like overhead until there's a breach.
-
-## BOLA: Broken Object Level Authorization
-
-BOLA is the most common critical API vulnerability. The pattern: your API uses predictable IDs, and you don't verify that the authenticated user owns the object they're requesting.
-
-**The attack:** User A requests /api/orders/1001. They don't own order 1001. Your API returns it anyway.
-
-**The fix:** Never assume an ID in the URL is authorized. Always cross-reference the authenticated user's ownership before returning data.
-
-## Mass Assignment
-
-Your API accepts a JSON payload and maps it directly to a database model without filtering fields. An attacker adds isAdmin: true to the payload.
-
-**The fix:** Use an allowlist of accepted fields. Never pass raw request bodies to ORM save methods.
-
-## Broken Authentication
-
-Weak JWT secrets, missing token expiration, and tokens that can't be revoked after logout. Any one of these creates significant risk.
-
-**JWT checklist:**
-- HS256 secret should be 256 bits minimum, randomly generated
-- Tokens should expire (accessToken: 15 min, refreshToken: 7 days)
-- Implement a token blacklist or short-lived tokens with refresh rotation
-
-## Unrestricted Rate Limiting
-
-No rate limiting = your API is a free computation resource for attackers. At minimum, implement per-IP and per-authenticated-user limits on all endpoints.
-
-## Security Headers
-
-Every API response should include: Strict-Transport-Security, X-Content-Type-Options, X-Frame-Options, Content-Security-Policy.`
-  },
-  {
-    id: 9,
-    title: "Rotating API Keys Safely Without Breaking Your Integrations",
-    desc: "A step-by-step operational playbook for rotating API keys in production without downtime, service interruptions, or broken third-party integrations.",
-    category: "API Security",
-    read: "5 min read",
-    date: "Apr 14, 2026",
-    featured: false,
-    accent: "#ef4444",
-    Icon: Lock,
-    content: `## Why API Key Rotation Gets Neglected
-
-API key rotation is one of those operational practices everyone agrees is important and almost nobody does on schedule. The reason is simple: it's scary. Rotating a key that dozens of integrations depend on feels like defusing a bomb.
-
-It doesn't have to be.
-
-## The Safe Rotation Pattern
-
-**Step 1: Generate the new key**
-Create the new key before revoking the old one. You need overlap time.
-
-**Step 2: Deploy the new key to non-critical services first**
-Update staging, monitoring, and internal tooling before touching production.
-
-**Step 3: Update secrets management**
-If you're using a secrets manager (Vault, AWS Secrets Manager, Doppler), update the secret there—not in environment variables scattered across your infrastructure.
-
-**Step 4: Rolling deploy to production**
-Update your primary application with the new key. Monitor error rates for 15 minutes.
-
-**Step 5: Update downstream integrations**
-Third-party services, webhooks, and partner integrations that use your key.
-
-**Step 6: Revoke the old key**
-Only after all integrations are confirmed working. Keep a 24-hour grace period if possible.
-
-## Automating Rotation
-
-Services like Doppler, AWS Secrets Manager, and HashiCorp Vault support automatic rotation with zero-downtime key transitions. If you're rotating manually more than twice a year, it's worth automating.`
-  },
-  {
-    id: 10,
-    title: "REST vs GraphQL vs gRPC: Which API Style in 2026?",
-    desc: "A practical breakdown of API design paradigms—when each shines, when each struggles, and how to make the right call for your use case.",
-    category: "GraphQL",
-    read: "9 min read",
-    date: "Apr 12, 2026",
-    featured: false,
-    accent: "#e91e96",
-    Icon: Layers,
-    content: `## Three Paradigms, One Decision
-
-The REST vs GraphQL vs gRPC debate has been running for years. There isn't a universal right answer—each approach has genuine strengths and weaknesses.
-
-## REST: The Default for Good Reason
-
-REST maps naturally to HTTP, it's universally understood, and every major language has mature client libraries.
-
-**When REST wins:**
-- Public APIs consumed by many different clients
-- CRUD-heavy applications (most web apps)
-- When you need excellent caching (REST is cache-friendly by design)
-
-**When REST struggles:**
-- Complex queries requiring data from multiple resources (N+1 problem)
-- Mobile clients on constrained networks (over-fetching is real)
+When REST struggles: complex queries requiring data from multiple resources create N+1 problems. Mobile clients on constrained networks suffer from over-fetching.
 
 ## GraphQL: The Right Tool for Complex Data
 
-**When GraphQL wins:**
-- Applications with complex, nested data relationships
-- Mobile clients where bandwidth matters
-- Products where frontend evolves faster than backend
-- When you're serving multiple client types from one API
+GraphQL exposes a single endpoint that accepts client-defined queries. This solves the over-fetching problem and dramatically reduces API round-trips for complex UIs.
 
-**When GraphQL struggles:**
-- Simple CRUD applications (overkill)
-- Caching (HTTP caching doesn't work naturally)
+According to Apollo's 2026 enterprise survey, 73% of organizations running GraphQL in production use it alongside REST rather than as a complete replacement—often in a Backend-for-Frontend (BFF) pattern. This lets teams keep their battle-tested REST services while giving frontend developers flexible querying capabilities.
+
+When GraphQL wins: applications with complex nested data relationships, mobile clients where bandwidth matters, and products where the frontend evolves faster than the backend.
+
+When GraphQL struggles: simple CRUD applications where it's overkill, and HTTP caching which doesn't work naturally with single-endpoint designs.
 
 ## gRPC: Extreme Performance for Internal Services
 
-**When gRPC wins:**
-- Microservices communicating with each other
-- High-throughput, low-latency requirements
-- Streaming data
+gRPC uses Protocol Buffers over HTTP/2, delivering binary serialization, bidirectional streaming, and strongly-typed contracts. The performance gains over REST are substantial—typically 5-10x smaller payloads and much lower latency.
 
-**When gRPC struggles:**
-- Browser-based clients
-- Public APIs (developer experience is worse)
-- Debugging (binary format is not human-readable)
+When gRPC wins: microservices communicating with each other, high-throughput and low-latency requirements, and streaming data pipelines.
 
-## The Hybrid Approach
+When gRPC struggles: browser-based clients (gRPC-Web adds complexity), public APIs where developer experience matters, and debugging since the binary format isn't human-readable.
 
-Most mature companies use all three: REST for public-facing APIs, GraphQL for their primary product API, and gRPC for internal service communication.`
+## The Pragmatic Answer
+
+For most modern web applications, REST for public traffic combined with GraphQL or gRPC for selected internal services is the right architecture. REST remains the standard—if you're building a business API in 2026, it's your default unless you have a specific reason to deviate. AI tooling has reduced API development timelines by 20-30% compared to 2024, but the fundamental architecture decisions still matter for long-term maintainability.`,
   },
   {
-    id: 11,
-    title: "GraphQL Subscriptions in Production: Lessons From Scaling to 1M Connections",
-    desc: "What we learned running GraphQL subscriptions at scale—architecture decisions, connection management, and the pitfalls that don't show up until you have real traffic.",
-    category: "GraphQL",
-    read: "8 min read",
-    date: "Mar 28, 2026",
+    id: 2,
+    title: "LLM APIs in Production: OpenAI, Anthropic, Gemini Compared",
+    excerpt: "A practical comparison of production LLM APIs in 2026—latency, cost, context windows, streaming patterns, and the multi-provider routing strategy that cuts costs 60-80%.",
+    tag: "AI & LLMs",
+    tagColor: "#a855f7",
+    date: "May 5, 2026",
+    readTime: "10 min read",
+    source: "MyEngineeringPath",
+    sourceUrl: "https://myengineeringpath.dev/genai-engineer/api-integration-basics/",
+    image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800&q=80",
     featured: false,
-    accent: "#e91e96",
-    Icon: Database,
-    content: `## GraphQL Subscriptions Are Powerful and Treacherous
+    content: `LLM API integration is the first practical skill every GenAI engineer needs. In 2026, there are four enterprise-grade providers with distinct tradeoffs—and the right architecture uses all of them intelligently.
 
-Subscriptions are the most exciting and most dangerous feature of GraphQL. They enable real-time data synchronization with a clean developer experience. They also create persistent connections that don't scale like stateless HTTP requests.
+## The Multi-Provider Landscape
 
-## The Architecture That Works
+OpenAI, Anthropic, Google, and Mistral have all reached enterprise maturity. The fragmentation means managing multiple API keys, billing accounts, and integration code—unless you use a routing layer like OpenRouter, which provides access to 500+ models through one OpenAI-compatible endpoint.
 
-Don't run subscriptions on your primary GraphQL server. The persistent WebSocket connections will starve your request-handling capacity under load.
+## OpenAI (GPT-4o, o-series)
 
-**Recommended architecture:**
-- Separate subscription service (stateful, WebSocket-native)
-- Event bus between mutation handlers and subscription server (Redis Pub/Sub or Kafka)
-- Load balancer with sticky sessions or a shared state layer
+Still the default for most teams. The API surface is the most battle-tested, the tooling ecosystem is the largest, and GPT-4o strikes an excellent balance of speed and capability. Best for general-purpose production applications.
 
-## Connection Lifecycle Management
+## Anthropic (Claude Sonnet 4.6, Opus 4.6)
 
-Every connection must have:
-- Heartbeat / keep-alive (30-60 second ping/pong)
-- Inactivity timeout (disconnect after 5 minutes of no subscription activity)
-- Authentication refresh (subscriptions outlive JWT token lifetimes)
-- Graceful reconnection logic on the client
+The strongest option for long-context, instruction-following, and complex reasoning. 200K context window in production. Claude Haiku costs roughly $0.25 per million input tokens, Sonnet around $3, and Opus around $15. Excellent for document processing and multi-step agentic tasks. Anthropic offers MCP support for seamless tool integration—agents are becoming standard features rather than experimental add-ons.
 
-## The N+1 Problem Amplified
+## Google Gemini 3
 
-Every subscription resolver has the same N+1 risk as query resolvers, but it fires repeatedly. Use DataLoader caching aggressively and be extremely careful with what data you resolve on each event.
+Best-in-class for multimodal tasks. Native audio, video, and code understanding. The Flash model is the fastest sub-$1 option in the market, making it ideal for high-throughput pipelines where latency matters.
 
-## Memory Leaks Are Subscription-Specific
+## The Cost Optimization Strategy
 
-The most common production issue: subscription resolvers that don't clean up after themselves when a client disconnects. Always return a cleanup function from your subscribe resolver.`
+Model routing is the single biggest cost lever. Route 80% of simple queries to small models (Claude Haiku or GPT-4o-mini) and only 20% of complex tasks to larger models. This cuts costs 60-80% with minimal quality loss. A typical application processing 1,000 requests per day with short prompts costs $30-50/month using a mixed model strategy.
+
+## Streaming: Non-Negotiable for UX
+
+A non-streaming LLM response with a 3-second completion time feels broken. The same response streamed token-by-token feels alive. Streaming reduces perceived latency from 3-5 seconds to under 500ms. Both Anthropic and OpenAI SDKs support streaming with simple API changes. Always implement AbortController to cancel in-flight requests—this avoids billing for tokens that will never be rendered.
+
+## Production Error Handling
+
+Implement three layers: retry with exponential backoff for transient errors (429s and 5xx), multi-provider fallback so if one provider is down you route to another, and graceful degradation returning a cached response if all providers fail. Use the circuit breaker pattern to avoid hammering a failing provider.`,
   },
   {
-    id: 12,
-    title: "Building Bulletproof Webhook Consumers",
-    desc: "The complete engineering guide to receiving webhooks reliably—idempotency, signature verification, async queuing, and handling retries from third-party providers.",
-    category: "Webhooks",
-    read: "8 min read",
-    date: "May 1, 2026",
+    id: 3,
+    title: "API Security in 2026: The OWASP Top 10 Threats Still Breaking Production",
+    excerpt: "BOLA, mass assignment, broken auth, rate limiting failures—the vulnerabilities teams keep shipping in 2026 and the fixes that actually prevent breaches.",
+    tag: "API Security",
+    tagColor: "#ef4444",
+    date: "May 3, 2026",
+    readTime: "9 min read",
+    source: "Elysiate + OWASP",
+    sourceUrl: "https://www.elysiate.com/blog/api-security-owasp-top-10-prevention-guide-2025",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
     featured: false,
-    accent: "#f97316",
-    Icon: Webhook,
-    content: `## Webhooks Are Not HTTP Requests
+    content: `The OWASP API Security Top 10 has been published since 2019. In 2026, engineering teams are still shipping every vulnerability on the list. The problem isn't awareness—it's prioritization. Security feels like overhead until there's a breach.
 
-That sounds obvious, but most webhook consumer bugs come from treating webhooks like normal API requests. They're fundamentally different: they arrive unpredictably, can be retried multiple times, and can arrive out of order.
+## BOLA: The #1 API Vulnerability
 
-## Signature Verification First
+Broken Object Level Authorization sits at the top of the list for the third consecutive cycle. It occurs when an API fails to verify that the requesting user has permission to access a specific object.
 
-Before you process anything, verify the webhook signature. Stripe uses HMAC-SHA256. GitHub uses HMAC-SHA256 with X-Hub-Signature-256. Verify or reject—there's no middle ground.
+The attack is trivially simple: an attacker changes /api/orders/1023 to /api/orders/1024 and gains access to another user's data without any authentication challenge. Real-world examples include the Uber (2016), Facebook (2018), and Trello (2024) breaches, all of which exposed millions of users' PII through basic ID enumeration.
 
-Never do signature verification lazily. It should be the first line of your webhook handler, before any database queries.
+The fix: never assume an ID in the URL is authorized. Always cross-reference the authenticated user's ownership at the server before returning data. Use UUIDs instead of sequential integers for object IDs.
 
-## Acknowledge Immediately, Process Asynchronously
+## Mass Assignment
 
-Your webhook endpoint should respond with 200 OK within 3-5 seconds. If your processing takes longer, the provider will retry and you'll create duplicate processing.
+Backend frameworks that automatically map JSON fields to database models create a critical attack surface. An attacker adds `isAdmin: true` or `price: 0` to a request payload. Your API maps it directly to the model.
 
-**The correct pattern:**
-1. Verify signature
-2. Store the raw payload to a queue (SQS, Sidekiq, BullMQ)
-3. Return 200 immediately
-4. Process asynchronously with retry logic
+The fix: use an allowlist of accepted fields. Never pass raw request bodies to ORM save methods.
 
-## Idempotency Is Non-Negotiable
+## Broken Authentication
 
-Every webhook provider retries on failure. Your consumer will receive the same event multiple times. Design for it.
+Nearly 30% of API incidents involve broken authentication. Weak JWT secrets, missing token expiration, and tokens that can't be revoked after logout are the most common failures.
 
-Use the webhook event ID as an idempotency key. Store processed event IDs. Check before processing.
+JWT hardening checklist: HS256 secret should be 256 bits minimum and randomly generated, access tokens should expire in 15 minutes with refresh tokens at 7 days, implement token blacklist or short-lived tokens with refresh rotation.
 
-## Out-of-Order Delivery
+## Unrestricted Resource Consumption
 
-Webhooks don't arrive in order. A payment.updated event can arrive before the payment.created event. Design your state machine to handle this, or use timestamps to determine canonical state.`
+With AI-augmented applications making multiple API calls per user interaction, resource exhaustion is a bigger threat than ever. A single AI feature with no rate limiting can collapse an entire backend under modest traffic.
+
+At minimum, implement per-IP and per-authenticated-user limits on all endpoints. Return Retry-After headers on 429 responses—a raw 429 with no context is a sign of lazy implementation.
+
+## Defense in Depth
+
+The strongest defense is never a single control. Attackers chain weaknesses: a stolen token plus a BOLA flaw to extract data across thousands of IDs. Apply authorization, authentication, rate limiting, and input validation at every layer. Treat security testing as a pipeline step, not a pre-launch scramble.`,
   },
   {
-    id: 13,
-    title: "Designing a Webhook System for Your API",
-    desc: "The engineering decisions behind building a first-class webhook system—delivery guarantees, retry logic, payload design, and developer tooling.",
-    category: "Webhooks",
-    read: "7 min read",
-    date: "Apr 8, 2026",
+    id: 4,
+    title: "Building Production-Ready APIs: The 7-Step Engineering Process",
+    excerpt: "From requirements through monitoring—the disciplined development process that turns specifications into stable, scalable APIs ready for real traffic.",
+    tag: "API Development",
+    tagColor: "#22c55e",
+    date: "May 8, 2026",
+    readTime: "8 min read",
+    source: "Monocubed",
+    sourceUrl: "https://www.monocubed.com/blog/backend-api-development/",
+    image: "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800&q=80",
     featured: false,
-    accent: "#f97316",
-    Icon: Server,
-    content: `## Webhooks Are a Public API Contract
+    content: `A reliable backend API doesn't start with code. It starts with a clear process. The seven steps below cover everything from requirements through monitoring, mapping the modern backend development process that turns specifications into stable, scalable APIs ready for production.
 
-When you ship a webhook system, you're making a contract with your users: "When X happens, we'll send you Y within Z time." Breaking that contract erodes trust faster than almost anything else.
+## Step 1: Define Consumers and Contracts
 
-## Delivery Architecture
+Before writing a single endpoint, define who will consume the API, what data it must expose, and what business rules it must enforce. Write the OpenAPI spec before writing implementation code—spec-first development forces you to think about the API surface before you're deep in implementation details that make changes expensive.
 
-The right architecture separates the trigger path from the delivery path entirely.
+## Step 2: Choose the Right Architecture
 
-**Event generation:** Your application logic creates an event record in the database with status PENDING.
+REST remains the best choice for most web and mobile applications. GraphQL excels when clients need flexible, efficient data fetching. gRPC is ideal for internal microservices requiring high performance. For most startups, REST is the better default—faster to build, cheaper to maintain, and every developer understands it.
 
-**Delivery worker:** A separate async process picks up PENDING events and attempts delivery. On 2xx response, marks DELIVERED. On failure, schedules retry with exponential backoff.
+## Step 3: Authentication and Authorization Strategy
 
-**Never** deliver webhooks synchronously in the request path.
+Design auth before writing business logic. OAuth 2.0 with PKCE for user-facing applications, Client Credentials for machine-to-machine. Never design auth as an afterthought—retrofitting it creates the broken authentication patterns that appear in the OWASP Top 10.
 
-## Retry Strategy
+## Step 4: Data Modeling and Validation
 
-Industry standard: exponential backoff with jitter, maximum 72 hours of retries.
+Strong input validation at the API boundary. Never trust request data. Parameterized queries everywhere. Define strict schemas for request and response bodies—then enforce them.
 
-Reasonable retry schedule: 10s, 30s, 2m, 10m, 1h, 6h, 24h, 48h.
+## Step 5: Error Handling as a First-Class Concern
 
-After the final retry, mark the endpoint as disabled and notify the user.
+A list of error codes is not documentation. Every error should tell the consumer: what went wrong, which field caused it, what format was expected, and what to do next. Design error responses before writing business logic.
 
-## Signature Scheme
+## Step 6: Performance Baselines
 
-Use HMAC-SHA256. Include the timestamp in the signed payload to prevent replay attacks. Stripe's signature scheme is the industry reference implementation—follow it.
+Establish P50, P95, and P99 latency targets before launch. Set up load testing with k6 or Artillery against realistic scenarios—not just simple GET requests against /ping. Your database will be the bottleneck at scale; run EXPLAIN ANALYZE on your slowest queries before launch.
 
-## Developer Experience
+## Step 7: Observability from Day One
 
-Great webhook DX requires:
-- Delivery logs accessible in the dashboard
-- One-click retry for failed deliveries
-- Webhook event explorer with full request/response
-- CLI tool for local development (ngrok alternative built-in)
-- Event catalog documenting every event type with example payloads`
+Structured logging, distributed tracing, and alerting on error rate spikes aren't post-launch concerns. Wire them in during development. The APIs that survive production incidents are the ones with the best observability—not the best code.`,
   },
   {
-    id: 14,
-    title: "OAuth 2.0 in Practice: The Flows That Actually Matter",
-    desc: "A developer-focused breakdown of OAuth 2.0 flows—when to use Authorization Code, Client Credentials, and PKCE, with implementation patterns for each.",
-    category: "Authentication",
-    read: "8 min read",
-    date: "Apr 28, 2026",
-    featured: false,
-    accent: "#06b6d4",
-    Icon: Lock,
-    content: `## OAuth 2.0 Is Misunderstood
-
-Most developers implement one OAuth flow, then treat it as the universal solution. In practice, the four OAuth flows exist because they solve different problems. Using the wrong one isn't just inefficient—it can introduce security vulnerabilities.
-
-## Authorization Code with PKCE (The Browser/Mobile Flow)
-
-This is the flow you use for any application where you're acting on behalf of a user and the application runs in an environment you don't fully control (browser, mobile app).
-
-PKCE (Proof Key for Code Exchange) replaces the client secret for public clients. You generate a code_verifier, hash it to create a code_challenge, and send the challenge during the auth request. The server verifies the code_verifier at token exchange time.
-
-**When to use:** Web applications authenticating users, mobile apps, SPAs.
-
-## Client Credentials (The Server-to-Server Flow)
-
-No user involved. Your backend service exchanges its credentials for an access token to call another service. This is machine-to-machine authentication.
-
-**When to use:** Microservices, scheduled jobs, backend integrations, any M2M communication.
-
-## Authorization Code Without PKCE (Avoid for New Work)
-
-The original flow. Still used by confidential clients (server-side web apps with a secure client secret), but PKCE is now recommended even for these.
-
-## Implicit Flow (Deprecated)
-
-Don't use this. It's in the spec for historical reasons. Access tokens in URL fragments are a security problem.
-
-## Token Refresh Strategy
-
-Access tokens should have short lifetimes (15-60 minutes). Implement silent refresh: when the access token approaches expiration, automatically exchange the refresh token without user interaction.`
-  },
-  {
-    id: 15,
-    title: "Auth APIs Compared: Clerk vs Auth0 vs Supabase Auth vs Building Your Own",
-    desc: "An honest engineering analysis of managed authentication services versus rolling your own—costs, tradeoffs, migration complexity, and where each breaks down.",
-    category: "Authentication",
-    read: "9 min read",
-    date: "Apr 3, 2026",
-    featured: false,
-    accent: "#06b6d4",
-    Icon: Users,
-    content: `## The Build vs Buy Question for Auth
-
-Authentication is the one piece of infrastructure that seems simple and is actually complex. Password hashing, session management, MFA, SSO, rate limiting on login endpoints, account recovery flows—each one has subtle failure modes that cause real security incidents.
-
-The question isn't whether managed auth is expensive. It's whether the cost is worth avoiding those failure modes.
-
-## Clerk
-
-The developer experience leader. Clerk's prebuilt components are genuinely beautiful. User management dashboard is excellent. React/Next.js integration is the smoothest in the market.
-
-**Strengths:** DX, prebuilt UI components, B2B/multi-tenant support
-**Weaknesses:** Pricing at scale ($0.02/MAU), US-only data residency historically
-**Best for:** SaaS products, teams prioritizing DX, B2B applications
-
-## Auth0
-
-The enterprise standard. Every compliance certification, every SSO provider, every edge case. Battle-tested at scale.
-
-**Strengths:** Enterprise features, compliance, SSO breadth, ecosystem
-**Weaknesses:** Pricing is aggressive at scale, DX has historically lagged competitors
-**Best for:** Enterprise sales motion, regulated industries
-
-## Supabase Auth
-
-The open-source option built on GoTrue. Free for projects under 50K MAU, self-hostable, and deeply integrated with the Supabase ecosystem.
-
-**Strengths:** Free tier, open source, self-hostable, Postgres-native
-**Weaknesses:** Fewer enterprise features, smaller ecosystem
-**Best for:** Indie hackers, open-source projects, Supabase users
-
-## Building Your Own
-
-Only recommended if you have a dedicated security engineering team and a specific reason that managed auth can't serve (e.g., extreme data residency requirements, deeply custom authentication flows).
-
-For everyone else: buy, don't build.`
-  },
-  {
-    id: 16,
-    title: "How to Price Your API: A Practical Guide for Developer Tools",
-    desc: "The pricing models used by successful API companies—per-request, per-seat, usage tiers, and hybrid approaches—with real examples and implementation advice.",
-    category: "API Monetization",
-    read: "7 min read",
-    date: "Apr 22, 2026",
-    featured: false,
-    accent: "#eab308",
-    Icon: DollarSign,
-    content: `## API Pricing Is Product Strategy
-
-How you price your API determines who uses it, how they integrate it, and how much they're willing to pay when you need to raise prices. Getting it right in year one is much easier than migrating thousands of integrations later.
-
-## Model 1: Per-Request Pricing
-
-The simplest model. Charge per API call. Easy to understand, easy to implement, easy to monitor.
-
-**Works well for:** APIs where each call has roughly equal cost, data APIs, computation APIs.
-
-**Pitfalls:** Incentivizes users to minimize API calls aggressively, which leads to batching abuse and cache-heavy integrations that reduce your usage metrics.
-
-## Model 2: Per-Seat / Per-User
-
-Charge based on the number of end users in a customer's system. Popular for B2B products where the API powers a feature.
-
-**Works well for:** User-facing features, collaboration tools, identity APIs.
-
-**Pitfalls:** Customers under-report users. Hard to audit.
-
-## Model 3: Usage Tiers (Stripe's Model)
-
-Bundle requests into tiers with overage pricing. Free tier for developers, paid tiers with step-function pricing as usage grows.
-
-**Works well for:** Developer tools with a freemium acquisition model.
-
-**Implementation:** Track usage in real-time. Alert at 80% of tier limit. Make upgrading frictionless.
-
-## Model 4: Hybrid (The Right Answer for Most)
-
-Combine a monthly platform fee with usage-based pricing above a base volume. This gives you predictable revenue while aligning incentives at high usage.
-
-**Example:** $99/month includes 500K requests. $0.0002 per request above that.`
-  },
-  {
-    id: 17,
-    title: "Top 10 Free APIs Every Indie Hacker Should Know in 2026",
-    desc: "The best zero-cost, production-ready APIs for solo founders building products without burning through their runway.",
-    category: "Indie Hackers",
-    read: "8 min read",
-    date: "Apr 25, 2026",
-    featured: false,
-    accent: "#ec4899",
-    Icon: Rocket,
-    content: `## Building Lean With the Right APIs
-
-The best thing that happened to indie hackers in the last five years is the explosion of generous free API tiers. You can build a legitimately impressive product with zero API spend if you know which APIs to use.
-
-## 1. Resend (Email)
-
-$0 for 3,000 emails/month. Clean API, beautiful dashboard, built specifically for developers. The best transactional email API available.
-
-## 2. Cloudflare Workers (Compute + Edge)
-
-100,000 free requests/day. Run code at the edge globally for literally nothing. Also free R2 storage (10GB) and KV storage.
-
-## 3. Supabase (Database + Auth)
-
-Two free projects, 500MB database storage, 50,000 monthly active users on Auth. Genuinely usable in early production.
-
-## 4. Upstash (Redis + Kafka)
-
-10,000 free Redis commands/day. The best serverless Redis for rate limiting, caching, and session storage.
-
-## 5. ExchangeRate-API (Currency)
-
-1,500 free requests/month. Accurate currency conversion for 170+ currencies. No credit card required.
-
-## 6. ipapi (IP Geolocation)
-
-1,000 free requests/day. Get country, city, timezone, and currency from an IP address.
-
-## 7. Resend for React Email
-
-Free tier includes the React Email framework for building HTML emails with React components. The only email templating approach worth using.
-
-## 8. Loops (Email Marketing)
-
-Free up to 1,000 contacts. Built for SaaS—onboarding sequences, feature announcements, and transactional all in one.
-
-## How to Vet a Free Tier
-
-- What happens when you exceed the limit? Hard block or auto-charged?
-- Is there a rate limit on top of the monthly limit?
-- Does the free tier include webhooks?
-- What's the data retention policy?`
-  },
-  {
-    id: 18,
-    title: "Apives vs. RapidAPI vs. ProgrammableWeb: Which Directory Helps?",
-    desc: "An honest comparison of the top API marketplaces—what each does well, where they fall short, and why verification changes everything.",
-    category: "Indie Hackers",
-    read: "8 min read",
-    date: "May 2, 2026",
-    featured: false,
-    accent: "#ec4899",
-    Icon: Swords,
-    content: `## The API Directory Landscape in 2026
-
-When a developer needs an API, they usually start with a search engine or one of three major directories: RapidAPI, ProgrammableWeb, or Apives.
-
-## RapidAPI
-
-The largest API marketplace on the internet. Tens of thousands of APIs, unified authentication, billing abstraction.
-
-**What it does well:** Massive catalog, unified API key, built-in billing, in-browser testing.
-
-**Where it falls short:** Quality is inconsistent. Thousands of APIs are abandoned, broken, or poorly maintained.
-
-## ProgrammableWeb
-
-The original API directory—launched in 2005. MuleSoft shut it down in 2021. Legacy resource only.
-
-## Apives
-
-A different philosophy: fewer APIs, verified quality.
-
-**What it does well:** Active verification of endpoints, uptime, and documentation. Curated catalog. Real uptime data, not vendor marketing copy.
-
-## The Bottom Line
-
-If you want volume, go to RapidAPI. If you want quality you can trust, use Apives.
-
-The fundamental insight: a smaller catalog of verified, working APIs is more valuable than a massive catalog full of noise. Developers don't need ten thousand options. They need five great ones.`
-  },
-  {
-    id: 19,
-    title: "Building Faster With Better APIs: A Startup Playbook",
-    desc: "Why the APIs you choose in week one determine your velocity in month six—and how to make decisions that compound over time.",
-    category: "Startups",
-    read: "6 min read",
-    date: "Apr 17, 2026",
-    featured: false,
-    accent: "#f97316",
-    Icon: BarChart2,
-    content: `## The Compounding Effect of API Choices
-
-Most startup founders think about APIs tactically: "I need email, I'll use Mailgun. I need payments, I'll use Stripe."
-
-But the best engineering teams think about APIs strategically. The difference shows up six months later when one team is moving at twice the speed of the other.
-
-## Technical Debt You Don't See Coming
-
-When you choose an API in week one, you're also choosing:
-
-- **The shape of your data model** — How you store API responses affects your entire DB schema
-- **Your error handling patterns** — A poorly designed error response propagates bad patterns throughout your codebase
-- **Your testing strategy** — APIs with good sandboxes produce better-tested code
-- **Your observability posture** — APIs with good webhook support make incidents easier to debug
-
-## The Three Criteria That Matter Most
-
-**1. Breaking Change Frequency** — Look for semantic versioning with actual deprecation timelines.
-
-**2. Webhook Support** — Real-time webhooks vs. polling is an architecture question. Always prefer APIs with robust webhook support.
-
-**3. SDK Quality** — A good SDK is worth weeks of development time. Check GitHub commit frequency, retry/backoff handling, TypeScript support.
-
-## A Fast Evaluation Framework
-
-For any API you're considering, spend 30 minutes:
-
-- Test the quickstart — Did it work in under 15 minutes?
-- Read the last 10 GitHub issues — Are they bugs or feature requests?
-- Check uptime over the last 90 days — Is it above 99.5%?
-- Find the pricing ceiling — What does it cost at 10x your current usage?`
-  },
-  {
-    id: 20,
-    title: "Why API Documentation So Often Fails Developers",
-    desc: "The hidden, systemic problems developers face while integrating APIs—and what good documentation actually looks like.",
-    category: "Developer Experience",
-    read: "6 min read",
+    id: 5,
+    title: "OpenAPI Specs Are Infrastructure, Not Documentation",
+    excerpt: "How a high-quality OpenAPI spec unlocks auto-generated SDKs, mock servers, contract testing, type safety, and interactive documentation—and why spec-first development changes everything.",
+    tag: "Developer Experience",
+    tagColor: "#f59e0b",
     date: "Apr 29, 2026",
+    readTime: "6 min read",
+    source: "Postman Blog",
+    sourceUrl: "https://blog.postman.com/api-security-best-practices/",
+    image: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&q=80",
     featured: false,
-    accent: "#f59e0b",
-    Icon: FileText,
-    content: `## The Documentation Gap
-
-There's a persistent truth in software development: most API documentation is written for the person who built the API, not for the developer trying to use it.
-
-## The Five Failure Modes
-
-**1. Example Responses That Aren't Real** — The most damaging failure. A doc shows you a response payload with five fields. In production, the actual response has twelve.
-
-**2. Auth Flows Described Incorrectly** — Authentication is the first thing developers implement and the most critical to get right. Yet auth documentation is among the most frequently wrong.
-
-**3. Rate Limits Without Context** — "Rate limited to 100 requests per minute" tells you almost nothing. Is that per endpoint? Per IP? Sliding window or fixed window?
-
-**4. Error Codes Without Actionable Guidance** — A list of error codes is not documentation. What specific field was wrong? What format was expected?
-
-**5. No Changelog** — APIs change. That's fine. Changing without telling anyone is not.
-
-## What Great Documentation Looks Like
-
-- **Real, runnable examples** — Copy-paste code that actually works
-- **Versioned docs** — You can see what changed between v1 and v2
-- **Interactive testing** — Try the endpoint in the browser before writing any code
-- **Explicit error tables** — Every error code with a cause and a fix
-- **Authentication flow diagrams** — Visual flows for OAuth, API key, JWT`
-  },
-  {
-    id: 21,
-    title: "The OpenAPI Spec Is Your Best Engineering Hire",
-    desc: "Why investing in a high-quality OpenAPI specification pays dividends in generated SDKs, documentation, mocking, contract testing, and team alignment.",
-    category: "Developer Experience",
-    read: "6 min read",
-    date: "Mar 25, 2026",
-    featured: false,
-    accent: "#f59e0b",
-    Icon: Code2,
-    content: `## An OpenAPI Spec Is Infrastructure
-
-Most teams treat their OpenAPI spec as documentation—something you generate from code and maybe publish to a docs site. The teams building the best developer experiences treat it as infrastructure.
+    content: `Most teams treat their OpenAPI spec as documentation—something you generate from code and publish to a docs site. The teams building the best developer experiences treat it as infrastructure.
 
 ## What a Great Spec Unlocks
 
-**Client SDKs** — Tools like Speakeasy and OpenAPI Generator produce high-quality SDKs in 20+ languages from your spec. Update the spec, regenerate the SDKs. No manual SDK maintenance.
+Client SDKs in 20+ languages, auto-generated from your spec. Update the spec, regenerate the SDKs—no manual maintenance. Mock servers that let frontend teams work without waiting for backend implementation. Contract testing that catches spec drift as a CI failure before deployment.
 
-**Mock Servers** — Prism can run a mock server directly from your spec. Frontend teams don't need to wait for backend implementation.
-
-**Contract Testing** — Dredd and Schemathesis can run automated tests against your live API to verify it matches the spec. Spec drift becomes a CI failure.
-
-**Documentation** — Stoplight, Readme, and Redoc generate beautiful interactive documentation from your spec automatically.
-
-**Type Safety** — Generate TypeScript types directly from your API spec. The client types are always in sync with the server.
+TypeScript types generated directly from your API spec mean the client types are always in sync with the server. Stoplight, Readme, and Redoc generate beautiful interactive documentation automatically.
 
 ## Spec-First Development
 
-The biggest unlock is spec-first: write the OpenAPI spec before writing the implementation code. This forces you to think about the API surface before you're deep in implementation. It's the API design equivalent of writing tests first.
+The biggest unlock is writing the OpenAPI spec before writing implementation code. This forces you to think about the API surface before you're deep in implementation details. It's the API design equivalent of writing tests first—decisions made in the spec phase are cheap; decisions made after deployment are expensive.
+
+Machine-readable specs are proof that the team treats documentation as code. They also mean you can auto-generate client SDKs, mock servers, and integration tests—a force multiplier that pays dividends for the entire lifecycle of the API.
 
 ## Common Pitfalls
 
-- **Auto-generating from code** produces mediocre specs. Write them deliberately.
-- **Incomplete error schemas** make the spec useless for generating error handling code.
-- **Missing examples** make the spec less useful for mock servers and docs.`
+Auto-generating specs from code produces mediocre output. Write them deliberately. Incomplete error schemas make the spec useless for generating error handling code. Missing examples make the spec less useful for mock servers and documentation. The spec should be the single source of truth—not an afterthought.
+
+## The Documentation Gap
+
+Most API documentation is written for the person who built the API, not for the developer trying to use it. The five most common failures: example responses that don't reflect actual production responses, auth flows described incorrectly, rate limits without context on window type and scope, error codes without actionable guidance, and no changelog. A great OpenAPI spec fixes all five.`,
   },
   {
-    id: 22,
-    title: "AWS vs Cloudflare Workers vs Vercel Functions: Where to Run Your API",
-    desc: "A practical comparison of the three dominant platforms for running API backends in 2026—cold starts, pricing at scale, developer experience, and operational complexity.",
-    category: "Cloud APIs",
-    read: "8 min read",
-    date: "Apr 15, 2026",
+    id: 6,
+    title: "Webhook Systems That Actually Work in Production",
+    excerpt: "Signature verification, idempotency, async queuing, out-of-order delivery—the complete engineering guide to building and consuming webhooks that survive real traffic.",
+    tag: "Webhooks",
+    tagColor: "#f97316",
+    date: "May 1, 2026",
+    readTime: "8 min read",
+    source: "Apives Guide",
+    sourceUrl: "#",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80",
     featured: false,
-    accent: "#0ea5e9",
-    Icon: Cloud,
-    content: `## The Platform Decision Shapes Everything
+    content: `Webhooks are not HTTP requests. That sounds obvious, but most webhook consumer bugs come from treating them like normal API calls. They arrive unpredictably, can be retried multiple times, and can arrive out of order.
 
-Where you run your API isn't just an infrastructure decision—it determines your cold start behavior, global latency profile, operational overhead, and pricing structure at scale.
+## The Rule: Acknowledge Immediately, Process Asynchronously
+
+Your webhook endpoint must respond with 200 OK within 3-5 seconds. If processing takes longer, the provider retries—creating duplicate events. The correct pattern: verify the signature, push the raw payload to a queue (SQS, BullMQ, Sidekiq), return 200 immediately, then process asynchronously with idempotency checks.
+
+## Signature Verification Is Non-Negotiable
+
+Before you process anything, verify the webhook signature. Stripe uses HMAC-SHA256. GitHub uses HMAC-SHA256 with X-Hub-Signature-256. Verify or reject—no middle ground. Signature verification must be the first line of your handler, before any database queries. Include the timestamp in the signed payload to prevent replay attacks.
+
+## Idempotency: Design for Duplicates
+
+Every webhook provider retries on failure. Your consumer will receive the same event multiple times—design for it. Use the webhook event ID as an idempotency key. Store processed event IDs. Check before processing. Never assume an event will arrive exactly once.
+
+## Out-of-Order Delivery
+
+Webhooks don't arrive in order. A `payment.updated` event can arrive before `payment.created`. Design your state machine to handle this, or use event timestamps to determine canonical state. Don't assume sequence.
+
+## Building a First-Class Webhook System
+
+If you're building webhooks for your own API, the right architecture separates event generation from delivery entirely. Your application logic creates an event record with status PENDING. A separate async worker picks up PENDING events and attempts delivery. On 2xx, mark DELIVERED. On failure, schedule retry with exponential backoff: 10s, 30s, 2m, 10m, 1h, 6h, 24h, 48h—then disable the endpoint after the final retry. Great webhook DX requires delivery logs, one-click retry, and a webhook explorer with full request/response history.`,
+  },
+  {
+    id: 7,
+    title: "OAuth 2.0 Flows That Actually Matter: PKCE, Client Credentials, and Why Implicit Is Dead",
+    excerpt: "A developer-focused breakdown of the OAuth 2.0 flows teams actually need—with implementation patterns, security reasoning, and silent refresh strategy for production.",
+    tag: "Authentication",
+    tagColor: "#06b6d4",
+    date: "Apr 28, 2026",
+    readTime: "8 min read",
+    source: "Apives Deep Dive",
+    sourceUrl: "#",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+    featured: false,
+    content: `Most developers implement one OAuth flow and treat it as the universal solution. The four OAuth flows exist because they solve different problems. Using the wrong one creates security vulnerabilities, not just inefficiency.
+
+## Authorization Code with PKCE: The Browser and Mobile Flow
+
+Use this for any application where you're acting on behalf of a user in an environment you don't fully control—browser, mobile app, or SPA.
+
+PKCE (Proof Key for Code Exchange) replaces the client secret for public clients. You generate a code_verifier, hash it to create a code_challenge, and send the challenge during the auth request. The server verifies the code_verifier at token exchange time. This prevents authorization code interception attacks—a real threat in mobile environments.
+
+PKCE is now recommended even for confidential clients (server-side web apps). There's no downside to using it and meaningful security improvements.
+
+## Client Credentials: Machine-to-Machine
+
+No user involved. Your backend service exchanges its credentials for an access token to call another service. This is the correct pattern for microservices, scheduled jobs, backend integrations, and any M2M communication. Never use Authorization Code flow for server-to-server calls.
+
+## Silent Refresh Strategy
+
+Access tokens should expire in 15-60 minutes. Implement silent refresh: when the access token approaches expiration, automatically exchange the refresh token without user interaction. This keeps sessions alive without forcing re-authentication. Use refresh token rotation—each use of a refresh token issues a new one and invalidates the old, preventing token reuse after compromise.
+
+## Implicit Flow: Deprecated, Do Not Use
+
+The implicit flow returns access tokens directly in URL fragments. This is a security problem—tokens in URL fragments appear in browser history, referrer headers, and server logs. It's in the spec for historical reasons only. Any new implementation should use Authorization Code with PKCE instead.
+
+## The JWT Hardening Checklist
+
+HS256 secret: 256 bits minimum, randomly generated, rotated on a schedule. Never hardcode in source. Expiration: always set exp claim. Access token 15 minutes, refresh token 7 days. Implement a token blacklist or use short-lived tokens with refresh rotation to support logout. Validate iss and aud claims—not just the signature.`,
+  },
+  {
+    id: 8,
+    title: "GraphQL at Scale: Subscriptions, DataLoader, and the N+1 Trap",
+    excerpt: "What production GraphQL actually looks like—subscription architecture for 1M+ connections, DataLoader patterns that prevent database meltdown, and the memory leaks nobody warns you about.",
+    tag: "GraphQL",
+    tagColor: "#e91e96",
+    date: "Mar 28, 2026",
+    readTime: "8 min read",
+    source: "tech-insider.org",
+    sourceUrl: "https://tech-insider.org/graphql-tutorial-nodejs-apollo-server-2026/",
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    featured: false,
+    content: `GraphQL subscriptions are the most powerful and most treacherous feature in the ecosystem. They enable real-time data synchronization with clean developer experience. They also create persistent connections that don't scale like stateless HTTP requests.
+
+## The Architecture That Works at Scale
+
+Don't run subscriptions on your primary GraphQL server. Persistent WebSocket connections starve request-handling capacity under load. The correct architecture: a separate subscription service (stateful, WebSocket-native), an event bus between mutation handlers and the subscription server (Redis Pub/Sub or Kafka), and a load balancer with sticky sessions.
+
+## Automatic Persisted Queries for Performance
+
+APQ replaces full query strings with short SHA-256 hashes, reducing request payload size by 80-90%. Apollo Server 4 supports APQ out of the box. For high-traffic endpoints, this is a significant bandwidth and latency win.
+
+## The N+1 Problem, Amplified
+
+Every subscription resolver has the same N+1 risk as query resolvers—but it fires repeatedly on every event. A subscription that triggers 10 database queries per event at 1000 events/second is 10,000 database queries per second. Use DataLoader caching aggressively. Be extremely careful about what data you resolve on each event emission.
+
+## Memory Leaks Are Subscription-Specific
+
+The most common production issue: subscription resolvers that don't clean up after themselves when a client disconnects. Always return a cleanup function from your subscribe resolver. Without it, you accumulate dead subscriptions that still receive events and still execute resolver code against your database.
+
+## Connection Lifecycle Management
+
+Every connection must implement: heartbeat/keep-alive (30-60 second ping/pong), inactivity timeout (disconnect after 5 minutes of no subscription activity), authentication refresh (subscriptions outlive JWT token lifetimes), and graceful reconnection logic on the client. Missing any one of these creates subtle production failures that only appear under sustained load.`,
+  },
+  {
+    id: 9,
+    title: "How to Load Test Your API Before It Matters",
+    excerpt: "k6, Artillery, and Locust compared—how to design realistic test scenarios, interpret P95 and P99 results, and fix the database bottlenecks that only appear under real load.",
+    tag: "API Testing",
+    tagColor: "#10b981",
+    date: "Apr 5, 2026",
+    readTime: "6 min read",
+    source: "Apives Engineering",
+    sourceUrl: "#",
+    image: "https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=800&q=80",
+    featured: false,
+    content: `The dirty secret of production APIs: most have never been load tested. Developers write unit tests, integration tests, maybe end-to-end tests. Load testing gets skipped because it's "not a priority" until there's a production incident that costs more than six months of engineering time.
+
+## Tool Selection
+
+k6 is the modern choice for most teams. JavaScript-based test scripts, excellent CLI, Grafana integration, and cloud execution available. The developer experience is the best in class.
+
+Artillery is YAML-based with good tooling for simulating complex user journeys. Better choice for teams that prefer configuration over code.
+
+Locust is Python-based and highly customizable. Best for teams with complex testing requirements or where Python is the team's primary language.
+
+## Designing Meaningful Scenarios
+
+A load test that sends a thousand identical GET requests to /ping is useless. Realistic load tests mix read and write operations proportional to your actual traffic, include authentication with real JWT tokens, test your most expensive endpoints (not your simplest), and include the data setup and teardown your real users trigger.
+
+## The Metrics That Actually Matter
+
+Latency at P95 and P99—not average. Average latency hides the spikes that kill user experience. Error rate under load (target: 0% for 2xx, monitor 5xx closely). Throughput ceiling: at what requests-per-second does latency degrade? Database connection pool exhaustion—the first thing to hit its limit under sustained load.
+
+## The Most Common Finding
+
+Your database is the bottleneck. N+1 queries that are invisible at low traffic become catastrophic at scale. Always run EXPLAIN ANALYZE on your slowest queries after a load test. Add indexes on columns used in WHERE clauses and JOINs. Connection pooling configuration matters more than most teams realize.`,
+  },
+  {
+    id: 10,
+    title: "Serverless Platforms for APIs in 2026: AWS Lambda vs Cloudflare Workers vs Vercel",
+    excerpt: "A practical comparison of the three dominant API platforms—cold starts, pricing at scale, developer experience, and which one to choose for latency-critical public APIs.",
+    tag: "Cloud & Infra",
+    tagColor: "#0ea5e9",
+    date: "Apr 15, 2026",
+    readTime: "8 min read",
+    source: "Apives Platform Guide",
+    sourceUrl: "#",
+    image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80",
+    featured: false,
+    content: `Where you run your API isn't just an infrastructure decision—it determines your cold start behavior, global latency profile, operational overhead, and pricing structure at scale.
 
 ## AWS Lambda + API Gateway
 
 The original serverless. Mature, infinitely flexible, and deeply integrated with the rest of the AWS ecosystem.
 
-**Cold starts:** 100-800ms depending on runtime. SnapStart for Java, $LAMBDA_RUNTIME for Node.js/Python are dramatically better.
+Cold starts: 100-800ms depending on runtime. Lambda SnapStart for Java dramatically improves this. Pricing at $0.20 per million requests plus duration is predictable. Best for teams already in AWS, applications needing VPC access, and complex enterprise requirements.
 
-**Pricing:** $0.20 per 1M requests + duration. Predictable at scale.
-
-**Operational overhead:** Higher than alternatives. VPC configuration, IAM policies, API Gateway limits.
-
-**Best for:** Teams already in AWS, applications needing VPC access, complex enterprise requirements.
+Operational overhead is higher than alternatives—VPC configuration, IAM policies, and API Gateway limits require real expertise to configure correctly.
 
 ## Cloudflare Workers
 
-Runs at the edge in 300+ locations. V8 isolates eliminate cold starts entirely.
+Runs at the edge in 300+ locations. V8 isolates eliminate cold starts entirely—near-zero latency startup versus full VM instantiation. Priced at $5/month for 10 million requests. Extremely cost-effective.
 
-**Cold starts:** Near zero. V8 isolates vs. full VM instantiation.
+Constraints: no Node.js standard library, 128MB memory limit, CPU time limits. These matter for complex business logic but are irrelevant for edge routing, auth middleware, and API gateways.
 
-**Pricing:** $5/month for 10M requests. Extremely cost-effective.
-
-**Constraints:** No Node.js standard library, 128MB memory limit, CPU time limits.
-
-**Best for:** Low-latency public APIs, API gateways, auth middleware, globally distributed workloads.
+Best for: latency-critical public APIs, API gateways, auth middleware, and globally distributed workloads where edge proximity matters.
 
 ## Vercel Functions
 
-The best developer experience in the market. Deploy your entire application—frontend and API—with one git push.
+The best developer experience in the market. Deploy your entire application—frontend and API—with one git push. Cold starts of 50-200ms, better than Lambda but worse than Cloudflare. Generous free tier that scales to Enterprise plans.
 
-**Cold starts:** 50-200ms. Better than Lambda but worse than Cloudflare.
-
-**Pricing:** Generous free tier; scales with Enterprise plans.
-
-**Best for:** Next.js applications, full-stack TypeScript, teams prioritizing DX.
+Best for: Next.js applications, full-stack TypeScript teams, and any project where shipping velocity matters more than raw performance optimization.
 
 ## The Right Answer
 
-For latency-critical public APIs: Cloudflare Workers. For complex backend logic: AWS Lambda. For full-stack applications: Vercel.`
+For latency-critical public APIs: Cloudflare Workers. For complex backend logic with AWS ecosystem dependencies: Lambda. For full-stack applications: Vercel. Most production systems end up using more than one.`,
   },
   {
-    id: 23,
-    title: "Contract Testing Your APIs With Pact",
-    desc: "How consumer-driven contract testing with Pact eliminates integration failures between services without requiring a live test environment.",
-    category: "API Testing",
-    read: "7 min read",
-    date: "Apr 5, 2026",
+    id: 11,
+    title: "Why Apives Verifies Every API Before Listing",
+    excerpt: "The multi-stage technical process behind Apives' API quality system—endpoint reachability, auth verification, response schema validation, uptime monitoring, and what gets rejected.",
+    tag: "About Apives",
+    tagColor: "#22c55e",
+    date: "Apr 21, 2026",
+    readTime: "5 min read",
+    source: "Apives",
+    sourceUrl: "#",
+    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80",
     featured: false,
-    accent: "#10b981",
-    Icon: TestTube2,
-    content: `## The Problem With Integration Tests
+    content: `Any website can list APIs. The hard part—the part that actually helps developers—is knowing which ones work. Apives runs a multi-stage verification process on every API before it appears in the directory.
 
-Traditional integration tests require both the consumer and provider to be running simultaneously. This is slow, flaky, and doesn't scale well in a microservices architecture.
+## Why Verification Matters
 
-Contract testing solves this. With Pact, the consumer defines the contract (what it expects from the provider), and the provider verifies it independently. No shared test environment required.
+Most API directories are static lists. Someone submits an API, it gets a card with a description and a link, and that's it. Nobody verifies whether the API actually works right now, whether the auth method described is current, whether pricing has changed, or whether endpoints return what they claim to return. Developers spend hours integrating APIs that are broken in production. Apives exists to solve that.
 
-## How Pact Works
+## Stage 1: Endpoint Reachability
 
-**Step 1: Consumer writes interaction tests**
-The consumer service writes tests that define the exact HTTP interactions it expects. Pact captures these as a contract (pact file).
+The first check verifies that documented endpoints respond. We check HTTP status codes, response times, SSL certificate validity, and CORS headers. Endpoints that don't respond get flagged immediately.
 
-**Step 2: Pact file published to a broker**
-The contract is published to a Pact Broker (hosted or self-hosted).
+## Stage 2: Authentication Verification
 
-**Step 3: Provider verifies the contract**
-The provider pulls the contract and runs it against its implementation. If the provider's response doesn't match the consumer's expectations, the verification fails.
+We verify that the documented authentication method actually works with both valid and invalid credentials. OAuth flows, API keys, and JWT-based auth are all tested against the documented specification.
 
-**Step 4: Can I Deploy?**
-Before deploying, run pact-broker can-i-deploy to verify that the version you're about to ship is compatible with all its consumers.
+## Stage 3: Response Schema Validation
 
-## When Contract Testing Shines
+We compare actual response schemas against what documentation claims. Any mismatch—extra fields, missing fields, wrong types—gets flagged. This is the most common failure point in the directory: documentation that describes a response with five fields while the real response has twelve.
 
-- Microservices with many inter-service dependencies
-- Teams that can't coordinate integration test environments
-- APIs with multiple consumer teams
-- High-velocity teams that break integrations regularly
+## Stage 4: Continuous Uptime Monitoring
 
-## When to Skip It
+After passing initial verification, every API enters continuous monitoring: health checks every 5 minutes, P50/P95/P99 latency tracking, and 30-day and 90-day uptime calculations. Uptime data is displayed on every listing—not vendor marketing copy, but real measurements.
 
-- Monoliths (just write integration tests)
-- Simple two-service architectures
-- APIs with a single consumer
+## What Gets Rejected
 
-The overhead of Pact is worth it once you have 4+ services communicating with each other.`
-  },
-  {
-    id: 24,
-    title: "Load Testing Your API Before It Matters",
-    desc: "A practical guide to load testing with k6, Artillery, and Locust—how to design meaningful test scenarios, interpret results, and fix what you find.",
-    category: "API Testing",
-    read: "6 min read",
-    date: "Mar 18, 2026",
-    featured: false,
-    accent: "#10b981",
-    Icon: Activity,
-    content: `## Most APIs Have Never Been Load Tested
+APIs with uptime below 99% over 30 days, documentation with more than 20% inaccuracy against actual responses, no clear pricing information, or authentication flows that don't match documentation are rejected from the directory.
 
-The dirty secret of production APIs: most of them have never been load tested. Developers write unit tests, integration tests, maybe end-to-end tests. Load testing gets skipped because it's "not a priority" until there's a production incident.
-
-## Choosing a Tool
-
-**k6** — The modern choice. JavaScript-based test scripts, excellent CLI, Grafana integration, cloud execution available. The best DX.
-
-**Artillery** — YAML-based scenarios, good for teams that prefer configuration over code. Excellent for simulating complex user journeys.
-
-**Locust** — Python-based, highly customizable. Best for teams with complex testing requirements.
-
-For most teams starting out: k6.
-
-## Designing Meaningful Scenarios
-
-A load test that sends a thousand identical GET requests to /ping is useless. Realistic load tests:
-
-- Mix read and write operations proportional to your actual traffic
-- Include authentication (test with real JWT tokens)
-- Test your most expensive endpoints, not just your simplest
-- Include the data setup/teardown your real users trigger
-
-## What to Measure
-
-- **Latency at P95 and P99**, not average
-- **Error rate** under load (target: 0% for 2xx, monitor 5xx closely)
-- **Throughput ceiling** — at what RPS does latency degrade?
-- **Database connection pool** exhaustion
-
-## The Most Common Finding
-
-Your database is the bottleneck. N+1 queries that are invisible at low traffic become catastrophic at scale. Always run EXPLAIN ANALYZE on your slowest queries after a load test.`
+The result: a smaller catalog of verified, working APIs—more valuable than a massive catalog full of noise. Developers don't need ten thousand options. They need five great ones.`,
   },
 ];
 
-const CATEGORIES = [
-  "All", "API Discovery", "AI APIs", "Search APIs", "API Security",
-  "GraphQL", "Webhooks", "Authentication", "API Monetization",
-  "Indie Hackers", "Startups", "Developer Experience", "Cloud APIs",
-  "API Testing",
-];
+const FILTERS = ["All", "API Architecture", "AI & LLMs", "API Security", "API Development", "Developer Experience", "Webhooks", "Authentication", "GraphQL", "API Testing", "Cloud & Infra", "About Apives"];
 
-const CATEGORY_META = {
-  "All":                 { Icon: Layers,     color: "#22c55e" },
-  "API Discovery":       { Icon: Search,     color: "#22c55e" },
-  "AI APIs":             { Icon: Sparkles,   color: "#a855f7" },
-  "Search APIs":         { Icon: Zap,        color: "#3b82f6" },
-  "API Security":        { Icon: Shield,     color: "#ef4444" },
-  "GraphQL":             { Icon: Blocks,     color: "#e91e96" },
-  "Webhooks":            { Icon: Webhook,    color: "#f97316" },
-  "Authentication":      { Icon: Lock,       color: "#06b6d4" },
-  "API Monetization":    { Icon: DollarSign, color: "#eab308" },
-  "Indie Hackers":       { Icon: Rocket,     color: "#ec4899" },
-  "Startups":            { Icon: BarChart2,  color: "#f97316" },
-  "Developer Experience":{ Icon: Code2,      color: "#f59e0b" },
-  "Cloud APIs":          { Icon: Cloud,      color: "#0ea5e9" },
-  "API Testing":         { Icon: TestTube2,  color: "#10b981" },
-};
-
-// ── Markdown renderer ─────────────────────────────────────────────────────────
-function renderInline(text) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, i) =>
-    part.startsWith("**") && part.endsWith("**")
-      ? <strong key={i} style={{ color: "#e4e4e7", fontWeight: 600 }}>{part.slice(2, -2)}</strong>
-      : part
-  );
-}
-
-function renderContent(content) {
-  const lines = content.trim().split("\n");
+function renderContent(text) {
+  const lines = text.trim().split("\n");
   const elements = [];
   let listBuffer = [];
 
-  const flushList = key => {
+  const flushList = (key) => {
     if (!listBuffer.length) return;
     elements.push(
-      <ul key={`ul-${key}`} style={{ margin: "12px 0 16px 0", padding: "0 0 0 16px", listStyle: "none" }}>
+      <ul key={`ul-${key}`} style={{ margin: "12px 0 18px 0", padding: 0, listStyle: "none" }}>
         {listBuffer.map((item, j) => (
-          <li key={j} style={{ color: "#a1a1aa", fontSize: "13.5px", lineHeight: "1.7", marginBottom: "6px", display: "flex", gap: "8px" }}>
-            <span style={{ color: "#22c55e", marginTop: "1px", flexShrink: 0 }}>›</span>
-            <span>{renderInline(item)}</span>
+          <li key={j} style={{ display: "flex", gap: "10px", color: "#9ca3af", fontSize: "14.5px", lineHeight: "1.75", marginBottom: "7px" }}>
+            <span style={{ color: "#22c55e", marginTop: "2px", flexShrink: 0 }}>›</span>
+            <span>{item.split(/(\*\*[^*]+\*\*)/).map((p, i) => p.startsWith("**") && p.endsWith("**") ? <strong key={i} style={{ color: "#e5e7eb", fontWeight: 600 }}>{p.slice(2, -2)}</strong> : p)}</span>
           </li>
         ))}
       </ul>
@@ -1131,32 +456,19 @@ function renderContent(content) {
   lines.forEach((line, i) => {
     if (line.startsWith("## ")) {
       flushList(i);
-      elements.push(
-        <h2 key={i} style={{ fontSize: "17px", fontWeight: 700, color: "#fafafa", marginTop: "36px", marginBottom: "10px", letterSpacing: "-0.3px", fontFamily: "inherit" }}>
-          {line.slice(3)}
-        </h2>
-      );
-    } else if (line.startsWith("### ")) {
-      flushList(i);
-      elements.push(
-        <h3 key={i} style={{ fontSize: "13px", fontWeight: 600, color: "#22c55e", marginTop: "20px", marginBottom: "6px" }}>
-          {line.slice(4)}
-        </h3>
-      );
+      elements.push(<h2 key={i} style={{ fontSize: "19px", fontWeight: 700, color: "#f9fafb", marginTop: "38px", marginBottom: "12px", letterSpacing: "-0.4px", lineHeight: 1.3 }}>{line.slice(3)}</h2>);
     } else if (line.startsWith("- ")) {
       listBuffer.push(line.slice(2));
-    } else if (line.startsWith("**") && line.endsWith("**") && !line.slice(2, -2).includes("**")) {
-      flushList(i);
-      elements.push(
-        <p key={i} style={{ fontSize: "13px", fontWeight: 600, color: "#d4d4d8", marginTop: "12px", marginBottom: "4px" }}>{line.slice(2, -2)}</p>
-      );
     } else if (line.trim() === "") {
       flushList(i);
-      elements.push(<div key={i} style={{ height: "6px" }} />);
+      elements.push(<div key={i} style={{ height: "8px" }} />);
     } else {
       flushList(i);
+      const parts = line.split(/(\*\*[^*]+\*\*)/);
       elements.push(
-        <p key={i} style={{ color: "#a1a1aa", fontSize: "13.5px", lineHeight: "1.75", margin: "4px 0" }}>{renderInline(line)}</p>
+        <p key={i} style={{ color: "#9ca3af", fontSize: "14.5px", lineHeight: "1.8", margin: "4px 0" }}>
+          {parts.map((p, j) => p.startsWith("**") && p.endsWith("**") ? <strong key={j} style={{ color: "#d1d5db", fontWeight: 600 }}>{p.slice(2, -2)}</strong> : p)}
+        </p>
       );
     }
   });
@@ -1164,223 +476,120 @@ function renderContent(content) {
   return elements;
 }
 
-// ── Article Card ──────────────────────────────────────────────────────────────
-function ArticleCard({ article, onClick }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: "block",
-        width: "100%",
-        textAlign: "left",
-        background: hovered ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.025)",
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
-        borderRadius: "14px",
-        overflow: "hidden",
-        cursor: "pointer",
-        transition: "all 0.2s ease",
-        transform: hovered ? "translateY(-1px)" : "none",
-        outline: "none",
-      }}
-    >
-      <div style={{ height: "1px", background: `linear-gradient(90deg, ${article.accent}, transparent 60%)` }} />
-      <div style={{ padding: "18px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-          <div style={{
-            width: "28px", height: "28px", borderRadius: "8px", flexShrink: 0,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            background: `${article.accent}18`, border: `1px solid ${article.accent}28`
-          }}>
-            <article.Icon size={13} style={{ color: article.accent }} />
-          </div>
-          <span style={{
-            fontSize: "10px", fontWeight: 500, padding: "2px 8px", borderRadius: "99px",
-            color: article.accent, background: `${article.accent}12`, border: `1px solid ${article.accent}22`,
-            letterSpacing: "0.01em"
-          }}>
-            {article.category}
-          </span>
-          <span style={{ fontSize: "10px", color: "#52525b", marginLeft: "auto" }}>{article.date}</span>
-        </div>
-
-        <h3 style={{
-          fontSize: "13px", fontWeight: 600, color: hovered ? "#ffffff" : "#e4e4e7",
-          lineHeight: "1.45", marginBottom: "7px", letterSpacing: "-0.15px",
-          transition: "color 0.15s ease", fontFamily: "inherit"
-        }}>
-          {article.title}
-        </h3>
-
-        <p style={{
-          fontSize: "11.5px", color: "#52525b", lineHeight: "1.6",
-          marginBottom: "14px", display: "-webkit-box", WebkitLineClamp: 2,
-          WebkitBoxOrient: "vertical", overflow: "hidden"
-        }}>
-          {article.desc}
-        </p>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "10.5px", color: "#52525b" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            <Clock size={9} />{article.read}
-          </span>
-          <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "4px", color: article.accent, fontWeight: 600 }}>
-            Read <ArrowRight size={9} style={{ transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
-          </span>
-        </div>
-      </div>
-    </button>
-  );
-}
-
-// ── Article Modal ─────────────────────────────────────────────────────────────
-function ArticleModal({ article, onClose, onSelectArticle }) {
+// ── Article Reader Modal ────────────────────────────────────────────────────
+function ArticleModal({ article, onClose, articles, onSelect }) {
   const scrollRef = useRef(null);
-  const [progress, setProgress] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [readProgress, setReadProgress] = useState(0);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setVisible(true));
     document.body.style.overflow = "hidden";
     return () => { cancelAnimationFrame(raf); document.body.style.overflow = ""; };
-  }, []);
+  }, [article]);
 
-  const handleClose = () => {
-    setVisible(false);
-    setTimeout(onClose, 200);
-  };
-
-  const onScroll = e => {
-    const el = e.currentTarget;
-    const h = el.scrollHeight - el.clientHeight;
-    setProgress(h > 0 ? (el.scrollTop / h) * 100 : 0);
-  };
-
-  const related = ARTICLES
-    .filter(a => a.id !== article.id && a.category === article.category)
-    .slice(0, 2)
-    .concat(ARTICLES.filter(a => a.id !== article.id && a.category !== article.category).slice(0, 1));
+  const handleClose = () => { setVisible(false); setTimeout(onClose, 220); };
 
   useEffect(() => {
-    const handleKey = e => { if (e.key === "Escape") handleClose(); };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    const handler = (e) => { if (e.key === "Escape") handleClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  const onScroll = (e) => {
+    const el = e.currentTarget;
+    const h = el.scrollHeight - el.clientHeight;
+    setReadProgress(h > 0 ? Math.min(100, (el.scrollTop / h) * 100) : 0);
+  };
+
+  const related = articles.filter(a => a.id !== article.id && a.tag === article.tag).slice(0, 2)
+    .concat(articles.filter(a => a.id !== article.id && a.tag !== article.tag).slice(0, 1));
+
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "flex-start", justifyContent: "center" }}>
-      <div
-        onClick={handleClose}
-        style={{
-          position: "absolute", inset: 0,
-          background: "rgba(0,0,0,0.75)",
-          backdropFilter: "blur(10px)",
-          opacity: visible ? 1 : 0,
-          transition: "opacity 0.2s ease"
-        }}
-      />
-      <div
-        ref={scrollRef}
-        onScroll={onScroll}
-        style={{
-          position: "relative", zIndex: 10,
-          width: "100%", maxWidth: "660px", height: "100vh",
-          overflowY: "auto",
-          background: "#070a0b",
-          borderLeft: "1px solid rgba(255,255,255,0.06)",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
-          transform: visible ? "translateY(0)" : "translateY(16px)",
-          opacity: visible ? 1 : 0,
-          transition: "all 0.2s ease",
-        }}
-      >
-        {/* Progress */}
+    <div style={{ position: "fixed", inset: 0, zIndex: 500, display: "flex", justifyContent: "flex-end" }}>
+      <div onClick={handleClose} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(12px)", opacity: visible ? 1 : 0, transition: "opacity 0.22s ease" }} />
+      <div ref={scrollRef} onScroll={onScroll} style={{
+        position: "relative", zIndex: 10, width: "100%", maxWidth: "680px", height: "100vh",
+        overflowY: "auto", background: "#080b0e",
+        borderLeft: "1px solid rgba(255,255,255,0.07)",
+        transform: visible ? "translateX(0)" : "translateX(40px)",
+        opacity: visible ? 1 : 0, transition: "all 0.22s cubic-bezier(0.16,1,0.3,1)"
+      }}>
+        {/* Progress bar */}
         <div style={{ position: "sticky", top: 0, height: "2px", background: "rgba(255,255,255,0.05)", zIndex: 30 }}>
-          <div style={{
-            height: "100%", width: `${progress}%`,
-            background: "linear-gradient(90deg, #16a34a, #22c55e)",
-            transition: "width 0.1s linear"
-          }} />
+          <div style={{ height: "100%", width: `${readProgress}%`, background: "linear-gradient(90deg, #16a34a, #4ade80)", transition: "width 0.1s linear" }} />
         </div>
 
-        {/* Header */}
+        {/* Sticky header */}
         <div style={{
-          position: "sticky", top: "2px", zIndex: 20,
-          padding: "12px 24px",
+          position: "sticky", top: "2px", zIndex: 20, padding: "14px 28px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          background: "rgba(7,10,11,0.97)", backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(255,255,255,0.055)"
+          background: "rgba(8,11,14,0.96)", backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)"
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
-            <span style={{
-              fontSize: "10px", fontWeight: 500, padding: "2px 8px", borderRadius: "99px",
-              color: article.accent, background: `${article.accent}12`, border: `1px solid ${article.accent}25`,
-              flexShrink: 0
-            }}>
-              {article.category}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "10px", fontWeight: 600, padding: "3px 10px", borderRadius: "99px", color: article.tagColor, background: `${article.tagColor}15`, border: `1px solid ${article.tagColor}30`, letterSpacing: "0.02em" }}>
+              {article.tag}
             </span>
-            <span style={{ fontSize: "10px", color: "#52525b", display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
-              <Clock size={9} />{article.read}
-            </span>
-            <span style={{ color: "#3f3f46" }}>·</span>
-            <span style={{ fontSize: "10px", color: "#52525b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {article.date}
+            <span style={{ fontSize: "10px", color: "#6b7280", display: "flex", alignItems: "center", gap: "4px" }}>
+              <Clock size={9} />{article.readTime}
             </span>
           </div>
-          <button
-            onClick={handleClose}
-            style={{
-              marginLeft: "12px", width: "28px", height: "28px", borderRadius: "8px",
-              display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-              cursor: "pointer", color: "#71717a", transition: "all 0.15s ease"
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.09)"; e.currentTarget.style.color = "#d4d4d8"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#71717a"; }}
-          >
+          <button onClick={handleClose} style={{ width: "30px", height: "30px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", cursor: "pointer", color: "#6b7280" }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#f3f4f6"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#6b7280"; }}>
             <X size={13} />
           </button>
         </div>
 
-        {/* Body */}
-        <div style={{ padding: "28px 24px 80px" }}>
-          <div style={{
-            width: "40px", height: "40px", borderRadius: "12px",
-            display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "20px",
-            background: `${article.accent}14`, border: `1px solid ${article.accent}25`
-          }}>
-            <article.Icon size={18} style={{ color: article.accent }} />
+        {/* Hero image */}
+        <div style={{ height: "260px", overflow: "hidden", position: "relative" }}>
+          <img src={article.image} alt={article.title} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.55)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #080b0e 0%, transparent 60%)" }} />
+          <div style={{ position: "absolute", bottom: "24px", left: "28px", right: "28px" }}>
+            <h1 style={{ fontSize: "24px", fontWeight: 800, color: "#f9fafb", lineHeight: 1.2, letterSpacing: "-0.5px", margin: 0, fontFamily: "inherit" }}>{article.title}</h1>
           </div>
+        </div>
 
-          <h1 style={{
-            fontSize: "20px", fontWeight: 700, color: "#fafafa",
-            lineHeight: "1.3", marginBottom: "10px", letterSpacing: "-0.4px",
-            fontFamily: "inherit"
-          }}>
-            {article.title}
-          </h1>
-
-          <p style={{
-            color: "#52525b", fontSize: "13px", lineHeight: "1.65",
-            marginBottom: "24px", paddingBottom: "24px",
-            borderBottom: "1px solid rgba(255,255,255,0.055)"
-          }}>
-            {article.desc}
+        {/* Body */}
+        <div style={{ padding: "24px 28px 80px" }}>
+          <p style={{ color: "#6b7280", fontSize: "14px", lineHeight: "1.65", marginBottom: "28px", paddingBottom: "24px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+            {article.excerpt}
           </p>
 
           <div>{renderContent(article.content)}</div>
 
+          {/* Source credit */}
+          {article.sourceUrl !== "#" && (
+            <div style={{ marginTop: "36px", padding: "16px 18px", borderRadius: "12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div>
+                <p style={{ fontSize: "10px", color: "#4b5563", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "3px" }}>Source & Further Reading</p>
+                <p style={{ fontSize: "13px", color: "#9ca3af" }}>{article.source}</p>
+              </div>
+              <a href={article.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11.5px", fontWeight: 600, color: "#22c55e", textDecoration: "none" }}>
+                Visit Source <ExternalLink size={10} />
+              </a>
+            </div>
+          )}
+
           {/* Related */}
-          <div style={{ marginTop: "44px", paddingTop: "28px", borderTop: "1px solid rgba(255,255,255,0.055)" }}>
-            <p style={{ fontSize: "9px", fontWeight: 600, color: "#52525b", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "14px" }}>
-              Continue Reading
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          <div style={{ marginTop: "40px", paddingTop: "28px", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+            <p style={{ fontSize: "9px", fontWeight: 700, color: "#4b5563", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "14px" }}>Continue Reading</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {related.slice(0, 3).map(a => (
-                <RelatedCard key={a.id} article={a} onClick={() => { onSelectArticle(a); scrollRef.current?.scrollTo(0, 0); setProgress(0); }} />
+                <button key={a.id} onClick={() => { onSelect(a); scrollRef.current?.scrollTo(0, 0); setReadProgress(0); }}
+                  style={{ display: "flex", alignItems: "center", gap: "14px", padding: "14px 16px", borderRadius: "12px", cursor: "pointer", textAlign: "left", background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)", transition: "all 0.15s", outline: "none", fontFamily: "inherit", width: "100%" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.025)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}>
+                  <div style={{ width: "44px", height: "44px", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}>
+                    <img src={a.image} alt={a.title} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(0.7)" }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: "12.5px", fontWeight: 600, color: "#e5e7eb", lineHeight: 1.35, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "3px" }}>{a.title}</p>
+                    <p style={{ fontSize: "10px", color: "#4b5563" }}>{a.tag} · {a.readTime}</p>
+                  </div>
+                  <ChevronRight size={13} style={{ color: "#4b5563", flexShrink: 0 }} />
+                </button>
               ))}
             </div>
           </div>
@@ -1390,288 +599,262 @@ function ArticleModal({ article, onClose, onSelectArticle }) {
   );
 }
 
-function RelatedCard({ article, onClick }) {
+// ── Article Card (Glassmorphic) ───────────────────────────────────────────────
+function ArticleCard({ article, onClick, index }) {
   const [hovered, setHovered] = useState(false);
+  const isFeatured = article.featured;
+
   return (
     <button
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        width: "100%", textAlign: "left",
-        display: "flex", alignItems: "center", gap: "12px",
-        padding: "12px 14px", borderRadius: "10px", cursor: "pointer",
-        background: hovered ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.025)",
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
-        transition: "all 0.15s ease", outline: "none"
+        display: "block", width: "100%", textAlign: "left", cursor: "pointer", outline: "none",
+        borderRadius: "16px", overflow: "hidden", position: "relative",
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.07)"}`,
+        background: "rgba(255,255,255,0.03)",
+        backdropFilter: "blur(20px)",
+        transform: hovered ? "translateY(-3px)" : "none",
+        boxShadow: hovered ? "0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08)" : "0 4px 20px rgba(0,0,0,0.2)",
+        transition: "all 0.28s cubic-bezier(0.16,1,0.3,1)",
+        fontFamily: "inherit",
+        animation: `fadeUp 0.5s ease both`,
+        animationDelay: `${index * 60}ms`,
+        gridColumn: isFeatured ? "1 / -1" : "auto",
       }}
     >
-      <div style={{
-        width: "28px", height: "28px", borderRadius: "8px", flexShrink: 0,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: `${article.accent}12`, border: `1px solid ${article.accent}22`
-      }}>
-        <article.Icon size={12} style={{ color: article.accent }} />
+      {/* Image */}
+      <div style={{ height: isFeatured ? "320px" : "190px", overflow: "hidden", position: "relative" }}>
+        <img
+          src={article.image}
+          alt={article.title}
+          style={{ width: "100%", height: "100%", objectFit: "cover", filter: `brightness(${hovered ? 0.65 : 0.5})`, transform: hovered ? "scale(1.04)" : "scale(1)", transition: "all 0.5s ease" }}
+        />
+        <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, rgba(8,11,14,0.98) 0%, rgba(8,11,14,0.4) 50%, transparent 100%)` }} />
+
+        {/* Tag pill on image */}
+        <div style={{ position: "absolute", top: "14px", left: "14px" }}>
+          <span style={{
+            fontSize: "9.5px", fontWeight: 600, padding: "4px 10px", borderRadius: "99px",
+            color: article.tagColor, background: `rgba(8,11,14,0.75)`,
+            border: `1px solid ${article.tagColor}40`,
+            backdropFilter: "blur(12px)", letterSpacing: "0.04em"
+          }}>
+            {article.tag}
+          </span>
+        </div>
+
+        {isFeatured && (
+          <div style={{ position: "absolute", top: "14px", right: "14px" }}>
+            <span style={{ fontSize: "9px", fontWeight: 700, padding: "4px 10px", borderRadius: "99px", color: "#fbbf24", background: "rgba(8,11,14,0.75)", border: "1px solid rgba(251,191,36,0.3)", backdropFilter: "blur(12px)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+              Featured
+            </span>
+          </div>
+        )}
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{
-          fontSize: "12px", fontWeight: 600,
-          color: hovered ? "#ffffff" : "#d4d4d8",
-          lineHeight: "1.35", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-          transition: "color 0.15s", fontFamily: "inherit"
+
+      {/* Card body */}
+      <div style={{ padding: isFeatured ? "22px 24px 20px" : "16px 18px 16px", position: "relative" }}>
+        <h3 style={{
+          fontSize: isFeatured ? "18px" : "13.5px", fontWeight: 700,
+          color: hovered ? "#ffffff" : "#f3f4f6",
+          lineHeight: 1.3, marginBottom: "8px", letterSpacing: "-0.3px",
+          transition: "color 0.15s", fontFamily: "inherit",
+          display: "-webkit-box", WebkitLineClamp: isFeatured ? 2 : 2, WebkitBoxOrient: "vertical", overflow: "hidden"
         }}>
           {article.title}
+        </h3>
+
+        <p style={{
+          fontSize: "11.5px", color: "#4b5563", lineHeight: "1.6",
+          marginBottom: "14px",
+          display: "-webkit-box", WebkitLineClamp: isFeatured ? 2 : 2, WebkitBoxOrient: "vertical", overflow: "hidden"
+        }}>
+          {article.excerpt}
         </p>
-        <p style={{ fontSize: "10px", color: "#52525b", marginTop: "2px" }}>{article.category} · {article.read}</p>
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "10px", color: "#374151" }}>
+            <span style={{ display: "flex", alignItems: "center", gap: "3px" }}><Clock size={9} />{article.readTime}</span>
+            <span style={{ color: "#1f2937" }}>·</span>
+            <span>{article.date}</span>
+          </div>
+          <span style={{
+            display: "flex", alignItems: "center", gap: "4px",
+            fontSize: "10.5px", fontWeight: 600, color: article.tagColor,
+            opacity: hovered ? 1 : 0.7, transition: "opacity 0.15s"
+          }}>
+            Read <ArrowRight size={9} style={{ transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
+          </span>
+        </div>
       </div>
-      <ChevronRight size={12} style={{ color: "#52525b", flexShrink: 0 }} />
     </button>
   );
 }
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
-export default function ApivesBlogsPage() {
+export default function ApivesBlog() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [viewMode, setViewMode] = useState("grid");
+  const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered = ARTICLES.filter(a => {
-    const matchCat = activeCategory === "All" || a.category === activeCategory;
+    const matchTag = activeFilter === "All" || a.tag === activeFilter;
     const q = searchQuery.toLowerCase();
-    const matchSearch = !q ||
-      a.title.toLowerCase().includes(q) ||
-      a.desc.toLowerCase().includes(q) ||
-      a.category.toLowerCase().includes(q);
-    return matchCat && matchSearch;
+    const matchSearch = !q || a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q) || a.tag.toLowerCase().includes(q);
+    return matchTag && matchSearch;
   });
-
-  const featured = ARTICLES[0];
-  const showFeatured = activeCategory === "All" && !searchQuery;
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: #050708; }
-        ::-webkit-scrollbar-thumb { background: #1c2a1e; border-radius: 99px; }
-        ::-webkit-scrollbar-thumb:hover { background: #16a34a; }
-        .pill-scroll::-webkit-scrollbar { height: 0; display: none; }
-        input::placeholder { color: #3f3f46; }
-        input::-webkit-input-placeholder { color: #3f3f46; }
+        body { background: #07090c; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #07090c; }
+        ::-webkit-scrollbar-thumb { background: #1a2a1e; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #22c55e; }
+        .filter-scroll::-webkit-scrollbar { display: none; }
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(12px); }
+          from { opacity: 0; transform: translateY(16px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .fade-up-1 { animation: fadeUp 0.4s ease both; animation-delay: 0ms; }
-        .fade-up-2 { animation: fadeUp 0.4s ease both; animation-delay: 60ms; }
-        .fade-up-3 { animation: fadeUp 0.4s ease both; animation-delay: 110ms; }
-        .fade-up-4 { animation: fadeUp 0.4s ease both; animation-delay: 150ms; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .filter-btn:hover { background: rgba(255,255,255,0.06) !important; border-color: rgba(255,255,255,0.14) !important; color: #d1d5db !important; }
+        input::placeholder { color: #374151; }
       `}</style>
 
-      <div style={{ fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, sans-serif", background: "#070a0b", minHeight: "100vh", color: "#fafafa" }}>
+      <div style={{ fontFamily: "'DM Sans', -apple-system, sans-serif", background: "#07090c", minHeight: "100vh", color: "#f9fafb" }}>
 
-        {/* ── HERO ──────────────────────────────────────────────────────── */}
-        <section style={{
-          position: "relative",
-          paddingTop: "64px",
-          paddingBottom: "52px",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          overflow: "hidden"
-        }}>
-          {/* Subtle radial glow */}
-          <div style={{
-            position: "absolute", top: "-100px", right: "-80px",
-            width: "480px", height: "480px", borderRadius: "50%",
-            pointerEvents: "none",
-            background: "radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 65%)"
-          }} />
-          <div style={{
-            position: "absolute", bottom: "-60px", left: "15%",
-            width: "340px", height: "220px", borderRadius: "50%",
-            pointerEvents: "none",
-            background: "radial-gradient(circle, rgba(34,197,94,0.04) 0%, transparent 70%)"
-          }} />
-
-          <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "0 24px" }}>
-            <div className="fade-up-1">
-              <h1 style={{
-                fontSize: "clamp(28px,4.5vw,48px)",
-                fontWeight: 800,
-                lineHeight: 1.08,
-                letterSpacing: "-1.5px",
-                maxWidth: "520px",
-                marginBottom: "14px",
-                color: "#fafafa"
-              }}>
-                The blog for{" "}
-                <span style={{ color: "#22c55e" }}>API-first</span>{" "}
-                developers.
-              </h1>
-            </div>
-
-            <div className="fade-up-2">
-              <p style={{
-                color: "#71717a",
-                fontSize: "14px",
-                maxWidth: "380px",
-                lineHeight: "1.65",
-                marginBottom: "28px",
-                fontWeight: 400
-              }}>
-                Verified guides, honest comparisons, and practical insights for building with APIs in production.
-              </p>
-            </div>
-
-            <div className="fade-up-3" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px" }}>
-              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                <Search size={12} style={{ position: "absolute", left: "13px", color: "#22c55e", pointerEvents: "none" }} />
-                <input
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Search articles..."
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    borderRadius: "99px",
-                    paddingLeft: "34px",
-                    paddingRight: searchQuery ? "32px" : "16px",
-                    paddingTop: "9px",
-                    paddingBottom: "9px",
-                    fontSize: "12.5px",
-                    color: "#e4e4e7",
-                    width: "220px",
-                    outline: "none",
-                    fontFamily: "inherit",
-                    transition: "border-color 0.15s, background 0.15s"
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = "rgba(34,197,94,0.35)"; e.currentTarget.style.background = "rgba(34,197,94,0.04)"; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    style={{ position: "absolute", right: "12px", background: "none", border: "none", cursor: "pointer", color: "#52525b", display: "flex" }}
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11.5px", color: "#52525b" }}>
-                <BookOpen size={11} />
-                <span>{ARTICLES.length} articles</span>
-                <span style={{ color: "#3f3f46" }}>·</span>
-                <span style={{ color: "#22c55e" }}>All verified</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── CATEGORY PILLS ────────────────────────────────────────────── */}
-        <div
-          className="pill-scroll"
-          style={{
-            overflowX: "auto",
-            borderBottom: "1px solid rgba(255,255,255,0.05)"
-          }}
-        >
-          <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "0 24px" }}>
-            <div style={{ display: "flex", gap: "6px", padding: "12px 0", whiteSpace: "nowrap" }}>
-              {CATEGORIES.map(cat => {
-                const meta = CATEGORY_META[cat];
-                const CatIcon = meta?.Icon || Layers;
-                const active = activeCategory === cat;
-                return (
-                  <CategoryPill
-                    key={cat}
-                    cat={cat}
-                    CatIcon={CatIcon}
-                    active={active}
-                    onClick={() => setActiveCategory(cat)}
-                  />
-                );
-              })}
-            </div>
-          </div>
+        {/* ── BACKGROUND GLOWS ──────────────────────────────────────────── */}
+        <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+          <div style={{ position: "absolute", top: "-200px", right: "-100px", width: "600px", height: "600px", borderRadius: "50%", background: "radial-gradient(circle, rgba(34,197,94,0.06) 0%, transparent 65%)" }} />
+          <div style={{ position: "absolute", top: "50%", left: "-200px", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(99,102,241,0.04) 0%, transparent 65%)" }} />
         </div>
 
-        {/* ── MAIN CONTENT ──────────────────────────────────────────────── */}
-        <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "36px 24px 80px" }}>
+        <div style={{ position: "relative", zIndex: 1 }}>
 
-          {/* Featured */}
-          {showFeatured && (
-            <div style={{ marginBottom: "40px" }}>
-              <SectionLabel color="#22c55e" label="Featured" />
-              <FeaturedCard article={featured} onClick={() => setSelectedArticle(featured)} />
-            </div>
-          )}
+          {/* ── HERO ─────────────────────────────────────────────────────── */}
+          <section style={{ paddingTop: "80px", paddingBottom: "64px", textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+            <div style={{ maxWidth: "600px", margin: "0 auto", padding: "0 24px" }}>
 
-          {/* All Articles */}
-          <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <div style={{ width: "2px", height: "12px", borderRadius: "99px", background: "rgba(255,255,255,0.25)" }} />
-                <span style={{ fontSize: "9px", fontWeight: 600, color: "#52525b", letterSpacing: "0.14em", textTransform: "uppercase" }}>
-                  {searchQuery ? `Results for "${searchQuery}"` : activeCategory === "All" ? "All Articles" : activeCategory}
-                </span>
-                <span style={{
-                  fontSize: "10px", color: "#52525b", borderRadius: "99px",
-                  padding: "1px 8px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)"
-                }}>
-                  {filtered.length}
-                </span>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "5px 14px", borderRadius: "99px", border: "1px solid rgba(34,197,94,0.2)", background: "rgba(34,197,94,0.06)", marginBottom: "28px", animation: "fadeIn 0.5s ease both" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
+                <span style={{ fontSize: "11px", fontWeight: 600, color: "#22c55e", letterSpacing: "0.05em" }}>APIVES BLOG</span>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                <ViewButton active={viewMode === "grid"} onClick={() => setViewMode("grid")}>
-                  <LayoutGrid size={11} />
-                </ViewButton>
-                <ViewButton active={viewMode === "list"} onClick={() => setViewMode("list")}>
-                  <List size={11} />
-                </ViewButton>
+              <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: "clamp(36px,5.5vw,58px)", fontWeight: 800, lineHeight: 1.06, letterSpacing: "-2px", marginBottom: "18px", animation: "fadeUp 0.5s ease 0.05s both" }}>
+                The blog for{" "}
+                <span style={{
+                  background: "linear-gradient(135deg, #22c55e, #4ade80)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"
+                }}>
+                  API-first
+                </span>
+                {" "}developers.
+              </h1>
+
+              <p style={{ color: "#6b7280", fontSize: "15px", lineHeight: "1.65", marginBottom: "36px", animation: "fadeUp 0.5s ease 0.1s both" }}>
+                Verified guides, honest comparisons, and practical insights for building with APIs in production.
+              </p>
+
+              {/* Search */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", flexWrap: "wrap", animation: "fadeUp 0.5s ease 0.15s both" }}>
+                <div style={{ position: "relative" }}>
+                  <Search size={13} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#22c55e", pointerEvents: "none" }} />
+                  <input
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder="Search articles..."
+                    style={{
+                      background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)",
+                      borderRadius: "99px", paddingLeft: "38px", paddingRight: searchQuery ? "36px" : "18px",
+                      paddingTop: "11px", paddingBottom: "11px", fontSize: "13px", color: "#e5e7eb",
+                      width: "240px", outline: "none", fontFamily: "inherit", transition: "all 0.15s"
+                    }}
+                    onFocus={e => { e.currentTarget.style.borderColor = "rgba(34,197,94,0.4)"; e.currentTarget.style.background = "rgba(34,197,94,0.04)"; }}
+                    onBlur={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+                  />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery("")} style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#4b5563", display: "flex" }}>
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11.5px", color: "#374151" }}>
+                  <BookOpen size={11} style={{ color: "#22c55e" }} />
+                  <span style={{ color: "#4b5563" }}>{ARTICLES.length} articles</span>
+                  <span style={{ color: "#1f2937" }}>·</span>
+                  <span style={{ color: "#22c55e", fontWeight: 600 }}>All verified</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── UNIQUE FILTER STRIP ───────────────────────────────────────── */}
+          <div style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "rgba(7,9,12,0.8)", backdropFilter: "blur(20px)", position: "sticky", top: 0, zIndex: 100 }}>
+            <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 28px" }}>
+              <div className="filter-scroll" style={{ overflowX: "auto", display: "flex", gap: "4px", padding: "10px 0", whiteSpace: "nowrap" }}>
+                {FILTERS.map(f => {
+                  const active = activeFilter === f;
+                  return (
+                    <button
+                      key={f}
+                      className={active ? "" : "filter-btn"}
+                      onClick={() => setActiveFilter(f)}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "5px",
+                        padding: "6px 14px", borderRadius: "8px", fontSize: "11px", fontWeight: 600,
+                        border: active ? "1px solid rgba(34,197,94,0.4)" : "1px solid rgba(255,255,255,0.06)",
+                        background: active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.025)",
+                        color: active ? "#22c55e" : "#4b5563",
+                        cursor: "pointer", transition: "all 0.15s", outline: "none",
+                        fontFamily: "inherit", whiteSpace: "nowrap", letterSpacing: "0.01em"
+                      }}
+                    >
+                      {active && <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#22c55e", flexShrink: 0 }} />}
+                      {f}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ── ARTICLES GRID ─────────────────────────────────────────────── */}
+          <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "40px 28px 100px" }}>
+
+            {/* Count bar */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "28px", flexWrap: "wrap", gap: "10px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "2px", height: "14px", borderRadius: "99px", background: "#22c55e" }} />
+                <span style={{ fontFamily: "'Syne', sans-serif", fontSize: "14px", fontWeight: 700, color: "#9ca3af", letterSpacing: "-0.2px" }}>
+                  {searchQuery ? `"${searchQuery}"` : activeFilter === "All" ? "All Articles" : activeFilter}
+                </span>
+                <span style={{ fontSize: "11px", color: "#374151", padding: "2px 9px", borderRadius: "99px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  {filtered.length}
+                </span>
               </div>
             </div>
 
             {filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "80px 0" }}>
-                <div style={{
-                  width: "48px", height: "48px", borderRadius: "14px", margin: "0 auto 16px",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)"
-                }}>
-                  <AlertCircle size={20} style={{ color: "#52525b" }} />
-                </div>
-                <p style={{ color: "#d4d4d8", fontSize: "14px", fontWeight: 500, marginBottom: "4px" }}>No articles found</p>
-                <p style={{ color: "#52525b", fontSize: "12px", marginBottom: "18px" }}>No results for "{searchQuery}"</p>
-                <button
-                  onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "6px",
-                    fontSize: "11.5px", fontWeight: 500, padding: "8px 16px", borderRadius: "99px",
-                    background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)",
-                    color: "#22c55e", cursor: "pointer", fontFamily: "inherit"
-                  }}
-                >
-                  <RefreshCw size={11} /> Clear filters
+                <p style={{ color: "#374151", fontSize: "14px", marginBottom: "16px" }}>No articles found for "{searchQuery}"</p>
+                <button onClick={() => { setSearchQuery(""); setActiveFilter("All"); }} style={{ fontSize: "12px", padding: "9px 20px", borderRadius: "99px", background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)", color: "#22c55e", cursor: "pointer", fontFamily: "inherit" }}>
+                  Clear filters
                 </button>
               </div>
-            ) : viewMode === "grid" ? (
+            ) : (
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                gap: "14px"
+                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+                gap: "16px"
               }}>
-                {filtered.map(a => (
-                  <ArticleCard key={a.id} article={a} onClick={() => setSelectedArticle(a)} />
-                ))}
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                {filtered.map(a => (
-                  <ListCard key={a.id} article={a} onClick={() => setSelectedArticle(a)} />
+                {filtered.map((a, i) => (
+                  <ArticleCard key={a.id} article={a} onClick={() => setSelectedArticle(a)} index={i} />
                 ))}
               </div>
             )}
@@ -1683,185 +866,11 @@ export default function ApivesBlogsPage() {
           <ArticleModal
             article={selectedArticle}
             onClose={() => setSelectedArticle(null)}
-            onSelectArticle={setSelectedArticle}
+            articles={ARTICLES}
+            onSelect={setSelectedArticle}
           />
         )}
       </div>
     </>
-  );
-}
-
-function CategoryPill({ cat, CatIcon, active, onClick }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        display: "inline-flex", alignItems: "center", gap: "5px",
-        padding: "5px 12px", borderRadius: "99px", fontSize: "10.5px", fontWeight: 500,
-        border: `1px solid ${active ? "#22c55e" : hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
-        background: active ? "#22c55e" : hovered ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-        color: active ? "#000000" : hovered ? "#a1a1aa" : "#71717a",
-        cursor: "pointer", transition: "all 0.15s ease", outline: "none",
-        fontFamily: "inherit", whiteSpace: "nowrap"
-      }}
-    >
-      <CatIcon size={9} />
-      {cat}
-    </button>
-  );
-}
-
-function ViewButton({ active, onClick, children }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: "28px", height: "28px", borderRadius: "8px",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        cursor: "pointer", transition: "all 0.15s ease", outline: "none",
-        background: active ? "#22c55e" : hovered ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.04)",
-        border: `1px solid ${active ? "#22c55e" : "rgba(255,255,255,0.06)"}`,
-        color: active ? "#000" : "#71717a",
-        fontFamily: "inherit"
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-
-function SectionLabel({ color, label, Icon: LIcon }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "16px" }}>
-      <div style={{ width: "2px", height: "13px", borderRadius: "99px", background: color, flexShrink: 0 }} />
-      {LIcon && <LIcon size={10} style={{ color }} />}
-      <span style={{ fontSize: "9px", fontWeight: 600, color: "#52525b", letterSpacing: "0.13em", textTransform: "uppercase" }}>
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function FeaturedCard({ article, onClick }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: "100%", textAlign: "left", cursor: "pointer", outline: "none",
-        borderRadius: "16px", padding: "28px 28px 24px",
-        background: "rgba(255,255,255,0.025)",
-        border: `1px solid ${hovered ? "rgba(34,197,94,0.2)" : "rgba(34,197,94,0.1)"}`,
-        transition: "all 0.25s ease",
-        boxShadow: hovered ? "0 0 32px rgba(34,197,94,0.06)" : "none",
-        position: "relative", overflow: "hidden",
-        fontFamily: "inherit"
-      }}
-    >
-      <div style={{
-        position: "absolute", top: "-80px", right: "-60px",
-        width: "300px", height: "300px", borderRadius: "50%",
-        pointerEvents: "none",
-        background: "radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 65%)"
-      }} />
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "flex-start", position: "relative" }}>
-        <div style={{ flex: 1, minWidth: "260px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "7px", alignItems: "center", marginBottom: "16px" }}>
-            <span style={{
-              fontSize: "10px", fontWeight: 500, padding: "2px 8px", borderRadius: "99px",
-              color: "#22c55e", background: "rgba(34,197,94,0.09)", border: "1px solid rgba(34,197,94,0.18)"
-            }}>
-              {article.category}
-            </span>
-            <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "10.5px", color: "#52525b" }}>
-              <Clock size={9} />{article.read}
-            </span>
-            <span style={{ color: "#3f3f46", fontSize: "10px" }}>·</span>
-            <span style={{ fontSize: "10.5px", color: "#52525b" }}>{article.date}</span>
-          </div>
-
-          <h2 style={{
-            fontSize: "clamp(16px,2.2vw,22px)",
-            fontWeight: 700, lineHeight: 1.25,
-            letterSpacing: "-0.4px", marginBottom: "10px",
-            color: hovered ? "#ffffff" : "#f4f4f5",
-            transition: "color 0.2s", maxWidth: "480px",
-            fontFamily: "inherit"
-          }}>
-            {article.title}
-          </h2>
-
-          <p style={{ color: "#52525b", fontSize: "13px", lineHeight: "1.6", maxWidth: "460px", marginBottom: "20px" }}>
-            {article.desc}
-          </p>
-
-          <span style={{
-            display: "inline-flex", alignItems: "center", gap: "5px",
-            fontSize: "12.5px", fontWeight: 600, color: "#22c55e"
-          }}>
-            Read article
-            <ArrowRight size={12} style={{ transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
-          </span>
-        </div>
-
-        <div style={{
-          width: "80px", height: "80px", borderRadius: "18px", flexShrink: 0,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.12)"
-        }}>
-          <article.Icon size={34} style={{ color: "#22c55e", opacity: 0.55 }} />
-        </div>
-      </div>
-    </button>
-  );
-}
-
-function ListCard({ article, onClick }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: "100%", textAlign: "left",
-        display: "flex", alignItems: "center", gap: "14px",
-        padding: "14px 16px", borderRadius: "12px", cursor: "pointer",
-        background: hovered ? "rgba(255,255,255,0.045)" : "rgba(255,255,255,0.025)",
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)"}`,
-        transition: "all 0.15s ease", outline: "none", fontFamily: "inherit"
-      }}
-    >
-      <div style={{
-        width: "34px", height: "34px", borderRadius: "10px", flexShrink: 0,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        background: `${article.accent}12`, border: `1px solid ${article.accent}22`
-      }}>
-        <article.Icon size={14} style={{ color: article.accent }} />
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{
-          fontSize: "13px", fontWeight: 600,
-          color: hovered ? "#ffffff" : "#e4e4e7",
-          lineHeight: "1.35", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-          transition: "color 0.15s", fontFamily: "inherit"
-        }}>
-          {article.title}
-        </p>
-        <p style={{ fontSize: "10.5px", color: "#52525b", marginTop: "2px" }}>
-          {article.category} · {article.read} · {article.date}
-        </p>
-      </div>
-      <ArrowRight size={13} style={{ color: article.accent, flexShrink: 0, transform: hovered ? "translateX(2px)" : "none", transition: "transform 0.15s" }} />
-    </button>
   );
 }
