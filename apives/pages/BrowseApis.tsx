@@ -15,6 +15,11 @@ Sprout, FlaskConical, Dumbbell, Wallet, Umbrella, Building, Zap, Truck,
 Landmark, Gamepad2
 } from 'lucide-react';
 
+// FIX 1: Global performance styles injected via style tag
+// Add these to your global CSS / index.css instead if possible:
+// html, body { overflow-x: hidden; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; background: #000; }
+// * { -webkit-tap-highlight-color: transparent; }
+
 const CATEGORIES = [
 { name: 'All', icon: LayoutGrid },
 { name: 'AI', icon: Cpu },
@@ -76,104 +81,123 @@ export const BrowseApis: React.FC = () => {
   const [topIds, setTopIds] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-const [selectedPricing, setSelectedPricing] = useState("All");
-const [showFilters, setShowFilters] = useState(false);
+  const [selectedPricing, setSelectedPricing] = useState("All");
+  const [showFilters, setShowFilters] = useState(false);
 
-// 🔥 VERY LIGHT SHUFFLE (cheap, no heavy sort)
-const lightShuffle = (arr: ApiListing[]) => {
-  const copy = [...arr];
-  for (let i = 0; i < Math.min(4, copy.length - 1); i++) {
-    const j = Math.floor(Math.random() * copy.length);
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-};
+  // 🔥 VERY LIGHT SHUFFLE (cheap, no heavy sort)
+  const lightShuffle = (arr: ApiListing[]) => {
+    const copy = [...arr];
+    for (let i = 0; i < Math.min(4, copy.length - 1); i++) {
+      const j = Math.floor(Math.random() * copy.length);
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  };
 
   // 🚀 LOAD FUNCTION
- const loadApis = async (pageNumber: number, reset = false) => {
-  try {
-    setIsLoading(true);
+  const loadApis = async (pageNumber: number, reset = false) => {
+    try {
+      setIsLoading(true);
 
-    const res = await fetch(
-  `https://apives-3xrc.onrender.com/api/apis?page=${pageNumber}&limit=12&search=${encodeURIComponent(searchTerm)}&category=${selectedCategory}&pricing=${selectedPricing}`
-);
+      const res = await fetch(
+        `https://apives-3xrc.onrender.com/api/apis?page=${pageNumber}&limit=12&search=${encodeURIComponent(searchTerm)}&category=${selectedCategory}&pricing=${selectedPricing}`
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    console.log("API RESPONSE:", data);
+      console.log("API RESPONSE:", data);
 
-    const list = Array.isArray(data.apis) ? data.apis : [];
+      const list = Array.isArray(data.apis) ? data.apis : [];
 
-    const normalized = list.map((a: any) => ({
-      ...a,
-      id: a._id,
-    }));
+      const normalized = list.map((a: any) => ({
+        ...a,
+        id: a._id,
+      }));
 
-    const finalList =
-  pageNumber === 1 ? lightShuffle(normalized) : normalized;
+      const finalList =
+        pageNumber === 1 ? lightShuffle(normalized) : normalized;
 
-if (reset) {
-  setApis(finalList);
-} else {
-  setApis((prev) => [...prev, ...finalList]);
-}
+      if (reset) {
+        setApis(finalList);
+      } else {
+        setApis((prev) => [...prev, ...finalList]);
+      }
 
-    setHasMore(pageNumber < data.totalPages);
-    setPage(pageNumber);
+      setHasMore(pageNumber < data.totalPages);
+      setPage(pageNumber);
 
-// 🔥 Fetch real top 3 most liked APIs (only first page)
-if (pageNumber === 1) {
-  const rankRes = await fetch(
-    "https://apives-3xrc.onrender.com/api/community?page=1&limit=3"
-  );
-  const rankData = await rankRes.json();
+      // 🔥 Fetch real top 3 most liked APIs (only first page)
+      if (pageNumber === 1) {
+        const rankRes = await fetch(
+          "https://apives-3xrc.onrender.com/api/community?page=1&limit=3"
+        );
+        const rankData = await rankRes.json();
+        setTopIds(rankData.apis.map((a: any) => a._id));
+      }
 
-  setTopIds(rankData.apis.map((a: any) => a._id));
-}
-
-    setIsLoading(false);
-
-  } catch (err) {
-    console.error("Pagination Load Error", err);
-    setIsLoading(false);
-  }
-};
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Pagination Load Error", err);
+      setIsLoading(false);
+    }
+  };
 
   // 🚀 Initial Load
   useEffect(() => {
     loadApis(1, true);
   }, []);
 
-useEffect(() => {
-  const delay = setTimeout(() => {
-    loadApis(1, true);
-  }, 400);
-
-  return () => clearTimeout(delay);
-}, [searchTerm, selectedCategory, selectedPricing]);
-
-  // 🚀 Infinite Scroll
   useEffect(() => {
+    const delay = setTimeout(() => {
+      loadApis(1, true);
+    }, 400);
+    return () => clearTimeout(delay);
+  }, [searchTerm, selectedCategory, selectedPricing]);
+
+  // FIX 7: Infinite Scroll with requestAnimationFrame + passive listener
+  useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - 300 &&
-        hasMore &&
-        !isLoading
-      ) {
-        loadApis(page + 1);
-      }
+      if (ticking) return;
+
+      ticking = true;
+
+      requestAnimationFrame(() => {
+        if (
+          window.innerHeight + window.scrollY >=
+            document.body.offsetHeight - 500 &&
+          hasMore &&
+          !isLoading
+        ) {
+          loadApis(page + 1);
+        }
+
+        ticking = false;
+      });
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [page, hasMore, isLoading]);
 
-  // 🔥 LIGHT FRONTEND FILTER (FAST)
-  
-
   return (
-    <div className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-20 relative">
+    // FIX 2: Main page GPU composite layer
+    <div
+      className="min-h-screen bg-dark-950 pt-24 md:pt-32 pb-20 relative overflow-x-hidden"
+      style={{
+        transform: "translateZ(0)",
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
+        contain: "layout paint",
+      } as React.CSSProperties}
+    >
       <div className="absolute top-24 left-4 lg:left-8 z-30">
         <BackButton />
       </div>
@@ -196,118 +220,141 @@ useEffect(() => {
         </div>
 
         {/* SEARCH + FILTER UI */}
-<div className="max-w-2xl mx-auto mb-8 relative px-2">
+        <div className="max-w-2xl mx-auto mb-8 relative px-2">
 
-  <div className="
-  relative
-  flex items-center
-  bg-black/50
-  border border-white/10
-  rounded-full
-  px-4 md:px-6
-  py-2 md:py-3
-  shadow-xl
-  overflow-hidden
-  group
-">
+          {/* FIX 4: Search container with GPU layer + reduced shadow */}
+          <div
+            className="
+              relative
+              flex items-center
+              bg-black/50
+              border border-white/10
+              rounded-full
+              px-4 md:px-6
+              py-2 md:py-3
+              shadow-lg
+              overflow-hidden
+              group
+            "
+            style={{
+              transform: "translateZ(0)",
+              backfaceVisibility: "hidden",
+              willChange: "transform",
+              contain: "layout paint",
+            } as React.CSSProperties}
+          >
 
-    {/* Navbar Style Glow */}
-<div className="absolute inset-0 rounded-full pointer-events-none">
-  <div className="absolute top-0 bottom-0 left-0 w-[50%] border-l-[2px] border-mora-500 rounded-l-full shadow-[-15px_0_30px_-5px_rgba(34,197,94,0.45)] opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
-  <div className="absolute top-0 bottom-0 right-0 w-[50%] border-r-[2px] border-mora-500 rounded-r-full shadow-[15px_0_30px_-5px_rgba(34,197,94,0.45)] opacity-80 group-hover:opacity-100 transition-all duration-500"></div>
-</div>
+            {/* FIX 3: Search bar glow — replaced heavy layered shadows with single GPU-composited box-shadow */}
+            <div
+              className="absolute inset-0 rounded-full pointer-events-none border border-mora-500/20"
+              style={{
+                boxShadow: "0 0 18px rgba(34,197,94,0.10)",
+                transform: "translateZ(0)",
+                backfaceVisibility: "hidden",
+                willChange: "transform",
+              } as React.CSSProperties}
+            ></div>
 
-    {/* SEARCH ICON */}
-    <Search
-      className="text-slate-400 mr-2 flex-shrink-0"
-      size={16}
-    />
+            {/* SEARCH ICON */}
+            <Search
+              className="text-slate-400 mr-2 flex-shrink-0"
+              size={16}
+            />
 
-    {/* INPUT */}
-    <input
-      type="text"
-      placeholder="Find APIs..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-xs md:text-sm"
-    />
+            {/* INPUT */}
+            <input
+              type="text"
+              placeholder="Find APIs..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-white placeholder-slate-500 text-xs md:text-sm"
+            />
 
-    {/* FILTER BUTTON */}
-    <button
-      onClick={() => setShowFilters(!showFilters)}
-      className={`ml-2 px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase transition-all ${
-        showFilters
-          ? "bg-mora-500 text-black"
-          : "bg-white/10 text-slate-300"
-      }`}
-    >
-      Filters
-    </button>
-  </div>
-
-
-  {/* FILTER PANEL */}
-  {showFilters && (
-    <div className="absolute top-full left-0 w-full mt-3 z-50">
-      <div className="bg-black border border-mora-500/30 rounded-2xl p-5 shadow-2xl">
-
-        {/* PRICING */}
-        <div className="mb-6">
-          <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest mb-3">
-            Pricing
-          </h4>
-
-          <div className="flex flex-wrap gap-2">
-            {["All", "Free", "Freemium", "Paid"].map((price) => (
-              <button
-                key={price}
-                onClick={() => setSelectedPricing(price)}
-                className={`px-3 py-1.5 rounded-full text-[10px] font-semibold border ${
-                  selectedPricing === price
-                    ? "bg-mora-500 text-black border-mora-500"
-                    : "bg-white/5 border-white/10 text-slate-400"
-                }`}
-              >
-                {price}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* CATEGORY */}
-        <div className="mb-3 flex justify-between items-center">
-          <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest">
-            Category
-          </h4>
-          <button onClick={() => setShowFilters(false)}>
-            <X size={16} className="text-slate-400" />
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 max-h-[250px] overflow-y-auto">
-          {CATEGORIES.map((cat) => (
+            {/* FILTER BUTTON */}
             <button
-              key={cat.name}
-              onClick={() => {
-                setSelectedCategory(cat.name);
-                setShowFilters(false);
-              }}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full text-[10px] border ${
-                selectedCategory === cat.name
-                  ? "bg-mora-500 text-black border-mora-500"
-                  : "bg-white/5 border-white/10 text-slate-400"
+              onClick={() => setShowFilters(!showFilters)}
+              className={`ml-2 px-3 py-1.5 rounded-full text-[10px] font-semibold uppercase transition-all ${
+                showFilters
+                  ? "bg-mora-500 text-black"
+                  : "bg-white/10 text-slate-300"
               }`}
             >
-              <cat.icon size={14} />
-              {cat.name}
+              Filters
             </button>
-          ))}
+          </div>
+
+          {/* FILTER PANEL */}
+          {showFilters && (
+            <div className="absolute top-full left-0 w-full mt-3 z-50">
+              {/* FIX 5: Filter panel — removed shadow-2xl, reduced border opacity, GPU layer */}
+              <div
+                className="bg-black border border-mora-500/20 rounded-2xl p-5"
+                style={{
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
+                  transform: "translateZ(0)",
+                  willChange: "transform",
+                  contain: "layout paint",
+                } as React.CSSProperties}
+              >
+
+                {/* PRICING */}
+                <div className="mb-6">
+                  <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest mb-3">
+                    Pricing
+                  </h4>
+
+                  <div className="flex flex-wrap gap-2">
+                    {["All", "Free", "Freemium", "Paid"].map((price) => (
+                      <button
+                        key={price}
+                        onClick={() => setSelectedPricing(price)}
+                        className={`px-3 py-1.5 rounded-full text-[10px] font-semibold border ${
+                          selectedPricing === price
+                            ? "bg-mora-500 text-black border-mora-500"
+                            : "bg-white/5 border-white/10 text-slate-400"
+                        }`}
+                      >
+                        {price}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CATEGORY */}
+                <div className="mb-3 flex justify-between items-center">
+                  <h4 className="text-[10px] font-bold text-mora-400 uppercase tracking-widest">
+                    Category
+                  </h4>
+                  <button onClick={() => setShowFilters(false)}>
+                    <X size={16} className="text-slate-400" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 max-h-[250px] overflow-y-auto">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.name}
+                      onClick={() => {
+                        setSelectedCategory(cat.name);
+                        setShowFilters(false);
+                      }}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-full text-[10px] border ${
+                        selectedCategory === cat.name
+                          ? "bg-mora-500 text-black border-mora-500"
+                          : "bg-white/5 border-white/10 text-slate-400"
+                      }`}
+                    >
+                      <cat.icon size={14} />
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    </div>
-  )}
-</div>
- {/* GRID */}
+
+        {/* GRID */}
         {apis.length === 0 && isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
@@ -316,7 +363,14 @@ useEffect(() => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {/* FIX 6: Grid with CSS containment + GPU layer */}
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
+              style={{
+                contain: "layout paint",
+                transform: "translateZ(0)",
+              } as React.CSSProperties}
+            >
               {apis.map((api) => (
                 <ApiCard
                   key={api.id}
@@ -326,21 +380,21 @@ useEffect(() => {
               ))}
             </div>
 
-           {/* GLOBAL LOADER */}
-{isLoading && (
-  <div className="w-full flex justify-center py-12">
-    <div className="flex flex-col items-center gap-3">
-      <div className="relative w-10 h-10">
-        <div className="absolute inset-0 rounded-full border border-mora-500/20 animate-ping"></div>
-        <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin"></div>
-      </div>
+            {/* GLOBAL LOADER */}
+            {isLoading && (
+              <div className="w-full flex justify-center py-12">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="relative w-10 h-10">
+                    <div className="absolute inset-0 rounded-full border border-mora-500/20 animate-ping"></div>
+                    <div className="absolute inset-0 rounded-full border-2 border-mora-500 border-t-transparent animate-spin"></div>
+                  </div>
 
-      <p className="text-mora-400 text-[10px] uppercase tracking-[0.3em]">
-        Syncing APIs
-      </p>
-    </div>
-  </div>
-)}
+                  <p className="text-mora-400 text-[10px] uppercase tracking-[0.3em]">
+                    Syncing APIs
+                  </p>
+                </div>
+              </div>
+            )}
 
             {!hasMore && (
               <div className="text-center text-slate-500 text-xs uppercase tracking-widest">
