@@ -290,7 +290,7 @@ const isAdminUser = user?.email === "beatslevelone@gmail.com";
             id={`card-gallery-${api.id}`}
             className="flex overflow-x-auto gap-3 snap-x no-scrollbar"
           >
-            {api.gallery.slice(0, 5).map((img, i) => (
+            {api.gallery.slice(0, 1).map((img, i) => (
               <div
                 key={i}
                 className="flex-none w-[90%] aspect-[16/9] rounded-xl overflow-hidden
