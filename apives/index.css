@@ -17,7 +17,7 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #22c55e; /* mora green */
+  background-color: #22c55e;
   border-radius: 10px;
   border: 2px solid #0b0b0b;
 }
@@ -26,4 +26,60 @@ html, body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #22c55e #0b0b0b;
+}
+
+
+/* =========================================
+   APIVES MOBILE PERFORMANCE FIXES
+========================================= */
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.api-card {
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  contain: layout paint;
+  will-change: transform;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (max-width: 767px) {
+
+  .api-card:hover {
+    transform: none !important;
+  }
+
+  [class*="shadow-[0_0_"] {
+    box-shadow: none !important;
+  }
+
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl {
+    backdrop-filter: none !important;
+  }
+}
+
+section {
+  position: relative;
+}
+
+section > .absolute.inset-0 {
+  overflow: hidden;
+  pointer-events: none;
+  max-width: 100%;
 }
