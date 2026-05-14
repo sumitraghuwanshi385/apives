@@ -1527,4 +1527,4 @@ Empowering Startup Founders to Connect & Build.
 </div>
 
 );
-};
+}; 
