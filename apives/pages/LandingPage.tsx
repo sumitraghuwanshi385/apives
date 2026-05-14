@@ -22,8 +22,6 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import { ApivesAIHighlight } from '../components/ApivesAIHighlight';
-import QuickStartPlayground from "../components/QuickStartPlayground";
-import LiveApiRunner from "../components/LiveApiRunner";
 import ApiCard from '../components/ApiCard';
 let LANDING_API_CACHE:
   | {
