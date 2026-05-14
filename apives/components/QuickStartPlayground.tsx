@@ -201,5 +201,3 @@ Never expose secret keys in frontend code.
 );
 
 };
-
-export default QuickStartPlayground;
