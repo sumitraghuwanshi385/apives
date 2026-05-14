@@ -1,11 +1,93 @@
-/* ===== GLOBAL SCROLLBAR FIX ===== */
+/* =========================================
+   GLOBAL RESET
+========================================= */
 
-html, body {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
   overflow-y: auto !important;
   background-color: #000;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
+
+/* =========================================
+   UNIVERSAL FIXES
+========================================= */
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* =========================================
+   SAFE API CARD
+========================================= */
+
+.api-card {
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* =========================================
+   MOBILE PERFORMANCE FIX
+========================================= */
+
+@media (max-width: 767px) {
+
+  .api-card:hover {
+    transform: none !important;
+  }
+
+  [class*="shadow-[0_0_"] {
+    box-shadow: none !important;
+  }
+
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* =========================================
+   SECTION SAFETY
+========================================= */
+
+section {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+section > .absolute.inset-0 {
+  overflow: hidden;
+  pointer-events: none;
+  max-width: 100%;
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
 
 /* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
@@ -26,60 +108,4 @@ html, body {
 * {
   scrollbar-width: thin;
   scrollbar-color: #22c55e #0b0b0b;
-}
-
-
-/* =========================================
-   APIVES MOBILE PERFORMANCE FIXES
-========================================= */
-
-html,
-body {
-  overflow-x: hidden;
-  max-width: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.api-card {
-  overflow: hidden;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  contain: layout paint;
-  will-change: transform;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-@media (max-width: 767px) {
-
-  .api-card:hover {
-    transform: none !important;
-  }
-
-  [class*="shadow-[0_0_"] {
-    box-shadow: none !important;
-  }
-
-  .backdrop-blur-md,
-  .backdrop-blur-lg,
-  .backdrop-blur-xl {
-    backdrop-filter: none !important;
-  }
-}
-
-section {
-  position: relative;
-}
-
-section > .absolute.inset-0 {
-  overflow: hidden;
-  pointer-events: none;
-  max-width: 100%;
 }
