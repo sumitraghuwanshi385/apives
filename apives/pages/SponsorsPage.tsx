@@ -1,295 +1,127 @@
-import React, { useEffect } from "react";
-import {
-Crown,
-Star,
-Gem,
-TrendingUp,
-Users,
-Globe,
-MousePointerClick,
-ArrowRight
-} from "lucide-react";
+import React from "react";
 
-const trackSponsor = (
-sponsor: string,
-type: "impression" | "click"
-) => {
-fetch("https://apives-3xrc.onrender.com/api/sponsor/track", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({
-sponsor,
-type,
-page: window.location.pathname
-})
-}).catch(console.error);
-};
-
-const handleSponsorClick = (
-sponsor: string,
-baseUrl: string
-) => {
-trackSponsor(sponsor, "click");
-
-const url =
-"${baseUrl}?utm_source=apives&utm_medium=sponsor&utm_campaign=apives_marketplace";
-
-window.open(
-url,
-"_blank",
-"noopener,noreferrer"
-);
-};
-
-const sponsors = [
-{
-tier: "Apex",
-name: "ScoutPanels",
-logo: "https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg",
-description:
-"Turning B2B feedback into adoption signals.",
-website: "https://scoutpanels.com"
-},
-{
-tier: "Prime",
-name: "SerpApi",
-logo: "https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg",
-description:
-"Real-time Google Search results via developer APIs.",
-website: "https://serpapi.com"
-},
-{
-tier: "Zenith",
-name: "Startives",
-logo: "https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png",
-description:
-"Empowering startup founders to connect and build.",
-website: "https://startives.com"
+interface SponsorsSectionProps {
+  handleSponsorClick: (
+    sponsor: string,
+    baseUrl: string
+  ) => void;
 }
-];
 
-const tierStyles: any = {
-Apex:
-"border-amber-400/30 bg-amber-500/10",
-Prime:
-"border-slate-300/20 bg-white/5",
-Zenith:
-"border-orange-500/30 bg-orange-500/10"
+const SponsorsSection: React.FC<SponsorsSectionProps> = ({
+  handleSponsorClick
+}) => {
+  return (
+    <>
+{/* ================= SPONSORS ================= */}  
+  <section  
+    className="pt-10 pb-20 bg-black border-t border-white/5"  
+    style={{ overflow: 'hidden', position: 'relative' }}  
+  >  
+    <div  
+      className="absolute inset-0 pointer-events-none"  
+      style={{ overflow: 'hidden' }}  
+    >  
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]" />  
+    </div>  
+
+    <div className="max-w-4xl mx-auto px-6 relative z-10">  
+      <div className="text-center mb-14">  
+        <p className="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-black mb-3">  
+          SPONSORS  
+        </p>  
+        <h2 className="text-3xl md:text-4xl font-bold text-white">  
+          Partners Powering Apives  
+        </h2>  
+        <p className="text-slate-400 text-sm mt-3 max-w-xl mx-auto">  
+          Developer platforms supporting the Apives ecosystem.  
+        </p>  
+      </div>  
+
+      {/* APEX SPONSOR */}  
+      <div className="text-center mb-12">  
+        <p className="text-[10px] uppercase tracking-[0.35em] font-black bg-gradient-to-r from-amber-400 to-yellow-600 bg-clip-text text-transparent mb-4">  
+          Apex Sponsor  
+        </p>  
+        <a  
+          href="#"  
+          onClick={(e) => {  
+            e.preventDefault();  
+            handleSponsorClick("scoutpanels", "https://scoutpanels.com");  
+          }}  
+          className="relative inline-flex items-center gap-4 px-6 py-4 rounded-2xl border border-amber-400/40 bg-gradient-to-br from-amber-400/15 to-transparent hover:from-amber-400/25 transition-all shadow-[0_0_25px_rgba(245,158,11,0.18)] hover:shadow-[0_0_40px_rgba(245,158,11,0.30)]"  
+        >  
+          <img  
+            src="https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg"  
+            alt="ScoutPanels"  
+            className="h-10 md:h-12 w-10 md:w-12 object-contain rounded-2xl bg-white p-1 flex-shrink-0"  
+          />  
+          <div className="text-left">  
+            <p className="text-white font-bold text-sm md:text-base">ScoutPanels</p>  
+            <p className="text-slate-400 text-[11px] md:text-xs leading-snug max-w-[320px]">  
+              Turning B2B feedback into adoption signals  
+            </p>  
+          </div>  
+        </a>  
+      </div>  
+
+      {/* PRIME SPONSOR */}  
+      <div className="text-center">  
+        <p className="text-[10px] uppercase tracking-[0.35em] font-black bg-gradient-to-r from-slate-200 to-slate-400 bg-clip-text text-transparent mb-4">  
+          Prime Sponsor  
+        </p>  
+        <a  
+          href="#"  
+          onClick={(e) => {  
+            e.preventDefault();  
+            handleSponsorClick("serpapi", "https://serpapi.com");  
+          }}  
+          className="relative inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl border border-white/20 bg-gradient-to-br from-white/10 to-transparent hover:from-white/20 transition-all hover:scale-[1.02] shadow-[0_0_35px_rgba(255,255,255,0.12)] hover:shadow-[0_0_55px_rgba(255,255,255,0.22)]"  
+        >  
+          <img  
+            src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"  
+            alt="SerpApi"  
+            className="h-10 md:h-12 w-10 md:w-12 object-contain rounded-2xl bg-white p-1 flex-shrink-0"  
+          />  
+          <div className="text-left">  
+            <p className="text-white font-bold text-sm md:text-base">SerpApi</p>  
+            <p className="text-slate-400 text-[11px] md:text-xs leading-snug max-w-[320px]">  
+              Real-time Google Search results via a fast developer API  
+            </p>  
+          </div>  
+        </a>  
+      </div>  
+
+      {/* ZENITH SPONSOR */}  
+      <div className="text-center mt-10">  
+        <p className="text-[10px] uppercase tracking-[0.35em] font-black bg-gradient-to-r from-orange-500 to-amber-700 bg-clip-text text-transparent mb-4">  
+          Zenith Sponsor  
+        </p>  
+        <a  
+          href="#"  
+          onClick={(e) => {  
+            e.preventDefault();  
+            handleSponsorClick("startives", "https://startives.com");  
+          }}  
+          className="relative inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl border border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-transparent hover:from-orange-500/20 transition-all hover:scale-[1.02] shadow-[0_0_25px_rgba(249,115,22,0.18)] hover:shadow-[0_0_40px_rgba(249,115,22,0.30)]"  
+        >  
+          <img  
+            src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png"  
+            alt="Startives"  
+            className="h-10 md:h-12 w-10 md:w-12 object-contain rounded-2xl bg-white p-1 flex-shrink-0"  
+          />  
+          <div className="text-left">  
+            <p className="text-white font-bold text-sm md:text-base">Startives</p>  
+            <p className="text-slate-400 text-[11px] md:text-xs leading-snug max-w-[320px]">  
+              Empowering Startup Founders to Connect & Build.  
+            </p>  
+          </div>  
+        </a>  
+      </div>  
+    </div>  
+  </section>  
+      
+    </>
+  );
 };
 
-export const SponsorsPage = () => {
-useEffect(() => {
-sponsors.forEach((sponsor) => {
-trackSponsor(
-sponsor.name.toLowerCase(),
-"impression"
-);
-});
-}, []);
-
-return (
-<div className="min-h-screen bg-black text-white">
-
-  {/* HERO */}
-
-  <section className="relative pt-32 pb-20 overflow-hidden">
-
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.15),transparent_60%)]" />
-
-    <div className="max-w-6xl mx-auto px-6 relative z-10 text-center">
-
-      <p className="text-mora-500 uppercase tracking-[0.4em] text-xs font-black mb-4">
-        APIVES SPONSORSHIP
-      </p>
-
-      <h1 className="text-4xl md:text-7xl font-bold tracking-tight">
-        Partners Powering
-        <span className="text-mora-500">
-          {" "}Apives
-        </span>
-      </h1>
-
-      <p className="text-slate-400 max-w-2xl mx-auto mt-6">
-        Developer platforms helping builders
-        discover APIs, tools, infrastructure,
-        and opportunities inside the Apives
-        ecosystem.
-      </p>
-    </div>
-  </section>
-
-  {/* SPONSORS */}
-
-  <section className="pb-24">
-    <div className="max-w-5xl mx-auto px-6">
-
-      {sponsors.map((sponsor) => (
-        <div
-          key={sponsor.name}
-          className={`mb-8 rounded-3xl border p-8 ${tierStyles[sponsor.tier]}`}
-        >
-
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-
-            <div className="flex items-center gap-5">
-
-              <img
-                src={sponsor.logo}
-                alt={sponsor.name}
-                className="w-16 h-16 rounded-2xl bg-white object-contain p-1"
-              />
-
-              <div>
-
-                <div className="flex items-center gap-2 mb-2">
-
-                  {sponsor.tier === "Apex" && (
-                    <Crown className="text-amber-400" size={18} />
-                  )}
-
-                  {sponsor.tier === "Prime" && (
-                    <Star size={18} />
-                  )}
-
-                  {sponsor.tier === "Zenith" && (
-                    <Gem className="text-orange-400" size={18} />
-                  )}
-
-                  <span className="text-xs uppercase tracking-[0.25em] text-slate-400 font-black">
-                    {sponsor.tier} Sponsor
-                  </span>
-                </div>
-
-                <h2 className="text-2xl font-bold">
-                  {sponsor.name}
-                </h2>
-
-                <p className="text-slate-400 mt-2">
-                  {sponsor.description}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() =>
-                handleSponsorClick(
-                  sponsor.name.toLowerCase(),
-                  sponsor.website
-                )
-              }
-              className="px-6 py-3 rounded-full bg-mora-500 text-black font-black uppercase tracking-widest hover:scale-105 transition-all"
-            >
-              Visit
-            </button>
-
-          </div>
-        </div>
-      ))}
-
-    </div>
-  </section>
-
-  {/* BENEFITS */}
-
-  <section className="border-t border-white/5 py-24">
-
-    <div className="max-w-6xl mx-auto px-6">
-
-      <div className="text-center mb-16">
-
-        <h2 className="text-4xl font-bold">
-          Why Sponsor Apives?
-        </h2>
-
-        <p className="text-slate-400 mt-4">
-          Reach developers actively looking
-          for APIs and tools.
-        </p>
-
-      </div>
-
-      <div className="grid md:grid-cols-4 gap-6">
-
-        <div className="border border-white/10 rounded-2xl p-6">
-          <Users className="mb-4 text-mora-500" />
-          <h3 className="font-bold mb-2">
-            Developer Audience
-          </h3>
-          <p className="text-slate-400 text-sm">
-            Reach active builders.
-          </p>
-        </div>
-
-        <div className="border border-white/10 rounded-2xl p-6">
-          <TrendingUp className="mb-4 text-mora-500" />
-          <h3 className="font-bold mb-2">
-            Visibility
-          </h3>
-          <p className="text-slate-400 text-sm">
-            Premium ecosystem placement.
-          </p>
-        </div>
-
-        <div className="border border-white/10 rounded-2xl p-6">
-          <MousePointerClick className="mb-4 text-mora-500" />
-          <h3 className="font-bold mb-2">
-            Click Tracking
-          </h3>
-          <p className="text-slate-400 text-sm">
-            Impression and click analytics.
-          </p>
-        </div>
-
-        <div className="border border-white/10 rounded-2xl p-6">
-          <Globe className="mb-4 text-mora-500" />
-          <h3 className="font-bold mb-2">
-            Global Reach
-          </h3>
-          <p className="text-slate-400 text-sm">
-            Exposure across the API ecosystem.
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  {/* CTA */}
-
-  <section className="pb-24">
-
-    <div className="max-w-4xl mx-auto px-6">
-
-      <div className="rounded-3xl border border-mora-500/20 bg-gradient-to-br from-mora-500/10 to-transparent p-12 text-center">
-
-        <h2 className="text-4xl font-bold mb-4">
-          Become An Apives Sponsor
-        </h2>
-
-        <p className="text-slate-400 mb-8">
-          Showcase your product to developers,
-          startups, founders, and API consumers.
-        </p>
-
-        <button
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-mora-500 text-black font-black uppercase tracking-widest"
-        >
-          Apply For Sponsorship
-          <ArrowRight size={18} />
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-</div>
-
-);
-};
-
-export default SponsorsPage;
+export default SponsorsSection;
