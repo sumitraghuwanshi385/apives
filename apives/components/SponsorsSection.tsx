@@ -51,6 +51,10 @@ className="relative py-16 border-t border-white/5 bg-black overflow-hidden"
   <div className="max-w-6xl mx-auto px-6 relative z-10">
 
     {/* Header */}
+    <div className="text-center mb-10">
+      <div className="inline-flex items-center px-3 py-1 rounded-full border border-mora-500/20 bg-mora-500/10 text-mora-400 text-[10px] uppercase tracking-[0.25em] font-bold">
+        Our Partners 
+      </div>
 
       <h2 className="mt-4 text-3xl md:text-4xl font-bold text-white">
         Partners Powering Apives
@@ -81,7 +85,7 @@ className="relative py-16 border-t border-white/5 bg-black overflow-hidden"
             </span>
 
             <span className="px-2 py-1 rounded-full bg-mora-500/10 border border-mora-500/20 text-mora-400 text-[10px] font-bold">
-              Partner
+              Sponsored
             </span>
           </div>
 
