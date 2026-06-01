@@ -63,7 +63,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
               >
                 <img
-                  src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+                  src="https://i.postimg.cc/1tBGHWnW/Picsart-26-06-01-10-26-25-532.png"
                   alt="SerpApi"
                   className="max-h-16 max-w-[200px] w-auto h-auto object-contain"
                 />
