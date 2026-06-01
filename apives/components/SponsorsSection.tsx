@@ -82,7 +82,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
               >
                 <img
-                  src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png"
+                  src="https://i.postimg.cc/fbrtT6ds/Screenshot-2026-06-01-10-31-28-13-40deb401b9ffe8e1df2f1cc5ba480b12.jpg"
                   alt="Startives"
                   className="max-h-16 max-w-[200px] w-auto h-auto object-contain"
                 />
