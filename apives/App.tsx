@@ -78,7 +78,7 @@ return (
     <Route path="/onboarding" element={<OnboardingPage />} />    
 <Route path="/offers/serpapi" element={<SerpApiOffer />} />
 <Route path="/live-api-runner"
-  element={<LiveApiRunnerPage />} />
+element={<LiveApiRunnerPage />} />
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
