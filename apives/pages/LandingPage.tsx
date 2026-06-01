@@ -22,7 +22,6 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import { ApivesAIHighlight } from '../components/ApivesAIHighlight';
-import QuickStartPlayground from "../components/QuickStartPlayground";
 import LiveApiRunner from "../components/LiveApiRunner";
 import ApiCard from '../components/ApiCard';
 import SponsorsSection from "../components/SponsorsSection";
@@ -394,7 +393,7 @@ export const LandingPage: React.FC = () => {
         className="pt-4 md:pt-6 pb-6 bg-black"
         style={{ overflow: 'hidden', contain: 'layout paint' }}
       >
-        <QuickStartPlayground />
+        
         <LiveApiRunner />
       </section>
 
