@@ -42,7 +42,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleSponsorClick("scoutpanels", "https://scoutpanels.com"); }}
-                className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                className="opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
               >
                 <img
                   src="https://i.postimg.cc/CLGMddt9/Picsart-26-06-01-11-37-35-003.png"
@@ -61,7 +61,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleSponsorClick("serpapi", "https://serpapi.com"); }}
-                className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                className="opacity-100 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
               >
                 <img
                   src="https://i.postimg.cc/1tBGHWnW/Picsart-26-06-01-10-26-25-532.png"
@@ -80,7 +80,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
               <a
                 href="#"
                 onClick={(e) => { e.preventDefault(); handleSponsorClick("startives", "https://startives.com"); }}
-                className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+                className="opacity-100 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
               >
                 <img
                   src="https://i.postimg.cc/6q7hprq4/Picsart-26-06-01-10-35-38-466.png"
