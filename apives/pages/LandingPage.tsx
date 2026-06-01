@@ -23,7 +23,7 @@ import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import { ApivesAIHighlight } from '../components/ApivesAIHighlight';
 import LiveApiRunner from "../components/LiveApiRunner";
-import ApiCard from '../components/ApiCard';
+import LandingApiCard from '../components/LandingApiCard';
 import SponsorsSection from "../components/SponsorsSection";
 
 let LANDING_API_CACHE:
@@ -470,7 +470,7 @@ export const LandingPage: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {universalApis.map((api, idx) => (
-                <ApiCard
+                <LandingApiCard
                   key={`${api.id}-${idx}`}
                   api={api}
                   topIds={top3Ids}
@@ -506,7 +506,7 @@ export const LandingPage: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {freshApis.map((api, idx) => (
-                <ApiCard
+                <LandingApiCard
                   key={`new-${api.id}`}
                   api={api}
                   topIds={top3Ids}
@@ -542,7 +542,7 @@ export const LandingPage: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20">
               {communityApis.map((api, idx) => (
-                <ApiCard
+                <LandingApiCard
                   key={`loved-${api.id}`}
                   api={api}
                   topIds={top3Ids}
