@@ -44,7 +44,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
               >
                 <img
-                  src="https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg"
+                  src="https://i.postimg.cc/CLGMddt9/Picsart-26-06-01-11-37-35-003.png"
                   alt="ScoutPanels"
                   className="max-h-16 max-w-[200px] w-auto h-auto object-contain"
                 />
