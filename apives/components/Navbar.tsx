@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -99,7 +99,7 @@ return (
 <NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
 </NavLink>
-<NavLink to="/live-api-runner" icon={Radio}>
+<NavLink to="/live-api-runner" icon={Terminal}>
   API Runner
 </NavLink>
       </div>    
@@ -138,7 +138,7 @@ return (
             </div>    
         ) : (    
           <Link to="/access" className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]">    
-              <Terminal size={14} />    
+              <Fingerprint size={14} />    
               <span className="text-[10px] font-black uppercase tracking-widest">Access Console</span>    
           </Link>    
         )}    
@@ -221,7 +221,7 @@ transition-all
 </MobileNavLink>
 <MobileNavLink
   to="/ask-apives"
-  icon={Radio}
+  icon={Bot}
   onClick={() => {
     setIsOpen(false);
     navigate("/ask-apives-ai"); // ✅ FIX NAV
@@ -260,7 +260,7 @@ transition-all
           </button>    
         </>    
       ) : (    
-        <MobileNavLink to="/access" icon={Terminal} onClick={() => setIsOpen(false)}>Access Console</MobileNavLink>    
+        <MobileNavLink to="/access" icon={Fingerprint} onClick={() => setIsOpen(false)}>Access Console</MobileNavLink>    
       )}    
     </div>    
   </div>    
