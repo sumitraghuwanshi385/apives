@@ -1,4 +1,5 @@
 import React from "react";
+import { Handshake } from "lucide-react";
 
 interface SponsorsSectionProps {
   handleSponsorClick: (
@@ -97,21 +98,30 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
         {/* Become a Sponsor button */}
         <a
-          href="mailto: apivesecosystem@gmail.com"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/25 text-white text-sm font-medium hover:border-green-500/60 hover:shadow-[0_0_20px_rgba(34,197,94,0.18)] transition-all duration-300 hover:scale-[1.03]"
-        >
-          <span>Become a Sponsor</span>
-          <svg
-            className="w-4 h-4 text-slate-400"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </a>
+  href="mailto:apivesecosystem@gmail.com"
+  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/25 text-white text-sm font-medium hover:border-green-500/60 hover:shadow-[0_0_20px_rgba(34,197,94,0.18)] transition-all duration-300 hover:scale-[1.03]"
+>
+  <Handshake
+    size={16}
+    className="text-mora-500 drop-shadow-[0_0_10px_rgba(34,197,94,0.6)]"
+  />
 
+  <span>Become a Sponsor</span>
+
+  <svg
+    className="w-4 h-4 text-slate-400"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M17 8l4 4m0 0l-4 4m4-4H3"
+    />
+  </svg>
+</a>
       </div>
     </section>
   );
