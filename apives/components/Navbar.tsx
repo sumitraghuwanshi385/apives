@@ -99,6 +99,9 @@ return (
 <NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
 </NavLink>
+<NavLink to="/live-api-runner" icon={Terminal}>
+  API Runner
+</NavLink>
       </div>    
     </div>    
 
@@ -226,6 +229,14 @@ transition-all
 >
   ApivesAI
 </MobileNavLink>
+<MobileNavLink
+  to="/live-api-runner"
+  icon={Terminal}
+  onClick={() => setIsOpen(false)}
+>
+  API Runner
+</MobileNavLink>
+
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
