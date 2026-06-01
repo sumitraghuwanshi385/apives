@@ -97,7 +97,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
 
         {/* Become a Sponsor button */}
         <a
-          href="mailto:sponsor@apives.com"
+          href="mailto: apivesecosystem@gmail.com"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/25 text-white text-sm font-medium hover:border-green-500/60 hover:shadow-[0_0_20px_rgba(34,197,94,0.18)] transition-all duration-300 hover:scale-[1.03]"
         >
           <span>Become a Sponsor</span>
