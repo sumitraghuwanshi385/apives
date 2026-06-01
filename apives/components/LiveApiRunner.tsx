@@ -174,21 +174,9 @@ return(
 
 <section className="py-10 bg-black border-t border-white/5 relative overflow-hidden">
 
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
 
-<div className="max-w-5xl mx-auto px-4 relative z-10">
+<div className="max-w-6xl mx-auto px-4 relative z-10">
 
-<div className="text-center mb-6">
-
-<h2 className="text-2xl md:text-4xl font-bold text-white">
-Live API Request Runner
-</h2>
-
-<p className="text-slate-400 text-xs sm:text-sm mt-2">
-Run real APIs and inspect JSON responses instantly.
-</p>
-
-</div>
 
 <p className="text-center text-xs text-slate-500 mb-3">
 Try these example APIs to quickly test the runner
