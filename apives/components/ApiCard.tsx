@@ -27,7 +27,7 @@ const isNew = (dateString?: string) => {
   return Date.now() - publishedDate < 15 * 24 * 60 * 60 * 1000;
 };
 
-const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
+const ApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
   const [saved, setSaved] = useState(false);
 const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 const isVerified = api.verified;
