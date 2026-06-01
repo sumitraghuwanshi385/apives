@@ -99,7 +99,7 @@ return (
 <NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
 </NavLink>
-<NavLink to="/live-api-runner" icon={Terminal}>
+<NavLink to="/live-api-runner" icon={Radio}>
   API Runner
 </NavLink>
       </div>    
@@ -221,7 +221,7 @@ transition-all
 </MobileNavLink>
 <MobileNavLink
   to="/ask-apives"
-  icon={Bot}
+  icon={Radio}
   onClick={() => {
     setIsOpen(false);
     navigate("/ask-apives-ai"); // ✅ FIX NAV
