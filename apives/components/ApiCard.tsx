@@ -37,7 +37,7 @@ interface Props {
   refetchLandingApis?: () => Promise<void>;
 }
 
-/* ===============================
+/* ==============================
    API CARD — 1:1 LANDING COPY
 ================================ */
 
