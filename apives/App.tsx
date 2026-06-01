@@ -77,6 +77,8 @@ return (
     <Route path="/popular" element={<PopularApis />} />    
     <Route path="/onboarding" element={<OnboardingPage />} />    
 <Route path="/offers/serpapi" element={<SerpApiOffer />} />
+<Route path="/live-api-runner"
+element={<LiveApiRunnerPage />} />
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
@@ -88,8 +90,7 @@ return (
     <Route path="/terms" element={<TermsPage />} />    
     <Route path="/support" element={<SupportPage />} />    
     <Route path="/sponsorship" element={<SponsorshipPage />} />    
-<Route path="/live-api-runner"
-element={<LiveApiRunnerPage />} />
+
     {/* Admin */}    
     <Route path="/admin/sponsors" element={<SponsorAnalytics />} />    
 
