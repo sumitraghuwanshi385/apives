@@ -25,6 +25,7 @@ import { OnboardingPage } from './pages/Onboarding';
 import AskApivesPage from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
 import Blogs from "./pages/Blogs";
+import LiveApiRunnerPage from "./pages/LiveApiRunnerPage";
 
 import {
 EnterprisePage,
@@ -87,7 +88,8 @@ return (
     <Route path="/terms" element={<TermsPage />} />    
     <Route path="/support" element={<SupportPage />} />    
     <Route path="/sponsorship" element={<SponsorshipPage />} />    
-
+<Route path="/live-api-runner"
+element={<LiveApiRunnerPage />} />
     {/* Admin */}    
     <Route path="/admin/sponsors" element={<SponsorAnalytics />} />    
 
