@@ -10,74 +10,90 @@ interface SponsorsSectionProps {
 const SponsorsSection: React.FC<SponsorsSectionProps> = ({
   handleSponsorClick
 }) => {
-  const sponsors = [
-    {
-      key: "serpapi",
-      name: "SerpApi",
-      url: "https://serpapi.com",
-      logo: "https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg",
-    },
-    {
-      key: "startives",
-      name: "Startives",
-      url: "https://startives.com",
-      logo: "https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png",
-    },
-    {
-      key: "scoutpanels",
-      name: "ScoutPanels",
-      url: "https://scoutpanels.com",
-      logo: "https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg",
-    },
-  ];
-
   return (
-    <section className="bg-black border-t border-white/10 py-20">
+    <section className="bg-black border-t border-white/10 py-16">
       <div className="max-w-3xl mx-auto px-6 text-center">
 
-        {/* Top label */}
-        <p className="text-[10px] uppercase tracking-[0.45em] text-slate-500 font-black mb-3">
-          Our Sponsors
-        </p>
-
         {/* Main heading */}
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
-          Sponsored By
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          Our Sponsors
         </h2>
 
         {/* Subtitle */}
-        <p className="text-slate-400 text-sm max-w-sm mx-auto mb-16">
+        <p className="text-slate-400 text-sm max-w-sm mx-auto mb-12">
           Companies helping power the Apives ecosystem.
         </p>
 
-        {/* Sponsor list */}
-        <div className="flex flex-col items-center gap-12 mb-16">
-          {sponsors.map((sponsor) => (
-            <a
-              key={sponsor.key}
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleSponsorClick(sponsor.key, sponsor.url);
-              }}
-              className="group flex flex-col items-center gap-3 opacity-75 hover:opacity-100 transition-all duration-300"
-            >
-              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-white p-1 shadow-[0_0_0px_rgba(34,197,94,0)] group-hover:shadow-[0_0_18px_rgba(34,197,94,0.35)] transition-shadow duration-300 group-hover:scale-105 transform">
+        {/* Soft green ambient glow */}
+        <div className="relative">
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div className="w-96 h-64 bg-green-500/8 rounded-full blur-3xl" />
+          </div>
+
+          <div className="relative flex flex-col items-center gap-14">
+
+            {/* APEX — Gold */}
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-[9px] uppercase tracking-[0.45em] font-black"
+                style={{ background: "linear-gradient(90deg, #f59e0b, #d97706)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Apex
+              </p>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); handleSponsorClick("scoutpanels", "https://scoutpanels.com"); }}
+                className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+              >
                 <img
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  className="w-full h-full object-contain rounded-xl"
+                  src="https://i.postimg.cc/VsZnhSDy/Picsart-26-01-18-21-34-03-305.jpg"
+                  alt="ScoutPanels"
+                  className="max-h-16 max-w-[200px] w-auto h-auto object-contain"
                 />
-              </div>
-              <span className="text-white font-semibold text-base tracking-wide">
-                {sponsor.name}
-              </span>
-            </a>
-          ))}
+              </a>
+            </div>
+
+            {/* PRIME — Silver */}
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-[9px] uppercase tracking-[0.45em] font-black"
+                style={{ background: "linear-gradient(90deg, #e2e8f0, #94a3b8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Prime
+              </p>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); handleSponsorClick("serpapi", "https://serpapi.com"); }}
+                className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+              >
+                <img
+                  src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
+                  alt="SerpApi"
+                  className="max-h-16 max-w-[200px] w-auto h-auto object-contain"
+                />
+              </a>
+            </div>
+
+            {/* ZENITH — Bronze */}
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-[9px] uppercase tracking-[0.45em] font-black"
+                style={{ background: "linear-gradient(90deg, #cd7f32, #a0522d)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Zenith
+              </p>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); handleSponsorClick("startives", "https://startives.com"); }}
+                className="opacity-75 hover:opacity-100 transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.4)]"
+              >
+                <img
+                  src="https://res.cloudinary.com/dp7avkarg/image/upload/v1774100516/Picsart_26-02-22_16-45-46-153_owkgpp.png"
+                  alt="Startives"
+                  className="max-h-16 max-w-[200px] w-auto h-auto object-contain"
+                />
+              </a>
+            </div>
+
+          </div>
         </div>
 
         {/* Divider */}
-        <div className="w-16 h-px bg-white/10 mx-auto mb-10" />
+        <div className="w-16 h-px bg-white/10 mx-auto mt-14 mb-10" />
 
         {/* Become a Sponsor button */}
         <a
@@ -86,7 +102,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
         >
           <span>Become a Sponsor</span>
           <svg
-            className="w-4 h-4 text-slate-400 group-hover:text-green-400"
+            className="w-4 h-4 text-slate-400"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
