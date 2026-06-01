@@ -25,7 +25,6 @@ import { OnboardingPage } from './pages/Onboarding';
 import AskApivesPage from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
 import Blogs from "./pages/Blogs";
-import LiveApiRunnerPage from "./pages/LiveApiRunnerPage";
 
 import {
 EnterprisePage,
@@ -77,8 +76,6 @@ return (
     <Route path="/popular" element={<PopularApis />} />    
     <Route path="/onboarding" element={<OnboardingPage />} />    
 <Route path="/offers/serpapi" element={<SerpApiOffer />} />
-<Route path="/live-api-runner"
-element={<LiveApiRunnerPage />} />
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
