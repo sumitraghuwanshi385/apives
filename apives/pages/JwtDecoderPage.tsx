@@ -21,6 +21,7 @@ import {
   XCircle,
   Search,
   Check,
+  Network,
 } from "lucide-react";
 import { BackButton } from "../components/BackButton";
 
@@ -354,7 +355,7 @@ const JwtDecoderPage = () => {
                 <button
                   onClick={decodeJWT}
                   disabled={!token.trim()}
-                  className="flex-1 py-3.5 lg:py-4 px-6 lg:px-8 rounded-full bg-mora-500 hover:bg-mora-400 active:bg-mora-600 disabled:bg-white/10 disabled:text-slate-500 text-black font-semibold text-sm lg:text-base tracking-wide transition-all duration-200 shadow-lg shadow-mora-500/30"
+                  className="flex-1 py-3.5 lg:py-4 px-6 lg:px-8 rounded-full bg-mora-500 hover:bg-mora-400 active:bg-mora-600 disabled:bg-white/10 disabled:text-slate-500 text-black font-semibold text-sm lg:text-base tracking-wide transition-all duration-200"
                 >
                   DECODE &amp; ANALYZE
                 </button>
@@ -437,7 +438,7 @@ const JwtDecoderPage = () => {
             {/* JWT Structure - Compact Horizontal */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
               <div className="flex items-center gap-3 mb-5">
-                <ShieldCheck size={20} className="text-mora-500" />
+                <Network size={20} className="text-mora-500" />
                 <h3 className="text-white font-semibold text-lg">JWT Structure</h3>
               </div>
               <div className="flex flex-col md:flex-row gap-3">
