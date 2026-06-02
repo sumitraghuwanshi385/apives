@@ -22,6 +22,7 @@ import {
   Search,
   Check,
   Network,
+Key,
 } from "lucide-react";
 import { BackButton } from "../components/BackButton";
 
@@ -306,15 +307,23 @@ const JwtDecoderPage = () => {
 
       <div className="max-w-6xl mx-auto px-5 lg:px-6 relative z-10">
         {/* Hero */}
-        <div className="text-center mb-8 md:mb-12">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-none">
-            JWT Decoder
-            <span className="block text-mora-500">&amp; Validator</span>
-          </h1>
-          <p className="text-slate-400 mt-5 max-w-2xl mx-auto text-base lg:text-lg">
-            Professional-grade JWT analysis with real-time security scoring and smart insights.
-          </p>
-        </div>
+        
+<div className="text-center mb-8 md:mb-12">
+
+  <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-4">
+    <KeyRound className="text-mora-500" size={24} />
+  </div>
+
+  <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-none">
+    JWT Decoder
+    <span className="block text-mora-500">&amp; Validator</span>
+  </h1>
+
+  <p className="text-slate-400 mt-5 max-w-2xl mx-auto text-base lg:text-lg">
+    Professional-grade JWT analysis with real-time security scoring and smart insights.
+  </p>
+
+</div>
 
         <div className="grid lg:grid-cols-12 gap-5 lg:gap-6">
           {/* INPUT SECTION */}
