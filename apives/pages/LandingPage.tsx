@@ -283,9 +283,9 @@ export const LandingPage: React.FC = () => {
     {/* Mobile Horizontal Scroll + Desktop Grid */}
 
     <div
-      className="overflow-x-auto scrollbar-hide pb-2"
-      style={{ WebkitOverflowScrolling: "touch" }}
-    >
+  className="overflow-x-auto overflow-y-visible scrollbar-hide pb-4 pt-2"
+  style={{ WebkitOverflowScrolling: "touch" }}
+>
 
       <div className="flex gap-4 md:grid md:grid-cols-3">
 
@@ -293,7 +293,7 @@ export const LandingPage: React.FC = () => {
 
         <Link
           to="/live-api-runner"
-          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1 hover:bg-white/[0.05]"
+          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
         >
 
           <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
@@ -318,7 +318,7 @@ export const LandingPage: React.FC = () => {
 
         <Link
           to="/jwt-decoder"
-          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1 hover:bg-white/[0.05]"
+          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
         >
 
           <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
@@ -343,8 +343,7 @@ export const LandingPage: React.FC = () => {
 
         <Link
           to="/api-response-formatter"
-          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1 hover:bg-white/[0.05]"
-        >
+          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
 
           <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
             <FileJson className="text-mora-500" size={26} />
@@ -377,12 +376,7 @@ export const LandingPage: React.FC = () => {
         className="py-10 md:py-16 bg-black border-t border-white/5"
         style={{ overflow: 'hidden', contain: 'layout paint', position: 'relative' }}
       >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ overflow: 'hidden' }}
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]" />
-        </div>
+        
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
           <div className="text-center mb-8 md:mb-12">
