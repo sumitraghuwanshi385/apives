@@ -90,10 +90,6 @@ return(
 
 <section className="pt-8 pb-12 bg-black border-t border-white/5 relative overflow-hidden">
 
-{/* green glow */}
-
-<div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(34,197,94,0.12),transparent_60%)]"/>
-
 <div className="max-w-6xl mx-auto px-6 relative z-10">
 
 {/* HEADER */}
