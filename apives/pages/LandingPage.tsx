@@ -18,7 +18,7 @@ import {
   Key,
 Braces,
 KeyRound,
-PlayCircle
+Terminal
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -257,13 +257,13 @@ export const LandingPage: React.FC = () => {
 
 {/* ================= APIVES TOOLS ================= */}
 
-<section className="py-10 md:py-14 border-t border-white/5 bg-black">  <div className="max-w-7xl mx-auto px-4 md:px-8"><div className="text-center mb-8">
+<section className="py-10 md:py-14 border-t border-white/5 bg-black">  <div className="max-w-7xl mx-auto px-4 md:px-8"><div className="text-center mb-10">
 
-  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-mora-500/20 bg-mora-500/5 text-mora-400 text-[11px] font-black uppercase tracking-widest">
-    3 Tools Available Now
+  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.04] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[11px] font-black uppercase tracking-[0.25em] shadow-[0_0_30px_rgba(34,197,94,0.12)]">
+    ✦ 3 Tools Available Now
   </div>
 
-  <h2 className="mt-4 text-2xl md:text-4xl font-bold text-white tracking-tight">
+  <h2 className="mt-5 text-2xl md:text-4xl font-bold text-white tracking-tight">
     Apives Developer Tools
   </h2>
 
@@ -280,13 +280,14 @@ export const LandingPage: React.FC = () => {
 
   <div className="flex gap-4 md:grid md:grid-cols-3">
 
-    {/* API Response Formatter */}
+    {/* API RESPONSE FORMATTER */}
 
     <Link
-      to="/tools/api-response-formatter"
-      className="group min-w-[250px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-5 md:p-6 hover:border-mora-500/40 hover:bg-white/[0.02] transition-all duration-300 hover:-translate-y-1"
+      to="/api-response-formatter"
+      className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1"
     >
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-4">
+
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
         <Braces className="text-mora-500" size={26} />
       </div>
 
@@ -295,21 +296,23 @@ export const LandingPage: React.FC = () => {
       </h3>
 
       <p className="text-slate-400 text-sm leading-relaxed">
-        Format, validate and analyze JSON API responses instantly.
+        Format, validate, analyze and inspect JSON responses instantly.
       </p>
 
-      <div className="mt-4 text-mora-500 text-xs font-bold uppercase tracking-wider">
+      <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
         Open Tool →
       </div>
+
     </Link>
 
-    {/* JWT Decoder */}
+    {/* JWT DECODER */}
 
     <Link
-      to="/tools/jwt-decoder"
-      className="group min-w-[250px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-5 md:p-6 hover:border-mora-500/40 hover:bg-white/[0.02] transition-all duration-300 hover:-translate-y-1"
+      to="/jwt-decoder"
+      className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1"
     >
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-4">
+
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
         <KeyRound className="text-mora-500" size={26} />
       </div>
 
@@ -318,22 +321,24 @@ export const LandingPage: React.FC = () => {
       </h3>
 
       <p className="text-slate-400 text-sm leading-relaxed">
-        Decode JWT tokens and inspect payloads securely.
+        Decode JWT tokens, inspect payloads and verify claims instantly.
       </p>
 
-      <div className="mt-4 text-mora-500 text-xs font-bold uppercase tracking-wider">
+      <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
         Open Tool →
       </div>
+
     </Link>
 
-    {/* Live API Runner */}
+    {/* LIVE API RUNNER */}
 
     <Link
-      to="/tools/live-api-runner"
-      className="group min-w-[250px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-5 md:p-6 hover:border-mora-500/40 hover:bg-white/[0.02] transition-all duration-300 hover:-translate-y-1"
+      to="/live-api-runner"
+      className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1"
     >
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-4">
-        <PlayCircle className="text-mora-500" size={26} />
+
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+        <Terminal className="text-mora-500" size={26} />
       </div>
 
       <h3 className="text-white text-base md:text-lg font-bold mb-2">
@@ -341,12 +346,13 @@ export const LandingPage: React.FC = () => {
       </h3>
 
       <p className="text-slate-400 text-sm leading-relaxed">
-        Send API requests and inspect real-time responses instantly.
+        Test APIs, send requests and inspect live responses in real time.
       </p>
 
-      <div className="mt-4 text-mora-500 text-xs font-bold uppercase tracking-wider">
+      <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
         Open Tool →
       </div>
+
     </Link>
 
   </div>
@@ -355,7 +361,6 @@ export const LandingPage: React.FC = () => {
 
   </div>
 </section>
-     
       
       {/* ================= WHAT ARE YOU BUILDING TODAY ================= */}
       <section
