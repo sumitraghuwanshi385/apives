@@ -97,9 +97,6 @@ return (
 <NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
 </NavLink>
-<NavLink to="/live-api-runner" icon={Terminal}>
-  API Runner
-</NavLink>
       </div>    
     </div>    
 
@@ -218,16 +215,10 @@ transition-all
 
       <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
 
-<MobileNavLink to="/sponsorship" icon={Handshake} onClick={() => setIsOpen(false)}>Sponsorship</MobileNavLink>
+<MobileNavLink to="/ask-apives" icon={Bot}
+  onClick={() => { setIsOpen(false);
+ navigate("/ask-apives-ai"); }}> ApivesAI </MobileNavLink>
 
-<MobileNavLink
-  to="/ask-apives"
-  icon={Bot}
-  onClick={() => {
-    setIsOpen(false);
-    navigate("/ask-apives-ai"); }}>
-  ApivesAI
-</MobileNavLink>
 <MobileNavLink
   to="/live-api-runner"
   icon={Terminal}
@@ -253,7 +244,7 @@ transition-all
 </MobileNavLink>
 
 
-      <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
+          
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
         <>    
@@ -271,6 +262,9 @@ transition-all
             onClick={handleLogout}     
             className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-red-400 hover:bg-red-500/5 transition-all uppercase tracking-wide mt-1"    
           >    
+
+<MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
+
             <LogOut size={13} className="text-red-500/60" />     
             Terminate Session    
           </button>    
