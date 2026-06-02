@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo, Fragment } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   FileJson, Code2, Copy, Download, Upload, Trash2, Clock,
   CheckCircle2, XCircle, Search, ChevronDown, ChevronRight,
@@ -34,7 +34,7 @@ interface Stats {
   complexityScore: number;
 }
 
-const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
+const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97] focus:outline-none";
 
 const ApiResponseFormatterPage: React.FC = () => {
   const [jsonInput, setJsonInput] = useState('');
@@ -52,7 +52,8 @@ const ApiResponseFormatterPage: React.FC = () => {
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
 
-  const isLoggedIn = true; // Replace with real auth context
+  // TODO: Replace with real auth context
+  const isLoggedIn = true;
 
   // Load History
   useEffect(() => {
@@ -115,7 +116,9 @@ const ApiResponseFormatterPage: React.FC = () => {
       setError(null);
       setStats(calculateStats(parsed));
 
-      if (isLoggedIn) saveToHistory(input, pretty);
+      if (isLoggedIn) {
+        saveToHistory(input, pretty);
+      }
     } catch (err: any) {
       setIsValid(false);
       resetState(true);
@@ -130,7 +133,10 @@ const ApiResponseFormatterPage: React.FC = () => {
   }, [calculateStats, isLoggedIn]);
 
   const resetState = (keepError = false) => {
-    setFormattedOutput(''); setMinifiedOutput(''); setYamlOutput(''); setRawOutput('');
+    setFormattedOutput('');
+    setMinifiedOutput('');
+    setYamlOutput('');
+    setRawOutput('');
     if (!keepError) setError(null);
     setStats(null);
   };
@@ -175,31 +181,104 @@ const ApiResponseFormatterPage: React.FC = () => {
     const a = document.createElement('a');
     a.href = url;
     a.download = `\( {base} \){suffix}.${ext}`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  // Tree View Component
+  // Flatten
+  const handleFlatten = () => {
+    if (!formattedOutput) return;
+    try {
+      const parsed = JSON.parse(formattedOutput);
+      const flattened = flattenObject(parsed);
+      const flattenedStr = JSON.stringify(flattened, null, 2);
+      setJsonInput(flattenedStr);
+      validateAndFormat(flattenedStr);
+    } catch (e) {}
+  };
+
+  const flattenObject = (obj: any, prefix = ''): any => {
+    return Object.keys(obj).reduce((acc: any, k) => {
+      const pre = prefix ? `${prefix}.` : '';
+      if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+        Object.assign(acc, flattenObject(obj[k], pre + k));
+      } else {
+        acc[pre + k] = obj[k];
+      }
+      return acc;
+    }, {});
+  };
+
+  // Sort Keys
+  const handleSortKeys = () => {
+    if (!formattedOutput) return;
+    const parsed = JSON.parse(formattedOutput);
+    const sorted = Object.keys(parsed).sort().reduce((acc: any, k) => {
+      acc[k] = parsed[k];
+      return acc;
+    }, {});
+    const str = JSON.stringify(sorted, null, 2);
+    setJsonInput(str);
+    validateAndFormat(str);
+  };
+
+  // Remove Empty
+  const handleRemoveEmpty = () => {
+    if (!formattedOutput) return;
+    const parsed = JSON.parse(formattedOutput);
+    const cleaned = JSON.parse(JSON.stringify(parsed, (_, v) => 
+      (v === null || v === '' || (Array.isArray(v) && v.length === 0)) ? undefined : v
+    ));
+    const str = JSON.stringify(cleaned, null, 2);
+    setJsonInput(str);
+    validateAndFormat(str);
+  };
+
+  // Search
+  useEffect(() => {
+    if (!searchTerm.trim() || !formattedOutput) {
+      setMatchCount(0);
+      return;
+    }
+    try {
+      const regex = new RegExp(searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      setMatchCount((formattedOutput.match(regex) || []).length);
+    } catch {
+      setMatchCount(0);
+    }
+  }, [searchTerm, formattedOutput]);
+
+  const currentOutput = useMemo(() => {
+    if (activeTab === 'pretty') return formattedOutput;
+    if (activeTab === 'minified') return minifiedOutput;
+    if (activeTab === 'raw') return rawOutput;
+    return formattedOutput;
+  }, [activeTab, formattedOutput, minifiedOutput, rawOutput]);
+
+  // Tree View
   const JsonTree = React.memo(({ data, searchTerm }: { data: any; searchTerm: string }) => {
     const [expanded, setExpanded] = useState<Set<string>>(new Set(['$']));
 
-    const toggle = (path: string) => {
+    const toggleExpand = (path: string) => {
       setExpanded(prev => {
-        const n = new Set(prev);
-        n.has(path) ? n.delete(path) : n.add(path);
-        return n;
+        const newSet = new Set(prev);
+        if (newSet.has(path)) newSet.delete(path);
+        else newSet.add(path);
+        return newSet;
       });
     };
 
-    const highlight = (str: string) => {
-      if (!searchTerm.trim()) return str;
+    const highlight = (text: string) => {
+      if (!searchTerm.trim()) return text;
       const regex = new RegExp(`(\( {searchTerm.replace(/[.*+?^ \){}()|[\]\\]/g, '\\$&')})`, 'gi');
-      return str.replace(regex, m => `<mark class="bg-yellow-500/30 px-0.5 rounded">${m}</mark>`);
+      return text.replace(regex, match => `<mark class="bg-yellow-500/30 px-0.5 rounded">${match}</mark>`);
     };
 
     const renderNode = (node: any, path = '$'): React.ReactNode => {
       if (node === null) return <span className="text-red-400">null</span>;
-      if (typeof node === 'boolean') return <span className="text-mora-400">{node}</span>;
+      if (typeof node === 'boolean') return <span className="text-mora-400">{node.toString()}</span>;
       if (typeof node === 'number') return <span className="text-emerald-400">{node}</span>;
       if (typeof node === 'string') return <span className="text-amber-400">"{node}"</span>;
 
@@ -207,11 +286,15 @@ const ApiResponseFormatterPage: React.FC = () => {
         const isOpen = expanded.has(path);
         return (
           <div>
-            <div className="flex items-center gap-1 cursor-pointer hover:text-mora-400" onClick={() => toggle(path)}>
+            <div className="flex items-center gap-1.5 cursor-pointer hover:text-mora-400 py-0.5" onClick={() => toggleExpand(path)}>
               {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
-              Array [{node.length}]
+              <span>Array [{node.length}]</span>
             </div>
-            {isOpen && <div className="pl-6 border-l border-white/10 ml-2 mt-1">{node.map((item, i) => renderNode(item, `\( {path}[ \){i}]`))}</div>}
+            {isOpen && (
+              <div className="pl-6 border-l border-white/10 ml-2 mt-1 space-y-1">
+                {node.map((item: any, idx: number) => renderNode(item, `\( {path}[ \){idx}]`))}
+              </div>
+            )}
           </div>
         );
       }
@@ -221,14 +304,14 @@ const ApiResponseFormatterPage: React.FC = () => {
         const entries = Object.entries(node);
         return (
           <div>
-            <div className="flex items-center gap-1 cursor-pointer hover:text-mora-400" onClick={() => toggle(path)}>
+            <div className="flex items-center gap-1.5 cursor-pointer hover:text-mora-400 py-0.5" onClick={() => toggleExpand(path)}>
               {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
-              Object {'{'}{entries.length}{'}'}
+              <span>Object {'{'}{entries.length}{'}'}</span>
             </div>
             {isOpen && (
               <div className="pl-6 border-l border-white/10 ml-2 mt-1 space-y-1">
                 {entries.map(([key, val]) => (
-                  <div key={key} className="flex items-start gap-2">
+                  <div key={key} className="flex items-baseline gap-2">
                     <span className="text-violet-400">"{key}"</span>
                     <span className="text-white/50">:</span>
                     <div className="flex-1">{renderNode(val, `\( {path}. \){key}`)}</div>
@@ -242,34 +325,8 @@ const ApiResponseFormatterPage: React.FC = () => {
       return null;
     };
 
-    return <div className="font-mono text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: renderNode(data) as string }} />;
+    return <div className="font-mono text-sm leading-relaxed">{renderNode(data)}</div>;
   });
-
-  // Quick Utilities
-  const handleSortKeys = () => {
-    if (!formattedOutput) return;
-    const parsed = JSON.parse(formattedOutput);
-    const sorted = Object.keys(parsed).sort().reduce((acc: any, k) => { acc[k] = parsed[k]; return acc; }, {});
-    const str = JSON.stringify(sorted, null, 2);
-    setJsonInput(str);
-    validateAndFormat(str);
-  };
-
-  const handleRemoveEmpty = () => {
-    if (!formattedOutput) return;
-    const parsed = JSON.parse(formattedOutput);
-    const cleaned = JSON.parse(JSON.stringify(parsed, (_, v) => v === null || v === '' || (Array.isArray(v) && v.length === 0) ? undefined : v));
-    const str = JSON.stringify(cleaned, null, 2);
-    setJsonInput(str);
-    validateAndFormat(str);
-  };
-
-  const currentOutput = useMemo(() => {
-    if (activeTab === 'pretty') return formattedOutput;
-    if (activeTab === 'minified') return minifiedOutput;
-    if (activeTab === 'raw') return rawOutput;
-    return formattedOutput;
-  }, [activeTab, formattedOutput, minifiedOutput, rawOutput]);
 
   return (
     <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
@@ -292,7 +349,7 @@ const ApiResponseFormatterPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* INPUT */}
+          {/* Input Panel */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
@@ -300,7 +357,7 @@ const ApiResponseFormatterPage: React.FC = () => {
                 <h2 className="text-xl font-semibold">JSON Input</h2>
               </div>
 
-              <div className="flex gap-2 mb-4 text-xs text-white/70">
+              <div className="flex gap-2 mb-4 text-xs">
                 <div className="bg-white/5 px-3 py-1 rounded-full">Chars: {jsonInput.length}</div>
                 <div className="bg-white/5 px-3 py-1 rounded-full">Lines: {jsonInput.split('\n').length}</div>
               </div>
@@ -309,31 +366,31 @@ const ApiResponseFormatterPage: React.FC = () => {
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 onBlur={() => validateAndFormat(jsonInput)}
-                className="w-full h-80 bg-black border border-white/10 focus:border-mora-500 rounded-2xl p-5 font-mono text-sm resize-y min-h-[300px]"
+                className="w-full h-80 bg-black border border-white/10 focus:border-mora-500 rounded-2xl p-5 font-mono text-sm resize-y"
                 placeholder="Paste JSON, API response, GraphQL response, webhook payload, or upload a .json file..."
               />
 
               <div className="flex flex-wrap gap-2 mt-5">
                 <button onClick={() => validateAndFormat(jsonInput)} className={`${glassPill} bg-mora-500 text-black font-semibold`}>Format JSON</button>
-                <button onClick={() => document.getElementById('json-upload')?.click()} className={glassPill}><Upload size={16} className="mr-1" /> Upload</button>
+                <button onClick={() => document.getElementById('json-upload')?.click()} className={glassPill}><Upload size={16} /> Upload</button>
                 <button onClick={() => setJsonInput('')} className={`${glassPill} text-red-400`}>Clear</button>
               </div>
               <input id="json-upload" type="file" accept=".json" className="hidden" onChange={(e) => e.target.files?.[0] && processFile(e.target.files[0])} />
             </div>
 
-            {/* JSON Utilities */}
+            {/* Utilities */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
-              <h3 className="font-medium mb-4 flex items-center gap-2"><Activity size={18} className="text-mora-500" /> JSON Utilities</h3>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <button onClick={() => validateAndFormat(jsonInput)} className={glassPill}>Format</button>
+              <h3 className="font-medium mb-4 flex items-center gap-2"><Activity size={18} className="text-mora-500" /> Utilities</h3>
+              <div className="grid grid-cols-2 gap-2">
                 <button onClick={handleFlatten} className={glassPill}>Flatten</button>
                 <button onClick={handleSortKeys} className={glassPill}>Sort Keys</button>
                 <button onClick={handleRemoveEmpty} className={glassPill}>Remove Empty</button>
+                <button onClick={() => downloadFile(yamlOutput, '', 'yaml')} className={glassPill}>To YAML</button>
               </div>
             </div>
           </div>
 
-          {/* OUTPUT */}
+          {/* Output Panel */}
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
@@ -346,7 +403,7 @@ const ApiResponseFormatterPage: React.FC = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-5 py-2 text-sm rounded-xl transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-black' : 'hover:bg-white/10'}`}
+                    className={`px-4 py-2 text-sm rounded-xl transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-black' : 'hover:bg-white/10'}`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
@@ -354,11 +411,11 @@ const ApiResponseFormatterPage: React.FC = () => {
               </div>
 
               {isValid !== null && (
-                <div className={`mb-5 p-4 rounded-2xl flex items-start gap-3 ${isValid ? 'bg-mora-500/10 border border-mora-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
-                  {isValid ? <CheckCircle2 className="text-mora-400 mt-0.5" size={22} /> : <XCircle className="text-red-400 mt-0.5" size={22} />}
+                <div className={`mb-5 p-4 rounded-2xl flex gap-3 ${isValid ? 'bg-mora-500/10 border border-mora-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
+                  {isValid ? <CheckCircle2 className="text-mora-400" size={22} /> : <XCircle className="text-red-400" size={22} />}
                   <div>
                     <div className="font-medium">{isValid ? 'Valid JSON' : 'Invalid JSON'}</div>
-                    {error && <div className="text-xs text-red-400 mt-1">Line {error.line}, Column {error.column}: {error.message}</div>}
+                    {error && <div className="text-xs text-red-400 mt-1">Line {error.line}, Col {error.column}: {error.message}</div>}
                   </div>
                 </div>
               )}
@@ -368,28 +425,28 @@ const ApiResponseFormatterPage: React.FC = () => {
                   <Search size={17} className="text-white/40 mr-3" />
                   <input
                     type="text"
-                    placeholder="Search keys or values..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search keys/values..."
                     className="flex-1 bg-transparent outline-none text-sm"
                   />
                   {matchCount > 0 && <span className="text-xs text-white/50 ml-2">{matchCount} matches</span>}
                 </div>
               )}
 
-              <div className="bg-black border border-white/10 rounded-2xl min-h-[420px] overflow-auto">
+              <div className="bg-black border border-white/10 rounded-2xl min-h-[400px] overflow-auto">
                 {currentOutput ? (
                   activeTab === 'tree' ? (
                     <div className="p-5"><JsonTree data={JSON.parse(formattedOutput || '{}')} searchTerm={searchTerm} /></div>
                   ) : activeTab === 'raw' ? (
-                    <pre className="p-5 font-mono text-sm text-white whitespace-pre-wrap break-words">{rawOutput}</pre>
+                    <pre className="p-5 font-mono text-sm text-white whitespace-pre-wrap">{rawOutput}</pre>
                   ) : (
                     <SyntaxHighlighter language="json" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '20px' }}>
                       {searchTerm ? <HighlightedJSON text={currentOutput} searchTerm={searchTerm} /> : currentOutput}
                     </SyntaxHighlighter>
                   )
                 ) : (
-                  <div className="h-full flex items-center justify-center text-white/40 text-sm">Click "Format JSON" to start</div>
+                  <div className="h-full flex items-center justify-center text-white/40 text-sm">Click Format JSON to begin</div>
                 )}
               </div>
 
@@ -403,7 +460,7 @@ const ApiResponseFormatterPage: React.FC = () => {
               )}
             </div>
 
-            {/* Response Intelligence */}
+            {/* Intelligence */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
                 <Activity size={20} className="text-mora-500" />
@@ -413,24 +470,24 @@ const ApiResponseFormatterPage: React.FC = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Object.entries(stats).map(([key, value]) => (
                     <div key={key} className="bg-black/60 rounded-2xl p-4">
-                      <div className="text-xs text-white/50">{key.replace(/([A-Z])/g, ' $1')}</div>
+                      <div className="text-xs text-white/50 tracking-widest">{key.replace(/([A-Z])/g, ' $1')}</div>
                       <div className="text-2xl font-semibold tabular-nums mt-1">{value}</div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-white/40 py-12 text-center">Format JSON to unlock insights</div>
+                <div className="text-white/40 py-12 text-center">Format a JSON to see insights</div>
               )}
             </div>
           </div>
         </div>
 
-        {/* History - Logged-in users only */}
+        {/* History - Only for logged-in users */}
         {isLoggedIn && history.length > 0 && (
           <div className="mt-16">
             <h3 className="text-lg font-medium mb-6 flex items-center gap-2"><Clock size={18} /> Recent Sessions</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {history.map((item) => (
+              {history.map(item => (
                 <div key={item.id} className="bg-[#070707] border border-white/10 rounded-3xl p-5">
                   <div className="text-xs text-white/50 mb-3">{new Date(item.timestamp).toLocaleString()}</div>
                   <div className="font-mono text-xs line-clamp-2 mb-4 text-white/70">{item.output.substring(0, 120)}...</div>
@@ -460,7 +517,7 @@ const HighlightedJSON = ({ text, searchTerm }: { text: string; searchTerm: strin
   return (
     <>
       {parts.map((part, i) =>
-        regex.test(part) ? <mark key={i} className="bg-yellow-500/30 px-0.5 rounded">{part}</mark> : <Fragment key={i}>{part}</Fragment>
+        regex.test(part) ? <mark key={i} className="bg-yellow-500/30 px-0.5 rounded">{part}</mark> : <React.Fragment key={i}>{part}</React.Fragment>
       )}
     </>
   );
