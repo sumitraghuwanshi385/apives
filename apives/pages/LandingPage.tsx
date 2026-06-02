@@ -96,129 +96,7 @@ const RANK_BADGE_STYLES = [
   { label: 'Prime', color: 'from-slate-200 to-slate-400', text: 'text-black' },
   { label: 'Zenith', color: 'from-orange-400 to-amber-700', text: 'text-white' }
 ];
-
-const OfferSlider: React.FC = () => {
-  const navigate = useNavigate();
-  const [index, setIndex] = useState(0);
-  const [startX, setStartX] = useState(0);
-  const [currentX, setCurrentX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setIndex((prev) => (prev + 1) % 2);
-    }, 7000);
-    return () => clearInterval(t);
-  }, []);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setStartX(e.touches[0].clientX);
-    setIsDragging(true);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
-    setCurrentX(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    const diff = startX - currentX;
-    if (diff > 50) setIndex((prev) => (prev + 1) % 2);
-    else if (diff < -50) setIndex((prev) => (prev - 1 + 2) % 2);
-    setIsDragging(false);
-  };
-
-  return (
-    <div className="relative pt-3 pb-2" style={{ contain: 'layout paint', backfaceVisibility: 'hidden' }}>
-      <div className="flex justify-center px-4">
-        <div
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          className="overflow-hidden w-full max-w-xl"
-          style={{ maxWidth: '100%' }}
-        >
-          <div
-            className="flex transition-transform duration-500 ease-out"
-            style={{ transform: `translateX(-${index * 100}%)`, willChange: 'transform' }}
-          >
-            {/* ================= SERPAPI ================= */}
-            <div className="w-full flex-shrink-0 px-1" style={{ minWidth: '100%' }}>
-              <div className="relative w-full flex items-center justify-between px-5 py-4 rounded-xl border border-green-500/30 bg-green-500/10 backdrop-blur-md overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.15),transparent_70%)]" />
-                </div>
-                <div className="relative flex items-center gap-2">
-                  <img
-                    src="https://res.cloudinary.com/dp7avkarg/image/upload/v1706953800/Picsart_26-02-03_23-05-57-796_hiswhn.jpg"
-                    className="w-7 h-7 rounded-md bg-white p-[2px] object-contain"
-                    alt="SerpAPI"
-                  />
-                  <span className="text-slate-500 text-[10px] font-bold">×</span>
-                  <img
-                    src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
-                    className="w-7 h-7 object-contain"
-                    alt="Apives"
-                  />
-                  <div>
-                    <p className="text-green-400 text-[12px] font-bold">500 Free SerpAPI Credits</p>
-                    <p className="text-[10px] text-slate-400">Limited builder access</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => navigate("/offers/serpapi")}
-                  className="relative text-[10px] px-4 py-1.5 rounded-full bg-white text-black font-bold uppercase"
-                >
-                  Claim
-                </button>
-              </div>
-            </div>
-
-            {/* ================= APIVES AI ================= */}
-            <div className="w-full flex-shrink-0 px-1" style={{ minWidth: '100%' }}>
-              <div className="relative w-full flex items-center justify-between px-5 py-4 rounded-xl border border-mora-500/30 bg-mora-500/10 backdrop-blur-md overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(34,197,94,0.18),transparent_70%)]" />
-                </div>
-                <div className="relative flex items-center gap-2">
-                  <div className="relative w-8 h-8 flex-shrink-0">
-                    <img
-                      src="https://res.cloudinary.com/dp7avkarg/image/upload/v1777024712/Picsart_26-04-24_15-27-41-095_dwsga0.png"
-                      className="w-8 h-8 object-contain"
-                      alt="ApivesAI"
-                    />
-                    <div className="absolute inset-0 rounded-full border border-green-400/30 animate-ping pointer-events-none" />
-                  </div>
-                  <div>
-                    <p className="text-mora-400 text-[12px] font-bold">ApivesAI</p>
-                    <p className="text-[10px] text-slate-400">The API Intelligence You Deserve</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => navigate("/ask-apives-ai")}
-                  className="relative text-[10px] px-4 py-1.5 rounded-full bg-mora-500 text-black font-bold uppercase"
-                >
-                  Try
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* DOTS */}
-      <div className="flex justify-center gap-2 mt-2">
-        {[0, 1].map(i => (
-          <div
-            key={i}
-            className={`w-2 h-2 rounded-full ${i === index ? "bg-mora-500" : "bg-white/20"}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
+      
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -374,19 +252,7 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ================= OFFER SECTION ================= */}
-      <section
-        className="relative py-4 md:py-6 bg-black"
-        style={{ overflow: 'hidden', contain: 'layout paint' }}
-      >
-        <div className="text-center mb-3 md:mb-4">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-slate-500 font-bold">
-            APIVES EXCLUSIVE
-          </p>
-        </div>
-        <OfferSlider />
-      </section>
-
+     
       
       {/* ================= WHAT ARE YOU BUILDING TODAY ================= */}
       <section
