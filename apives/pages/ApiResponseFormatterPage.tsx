@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { BackButton } from "../components/BackButton";
 import yaml from 'js-yaml';
 
 interface HistoryItem {
