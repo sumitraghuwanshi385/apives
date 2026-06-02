@@ -1,208 +1,312 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  FileJson, Code2, CheckCircle2, XCircle, Copy, Download, Upload, 
-  Trash2, Clock, Activity, Search, ChevronDown, ChevronRight 
+import React, { useState, useEffect, useCallback, useMemo, Fragment } from 'react';
+import {
+  FileJson, Code2, Copy, Download, Upload, Trash2, Clock,
+  CheckCircle2, XCircle, Search, ChevronDown, ChevronRight,
+  Activity, Zap
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { BackButton } from "../components/BackButton";
+import yaml from 'js-yaml';
 
-const MoraColor = '#c026d3'; // Vibrant magenta-purple accent
-
+// ========== Types ==========
 interface HistoryItem {
   id: string;
   timestamp: string;
   input: string;
-  formatted: string;
+  output: string;
   size: number;
   valid: boolean;
 }
 
-interface JsonStats {
+interface Stats {
   totalKeys: number;
   objects: number;
   arrays: number;
+  nodes: number;
   depth: number;
   characters: number;
   lines: number;
   bytes: number;
-  nodes: number;
+  largestObject: number;
+  largestArray: number;
+  complexityScore: number;
 }
 
-const BackButton = () => (
-  <button 
-    onClick={() => window.history.back()}
-    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-sm transition-all active:scale-95"
-  >
-    ← Back
-  </button>
-);
+// ========== glass-pill style ==========
+const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm hover:bg-white/10 transition-all focus:outline-none focus:ring-2 focus:ring-mora-500/50 disabled:opacity-50";
 
-const APIResponseFormatter: React.FC = () => {
-  const [jsonInput, setJsonInput] = useState<string>('');
-  const [formattedOutput, setFormattedOutput] = useState<string>('');
-  const [minifiedOutput, setMinifiedOutput] = useState<string>('');
-  const [isValid, setIsValid] = useState<boolean | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [errorLine, setErrorLine] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'raw' | 'tree'>('raw');
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [showHistory, setShowHistory] = useState<boolean>(false);
-  const [stats, setStats] = useState<JsonStats | null>(null);
-  const [filename, setFilename] = useState<string>('');
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [copied, setCopied] = useState<string | null>(null);
-  const [showDiff, setShowDiff] = useState<boolean>(false);
-  const [secondJson, setSecondJson] = useState<string>('');
+// ========== Search Highlight Component for Pretty View (works with SyntaxHighlighter) ==========
+const HighlightedJSON = ({ text, searchTerm }: { text: string; searchTerm: string }) => {
+  if (!searchTerm.trim()) return <>{text}</>;
+  const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        regex.test(part) ? (
+          <mark key={i} className="bg-yellow-500/40 text-white rounded px-0.5">{part}</mark>
+        ) : (
+          <Fragment key={i}>{part}</Fragment>
+        )
+      )}
+    </>
+  );
+};
 
-  // Load history from localStorage
-  useEffect(() => {
-    const savedHistory = localStorage.getItem('apives-json-history');
-    if (savedHistory) {
-      setHistory(JSON.parse(savedHistory));
-    }
+// ========== Tree View with Search Highlighting (optimized) ==========
+const JsonTree = React.memo(({ data, searchTerm }: { data: any; searchTerm: string }) => {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['$']));
+
+  const toggleExpand = useCallback((path: string) => {
+    setExpanded(prev => {
+      const newSet = new Set(prev);
+      newSet.has(path) ? newSet.delete(path) : newSet.add(path);
+      return newSet;
+    });
   }, []);
 
-  // Save history
-  const saveToHistory = useCallback((input: string, formatted: string, valid: boolean) => {
-    const newItem: HistoryItem = {
-      id: Date.now().toString(36),
-      timestamp: new Date().toISOString(),
-      input,
-      formatted,
-      size: new Blob([formatted]).size,
-      valid
-    };
-    
-    const updated = [newItem, ...history].slice(0, 15);
-    setHistory(updated);
-    localStorage.setItem('apives-json-history', JSON.stringify(updated));
-  }, [history]);
+  const highlightText = useCallback((text: string): React.ReactNode => {
+    if (!searchTerm.trim()) return text;
+    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, i) =>
+      regex.test(part) ? <mark key={i} className="bg-yellow-500/40 text-white rounded px-0.5">{part}</mark> : part
+    );
+  }, [searchTerm]);
 
-  const validateAndFormat = (input: string) => {
-    if (!input.trim()) {
-      setIsValid(null);
-      setFormattedOutput('');
-      setMinifiedOutput('');
-      setErrorMessage('');
-      setStats(null);
-      return;
+  const renderNode = useCallback((node: any, path: string = '$'): React.ReactNode => {
+    if (node === null) return <span className="text-red-400">null</span>;
+    if (typeof node === 'boolean') return <span className="text-mora-400">{highlightText(node.toString())}</span>;
+    if (typeof node === 'number') return <span className="text-emerald-400">{highlightText(node.toString())}</span>;
+    if (typeof node === 'string') return <span className="text-amber-400">"{highlightText(node)}"</span>;
+
+    if (Array.isArray(node)) {
+      const isOpen = expanded.has(path);
+      const shouldShow = !searchTerm.trim() || JSON.stringify(node).toLowerCase().includes(searchTerm.toLowerCase());
+      if (!shouldShow) return null;
+      return (
+        <div>
+          <div className="flex items-center gap-1.5 cursor-pointer hover:text-mora-400" onClick={() => toggleExpand(path)}>
+            {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+            <span className="text-white/70">Array [{node.length}]</span>
+          </div>
+          {isOpen && (
+            <div className="pl-5 border-l border-white/10 ml-2 mt-1 space-y-1">
+              {node.map((item, idx) => (
+                <div key={idx}>{renderNode(item, `${path}[${idx}]`)}</div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
     }
 
+    if (node && typeof node === 'object') {
+      const isOpen = expanded.has(path);
+      const entries = Object.entries(node);
+      let shouldShow = !searchTerm.trim();
+      if (!shouldShow) {
+        shouldShow = entries.some(([k, v]) =>
+          k.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          JSON.stringify(v).toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+      if (!shouldShow) return null;
+      return (
+        <div>
+          <div className="flex items-center gap-1.5 cursor-pointer hover:text-mora-400" onClick={() => toggleExpand(path)}>
+            {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+            <span className="text-white/70">Object</span>
+          </div>
+          {isOpen && (
+            <div className="pl-5 border-l border-white/10 ml-2 mt-1 space-y-1">
+              {entries.map(([key, val]) => {
+                const keyMatches = searchTerm && key.toLowerCase().includes(searchTerm.toLowerCase());
+                const shouldShowChild = !searchTerm.trim() || keyMatches || JSON.stringify(val).toLowerCase().includes(searchTerm.toLowerCase());
+                if (!shouldShowChild) return null;
+                return (
+                  <div key={key} className="flex flex-wrap items-baseline gap-1">
+                    <span className="text-violet-400">"{highlightText(key)}"</span>
+                    <span className="text-white/50">:</span>
+                    <div className="flex-1">{renderNode(val, `${path}.${key}`)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  }, [expanded, searchTerm, highlightText, toggleExpand]);
+
+  return <div className="font-mono text-[13px] leading-relaxed">{renderNode(data)}</div>;
+});
+JsonTree.displayName = 'JsonTree';
+
+// ========== Main Component ==========
+const ApiResponseFormatterPage: React.FC = () => {
+  // State
+  const [jsonInput, setJsonInput] = useState('');
+  const [formattedOutput, setFormattedOutput] = useState('');
+  const [minifiedOutput, setMinifiedOutput] = useState('');
+  const [yamlOutput, setYamlOutput] = useState('');
+  const [rawOutput, setRawOutput] = useState('');
+  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [error, setError] = useState<{ message: string; line: number; column: number } | null>(null);
+  const [activeTab, setActiveTab] = useState<'pretty' | 'minified' | 'tree' | 'raw'>('pretty');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [matchCount, setMatchCount] = useState(0);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [uploadedFilename, setUploadedFilename] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [copiedType, setCopiedType] = useState<string | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+
+  // ===== Load history =====
+  useEffect(() => {
+    const saved = localStorage.getItem('apives-json-formatter-history');
+    if (saved) setHistory(JSON.parse(saved));
+  }, []);
+
+  // ===== Stats calculation =====
+  const calculateStats = useCallback((obj: any): Stats => {
+    let totalKeys = 0, objects = 0, arrays = 0, nodes = 0, depth = 0;
+    let largestObject = 0, largestArray = 0;
+    const traverse = (node: any, currentDepth: number) => {
+      nodes++;
+      depth = Math.max(depth, currentDepth);
+      if (Array.isArray(node)) {
+        arrays++;
+        largestArray = Math.max(largestArray, node.length);
+        node.forEach((item) => traverse(item, currentDepth + 1));
+      } else if (node && typeof node === 'object') {
+        objects++;
+        const keysLen = Object.keys(node).length;
+        totalKeys += keysLen;
+        largestObject = Math.max(largestObject, keysLen);
+        Object.values(node).forEach(val => traverse(val, currentDepth + 1));
+      }
+    };
+    traverse(obj, 1);
+    const str = JSON.stringify(obj);
+    const complexityScore = Math.min(100, Math.max(15, 100 - (depth * 12) - (objects * 1.2)));
+    return {
+      totalKeys, objects, arrays, nodes, depth,
+      characters: str.length,
+      lines: str.split('\n').length,
+      bytes: new Blob([str]).size,
+      largestObject, largestArray,
+      complexityScore: Math.round(complexityScore)
+    };
+  }, []);
+
+  // ===== Full reset =====
+  const fullReset = useCallback(() => {
+    setJsonInput('');
+    setFormattedOutput('');
+    setMinifiedOutput('');
+    setYamlOutput('');
+    setRawOutput('');
+    setIsValid(null);
+    setError(null);
+    setStats(null);
+    setSearchTerm('');
+    setUploadedFilename(null);
+    setUploadStatus(null);
+    setActiveTab('pretty');
+  }, []);
+
+  // ===== Validate & Format =====
+  const validateAndFormat = useCallback((input: string) => {
+    if (!input.trim()) {
+      setFormattedOutput(''); setMinifiedOutput(''); setYamlOutput(''); setRawOutput('');
+      setIsValid(null); setError(null); setStats(null);
+      return;
+    }
     try {
       const parsed = JSON.parse(input);
       const pretty = JSON.stringify(parsed, null, 2);
       const minified = JSON.stringify(parsed);
-      
+      const yamlStr = yaml.dump(parsed);
       setFormattedOutput(pretty);
       setMinifiedOutput(minified);
+      setYamlOutput(yamlStr);
+      setRawOutput(input);
       setIsValid(true);
-      setErrorMessage('');
-      setErrorLine(null);
+      setError(null);
+      setStats(calculateStats(parsed));
 
-      // Calculate stats
-      const statsData = calculateStats(parsed);
-      setStats(statsData);
-
-      saveToHistory(input, pretty, true);
+      // History deduplication
+      setHistory(prev => {
+        const last = prev[0];
+        if (last && last.input === input) return prev;
+        const newItem: HistoryItem = {
+          id: Date.now().toString(36),
+          timestamp: new Date().toISOString(),
+          input,
+          output: pretty,
+          size: new Blob([pretty]).size,
+          valid: true
+        };
+        const updated = [newItem, ...prev].slice(0, 20);
+        localStorage.setItem('apives-json-formatter-history', JSON.stringify(updated));
+        return updated;
+      });
     } catch (err: any) {
       setIsValid(false);
-      setFormattedOutput('');
-      setMinifiedOutput('');
-      setErrorMessage(err.message);
-      
-      // Try to extract line number
-      const lineMatch = err.message.match(/line (\d+)/i);
-      if (lineMatch) setErrorLine(parseInt(lineMatch[1]));
-      else setErrorLine(null);
-      
+      setFormattedOutput(''); setMinifiedOutput(''); setYamlOutput(''); setRawOutput('');
       setStats(null);
+      const lineMatch = err.message.match(/line (\d+)/i);
+      const colMatch = err.message.match(/column (\d+)/i);
+      setError({
+        message: err.message,
+        line: lineMatch ? parseInt(lineMatch[1]) : 1,
+        column: colMatch ? parseInt(colMatch[1]) : 1
+      });
     }
-  };
+  }, [calculateStats]);
 
-  const calculateStats = (obj: any): JsonStats => {
-    let totalKeys = 0;
-    let objects = 0;
-    let arrays = 0;
-    let depth = 0;
-    let nodes = 0;
-
-    const traverse = (node: any, currentDepth: number) => {
-      nodes++;
-      depth = Math.max(depth, currentDepth);
-      
-      if (Array.isArray(node)) {
-        arrays++;
-        node.forEach(item => traverse(item, currentDepth + 1));
-      } else if (node && typeof node === 'object') {
-        objects++;
-        totalKeys += Object.keys(node).length;
-        Object.values(node).forEach(val => traverse(val, currentDepth + 1));
+  // ===== Flatten =====
+  const flattenJson = useCallback((obj: any, prefix = ''): any => {
+    return Object.keys(obj).reduce((acc: any, k) => {
+      const pre = prefix.length ? prefix + '.' : '';
+      if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
+        Object.assign(acc, flattenJson(obj[k], pre + k));
+      } else {
+        acc[pre + k] = obj[k];
       }
-    };
+      return acc;
+    }, {});
+  }, []);
 
-    traverse(obj, 1);
-
-    const str = JSON.stringify(obj);
-    return {
-      totalKeys,
-      objects,
-      arrays,
-      depth,
-      characters: str.length,
-      lines: str.split('\n').length,
-      bytes: new Blob([str]).size,
-      nodes
-    };
-  };
-
-  const handleFormat = () => validateAndFormat(jsonInput);
-  const handleMinify = () => {
+  const handleFlatten = useCallback(() => {
     if (!formattedOutput) return;
-    setFormattedOutput(minifiedOutput);
-  };
-
-  const handleClear = () => {
-    setJsonInput('');
-    setFormattedOutput('');
-    setMinifiedOutput('');
-    setIsValid(null);
-    setErrorMessage('');
-    setStats(null);
-    setSearchTerm('');
-  };
-
-  const copyToClipboard = async (text: string, label: string) => {
     try {
-      await navigator.clipboard.writeText(text);
-      setCopied(label);
-      setTimeout(() => setCopied(null), 2000);
-    } catch (err) {
-      console.error('Failed to copy');
+      const parsed = JSON.parse(formattedOutput);
+      const flattened = flattenJson(parsed);
+      const flattenedPretty = JSON.stringify(flattened, null, 2);
+      setJsonInput(flattenedPretty);
+      validateAndFormat(flattenedPretty);
+    } catch (e) {
+      console.error("Flatten failed", e);
     }
-  };
+  }, [formattedOutput, flattenJson, validateAndFormat]);
 
-  const downloadJson = (content: string, suffix: string = '') => {
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `response${suffix ? '-' + suffix : ''}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const handleFileUpload = (file: File) => {
+  // ===== File handling with drag & drop =====
+  const processFile = useCallback((file: File) => {
     if (!file.name.endsWith('.json')) {
-      alert("Please upload a valid .json file");
+      setUploadStatus({ message: 'Please upload a .json file', type: 'error' });
+      setTimeout(() => setUploadStatus(null), 3000);
       return;
     }
-    
-    setFilename(file.name);
+    setUploadedFilename(file.name.replace(/\.json$/, ''));
+    setUploadStatus({ message: `Uploaded: ${file.name}`, type: 'success' });
+    setTimeout(() => setUploadStatus(null), 3000);
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target?.result as string;
@@ -210,159 +314,87 @@ const APIResponseFormatter: React.FC = () => {
       validateAndFormat(text);
     };
     reader.readAsText(file);
-  };
+  }, [validateAndFormat]);
 
-  // Drag and Drop handlers
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(true);
-  };
+    e.stopPropagation();
+  }, []);
 
-  const handleDragLeave = () => setIsDragging(false);
-
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragging(false);
+    e.stopPropagation();
     const file = e.dataTransfer.files[0];
-    if (file) handleFileUpload(file);
-  };
+    if (file) processFile(file);
+  }, [processFile]);
 
-  // Sample Data
-  const loadSample = (type: string) => {
-    let sample = '';
-    
-    switch(type) {
-      case 'user':
-        sample = JSON.stringify({
-          id: 123,
-          name: "Alex Rivera",
-          email: "alex@design.com",
-          role: "Senior Designer",
-          avatar: "https://api.dicebear.com/7.x/avataaars/svg",
-          preferences: {
-            theme: "dark",
-            notifications: true,
-            language: "en"
-          },
-          projects: [
-            { id: 1, name: "Apives Dashboard", status: "active" },
-            { id: 2, name: "Mobile Banking", status: "completed" }
-          ]
-        }, null, 2);
-        break;
-      case 'product':
-        sample = JSON.stringify({
-          id: "prod_987",
-          name: "Wireless Noise Cancelling Headphones",
-          price: 299.99,
-          currency: "USD",
-          inStock: true,
-          specs: {
-            battery: "30 hours",
-            driver: "40mm",
-            weight: "250g"
-          },
-          reviews: [
-            { user: "sam", rating: 5, comment: "Best headphones ever" }
-          ]
-        }, null, 2);
-        break;
-      default:
-        sample = JSON.stringify({ message: "Sample loaded successfully" }, null, 2);
+  // ===== Copy & Download =====
+  const copyToClipboard = useCallback(async (text: string, type: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 1800);
+  }, []);
+
+  const downloadFile = useCallback((content: string, suffix: string, ext: string = 'json', mime: string = 'application/json') => {
+    const baseName = uploadedFilename ? uploadedFilename : 'api-response';
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${baseName}${suffix}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [uploadedFilename]);
+
+  // ===== Search match counting =====
+  useEffect(() => {
+    if (!searchTerm.trim() || !formattedOutput) {
+      setMatchCount(0);
+      return;
     }
-    
-    setJsonInput(sample);
-    validateAndFormat(sample);
-  };
+    const regex = new RegExp(searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    const matches = (formattedOutput.match(regex) || []).length;
+    setMatchCount(matches);
+  }, [searchTerm, formattedOutput]);
 
-  // Tree View Component
-  const JsonTree: React.FC<{ data: any; search?: string }> = ({ data, search = '' }) => {
-    const [expanded, setExpanded] = useState<Set<string>>(new Set());
-    
-    const toggleExpand = (path: string) => {
-      const newExpanded = new Set(expanded);
-      if (newExpanded.has(path)) newExpanded.delete(path);
-      else newExpanded.add(path);
-      setExpanded(newExpanded);
+  // ===== Sample loader =====
+  const loadSample = useCallback((type: string) => {
+    const samples: Record<string, any> = {
+      'User': { id: 1, name: "Prince Gupta", email: "prince@example.com", role: "Developer", active: true },
+      'Product': { id: "prod_9382", name: "Premium Wireless Headphones", price: 299.99, inStock: true, specs: { battery: "40h" } },
+      'Payment': { status: "success", amount: 149.99, currency: "USD", transactionId: "txn_9f8e2a" },
+      'Analytics': { users: 12480, sessions: 8934, bounceRate: 0.42, topPages: ["/", "/dashboard"] },
+      'Auth': { token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", expiresIn: 3600, user: { id: 1 } },
+      'Error': { error: "Validation failed", code: 400, details: { field: "email", reason: "Invalid format" } }
     };
+    const sampleJson = JSON.stringify(samples[type] || samples['User'], null, 2);
+    setJsonInput(sampleJson);
+    validateAndFormat(sampleJson);
+    setUploadedFilename(null);
+  }, [validateAndFormat]);
 
-    const renderNode = (node: any, path: string = '', level: number = 0) => {
-      if (node === null) return <span className="text-[#f87171]">null</span>;
-      if (typeof node === 'boolean') return <span className="text-[#60a5fa]">{node.toString()}</span>;
-      if (typeof node === 'number') return <span className="text-[#34d399]">{node}</span>;
-      if (typeof node === 'string') {
-        const highlighted = search && node.toLowerCase().includes(search.toLowerCase())
-          ? <span className="bg-yellow-500/30 px-1 rounded">{node}</span>
-          : node;
-        return <span className="text-[#facc15]">"{highlighted}"</span>;
-      }
+  // ===== Current output =====
+  const currentOutput = useMemo(() => {
+    if (activeTab === 'pretty') return formattedOutput;
+    if (activeTab === 'minified') return minifiedOutput;
+    if (activeTab === 'raw') return rawOutput;
+    return formattedOutput;
+  }, [activeTab, formattedOutput, minifiedOutput, rawOutput]);
 
-      if (Array.isArray(node)) {
-        const isExpanded = expanded.has(path);
-        return (
-          <div>
-            <div 
-              className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
-              onClick={() => toggleExpand(path)}
-            >
-              <span>{isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>
-              <span className="text-[#94a3b8]">Array [{node.length}]</span>
-            </div>
-            {isExpanded && (
-              <div className="pl-6 border-l border-white/10 ml-2">
-                {node.map((item, idx) => (
-                  <div key={idx} className="py-0.5">
-                    {renderNode(item, `\( {path}[ \){idx}]`, level + 1)}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      }
-
-      if (node && typeof node === 'object') {
-        const isExpanded = expanded.has(path);
-        const keys = Object.keys(node);
-        
-        return (
-          <div>
-            <div 
-              className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
-              onClick={() => toggleExpand(path)}
-            >
-              <span>{isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>
-              <span className="text-[#94a3b8]">Object {'{'}{keys.length}{'}'}</span>
-            </div>
-            {isExpanded && (
-              <div className="pl-6 border-l border-white/10 ml-2">
-                {keys.map(key => (
-                  <div key={key} className="py-1">
-                    <span className="text-[#c4b5fd]">" {key} "</span>
-                    <span className="text-white/50 mx-2">:</span>
-                    {renderNode(node[key], `\( {path}. \){key}`, level + 1)}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      }
-
-      return <span>{String(node)}</span>;
-    };
-
-    return <div className="font-mono text-sm leading-relaxed">{renderNode(data)}</div>;
-  };
-
-  // Highlight search in raw view
-  const highlightedOutput = React.useMemo(() => {
-    if (!searchTerm || !formattedOutput) return formattedOutput;
-    return formattedOutput.replace(
-      new RegExp(searchTerm, 'gi'),
-      match => `<mark class="bg-yellow-500/30 text-white px-0.5 rounded">${match}</mark>`
-    );
-  }, [formattedOutput, searchTerm]);
+  // ===== Stats order (fixed) =====
+  const statsOrder: { label: string; key: keyof Stats }[] = [
+    { label: 'Total Keys', key: 'totalKeys' },
+    { label: 'Objects', key: 'objects' },
+    { label: 'Arrays', key: 'arrays' },
+    { label: 'Nodes', key: 'nodes' },
+    { label: 'Depth', key: 'depth' },
+    { label: 'Characters', key: 'characters' },
+    { label: 'Lines', key: 'lines' },
+    { label: 'Bytes', key: 'bytes' },
+    { label: 'Largest Object', key: 'largestObject' },
+    { label: 'Largest Array', key: 'largestArray' },
+    { label: 'Complexity Score', key: 'complexityScore' }
+  ];
 
   return (
     <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
@@ -371,294 +403,254 @@ const APIResponseFormatter: React.FC = () => {
         <BackButton />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* HERO SECTION */}
-        <div className="flex flex-col items-center text-center mb-16">
-          <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-4">
-            <FileJson size={42} className="text-white" strokeWidth={1.5} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6">
+        {/* Hero */}
+        <div className="flex flex-col items-center text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-5">
+            <FileJson size={42} strokeWidth={1.5} className="text-white" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-semibold tracking-tighter text-white mb-3">
-            API Response <span style={{ color: MoraColor }}>Formatter</span>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold tracking-tighter text-white mb-4 break-words">
+            API Response <span className="text-mora-500">Formatter</span>
           </h1>
-          <p className="max-w-md text-lg text-white/60">
-            Format, validate, beautify, minify and inspect API JSON responses with advanced developer tooling.
+          <p className="max-w-md text-base md:text-lg text-white/60">
+            Professional-grade JSON formatting, validation, analysis, optimization and debugging toolkit.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* INPUT WORKSPACE */}
-          <div className="space-y-6">
-            <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/5 rounded-xl">
-                    <FileJson size={22} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-medium">JSON Input</h2>
-                    <p className="text-sm text-white/50">Paste your API response</p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => document.getElementById('file-upload')?.click()}
-                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-2xl text-sm transition-all"
-                  >
-                    <Upload size={16} /> Upload
-                  </button>
-                  <input 
-                    id="file-upload" 
-                    type="file" 
-                    accept=".json" 
-                    className="hidden" 
-                    onChange={(e) => e.target.files && handleFileUpload(e.target.files[0])}
-                  />
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* LEFT PANEL */}
+          <div className="lg:col-span-5 space-y-6">
+            <div
+              className="bg-[#070707] border border-white/10 rounded-3xl p-4 sm:p-6"
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2.5 bg-white/5 rounded-2xl"><FileJson size={24} /></div>
+                <h2 className="text-xl sm:text-2xl font-semibold">JSON Input</h2>
               </div>
 
-              {/* Drag & Drop Area */}
-              <div 
-                className={`border border-dashed ${isDragging ? 'border-violet-500 bg-violet-500/10' : 'border-white/10'} rounded-2xl p-8 text-center mb-4 transition-all`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-              >
-                <Upload className="mx-auto mb-3 text-white/40" size={32} />
-                <p className="text-sm text-white/50">Drag &amp; drop JSON file here</p>
+              <div className="flex flex-wrap gap-2 mb-4 text-xs">
+                <div className="bg-white/5 px-3 py-1 rounded-full">Chars: {jsonInput.length}</div>
+                <div className="bg-white/5 px-3 py-1 rounded-full">Lines: {jsonInput.split('\n').length}</div>
+                <div className={`px-3 py-1 rounded-full ${isValid ? 'bg-mora-500/10 text-mora-400' : isValid === false ? 'bg-red-500/10 text-red-400' : 'bg-white/5'}`}>
+                  {isValid === null ? 'Ready' : isValid ? 'Valid' : 'Invalid'}
+                </div>
+                {uploadStatus && (
+                  <div className={`px-3 py-1 rounded-full text-xs ${uploadStatus.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                    {uploadStatus.message}
+                  </div>
+                )}
               </div>
 
               <textarea
                 value={jsonInput}
                 onChange={(e) => setJsonInput(e.target.value)}
                 onBlur={() => validateAndFormat(jsonInput)}
-                className="w-full h-80 bg-black border border-white/10 focus:border-violet-500 rounded-2xl p-5 font-mono text-sm text-white resize-y min-h-[320px] outline-none"
-                placeholder='Paste API response JSON here...&#10;{&#10;  "status": "success"&#10;}'
-                spellCheck={false}
+                className="w-full h-96 bg-black border border-white/10 focus:border-mora-500 rounded-2xl p-5 font-mono text-sm resize-y min-h-[280px] md:min-h-[380px]"
+                placeholder='Paste your API JSON response here... or drag & drop a .json file'
+                aria-label="JSON input textarea"
               />
 
-              {/* Toolbar */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                <button 
-                  onClick={handleFormat}
-                  className="px-6 py-3 bg-white text-black rounded-2xl font-medium flex items-center gap-2 hover:bg-white/90 transition-all active:scale-[0.985]"
-                >
+              <div className="flex flex-wrap gap-3 mt-6">
+                <button onClick={() => validateAndFormat(jsonInput)} className={`${glassPill} bg-mora-500 text-black border-mora-500 hover:bg-mora-600`}>
                   Format
                 </button>
-                <button 
-                  onClick={handleMinify}
-                  className="px-6 py-3 border border-white/20 hover:bg-white/5 rounded-2xl flex items-center gap-2 transition-all"
-                >
-                  Minify
+                <button onClick={handleFlatten} className={glassPill}>Flatten</button>
+                <button onClick={() => document.getElementById('json-upload')?.click()} className={`${glassPill} flex items-center gap-2`}>
+                  <Upload size={16} /> Upload
                 </button>
-                <button 
-                  onClick={handleClear}
-                  className="px-6 py-3 border border-white/20 hover:bg-white/5 rounded-2xl flex items-center gap-2 transition-all text-red-400"
-                >
-                  Clear
-                </button>
+                <button onClick={fullReset} className={`${glassPill} text-red-400`}>Clear</button>
               </div>
+              <input id="json-upload" type="file" accept=".json" className="hidden" onChange={(e) => e.target.files && processFile(e.target.files[0])} />
             </div>
 
-            {/* Sample Data */}
-            <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6">
-              <h3 className="font-medium mb-4 flex items-center gap-2">
-                <Activity size={18} /> Quick Samples
-              </h3>
+            {/* Samples */}
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 sm:p-6">
+              <h3 className="text-lg font-medium mb-4 flex items-center gap-2"><Zap size={18} /> Quick Samples</h3>
               <div className="grid grid-cols-2 gap-3">
-                {['user', 'product'].map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => loadSample(type)}
-                    className="text-left border border-white/10 hover:border-white/30 p-4 rounded-2xl transition-all text-sm"
-                  >
-                    Load Sample {type === 'user' ? 'User' : 'Product'} API
-                  </button>
+                {['User', 'Product', 'Payment', 'Analytics', 'Auth', 'Error'].map(s => (
+                  <button key={s} onClick={() => loadSample(s)} className={`${glassPill} text-left text-sm py-3.5`}>{s} API</button>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* OUTPUT WORKSPACE */}
-          <div className="space-y-6">
-            <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 h-full flex flex-col">
-              <div className="flex justify-between items-center mb-6">
+          {/* RIGHT PANEL */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 sm:p-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/5 rounded-xl">
-                    <Code2 size={22} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-medium">Formatted Output</h2>
-                  </div>
+                  <div className="p-2.5 bg-white/5 rounded-2xl"><Code2 size={24} /></div>
+                  <h2 className="text-xl sm:text-2xl font-semibold">Formatted Output</h2>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={() => setViewMode(viewMode === 'raw' ? 'tree' : 'raw')}
-                    className="px-4 py-2 text-xs border border-white/10 rounded-2xl hover:bg-white/5"
-                  >
-                    {viewMode === 'raw' ? 'Tree View' : 'Raw View'}
-                  </button>
+                <div className="flex bg-white/5 rounded-3xl p-1 text-sm overflow-x-auto scrollbar-thin">
+                  {(['pretty', 'minified', 'tree', 'raw'] as const).map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setActiveTab(t)}
+                      className={`px-4 py-2 whitespace-nowrap rounded-2xl transition-all ${activeTab === t ? 'bg-white text-black' : 'text-white/70 hover:text-white'}`}
+                      aria-label={`Switch to ${t} view`}
+                    >
+                      {t === 'pretty' ? 'Pretty' : t.charAt(0).toUpperCase() + t.slice(1)}
+                    </button>
+                  ))}
                 </div>
               </div>
 
-              {/* Validation Status */}
-              {isValid !== null && (
-                <div className={`mb-6 p-4 rounded-2xl flex items-center gap-3 ${isValid ? 'bg-emerald-500/10 border border-emerald-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
-                  {isValid ? <CheckCircle2 className="text-emerald-400" /> : <XCircle className="text-red-400" />}
-                  <div>
-                    <div className="font-medium">{isValid ? 'Valid JSON' : 'Invalid JSON'}</div>
-                    {!isValid && errorMessage && <div className="text-xs text-red-400 mt-1">{errorMessage}</div>}
+              {/* Validation Cards */}
+              {isValid === true && (
+                <div className="mb-6 p-5 rounded-3xl bg-mora-500/10 border border-mora-500/30">
+                  <div className="flex gap-4">
+                    <CheckCircle2 className="text-mora-400 shrink-0" size={26} />
+                    <div>
+                      <div className="font-semibold text-mora-400">Valid JSON</div>
+                      <div className="text-sm text-white/70">Ready to use in your application</div>
+                    </div>
                   </div>
+                </div>
+              )}
+              {isValid === false && error && (
+                <div className="mb-6 p-5 rounded-3xl bg-red-500/10 border border-red-500/30">
+                  <div className="flex gap-4">
+                    <XCircle className="text-red-400 shrink-0" size={26} />
+                    <div>
+                      <div className="font-semibold text-red-400">Invalid JSON</div>
+                      <div className="text-sm text-white/70 mt-1">Line: {error.line}, Column: {error.column}</div>
+                      <div className="text-sm text-white/50 mt-1 break-all">{error.message}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Search Bar */}
+              {isValid && (
+                <div className="mb-4 flex items-center gap-2 bg-black/40 border border-white/10 rounded-full px-4 py-2">
+                  <Search size={16} className="text-white/40" />
+                  <input
+                    type="text"
+                    placeholder="Search keys & values..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="bg-transparent flex-1 text-sm outline-none min-w-0"
+                    aria-label="Search within JSON"
+                  />
+                  {searchTerm && <span className="text-xs text-white/50 shrink-0">{matchCount} matches</span>}
                 </div>
               )}
 
               {/* Output Area */}
-              <div className="flex-1 bg-black border border-white/10 rounded-2xl overflow-hidden flex flex-col min-h-[420px]">
-                {formattedOutput ? (
-                  <>
-                    {viewMode === 'raw' ? (
-                      <div className="p-4 overflow-auto font-mono text-sm h-full">
-                        <SyntaxHighlighter 
-                          language="json" 
-                          style={vscDarkPlus} 
-                          customStyle={{ background: 'transparent', margin: 0 }}
-                        >
-                          {formattedOutput}
-                        </SyntaxHighlighter>
-                      </div>
-                    ) : (
-                      <div className="p-6 overflow-auto h-full">
-                        <JsonTree data={JSON.parse(formattedOutput)} search={searchTerm} />
-                      </div>
-                    )}
-                  </>
+              <div className="bg-black border border-white/10 rounded-2xl min-h-[320px] md:min-h-[460px] overflow-auto">
+                {currentOutput ? (
+                  activeTab === 'tree' && isValid ? (
+                    <div className="p-6 overflow-auto h-full">
+                      <JsonTree data={JSON.parse(formattedOutput)} searchTerm={searchTerm} />
+                    </div>
+                  ) : activeTab === 'raw' ? (
+                    <pre className="p-6 font-mono text-sm text-white/80 whitespace-pre-wrap break-all bg-transparent m-0">
+                      {rawOutput}
+                    </pre>
+                  ) : (
+                    <SyntaxHighlighter language="json" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '24px', margin: 0 }}>
+                      {searchTerm ? <HighlightedJSON text={currentOutput} searchTerm={searchTerm} /> : currentOutput}
+                    </SyntaxHighlighter>
+                  )
                 ) : (
-                  <div className="flex-1 flex items-center justify-center text-white/40 text-sm">
-                    Output will appear here
+                  <div className="flex items-center justify-center h-full text-white/40 text-sm p-8 text-center">
+                    Paste JSON and click Format to begin
                   </div>
                 )}
               </div>
 
-              {/* Action Bar */}
+              {/* Action Buttons */}
               {formattedOutput && (
-                <div className="flex flex-wrap gap-2 mt-6">
-                  <button 
-                    onClick={() => copyToClipboard(formattedOutput, 'pretty')}
-                    className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 py-3 rounded-2xl transition-all"
-                  >
-                    {copied === 'pretty' ? <CheckCircle2 size={18} /> : <Copy size={18} />}
-                    Copy
+                <div className="flex flex-wrap gap-3 mt-6">
+                  <button onClick={() => copyToClipboard(formattedOutput, 'pretty')} className={`${glassPill} flex items-center gap-2`}>
+                    {copiedType === 'pretty' ? '✓ Copied' : <><Copy size={16} /> Copy Pretty</>}
                   </button>
-                  
-                  <button 
-                    onClick={() => downloadJson(formattedOutput)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 py-3 rounded-2xl transition-all"
-                  >
-                    <Download size={18} /> Download
+                  <button onClick={() => copyToClipboard(minifiedOutput, 'minified')} className={`${glassPill} flex items-center gap-2`}>
+                    {copiedType === 'minified' ? '✓ Copied' : 'Copy Minified'}
                   </button>
-                  
-                  <button 
-                    onClick={() => downloadJson(minifiedOutput, 'minified')}
-                    className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 py-3 rounded-2xl transition-all"
-                  >
-                    Minified
+                  <button onClick={() => copyToClipboard(yamlOutput, 'yaml')} className={`${glassPill} flex items-center gap-2`}>
+                    {copiedType === 'yaml' ? '✓ Copied' : 'Copy YAML'}
+                  </button>
+                  <button onClick={() => downloadFile(formattedOutput, '-pretty', 'json', 'application/json')} className={`${glassPill} flex items-center gap-2`}>
+                    <Download size={16} /> Pretty
+                  </button>
+                  <button onClick={() => downloadFile(minifiedOutput, '-minified', 'json', 'application/json')} className={`${glassPill} flex items-center gap-2`}>
+                    <Download size={16} /> Minified
+                  </button>
+                  <button onClick={() => downloadFile(yamlOutput, '', 'yaml', 'text/yaml')} className={`${glassPill} flex items-center gap-2`}>
+                    <Download size={16} /> YAML
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Statistics */}
-            {stats && (
-              <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <Activity size={20} />
-                  <h3 className="font-medium">Response Statistics</h3>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Object.entries(stats).map(([key, value]) => (
-                    <div key={key} className="bg-black/50 rounded-2xl p-4">
-                      <div className="text-xs text-white/50 uppercase tracking-widest mb-1">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-                      <div className="text-3xl font-semibold text-white tabular-nums">{value}</div>
+            {/* Response Intelligence - fixed order */}
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 sm:p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Activity className="text-mora-400" size={22} />
+                <h3 className="text-xl font-semibold">Response Intelligence</h3>
+              </div>
+              {stats ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {statsOrder.map(({ label, key }) => (
+                    <div key={key} className="bg-black/60 rounded-2xl p-4">
+                      <div className="text-xs text-white/50 tracking-wider mb-1">{label}</div>
+                      <div className="text-xl md:text-3xl font-semibold tabular-nums">{stats[key]}</div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="text-white/40 text-center py-12">
+                  Format a JSON response to unlock intelligence insights
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Search Bar */}
-        {formattedOutput && (
-          <div className="mt-8 max-w-xl mx-auto">
-            <div className="relative">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-white/40" size={18} />
-              <input
-                type="text"
-                placeholder="Search keys or values..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#0a0a0a] border border-white/10 pl-12 py-4 rounded-3xl text-sm focus:outline-none focus:border-white/30"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* History Section */}
-        {history.length > 0 && (
-          <div className="mt-16">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-medium flex items-center gap-3">
-                <Clock /> Recent Sessions
-              </h3>
-              <button onClick={() => setShowHistory(!showHistory)} className="text-sm text-white/60 hover:text-white">
-                {showHistory ? 'Hide' : 'Show All'}
+        {/* History Section - always visible if history exists, else show empty state */}
+        <div className="mt-16">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-medium flex items-center gap-3"><Clock size={20} /> Recent Sessions</h3>
+            {history.length > 0 && (
+              <button onClick={() => setShowHistory(!showHistory)} className="text-sm text-mora-400 hover:underline">
+                {showHistory ? 'Collapse' : 'View All'}
               </button>
+            )}
+          </div>
+          {history.length === 0 ? (
+            <div className="text-center text-white/40 py-12 bg-[#070707] border border-white/10 rounded-3xl">
+              No formatting sessions yet
             </div>
-
-            {showHistory && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ) : (
+            showHistory && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {history.map(item => (
-                  <div key={item.id} className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-5 hover:border-white/30 group">
-                    <div className="text-xs text-white/50 mb-3">
-                      {new Date(item.timestamp).toLocaleString()}
-                    </div>
-                    
-                    <div className="text-sm line-clamp-2 font-mono text-white/70 mb-4">
-                      {item.formatted.substring(0, 120)}...
-                    </div>
-
-                    <div className="flex gap-3">
-                      <button 
-                        onClick={() => {
-                          setJsonInput(item.input);
-                          validateAndFormat(item.input);
-                        }}
-                        className="text-xs flex-1 py-2.5 bg-white/5 hover:bg-white/10 rounded-2xl"
-                      >
-                        Load Again
-                      </button>
-                      <button 
-                        onClick={() => {
-                          const updated = history.filter(h => h.id !== item.id);
-                          setHistory(updated);
-                          localStorage.setItem('apives-json-history', JSON.stringify(updated));
-                        }}
-                        className="text-xs px-4 text-red-400 hover:bg-red-500/10 rounded-2xl"
-                      >
-                        <Trash2 size={15} />
-                      </button>
+                  <div key={item.id} className="bg-[#070707] border border-white/10 rounded-3xl p-5 hover:border-mora-500/30 transition-all">
+                    <div className="text-xs text-white/50 mb-2">{new Date(item.timestamp).toLocaleString()}</div>
+                    <div className="font-mono text-sm line-clamp-2 text-white/70 mb-4 break-words">{item.output.substring(0, 120)}...</div>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={() => { setJsonInput(item.input); validateAndFormat(item.input); }} className={`${glassPill} flex-1 text-sm`}>Load</button>
+                      <button onClick={() => copyToClipboard(item.output, 'history')} className={glassPill}>Copy</button>
+                      <button onClick={() => {
+                        const filtered = history.filter(h => h.id !== item.id);
+                        setHistory(filtered);
+                        localStorage.setItem('apives-json-formatter-history', JSON.stringify(filtered));
+                      }} className={`${glassPill} text-red-400`}><Trash2 size={16} /></button>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        )}
+            )
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default APIResponseFormatter;
+export default ApiResponseFormatterPage;
