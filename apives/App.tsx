@@ -8,6 +8,9 @@ import BuildAuthentication from "./pages/build/BuildAuthentication";
 import BuildAnalytics from "./pages/build/BuildAnalytics";
 import BuildImageGeneration from "./pages/build/BuildImageGeneration";
 import SponsorAnalytics from "./pages/SponsorAnalytics";
+import JwtDecoderPage from "./pages/JwtDecoderPage";
+
+
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -79,6 +82,10 @@ return (
 <Route path="/offers/serpapi" element={<SerpApiOffer />} />
 <Route path="/live-api-runner"
 element={<LiveApiRunnerPage />} />
+<Route path="/jwt-decoder"
+  element={<JwtDecoderPage />} />
+
+
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
