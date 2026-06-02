@@ -124,7 +124,7 @@ text-slate-500 hover:text-white transition-all group"
       <div className="md:col-span-2">  
         <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">Platform</h3>  
         <ul className="space-y-2 md:space-y-3">  
-          <li><Link to="/browse" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Home</Link></li>  
+          <li><Link to="/browse" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Explore APIs</Link></li>  
           <li><Link to="/fresh" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">New Releases</Link></li>  
           <li><Link to="/popular" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Top Rated</Link></li>  
           <li>
