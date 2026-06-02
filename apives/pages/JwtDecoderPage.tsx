@@ -19,6 +19,7 @@ import {
   Timer,
   CheckCircle2,
   XCircle,
+  Search,
 } from "lucide-react";
 import { BackButton } from "../components/BackButton";
 
@@ -30,6 +31,7 @@ interface HistoryItem {
   tokenLength: number;
   isValid: boolean;
   isExpired: boolean;
+  tokenPreview: string;
 }
 
 interface SmartClaim {
@@ -48,8 +50,16 @@ const JwtDecoderPage = () => {
   const [isExpired, setIsExpired] = useState<boolean>(false);
   const [securityScore, setSecurityScore] = useState<number>(0);
   const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [payloadSearch, setPayloadSearch] = useState("");
 
-  // Load history from localStorage (for authenticated users)
+  // Check login status
+  useEffect(() => {
+    const user = localStorage.getItem("mora_user");
+    setIsLoggedIn(!!user);
+  }, []);
+
+  // Load history from localStorage
   useEffect(() => {
     const savedHistory = localStorage.getItem("jwtDecodeHistory");
     if (savedHistory) {
@@ -70,15 +80,21 @@ const JwtDecoderPage = () => {
     return atob(base64);
   };
 
-  const calculateSecurityScore = (hdr: any, pld: any, parts: string[]): number => {
+  const calculateSecurityScore = (hdr: any, pld: any, parts: string[], expired: boolean): number => {
+    if (hdr?.alg === "none") return 0;
+
     let score = 0;
     // Signature present
-    if (parts.length === 3 && parts[2] && parts[2].length > 0) score += 30;
+    if (parts.length === 3 && parts[2]?.length > 0) score += 35;
     // Has expiration
-    if (pld?.exp) score += 20;
+    if (pld?.exp) score += 25;
     // Secure algorithm
-    if (hdr?.alg && hdr.alg !== "none") score += 50;
-    return Math.min(100, score);
+    if (hdr?.alg && hdr.alg !== "none") score += 40;
+
+    // Penalty for expired token
+    if (expired) score = Math.max(0, score - 30);
+
+    return Math.min(100, Math.max(0, score));
   };
 
   const decodeJWT = () => {
@@ -89,6 +105,7 @@ const JwtDecoderPage = () => {
       setIsValid(null);
       setIsExpired(false);
       setSecurityScore(0);
+      setPayloadSearch("");
 
       const trimmedToken = token.trim();
       if (!trimmedToken) throw new Error("Please enter a JWT token");
@@ -121,7 +138,7 @@ const JwtDecoderPage = () => {
 
       setIsValid(valid);
       setIsExpired(expired);
-      setSecurityScore(calculateSecurityScore(decodedHeader, decodedPayload, parts));
+      setSecurityScore(calculateSecurityScore(decodedHeader, decodedPayload, parts, expired));
 
       // Save to history
       const historyItem: HistoryItem = {
@@ -132,6 +149,7 @@ const JwtDecoderPage = () => {
         tokenLength: trimmedToken.length,
         isValid: valid,
         isExpired: expired,
+        tokenPreview: trimmedToken.substring(0, 60) + (trimmedToken.length > 60 ? "..." : ""),
       };
 
       const updatedHistory = [historyItem, ...history].slice(0, 10);
@@ -154,6 +172,7 @@ const JwtDecoderPage = () => {
     setIsValid(null);
     setIsExpired(false);
     setSecurityScore(0);
+    setPayloadSearch("");
   };
 
   const copyToClipboard = async (text: string) => {
@@ -191,6 +210,12 @@ const JwtDecoderPage = () => {
 
   const clearHistory = () => saveHistory([]);
 
+  const loadFromHistory = (item: HistoryItem) => {
+    setToken(item.tokenPreview.includes("...") ? "" : item.tokenPreview); // Simplified - full token not stored for privacy
+    // In production, you might store full tokens encrypted or use a different strategy
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const getTimeStatus = (exp?: number) => {
     if (!exp) return null;
     const now = Date.now();
@@ -203,6 +228,14 @@ const JwtDecoderPage = () => {
       const diffMs = expTime - now;
       return { status: "active", text: `Expires in ${formatTimeLeft(diffMs)}` };
     }
+  };
+
+  const getTokenAge = (iat?: number) => {
+    if (!iat) return null;
+    const now = Date.now();
+    const iatTime = iat * 1000;
+    const diffMs = now - iatTime;
+    return `Issued ${formatTimeAgo(diffMs)}`;
   };
 
   const formatTimeAgo = (ms: number): string => {
@@ -262,15 +295,27 @@ const JwtDecoderPage = () => {
   const parts = token.trim().split(".");
   const hasSignature = parts.length === 3 && parts[2]?.length > 0;
 
+  // Filtered payload for search
+  const filteredPayload = React.useMemo(() => {
+    if (!payload || !payloadSearch.trim()) return payload;
+    const searchTerm = payloadSearch.toLowerCase().trim();
+    const filtered: any = {};
+    Object.keys(payload).forEach(key => {
+      if (key.toLowerCase().includes(searchTerm) || 
+          String(payload[key]).toLowerCase().includes(searchTerm)) {
+        filtered[key] = payload[key];
+      }
+    });
+    return filtered;
+  }, [payload, payloadSearch]);
+
   return (
     <div className="min-h-screen bg-black pt-20 pb-20 relative overflow-hidden">
-      {/* Back Button - Mobile Optimized */}
       <div className="absolute top-6 left-4 lg:top-28 lg:left-10 z-30">
         <BackButton />
       </div>
 
       <div className="max-w-6xl mx-auto px-5 lg:px-6 relative z-10">
-        {/* Hero */}
         <div className="text-center pt-8 lg:pt-0 mb-12">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-none">
             JWT Decoder
@@ -372,7 +417,6 @@ const JwtDecoderPage = () => {
                 </div>
               </div>
 
-              {/* Quick Claims */}
               {payload && (
                 <div className="mt-8 pt-6 border-t border-white/10">
                   <p className="text-xs uppercase tracking-widest text-slate-500 mb-4">QUICK CLAIMS</p>
@@ -461,9 +505,21 @@ const JwtDecoderPage = () => {
             {/* Validation Status */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-8">
               <div className="flex items-center gap-3 mb-8">
-                {isValid === true && !isExpired && <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center"><BadgeCheck className="text-emerald-400" size={28} /></div>}
-                {(isValid === false || isExpired) && <div className="w-11 h-11 rounded-2xl bg-red-500/10 flex items-center justify-center"><AlertTriangle className="text-red-400" size={28} /></div>}
-                {isValid === null && <div className="w-11 h-11 rounded-2xl bg-slate-700/50 flex items-center justify-center"><ShieldCheck className="text-slate-400" size={28} /></div>}
+                {isValid === true && !isExpired && (
+                  <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+                    <BadgeCheck className="text-emerald-400" size={28} />
+                  </div>
+                )}
+                {(isValid === false || isExpired) && (
+                  <div className="w-11 h-11 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                    <AlertTriangle className="text-red-400" size={28} />
+                  </div>
+                )}
+                {isValid === null && (
+                  <div className="w-11 h-11 rounded-2xl bg-slate-700/50 flex items-center justify-center">
+                    <ShieldCheck className="text-slate-400" size={28} />
+                  </div>
+                )}
 
                 <div>
                   <h3 className="text-white font-semibold text-xl">Validation Status</h3>
@@ -486,9 +542,13 @@ const JwtDecoderPage = () => {
                     {isValid && !isExpired ? "Valid Token" : isExpired ? "Expired Token" : "Invalid Token"}
                   </div>
                   <p className="text-slate-400 max-w-md mx-auto">
-                    {header?.alg === "none" && "Algorithm 'none' detected - insecure"}
-                    {isExpired && "This token has expired"}
-                    {!isValid && !isExpired && "Token failed validation checks"}
+                    {header?.alg === "none" 
+                      ? "Algorithm 'none' detected - insecure" 
+                      : isExpired 
+                        ? "This token has expired" 
+                        : isValid 
+                          ? "Token passed validation checks" 
+                          : "Token failed validation checks"}
                   </p>
                 </div>
               )}
@@ -509,6 +569,7 @@ const JwtDecoderPage = () => {
                     <div>
                       <div className="text-slate-400 text-sm">Issued At</div>
                       <div className="text-white mt-1">{new Date(payload.iat * 1000).toLocaleString()}</div>
+                      <div className="text-emerald-400 text-sm mt-1">{getTokenAge(payload.iat)}</div>
                     </div>
                   )}
                   {payload.exp && (
@@ -538,10 +599,16 @@ const JwtDecoderPage = () => {
                     <h3 className="text-xl font-semibold text-white">Header</h3>
                   </div>
                   <div className="flex gap-3">
-                    <button onClick={() => copyToClipboard(JSON.stringify(header, null, 2))} className="glass-btn px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10">
+                    <button 
+                      onClick={() => copyToClipboard(JSON.stringify(header, null, 2))} 
+                      className="px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                    >
                       <Copy size={16} /> Copy
                     </button>
-                    <button onClick={() => downloadJson(header, "jwt-header.json")} className="glass-btn px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10">
+                    <button 
+                      onClick={() => downloadJson(header, "jwt-header.json")} 
+                      className="px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                    >
                       <Download size={16} /> JSON
                     </button>
                   </div>
@@ -552,7 +619,7 @@ const JwtDecoderPage = () => {
               </div>
             )}
 
-            {/* Payload */}
+            {/* Payload with Search */}
             {payload && (
               <div className="bg-[#070707] border border-white/10 rounded-3xl p-8">
                 <div className="flex justify-between items-center mb-6">
@@ -561,20 +628,43 @@ const JwtDecoderPage = () => {
                     <h3 className="text-xl font-semibold text-white">Payload</h3>
                   </div>
                   <div className="flex gap-3">
-                    <button onClick={() => copyToClipboard(JSON.stringify(payload, null, 2))} className="glass-btn px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10">
+                    <button 
+                      onClick={() => copyToClipboard(JSON.stringify(payload, null, 2))} 
+                      className="px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                    >
                       <Copy size={16} /> Copy
                     </button>
-                    <button onClick={() => downloadJson(payload, "jwt-payload.json")} className="glass-btn px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10">
+                    <button 
+                      onClick={() => downloadJson(payload, "jwt-payload.json")} 
+                      className="px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                    >
                       <Download size={16} /> JSON
                     </button>
-                    <button onClick={downloadFullReport} className="glass-btn px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10">
+                    <button 
+                      onClick={downloadFullReport} 
+                      className="px-5 py-2.5 text-sm flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
+                    >
                       <Download size={16} /> Full Report
                     </button>
                   </div>
                 </div>
 
+                {/* Search Input */}
+                <div className="relative mb-6">
+                  <div className="absolute left-4 top-3.5 text-slate-500">
+                    <Search size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    value={payloadSearch}
+                    onChange={(e) => setPayloadSearch(e.target.value)}
+                    placeholder="Search claims (key or value)..."
+                    className="w-full bg-black/60 border border-white/10 rounded-2xl pl-12 py-3 text-sm text-white placeholder:text-slate-500 focus:border-mora-500 focus:ring-1 focus:ring-mora-500/30"
+                  />
+                </div>
+
                 <pre className="bg-black/70 p-7 rounded-2xl text-sm text-slate-300 overflow-auto max-h-80 font-mono border border-white/5">
-                  {JSON.stringify(payload, null, 2)}
+                  {JSON.stringify(filteredPayload || payload, null, 2)}
                 </pre>
 
                 {smartClaims.length > 0 && (
@@ -598,43 +688,58 @@ const JwtDecoderPage = () => {
               </div>
             )}
 
-            {/* Decode History */}
-            <div className="bg-[#070707] border border-white/10 rounded-3xl p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <Clock3 size={22} className="text-mora-500" />
-                  <h3 className="text-xl font-semibold text-white">Decode History</h3>
+            {/* Decode History - Only for logged in users */}
+            {isLoggedIn && (
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <Clock3 size={22} className="text-mora-500" />
+                    <h3 className="text-xl font-semibold text-white">Decode History</h3>
+                  </div>
+                  {history.length > 0 && (
+                    <button 
+                      onClick={clearHistory} 
+                      className="text-red-400 hover:text-red-500 text-sm flex items-center gap-1.5 transition-colors"
+                    >
+                      <Trash2 size={16} /> Clear All
+                    </button>
+                  )}
                 </div>
-                {history.length > 0 && (
-                  <button onClick={clearHistory} className="text-red-400 hover:text-red-500 text-sm flex items-center gap-1.5 transition-colors">
-                    <Trash2 size={16} /> Clear All
-                  </button>
+
+                {history.length === 0 ? (
+                  <div className="text-center py-20 text-slate-500">Your decode history will appear here</div>
+                ) : (
+                  <div className="space-y-3 max-h-[460px] overflow-auto pr-3 custom-scrollbar">
+                    {history.map((item) => (
+                      <div 
+                        key={item.id} 
+                        onClick={() => loadFromHistory(item)}
+                        className="flex items-center justify-between bg-black/40 border border-white/10 hover:border-mora-500/50 hover:bg-black/60 rounded-2xl px-6 py-5 transition-all cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-6">
+                          <div className="text-xs text-slate-500 w-28">
+                            {new Date(item.timestamp).toLocaleDateString([], { 
+                              month: 'short', 
+                              day: 'numeric', 
+                              hour: 'numeric', 
+                              minute: '2-digit' 
+                            })}
+                          </div>
+                          <div>
+                            <div className="font-mono text-white">{item.alg}</div>
+                            <div className="text-xs text-slate-500">{item.claimsCount} claims • {item.tokenLength} chars</div>
+                            <div className="text-[10px] text-slate-600 truncate max-w-[280px]">{item.tokenPreview}</div>
+                          </div>
+                        </div>
+                        <div className={`px-4 py-1 rounded-full text-xs font-medium ${item.isValid && !item.isExpired ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
+                          {item.isValid && !item.isExpired ? "VALID" : "INVALID"}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
-
-              {history.length === 0 ? (
-                <div className="text-center py-20 text-slate-500">Your decode history will appear here</div>
-              ) : (
-                <div className="space-y-3 max-h-[460px] overflow-auto pr-3 custom-scrollbar">
-                  {history.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between bg-black/40 border border-white/10 hover:border-white/20 rounded-2xl px-6 py-5 transition-all">
-                      <div className="flex items-center gap-6">
-                        <div className="text-xs text-slate-500 w-28">
-                          {new Date(item.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
-                        </div>
-                        <div>
-                          <div className="font-mono text-white">{item.alg}</div>
-                          <div className="text-xs text-slate-500">{item.claimsCount} claims • {item.tokenLength} chars</div>
-                        </div>
-                      </div>
-                      <div className={`px-4 py-1 rounded-full text-xs font-medium ${item.isValid && !item.isExpired ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
-                        {item.isValid && !item.isExpired ? "VALID" : "INVALID"}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
