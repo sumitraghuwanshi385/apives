@@ -257,98 +257,103 @@ export const LandingPage: React.FC = () => {
 
 {/* ================= APIVES TOOLS ================= */}
 
-<section className="py-10 md:py-14 border-t border-white/5 bg-black">
+<section className="py-10 md:py-14 border-t border-white/5 bg-black">  <div className="max-w-7xl mx-auto px-4 md:px-8"><div className="text-center mb-8">
 
-  <div className="max-w-7xl mx-auto px-4 md:px-8">
+  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-mora-500/20 bg-mora-500/5 text-mora-400 text-[11px] font-black uppercase tracking-widest">
+    3 Tools Available Now
+  </div>
 
-    <div className="text-center mb-8">
+  <h2 className="mt-4 text-2xl md:text-4xl font-bold text-white tracking-tight">
+    Apives Developer Tools
+  </h2>
 
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-mora-500/20 bg-mora-500/5 text-mora-400 text-[11px] font-black uppercase tracking-widest">
-        3 Tools Available Now
+  <p className="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
+    Built for developers who work with APIs every day.
+  </p>
+
+</div>
+
+<div
+  className="overflow-x-auto scrollbar-hide pb-2"
+  style={{ WebkitOverflowScrolling: "touch" }}
+>
+
+  <div className="flex gap-4 md:grid md:grid-cols-3">
+
+    {/* API Response Formatter */}
+
+    <Link
+      to="/tools/api-response-formatter"
+      className="group min-w-[250px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-5 md:p-6 hover:border-mora-500/40 hover:bg-white/[0.02] transition-all duration-300 hover:-translate-y-1"
+    >
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-4">
+        <Braces className="text-mora-500" size={26} />
       </div>
 
-      <h2 className="mt-4 text-2xl md:text-4xl font-bold text-white tracking-tight">
-        Apives Developer Tools
-      </h2>
+      <h3 className="text-white text-base md:text-lg font-bold mb-2">
+        API Response Formatter
+      </h3>
 
-      <p className="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
-        Built for developers who work with APIs every day.
+      <p className="text-slate-400 text-sm leading-relaxed">
+        Format, validate and analyze JSON API responses instantly.
       </p>
 
-    </div>
+      <div className="mt-4 text-mora-500 text-xs font-bold uppercase tracking-wider">
+        Open Tool →
+      </div>
+    </Link>
 
-    <div className="overflow-x-auto scrollbar-hide">
+    {/* JWT Decoder */}
 
-      <div className="flex gap-4 md:grid md:grid-cols-3">
-
-        {/* Formatter */}
-
-        <div className="min-w-[320px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-6 hover:border-mora-500/40 transition-all">
-
-          <div className="w-14 h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-5">
-            <Braces className="text-mora-500" size={28} />
-          </div>
-
-          <h3 className="text-white text-lg font-bold mb-2">
-            API Response Formatter
-          </h3>
-
-          <p className="text-slate-400 text-sm leading-relaxed">
-            Format, validate and analyze JSON API responses instantly.
-          </p>
-
-        </div>
-
-        {/* JWT */}
-
-        <div className="min-w-[320px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-6 hover:border-mora-500/40 transition-all">
-
-          <div className="w-14 h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-5">
-            <KeyRound className="text-mora-500" size={28} />
-          </div>
-
-          <h3 className="text-white text-lg font-bold mb-2">
-            JWT Decoder
-          </h3>
-
-          <p className="text-slate-400 text-sm leading-relaxed">
-            Decode JWT tokens and inspect payloads securely.
-          </p>
-
-        </div>
-
-        {/* Runner */}
-
-        <div className="min-w-[320px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-6 hover:border-mora-500/40 transition-all">
-
-          <div className="w-14 h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-5">
-            <PlayCircle className="text-mora-500" size={28} />
-          </div>
-
-          <h3 className="text-white text-lg font-bold mb-2">
-            Live API Runner
-          </h3>
-
-          <p className="text-slate-400 text-sm leading-relaxed">
-            Send API requests and inspect real-time responses instantly.
-          </p>
-
-        </div>
-
+    <Link
+      to="/tools/jwt-decoder"
+      className="group min-w-[250px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-5 md:p-6 hover:border-mora-500/40 hover:bg-white/[0.02] transition-all duration-300 hover:-translate-y-1"
+    >
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-4">
+        <KeyRound className="text-mora-500" size={26} />
       </div>
 
-    </div>
+      <h3 className="text-white text-base md:text-lg font-bold mb-2">
+        JWT Decoder
+      </h3>
 
-    <div className="flex justify-center mt-8">
+      <p className="text-slate-400 text-sm leading-relaxed">
+        Decode JWT tokens and inspect payloads securely.
+      </p>
 
-      <div className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400">
-        Coming Soon • API Mock Server • cURL Converter • JSON ↔ XML • Base64 Tools
+      <div className="mt-4 text-mora-500 text-xs font-bold uppercase tracking-wider">
+        Open Tool →
+      </div>
+    </Link>
+
+    {/* Live API Runner */}
+
+    <Link
+      to="/tools/live-api-runner"
+      className="group min-w-[250px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-5 md:p-6 hover:border-mora-500/40 hover:bg-white/[0.02] transition-all duration-300 hover:-translate-y-1"
+    >
+      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-4">
+        <PlayCircle className="text-mora-500" size={26} />
       </div>
 
-    </div>
+      <h3 className="text-white text-base md:text-lg font-bold mb-2">
+        Live API Runner
+      </h3>
+
+      <p className="text-slate-400 text-sm leading-relaxed">
+        Send API requests and inspect real-time responses instantly.
+      </p>
+
+      <div className="mt-4 text-mora-500 text-xs font-bold uppercase tracking-wider">
+        Open Tool →
+      </div>
+    </Link>
 
   </div>
 
+</div>
+
+  </div>
 </section>
      
       
