@@ -305,9 +305,15 @@ const ApiResponseFormatterPage: React.FC = () => {
               size={24}
             />
           </div>
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tighter text-white mb-3">
-            API Response <span className="text-mora-500">Formatter</span>
+
+
+<h1 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight leading-[0.95]">
+            API Response
+            <span className="block text-mora-500">
+              Formatter
+            </span>
           </h1>
+            
           <p className="text-base text-white/60 max-w-md">
             Format, validate, analyze and debug JSON API responses
           </p>
