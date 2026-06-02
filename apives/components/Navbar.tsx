@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -93,9 +93,7 @@ return (
       <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">    
         <NavLink to="/" icon={HomeIcon}>Home</NavLink>    
         <NavLink to="/browse" icon={Search}>Explore APIs</NavLink>    
-        <NavLink to="/sponsorship" icon={Handshake}>
-  For Sponsorship
-</NavLink>   
+        
 <NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
 </NavLink>
@@ -213,20 +211,21 @@ transition-all
   <div className="border-t border-white/10 animate-fade-in bg-black absolute w-full left-0 top-full shadow-2xl overflow-hidden rounded-b-2xl md:rounded-b-3xl">    
     <div className="px-4 pt-3 pb-4 space-y-1">    
       <MobileNavLink to="/" icon={HomeIcon} onClick={() => setIsOpen(false)}>Home</MobileNavLink>    
+
       <MobileNavLink to="/browse" icon={Search} onClick={() => setIsOpen(false)}>Explore APIs</MobileNavLink>    
+
       <MobileNavLink to="/fresh" icon={Zap} onClick={() => setIsOpen(false)}>New Releases</MobileNavLink>    
+
       <MobileNavLink to="/popular" icon={Trophy} onClick={() => setIsOpen(false)}>Top Rated</MobileNavLink>
-<MobileNavLink to="/sponsorship" icon={Handshake} onClick={() => setIsOpen(false)}>
-  Sponsorship
-</MobileNavLink>
+
+<MobileNavLink to="/sponsorship" icon={Handshake} onClick={() => setIsOpen(false)}>Sponsorship</MobileNavLink>
+
 <MobileNavLink
   to="/ask-apives"
   icon={Bot}
   onClick={() => {
     setIsOpen(false);
-    navigate("/ask-apives-ai"); // ✅ FIX NAV
-  }}
->
+    navigate("/ask-apives-ai"); }}>
   ApivesAI
 </MobileNavLink>
 <MobileNavLink
@@ -235,6 +234,14 @@ transition-all
   onClick={() => setIsOpen(false)}
 >
   API Runner
+</MobileNavLink>
+
+<MobileNavLink
+  to="/jwt-decoder"
+  icon={KeyRound}
+  onClick={() => setIsOpen(false)}
+>
+  JWT Decoder
 </MobileNavLink>
 
       <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>    
