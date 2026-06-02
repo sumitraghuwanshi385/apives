@@ -32,9 +32,10 @@ interface Stats {
   largestObject: number;
   largestArray: number;
   complexityScore: number;
+  efficiencyScore: number;
 }
 
-const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97] focus:outline-none";
+const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
 
 const ApiResponseFormatterPage: React.FC = () => {
   const [jsonInput, setJsonInput] = useState('');
@@ -52,10 +53,10 @@ const ApiResponseFormatterPage: React.FC = () => {
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
 
-  // TODO: Replace with real auth context
+  // TODO: Replace with real auth context from your app
   const isLoggedIn = true;
 
-  // Load History
+  // Load History (only for logged-in users)
   useEffect(() => {
     if (!isLoggedIn) return;
     const saved = localStorage.getItem('apives-json-formatter-history');
@@ -85,6 +86,7 @@ const ApiResponseFormatterPage: React.FC = () => {
     traverse(obj, 1);
     const str = JSON.stringify(obj);
     const complexityScore = Math.min(100, Math.max(15, 100 - (depth * 12) - (objects * 1.2)));
+    const efficiencyScore = Math.round(100 - (str.length / 1024));
 
     return {
       totalKeys, objects, arrays, nodes, depth,
@@ -92,7 +94,8 @@ const ApiResponseFormatterPage: React.FC = () => {
       lines: str.split('\n').length,
       bytes: new Blob([str]).size,
       largestObject, largestArray,
-      complexityScore: Math.round(complexityScore)
+      complexityScore: Math.round(complexityScore),
+      efficiencyScore: Math.max(10, efficiencyScore)
     };
   }, []);
 
@@ -116,9 +119,7 @@ const ApiResponseFormatterPage: React.FC = () => {
       setError(null);
       setStats(calculateStats(parsed));
 
-      if (isLoggedIn) {
-        saveToHistory(input, pretty);
-      }
+      if (isLoggedIn) saveToHistory(input, pretty);
     } catch (err: any) {
       setIsValid(false);
       resetState(true);
@@ -137,8 +138,11 @@ const ApiResponseFormatterPage: React.FC = () => {
     setMinifiedOutput('');
     setYamlOutput('');
     setRawOutput('');
+    setSearchTerm('');
     if (!keepError) setError(null);
     setStats(null);
+    setIsValid(null);
+    setUploadedFilename(null);
   };
 
   const saveToHistory = (input: string, output: string) => {
@@ -181,81 +185,14 @@ const ApiResponseFormatterPage: React.FC = () => {
     const a = document.createElement('a');
     a.href = url;
     a.download = `\( {base} \){suffix}.${ext}`;
-    document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
-  // Flatten
-  const handleFlatten = () => {
-    if (!formattedOutput) return;
-    try {
-      const parsed = JSON.parse(formattedOutput);
-      const flattened = flattenObject(parsed);
-      const flattenedStr = JSON.stringify(flattened, null, 2);
-      setJsonInput(flattenedStr);
-      validateAndFormat(flattenedStr);
-    } catch (e) {}
+  const handleClear = () => {
+    setJsonInput('');
+    resetState();
   };
-
-  const flattenObject = (obj: any, prefix = ''): any => {
-    return Object.keys(obj).reduce((acc: any, k) => {
-      const pre = prefix ? `${prefix}.` : '';
-      if (typeof obj[k] === 'object' && obj[k] !== null && !Array.isArray(obj[k])) {
-        Object.assign(acc, flattenObject(obj[k], pre + k));
-      } else {
-        acc[pre + k] = obj[k];
-      }
-      return acc;
-    }, {});
-  };
-
-  // Sort Keys
-  const handleSortKeys = () => {
-    if (!formattedOutput) return;
-    const parsed = JSON.parse(formattedOutput);
-    const sorted = Object.keys(parsed).sort().reduce((acc: any, k) => {
-      acc[k] = parsed[k];
-      return acc;
-    }, {});
-    const str = JSON.stringify(sorted, null, 2);
-    setJsonInput(str);
-    validateAndFormat(str);
-  };
-
-  // Remove Empty
-  const handleRemoveEmpty = () => {
-    if (!formattedOutput) return;
-    const parsed = JSON.parse(formattedOutput);
-    const cleaned = JSON.parse(JSON.stringify(parsed, (_, v) => 
-      (v === null || v === '' || (Array.isArray(v) && v.length === 0)) ? undefined : v
-    ));
-    const str = JSON.stringify(cleaned, null, 2);
-    setJsonInput(str);
-    validateAndFormat(str);
-  };
-
-  // Search
-  useEffect(() => {
-    if (!searchTerm.trim() || !formattedOutput) {
-      setMatchCount(0);
-      return;
-    }
-    try {
-      const regex = new RegExp(searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-      setMatchCount((formattedOutput.match(regex) || []).length);
-    } catch {
-      setMatchCount(0);
-    }
-  }, [searchTerm, formattedOutput]);
-
-  const currentOutput = useMemo(() => {
-    if (activeTab === 'pretty') return formattedOutput;
-    if (activeTab === 'minified') return minifiedOutput;
-    if (activeTab === 'raw') return rawOutput;
-    return formattedOutput;
-  }, [activeTab, formattedOutput, minifiedOutput, rawOutput]);
 
   // Tree View
   const JsonTree = React.memo(({ data, searchTerm }: { data: any; searchTerm: string }) => {
@@ -264,16 +201,9 @@ const ApiResponseFormatterPage: React.FC = () => {
     const toggleExpand = (path: string) => {
       setExpanded(prev => {
         const newSet = new Set(prev);
-        if (newSet.has(path)) newSet.delete(path);
-        else newSet.add(path);
+        newSet.has(path) ? newSet.delete(path) : newSet.add(path);
         return newSet;
       });
-    };
-
-    const highlight = (text: string) => {
-      if (!searchTerm.trim()) return text;
-      const regex = new RegExp(`(\( {searchTerm.replace(/[.*+?^ \){}()|[\]\\]/g, '\\$&')})`, 'gi');
-      return text.replace(regex, match => `<mark class="bg-yellow-500/30 px-0.5 rounded">${match}</mark>`);
     };
 
     const renderNode = (node: any, path = '$'): React.ReactNode => {
@@ -288,7 +218,7 @@ const ApiResponseFormatterPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-1.5 cursor-pointer hover:text-mora-400 py-0.5" onClick={() => toggleExpand(path)}>
               {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
-              <span>Array [{node.length}]</span>
+              Array [{node.length}]
             </div>
             {isOpen && (
               <div className="pl-6 border-l border-white/10 ml-2 mt-1 space-y-1">
@@ -306,7 +236,7 @@ const ApiResponseFormatterPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-1.5 cursor-pointer hover:text-mora-400 py-0.5" onClick={() => toggleExpand(path)}>
               {isOpen ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
-              <span>Object {'{'}{entries.length}{'}'}</span>
+              Object {'{'}{entries.length}{'}'}
             </div>
             {isOpen && (
               <div className="pl-6 border-l border-white/10 ml-2 mt-1 space-y-1">
@@ -328,6 +258,27 @@ const ApiResponseFormatterPage: React.FC = () => {
     return <div className="font-mono text-sm leading-relaxed">{renderNode(data)}</div>;
   });
 
+  const currentOutput = useMemo(() => {
+    if (activeTab === 'pretty') return formattedOutput;
+    if (activeTab === 'minified') return minifiedOutput;
+    if (activeTab === 'raw') return rawOutput;
+    return formattedOutput;
+  }, [activeTab, formattedOutput, minifiedOutput, rawOutput]);
+
+  // Search match count
+  useEffect(() => {
+    if (!searchTerm.trim() || !formattedOutput) {
+      setMatchCount(0);
+      return;
+    }
+    try {
+      const regex = new RegExp(searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      setMatchCount((formattedOutput.match(regex) || []).length);
+    } catch {
+      setMatchCount(0);
+    }
+  }, [searchTerm, formattedOutput]);
+
   return (
     <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
       <div className="absolute top-24 left-4 lg:left-8 z-30">
@@ -344,16 +295,16 @@ const ApiResponseFormatterPage: React.FC = () => {
             API Response <span className="text-mora-500">Formatter</span>
           </h1>
           <p className="text-base text-white/60 max-w-md">
-            Professional JSON formatting, validation, analysis & debugging toolkit
+            Format, validate, analyze and debug JSON API responses with precision
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Input Panel */}
+          {/* INPUT */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 bg-white/5 rounded-xl"><FileJson size={22} /></div>
+                <div className="p-2.5 bg-white/5 rounded-xl"><FileJson size={22} className="text-mora-500" /></div>
                 <h2 className="text-xl font-semibold">JSON Input</h2>
               </div>
 
@@ -371,39 +322,44 @@ const ApiResponseFormatterPage: React.FC = () => {
               />
 
               <div className="flex flex-wrap gap-2 mt-5">
-                <button onClick={() => validateAndFormat(jsonInput)} className={`${glassPill} bg-mora-500 text-black font-semibold`}>Format JSON</button>
-                <button onClick={() => document.getElementById('json-upload')?.click()} className={glassPill}><Upload size={16} /> Upload</button>
-                <button onClick={() => setJsonInput('')} className={`${glassPill} text-red-400`}>Clear</button>
+                <button 
+                  onClick={() => validateAndFormat(jsonInput)} 
+                  className={`${glassPill} bg-mora-500 text-black font-semibold`}
+                >
+                  Format JSON
+                </button>
+                <button 
+                  onClick={() => document.getElementById('json-upload')?.click()} 
+                  className={glassPill}
+                >
+                  <Upload size={16} className="mr-1.5" /> Upload
+                </button>
+                <button 
+                  onClick={handleClear} 
+                  className={`${glassPill} text-red-400`}
+                >
+                  Clear
+                </button>
               </div>
               <input id="json-upload" type="file" accept=".json" className="hidden" onChange={(e) => e.target.files?.[0] && processFile(e.target.files[0])} />
             </div>
-
-            {/* Utilities */}
-            <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
-              <h3 className="font-medium mb-4 flex items-center gap-2"><Activity size={18} className="text-mora-500" /> Utilities</h3>
-              <div className="grid grid-cols-2 gap-2">
-                <button onClick={handleFlatten} className={glassPill}>Flatten</button>
-                <button onClick={handleSortKeys} className={glassPill}>Sort Keys</button>
-                <button onClick={handleRemoveEmpty} className={glassPill}>Remove Empty</button>
-                <button onClick={() => downloadFile(yamlOutput, '', 'yaml')} className={glassPill}>To YAML</button>
-              </div>
-            </div>
           </div>
 
-          {/* Output Panel */}
+          {/* OUTPUT */}
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 bg-white/5 rounded-xl"><Code2 size={22} /></div>
+                <div className="p-2.5 bg-white/5 rounded-xl"><Code2 size={22} className="text-mora-500" /></div>
                 <h2 className="text-xl font-semibold">Formatted Output</h2>
               </div>
 
-              <div className="flex bg-white/5 rounded-2xl p-1 mb-5 overflow-x-auto">
+              {/* Compact Tab Switcher */}
+              <div className="flex bg-white/5 rounded-2xl p-1 mb-5 overflow-x-auto scrollbar-hide">
                 {(['pretty', 'minified', 'tree', 'raw'] as const).map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 text-sm rounded-xl transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-black' : 'hover:bg-white/10'}`}
+                    className={`px-5 py-2 text-sm rounded-xl transition-all whitespace-nowrap flex-1 min-w-0 ${activeTab === tab ? 'bg-white text-black shadow-sm' : 'hover:bg-white/10'}`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
@@ -412,7 +368,7 @@ const ApiResponseFormatterPage: React.FC = () => {
 
               {isValid !== null && (
                 <div className={`mb-5 p-4 rounded-2xl flex gap-3 ${isValid ? 'bg-mora-500/10 border border-mora-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
-                  {isValid ? <CheckCircle2 className="text-mora-400" size={22} /> : <XCircle className="text-red-400" size={22} />}
+                  {isValid ? <CheckCircle2 className="text-mora-400 mt-0.5" size={22} /> : <XCircle className="text-red-400 mt-0.5" size={22} />}
                   <div>
                     <div className="font-medium">{isValid ? 'Valid JSON' : 'Invalid JSON'}</div>
                     {error && <div className="text-xs text-red-400 mt-1">Line {error.line}, Col {error.column}: {error.message}</div>}
@@ -427,7 +383,7 @@ const ApiResponseFormatterPage: React.FC = () => {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search keys/values..."
+                    placeholder="Search keys or values..."
                     className="flex-1 bg-transparent outline-none text-sm"
                   />
                   {matchCount > 0 && <span className="text-xs text-white/50 ml-2">{matchCount} matches</span>}
@@ -446,7 +402,7 @@ const ApiResponseFormatterPage: React.FC = () => {
                     </SyntaxHighlighter>
                   )
                 ) : (
-                  <div className="h-full flex items-center justify-center text-white/40 text-sm">Click Format JSON to begin</div>
+                  <div className="h-full flex items-center justify-center text-white/40 text-sm">Format JSON to see output</div>
                 )}
               </div>
 
@@ -460,7 +416,7 @@ const ApiResponseFormatterPage: React.FC = () => {
               )}
             </div>
 
-            {/* Intelligence */}
+            {/* Response Intelligence */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
                 <Activity size={20} className="text-mora-500" />
@@ -476,16 +432,18 @@ const ApiResponseFormatterPage: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-white/40 py-12 text-center">Format a JSON to see insights</div>
+                <div className="text-white/40 py-12 text-center">Format JSON to unlock insights</div>
               )}
             </div>
           </div>
         </div>
 
-        {/* History - Only for logged-in users */}
+        {/* History - Logged-in users only */}
         {isLoggedIn && history.length > 0 && (
           <div className="mt-16">
-            <h3 className="text-lg font-medium mb-6 flex items-center gap-2"><Clock size={18} /> Recent Sessions</h3>
+            <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
+              <Clock size={18} className="text-mora-500" /> Recent Sessions
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {history.map(item => (
                 <div key={item.id} className="bg-[#070707] border border-white/10 rounded-3xl p-5">
@@ -494,11 +452,16 @@ const ApiResponseFormatterPage: React.FC = () => {
                   <div className="flex gap-2">
                     <button onClick={() => { setJsonInput(item.input); validateAndFormat(item.input); }} className={glassPill}>Load</button>
                     <button onClick={() => copyToClipboard(item.output, 'history')} className={glassPill}>Copy</button>
-                    <button onClick={() => {
-                      const filtered = history.filter(h => h.id !== item.id);
-                      setHistory(filtered);
-                      localStorage.setItem('apives-json-formatter-history', JSON.stringify(filtered));
-                    }} className={`${glassPill} text-red-400`}><Trash2 size={16} /></button>
+                    <button 
+                      onClick={() => {
+                        const filtered = history.filter(h => h.id !== item.id);
+                        setHistory(filtered);
+                        localStorage.setItem('apives-json-formatter-history', JSON.stringify(filtered));
+                      }} 
+                      className={`${glassPill} text-red-400`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               ))}
