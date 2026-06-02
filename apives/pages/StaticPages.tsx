@@ -6,7 +6,7 @@ import { ShieldCheck, Activity, FileText, Lock, CheckCircle2, ChevronRight, List
   Users } from 'lucide-react';
 import { BackButton } from '../components/BackButton';
 import { CustomSelect } from '../components/CustomSelect';
-import { QuickStartPlayground } from "../components/QuickStartPlayground";
+import QuickStartPlayground from "../components/QuickStartPlayground";
 
 const PageLayout: React.FC<{ title: string; subtitle: string; icon: React.ElementType; children: React.ReactNode }> = ({ title, subtitle, icon: Icon, children }) => (
   <div className="min-h-screen bg-black pt-28 pb-20 relative selection:bg-mora-500/30">
