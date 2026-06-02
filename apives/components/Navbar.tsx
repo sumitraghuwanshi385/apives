@@ -244,6 +244,8 @@ transition-all
 </MobileNavLink>
 
 
+<MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
+
           
       <div className="border-t border-white/10 my-2 opacity-30"></div>    
       {isAuthenticated ? (    
@@ -263,7 +265,6 @@ transition-all
             className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-red-400 hover:bg-red-500/5 transition-all uppercase tracking-wide mt-1"    
           >    
 
-<MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
 
             <LogOut size={13} className="text-red-500/60" />     
             Terminate Session    
