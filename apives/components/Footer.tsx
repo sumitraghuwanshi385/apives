@@ -212,14 +212,14 @@ text-slate-500 hover:text-white transition-all group"
             </h3>  
               
             <p className="text-[10px] md:text-[11px] text-slate-400 mb-3 leading-relaxed font-medium">
-  Join 500+ developers & builders already subscribed to discover new APIs, tools, launches, and ecosystem updates before everyone else 🚀
+  Join 500+ developers & builders already subscribed to discover new APIs, tools, launches, and ecosystem updates before everyone else!
 </p>  
               
             <form onSubmit={handleNewsletterSubmit} className="relative">
   <input type="hidden" name="_subject" value="New Newsletter Subscription - Apives" />
 {newsletterSuccess && (
   <p className="text-[10px] text-green-400 mt-2 flex items-center gap-1">
-    <Check size={12} /> You’re subscribed. Welcome to Apives 🚀
+    <Check size={12} /> You’re subscribed. Welcome to Apives 💚
   </p>
 )} 
                 <div className="relative group/input">  
