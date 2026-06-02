@@ -10,7 +10,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BackButton } from "../components/BackButton";
 import yaml from 'js-yaml';
-import { useAuth } from '@/contexts/AuthContext'; // Real auth context
+
 
 interface HistoryItem {
   id: string;
