@@ -297,15 +297,15 @@ const JwtDecoderPage = () => {
   }, [payload, payloadSearch]);
 
   return (
-    <div className="min-h-screen bg-black pt-16 pb-12 lg:pt-24 lg:pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
       {/* Back Button */}
-      <div className="absolute top-6 left-4 lg:top-28 lg:left-10 z-30">
+      <div className="absolute top-24 left-4 lg:left-8 z-30">
         <BackButton />
       </div>
 
       <div className="max-w-6xl mx-auto px-5 lg:px-6 relative z-10">
         {/* Hero */}
-        <div className="text-center pt-14 lg:pt-6 mb-10 lg:mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-none">
             JWT Decoder
             <span className="block text-mora-500">&amp; Validator</span>
@@ -318,7 +318,7 @@ const JwtDecoderPage = () => {
         <div className="grid lg:grid-cols-12 gap-5 lg:gap-6">
           {/* INPUT SECTION */}
           <div className="lg:col-span-5">
-            <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8 lg:sticky lg:top-24">
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8 lg:sticky lg:top-24">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-2xl bg-mora-500/10 flex items-center justify-center">
                   <KeyRound size={20} className="text-mora-500" />
@@ -333,7 +333,7 @@ const JwtDecoderPage = () => {
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                className="w-full h-[260px] lg:h-[340px] bg-[#050505] border border-white/10 rounded-2xl p-5 lg:p-6 text-sm text-white font-mono resize-none focus:border-mora-500 focus:ring-2 focus:ring-mora-500/30 transition-all"
+                className="w-full h-[220px] md:h-[280px] lg:h-[340px] bg-[#050505] border border-white/10 rounded-2xl p-5 lg:p-6 text-sm text-white font-mono resize-none focus:border-mora-500 focus:ring-2 focus:ring-mora-500/30 transition-all"
               />
 
               <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
@@ -383,9 +383,9 @@ const JwtDecoderPage = () => {
           </div>
 
           {/* ANALYSIS PANELS */}
-          <div className="lg:col-span-7 space-y-5 lg:space-y-6">
+          <div className="lg:col-span-7 space-y-3 md:space-y-5 lg:space-y-6">
             {/* Token Insights */}
-            <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Activity size={20} className="text-mora-500" />
                 <h3 className="text-white font-semibold text-lg lg:text-xl">Token Insights</h3>
@@ -435,12 +435,12 @@ const JwtDecoderPage = () => {
             </div>
 
             {/* JWT Structure - Compact Horizontal */}
-            <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
               <div className="flex items-center gap-3 mb-5">
                 <ShieldCheck size={20} className="text-mora-500" />
                 <h3 className="text-white font-semibold text-lg">JWT Structure</h3>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 {[
                   { label: "Header", present: !!header },
                   { label: "Payload", present: !!payload },
@@ -465,7 +465,7 @@ const JwtDecoderPage = () => {
 
             {/* Security Analysis */}
             {(header || payload) && (
-              <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
                 <div className="flex justify-between items-center mb-6">
                   <div className="flex items-center gap-3">
                     <ShieldCheck size={20} className="text-mora-500" />
@@ -500,7 +500,7 @@ const JwtDecoderPage = () => {
             )}
 
             {/* Validation Status - Compact */}
-            <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+            <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
               <div className="flex items-center gap-3 mb-5">
                 {isValid === true && !isExpired && <div className="w-8 h-8 rounded-xl bg-mora-500/10 flex items-center justify-center"><BadgeCheck className="text-mora-400" size={22} /></div>}
                 {(isValid === false || isExpired) && <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center"><AlertTriangle className="text-red-400" size={22} /></div>}
@@ -517,7 +517,7 @@ const JwtDecoderPage = () => {
               )}
 
               {isValid !== null && (
-                <div className={`rounded-2xl p-5 text-center border ${isValid && !isExpired ? "border-mora-500/30 bg-mora-500/5" : "border-red-500/30 bg-red-500/5"}`}>
+                <div className={`rounded-2xl p-4 md:p-5 text-center border ${isValid && !isExpired ? "border-mora-500/30 bg-mora-500/5" : "border-red-500/30 bg-red-500/5"}`}>
                   <div className={`text-2xl font-semibold mb-1 ${isValid && !isExpired ? "text-mora-400" : "text-red-400"}`}>
                     {isValid && !isExpired ? "Valid Token" : isExpired ? "Expired Token" : "Invalid Token"}
                   </div>
@@ -538,7 +538,7 @@ const JwtDecoderPage = () => {
 
             {/* Expiration Analysis */}
             {payload && (
-              <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <Clock3 size={20} className="text-mora-500" />
                   <h3 className="text-lg font-semibold text-white">Expiration Analysis</h3>
@@ -571,7 +571,7 @@ const JwtDecoderPage = () => {
 
             {/* Header */}
             {header && (
-              <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
                 <div className="flex justify-between items-center mb-5">
                   <div className="flex items-center gap-3">
                     <FileJson size={20} className="text-mora-500" />
@@ -600,7 +600,7 @@ const JwtDecoderPage = () => {
 
             {/* Payload */}
             {payload && (
-              <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
                 <div className="flex justify-between items-center mb-5">
                   <div className="flex items-center gap-3">
                     <FileJson size={20} className="text-mora-500" />
@@ -660,7 +660,7 @@ const JwtDecoderPage = () => {
 
             {/* Decode History */}
             {isLoggedIn && (
-              <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <Clock3 size={20} className="text-mora-500" />
