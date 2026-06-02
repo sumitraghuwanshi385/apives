@@ -11,7 +11,6 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BackButton } from "../components/BackButton";
 import yaml from 'js-yaml';
 
-
 interface HistoryItem {
   id: string;
   timestamp: string;
@@ -40,7 +39,8 @@ interface Stats {
 const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
 
 const ApiResponseFormatterPage: React.FC = () => {
-  const { user } = useAuth();
+  // Use same auth pattern as Live API Runner
+  const user = typeof window !== 'undefined' ? localStorage.getItem("mora_user") : null;
   const isLoggedIn = !!user;
 
   const [jsonInput, setJsonInput] = useState('');
@@ -353,7 +353,6 @@ const ApiResponseFormatterPage: React.FC = () => {
                 <h2 className="text-xl font-semibold">Formatted Output</h2>
               </div>
 
-              {/* Compact Tabs */}
               <div className="flex bg-white/5 rounded-2xl p-1 mb-5 overflow-x-auto">
                 {(['pretty', 'minified', 'tree', 'raw'] as const).map(tab => (
                   <button
