@@ -140,7 +140,6 @@ const JwtDecoderPage = () => {
       setIsExpired(expired);
       setSecurityScore(calculateSecurityScore(decodedHeader, decodedPayload, parts, expired));
 
-      // Save to history only if logged in
       if (isLoggedIn) {
         const historyItem: HistoryItem = {
           id: Date.now().toString(36),
@@ -206,10 +205,9 @@ const JwtDecoderPage = () => {
 
   const loadFromHistory = (item: HistoryItem) => {
     setToken(item.tokenValue);
-    // Auto-decode after a small delay for smooth UX
     setTimeout(() => {
       decodeJWT();
-    }, 50);
+    }, 80);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -299,7 +297,7 @@ const JwtDecoderPage = () => {
   }, [payload, payloadSearch]);
 
   return (
-    <div className="min-h-screen bg-black pt-16 pb-12 lg:pt-20 lg:pb-20 relative overflow-hidden">
+    <div className="min-h-screen bg-black pt-16 pb-12 lg:pt-24 lg:pb-20 relative overflow-hidden">
       {/* Back Button */}
       <div className="absolute top-6 left-4 lg:top-28 lg:left-10 z-30">
         <BackButton />
@@ -307,7 +305,7 @@ const JwtDecoderPage = () => {
 
       <div className="max-w-6xl mx-auto px-5 lg:px-6 relative z-10">
         {/* Hero */}
-        <div className="text-center pt-12 lg:pt-4 mb-10 lg:mb-12">
+        <div className="text-center pt-14 lg:pt-6 mb-10 lg:mb-12">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-none">
             JWT Decoder
             <span className="block text-mora-500">&amp; Validator</span>
@@ -335,7 +333,7 @@ const JwtDecoderPage = () => {
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                className="w-full h-[280px] lg:h-[340px] bg-[#050505] border border-white/10 rounded-2xl p-5 lg:p-6 text-sm text-white font-mono resize-none focus:border-mora-500 focus:ring-2 focus:ring-mora-500/30 transition-all"
+                className="w-full h-[260px] lg:h-[340px] bg-[#050505] border border-white/10 rounded-2xl p-5 lg:p-6 text-sm text-white font-mono resize-none focus:border-mora-500 focus:ring-2 focus:ring-mora-500/30 transition-all"
               />
 
               <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
@@ -356,7 +354,7 @@ const JwtDecoderPage = () => {
                 <button
                   onClick={decodeJWT}
                   disabled={!token.trim()}
-                  className="flex-1 py-3.5 lg:py-4 px-6 lg:px-8 rounded-full bg-mora-500 hover:bg-mora-400 active:bg-mora-600 disabled:bg-white/10 disabled:text-slate-500 text-black font-semibold text-sm lg:text-base tracking-wide transition-all duration-200"
+                  className="flex-1 py-3.5 lg:py-4 px-6 lg:px-8 rounded-full bg-mora-500 hover:bg-mora-400 active:bg-mora-600 disabled:bg-white/10 disabled:text-slate-500 text-black font-semibold text-sm lg:text-base tracking-wide transition-all duration-200 shadow-lg shadow-mora-500/30"
                 >
                   DECODE &amp; ANALYZE
                 </button>
@@ -375,7 +373,7 @@ const JwtDecoderPage = () => {
                   className="mt-4 w-full py-3 rounded-2xl border border-white/10 hover:bg-white/5 text-sm flex items-center justify-center gap-2 transition-colors"
                 >
                   {copiedId === "full-token" ? (
-                    <><Check size={16} className="text-emerald-400" /> Copied</>
+                    <><Check size={16} className="text-mora-400" /> Copied</>
                   ) : (
                     <><Copy size={16} /> Copy Full Token</>
                   )}
@@ -436,24 +434,30 @@ const JwtDecoderPage = () => {
               )}
             </div>
 
-            {/* JWT Structure - Compact */}
+            {/* JWT Structure - Compact Horizontal */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
               <div className="flex items-center gap-3 mb-5">
                 <ShieldCheck size={20} className="text-mora-500" />
                 <h3 className="text-white font-semibold text-lg">JWT Structure</h3>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="flex gap-3">
                 {[
-                  { label: "Header", present: !!header, icon: CheckCircle2 },
-                  { label: "Payload", present: !!payload, icon: CheckCircle2 },
-                  { label: "Signature", present: hasSignature, icon: hasSignature ? CheckCircle2 : XCircle },
+                  { label: "Header", present: !!header },
+                  { label: "Payload", present: !!payload },
+                  { label: "Signature", present: hasSignature },
                 ].map((seg, i) => (
-                  <div key={i} className={`rounded-2xl p-4 border text-center ${seg.present ? "border-emerald-500/30 bg-emerald-500/5" : "border-red-500/30 bg-red-500/5"}`}>
-                    <seg.icon className={`mx-auto mb-2.5 ${seg.present ? "text-emerald-400" : "text-red-400"}`} size={26} />
-                    <p className="font-medium text-white text-sm">{seg.label}</p>
-                    <p className={`text-xs mt-1 ${seg.present ? "text-emerald-400" : "text-red-400"}`}>
-                      {seg.present ? "Present" : "Missing"}
-                    </p>
+                  <div key={i} className={`flex-1 rounded-2xl px-5 py-4 border flex items-center gap-3 ${seg.present ? "border-mora-500/30 bg-mora-500/5" : "border-red-500/30 bg-red-500/5"}`}>
+                    {seg.present ? (
+                      <CheckCircle2 className="text-mora-400" size={22} />
+                    ) : (
+                      <XCircle className="text-red-400" size={22} />
+                    )}
+                    <div>
+                      <p className="font-medium text-white text-sm">{seg.label}</p>
+                      <p className={`text-xs ${seg.present ? "text-mora-400" : "text-red-400"}`}>
+                        {seg.present ? "Present" : "Missing"}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -467,7 +471,7 @@ const JwtDecoderPage = () => {
                     <ShieldCheck size={20} className="text-mora-500" />
                     <h3 className="text-white font-semibold text-lg">Security Analysis</h3>
                   </div>
-                  <div className={`px-4 py-1 rounded-full text-sm font-semibold tabular-nums ${securityScore >= 80 ? "bg-emerald-500/10 text-emerald-400" : securityScore >= 50 ? "bg-yellow-500/10 text-yellow-400" : "bg-red-500/10 text-red-400"}`}>
+                  <div className={`px-4 py-1 rounded-full text-sm font-semibold tabular-nums ${securityScore >= 80 ? "bg-mora-500/10 text-mora-400" : securityScore >= 50 ? "bg-yellow-500/10 text-yellow-400" : "bg-red-500/10 text-red-400"}`}>
                     Score: {securityScore}/100
                   </div>
                 </div>
@@ -479,11 +483,11 @@ const JwtDecoderPage = () => {
                   </div>
                   <div className="flex justify-between py-3 border-b border-white/10">
                     <span className="text-slate-400">Signature</span>
-                    <span className={hasSignature ? "text-emerald-400" : "text-red-400"}>{hasSignature ? "Present" : "Missing"}</span>
+                    <span className={hasSignature ? "text-mora-400" : "text-red-400"}>{hasSignature ? "Present" : "Missing"}</span>
                   </div>
                   <div className="flex justify-between py-3 border-b border-white/10">
                     <span className="text-slate-400">Expiration Claim</span>
-                    <span className={payload?.exp ? "text-emerald-400" : "text-amber-400"}>{payload?.exp ? "Present" : "Missing"}</span>
+                    <span className={payload?.exp ? "text-mora-400" : "text-amber-400"}>{payload?.exp ? "Present" : "Missing"}</span>
                   </div>
                 </div>
 
@@ -497,27 +501,24 @@ const JwtDecoderPage = () => {
 
             {/* Validation Status - Compact */}
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-6 lg:p-8">
-              <div className="flex items-center gap-3 mb-6">
-                {isValid === true && !isExpired && <div className="w-9 h-9 rounded-2xl bg-emerald-500/10 flex items-center justify-center"><BadgeCheck className="text-emerald-400" size={24} /></div>}
-                {(isValid === false || isExpired) && <div className="w-9 h-9 rounded-2xl bg-red-500/10 flex items-center justify-center"><AlertTriangle className="text-red-400" size={24} /></div>}
-                {isValid === null && <div className="w-9 h-9 rounded-2xl bg-slate-700/50 flex items-center justify-center"><ShieldCheck className="text-slate-400" size={24} /></div>}
+              <div className="flex items-center gap-3 mb-5">
+                {isValid === true && !isExpired && <div className="w-8 h-8 rounded-xl bg-mora-500/10 flex items-center justify-center"><BadgeCheck className="text-mora-400" size={22} /></div>}
+                {(isValid === false || isExpired) && <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center"><AlertTriangle className="text-red-400" size={22} /></div>}
+                {isValid === null && <div className="w-8 h-8 rounded-xl bg-slate-700/50 flex items-center justify-center"><ShieldCheck className="text-slate-400" size={22} /></div>}
 
                 <div>
                   <h3 className="text-white font-semibold text-lg">Validation Status</h3>
-                  <p className="text-xs text-slate-500">Integrity &amp; expiry check</p>
+                  <p className="text-xs text-slate-500">Token integrity check</p>
                 </div>
               </div>
 
               {isValid === null && !error && (
-                <div className="text-center py-10 text-slate-500 text-sm">Decode a token to see results</div>
+                <div className="text-center py-8 text-slate-500 text-sm">Decode a token to see results</div>
               )}
 
               {isValid !== null && (
-                <div className={`rounded-2xl p-6 text-center border ${isValid && !isExpired ? "border-emerald-500/30 bg-emerald-500/5" : "border-red-500/30 bg-red-500/5"}`}>
-                  <div className={`text-5xl mb-3 ${isValid && !isExpired ? "text-emerald-400" : "text-red-400"}`}>
-                    {isValid && !isExpired ? "✓" : "⚠"}
-                  </div>
-                  <div className={`text-xl font-semibold mb-2 ${isValid && !isExpired ? "text-emerald-400" : "text-red-400"}`}>
+                <div className={`rounded-2xl p-5 text-center border ${isValid && !isExpired ? "border-mora-500/30 bg-mora-500/5" : "border-red-500/30 bg-red-500/5"}`}>
+                  <div className={`text-2xl font-semibold mb-1 ${isValid && !isExpired ? "text-mora-400" : "text-red-400"}`}>
                     {isValid && !isExpired ? "Valid Token" : isExpired ? "Expired Token" : "Invalid Token"}
                   </div>
                   <p className="text-slate-400 text-sm">
@@ -548,7 +549,7 @@ const JwtDecoderPage = () => {
                     <div>
                       <div className="text-slate-400 text-sm">Issued At</div>
                       <div className="text-white mt-1">{new Date(payload.iat * 1000).toLocaleString()}</div>
-                      <div className="text-emerald-400 text-sm mt-1">{getTokenAge(payload.iat)}</div>
+                      <div className="text-mora-400 text-sm mt-1">{getTokenAge(payload.iat)}</div>
                     </div>
                   )}
                   {payload.exp && (
@@ -559,7 +560,7 @@ const JwtDecoderPage = () => {
                   )}
 
                   {getTimeStatus(payload.exp) && (
-                    <div className={`inline-flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium ${getTimeStatus(payload.exp)?.status === "active" ? "bg-emerald-500/10 text-emerald-400" : "bg-orange-500/10 text-orange-400"}`}>
+                    <div className={`inline-flex items-center gap-3 px-5 py-3 rounded-2xl text-sm font-medium ${getTimeStatus(payload.exp)?.status === "active" ? "bg-mora-500/10 text-mora-400" : "bg-orange-500/10 text-orange-400"}`}>
                       <Timer size={20} />
                       {getTimeStatus(payload.exp)?.text}
                     </div>
@@ -581,7 +582,7 @@ const JwtDecoderPage = () => {
                       onClick={() => copyToClipboard(JSON.stringify(header, null, 2), "header")}
                       className="px-4 py-2 text-xs flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
                     >
-                      {copiedId === "header" ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />} Copy
+                      {copiedId === "header" ? <Check size={15} className="text-mora-400" /> : <Copy size={15} />} Copy
                     </button>
                     <button 
                       onClick={() => downloadJson(header, "jwt-header.json")} 
@@ -610,7 +611,7 @@ const JwtDecoderPage = () => {
                       onClick={() => copyToClipboard(JSON.stringify(payload, null, 2), "payload")}
                       className="px-4 py-2 text-xs flex items-center gap-2 hover:bg-white/10 border border-white/10 rounded-xl transition-colors"
                     >
-                      {copiedId === "payload" ? <Check size={15} className="text-emerald-400" /> : <Copy size={15} />} Copy
+                      {copiedId === "payload" ? <Check size={15} className="text-mora-400" /> : <Copy size={15} />} Copy
                     </button>
                     <button 
                       onClick={() => downloadJson(payload, "jwt-payload.json")} 
@@ -675,7 +676,7 @@ const JwtDecoderPage = () => {
                 {history.length === 0 ? (
                   <div className="text-center py-12 text-slate-500 text-sm">No previous decodes yet</div>
                 ) : (
-                  <div className="space-y-3 max-h-[380px] overflow-auto pr-2 custom-scrollbar">
+                  <div className="space-y-3 max-h-[360px] overflow-auto pr-2 custom-scrollbar">
                     {history.map((item) => (
                       <div 
                         key={item.id} 
@@ -691,7 +692,7 @@ const JwtDecoderPage = () => {
                             <div className="text-xs text-slate-500">{item.claimsCount} claims • {item.tokenLength} chars</div>
                           </div>
                         </div>
-                        <div className={`px-3 py-0.5 rounded-full text-xs font-medium ${item.isValid && !item.isExpired ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
+                        <div className={`px-3 py-0.5 rounded-full text-xs font-medium ${item.isValid && !item.isExpired ? "bg-mora-500/10 text-mora-400" : "bg-red-500/10 text-red-400"}`}>
                           {item.isValid && !item.isExpired ? "VALID" : "INVALID"}
                         </div>
                       </div>
