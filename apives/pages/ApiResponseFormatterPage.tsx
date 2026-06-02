@@ -298,8 +298,12 @@ const ApiResponseFormatterPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6">
         {/* Compact Hero */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="inline-flex items-center justify-center p-2.5 bg-white/5 rounded-2xl mb-4">
-            <FileJson size={32} className="text-mora-500" strokeWidth={1.6} />
+          {/* Icon Box */}
+          <div className="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-4">
+            <FileJson
+              className="text-mora-500"
+              size={24}
+            />
           </div>
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tighter text-white mb-3">
             API Response <span className="text-mora-500">Formatter</span>
