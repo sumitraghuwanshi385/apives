@@ -4,12 +4,13 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   FileJson, Code2, Copy, Download, Upload, Trash2, Clock,
   CheckCircle2, XCircle, Search, ChevronDown, ChevronRight,
-  Activity
+  Activity, Braces
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BackButton } from "../components/BackButton";
 import yaml from 'js-yaml';
+import { useAuth } from '@/contexts/AuthContext'; // ← Real auth context
 
 interface HistoryItem {
   id: string;
@@ -38,6 +39,9 @@ interface Stats {
 const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
 
 const ApiResponseFormatterPage: React.FC = () => {
+  const { user } = useAuth(); // Real authentication
+  const isLoggedIn = !!user;
+
   const [jsonInput, setJsonInput] = useState('');
   const [formattedOutput, setFormattedOutput] = useState('');
   const [minifiedOutput, setMinifiedOutput] = useState('');
@@ -53,12 +57,12 @@ const ApiResponseFormatterPage: React.FC = () => {
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
 
-  // TODO: Replace with real auth context from your app
-  const isLoggedIn = true;
-
-  // Load History (only for logged-in users)
+  // Load History - Only for authenticated users
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      setHistory([]);
+      return;
+    }
     const saved = localStorage.getItem('apives-json-formatter-history');
     if (saved) setHistory(JSON.parse(saved));
   }, [isLoggedIn]);
@@ -139,6 +143,7 @@ const ApiResponseFormatterPage: React.FC = () => {
     setYamlOutput('');
     setRawOutput('');
     setSearchTerm('');
+    setMatchCount(0);
     if (!keepError) setError(null);
     setStats(null);
     setIsValid(null);
@@ -146,6 +151,7 @@ const ApiResponseFormatterPage: React.FC = () => {
   };
 
   const saveToHistory = (input: string, output: string) => {
+    if (!isLoggedIn) return;
     const newItem: HistoryItem = {
       id: Date.now().toString(36),
       timestamp: new Date().toISOString(),
@@ -208,7 +214,7 @@ const ApiResponseFormatterPage: React.FC = () => {
 
     const renderNode = (node: any, path = '$'): React.ReactNode => {
       if (node === null) return <span className="text-red-400">null</span>;
-      if (typeof node === 'boolean') return <span className="text-mora-400">{node.toString()}</span>;
+      if (typeof node === 'boolean') return <span className="text-mora-400">{node}</span>;
       if (typeof node === 'number') return <span className="text-emerald-400">{node}</span>;
       if (typeof node === 'string') return <span className="text-amber-400">"{node}"</span>;
 
@@ -265,7 +271,7 @@ const ApiResponseFormatterPage: React.FC = () => {
     return formattedOutput;
   }, [activeTab, formattedOutput, minifiedOutput, rawOutput]);
 
-  // Search match count
+  // Search
   useEffect(() => {
     if (!searchTerm.trim() || !formattedOutput) {
       setMatchCount(0);
@@ -287,15 +293,15 @@ const ApiResponseFormatterPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-5 md:px-6">
         {/* Compact Hero */}
-        <div className="flex flex-col items-center text-center mb-10">
-          <div className="inline-flex items-center justify-center p-3 bg-white/5 rounded-2xl mb-4">
-            <FileJson size={34} className="text-mora-500" strokeWidth={1.6} />
+        <div className="flex flex-col items-center text-center mb-8">
+          <div className="inline-flex items-center justify-center p-2.5 bg-white/5 rounded-2xl mb-4">
+            <FileJson size={32} className="text-mora-500" strokeWidth={1.6} />
           </div>
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tighter text-white mb-3">
             API Response <span className="text-mora-500">Formatter</span>
           </h1>
           <p className="text-base text-white/60 max-w-md">
-            Format, validate, analyze and debug JSON API responses with precision
+            Format, validate, analyze and debug JSON API responses
           </p>
         </div>
 
@@ -304,7 +310,9 @@ const ApiResponseFormatterPage: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 bg-white/5 rounded-xl"><FileJson size={22} className="text-mora-500" /></div>
+                <div className="p-2.5 bg-white/5 rounded-xl">
+                  <Braces size={22} className="text-mora-500" />
+                </div>
                 <h2 className="text-xl font-semibold">JSON Input</h2>
               </div>
 
@@ -321,13 +329,7 @@ const ApiResponseFormatterPage: React.FC = () => {
                 placeholder="Paste JSON, API response, GraphQL response, webhook payload, or upload a .json file..."
               />
 
-              <div className="flex flex-wrap gap-2 mt-5">
-                <button 
-                  onClick={() => validateAndFormat(jsonInput)} 
-                  className={`${glassPill} bg-mora-500 text-black font-semibold`}
-                >
-                  Format JSON
-                </button>
+              <div className="flex gap-2 mt-5">
                 <button 
                   onClick={() => document.getElementById('json-upload')?.click()} 
                   className={glassPill}
@@ -349,17 +351,19 @@ const ApiResponseFormatterPage: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-5">
               <div className="flex items-center gap-3 mb-5">
-                <div className="p-2.5 bg-white/5 rounded-xl"><Code2 size={22} className="text-mora-500" /></div>
+                <div className="p-2.5 bg-white/5 rounded-xl">
+                  <Code2 size={22} className="text-mora-500" />
+                </div>
                 <h2 className="text-xl font-semibold">Formatted Output</h2>
               </div>
 
-              {/* Compact Tab Switcher */}
-              <div className="flex bg-white/5 rounded-2xl p-1 mb-5 overflow-x-auto scrollbar-hide">
+              {/* Compact Tabs */}
+              <div className="flex bg-white/5 rounded-2xl p-1 mb-5 overflow-x-auto">
                 {(['pretty', 'minified', 'tree', 'raw'] as const).map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-5 py-2 text-sm rounded-xl transition-all whitespace-nowrap flex-1 min-w-0 ${activeTab === tab ? 'bg-white text-black shadow-sm' : 'hover:bg-white/10'}`}
+                    className={`px-5 py-2 text-sm rounded-xl transition-all whitespace-nowrap flex-1 ${activeTab === tab ? 'bg-white text-black' : 'hover:bg-white/10'}`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </button>
@@ -368,7 +372,7 @@ const ApiResponseFormatterPage: React.FC = () => {
 
               {isValid !== null && (
                 <div className={`mb-5 p-4 rounded-2xl flex gap-3 ${isValid ? 'bg-mora-500/10 border border-mora-500/30' : 'bg-red-500/10 border border-red-500/30'}`}>
-                  {isValid ? <CheckCircle2 className="text-mora-400 mt-0.5" size={22} /> : <XCircle className="text-red-400 mt-0.5" size={22} />}
+                  {isValid ? <CheckCircle2 className="text-mora-400" size={22} /> : <XCircle className="text-red-400" size={22} />}
                   <div>
                     <div className="font-medium">{isValid ? 'Valid JSON' : 'Invalid JSON'}</div>
                     {error && <div className="text-xs text-red-400 mt-1">Line {error.line}, Col {error.column}: {error.message}</div>}
@@ -402,7 +406,7 @@ const ApiResponseFormatterPage: React.FC = () => {
                     </SyntaxHighlighter>
                   )
                 ) : (
-                  <div className="h-full flex items-center justify-center text-white/40 text-sm">Format JSON to see output</div>
+                  <div className="h-full flex items-center justify-center text-white/40 text-sm">Upload or paste JSON to begin</div>
                 )}
               </div>
 
@@ -438,7 +442,7 @@ const ApiResponseFormatterPage: React.FC = () => {
           </div>
         </div>
 
-        {/* History - Logged-in users only */}
+        {/* History - Only visible to authenticated users */}
         {isLoggedIn && history.length > 0 && (
           <div className="mt-16">
             <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
