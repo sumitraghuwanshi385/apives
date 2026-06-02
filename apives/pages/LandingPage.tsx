@@ -18,7 +18,8 @@ import {
   Key,
 Braces,
 KeyRound,
-Terminal
+Terminal,
+FileJson
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -257,109 +258,118 @@ export const LandingPage: React.FC = () => {
 
 {/* ================= APIVES TOOLS ================= */}
 
-<section className="py-10 md:py-14 border-t border-white/5 bg-black">  <div className="max-w-7xl mx-auto px-4 md:px-8"><div className="text-center mb-10">
+<section className="py-10 md:py-14 border-t border-white/5 bg-black">
 
-  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.04] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[11px] font-black uppercase tracking-[0.25em] shadow-[0_0_30px_rgba(34,197,94,0.12)]">
-    ✦ 3 Tools Available Now
-  </div>
+  <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-  <h2 className="mt-5 text-2xl md:text-4xl font-bold text-white tracking-tight">
-    Apives Developer Tools
-  </h2>
+    {/* Header */}
 
-  <p className="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
-    Built for developers who work with APIs every day.
-  </p>
+    <div className="text-center mb-10">
 
-</div>
-
-<div
-  className="overflow-x-auto scrollbar-hide pb-2"
-  style={{ WebkitOverflowScrolling: "touch" }}
->
-
-  <div className="flex gap-4 md:grid md:grid-cols-3">
-
-    {/* API RESPONSE FORMATTER */}
-
-    <Link
-      to="/api-response-formatter"
-      className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1"
-    >
-
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-        <Braces className="text-mora-500" size={26} />
+      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.03] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[10px] font-black uppercase tracking-[0.18em] shadow-[0_0_20px_rgba(34,197,94,0.10)]">
+        ✦ 3 Tools Available Now
       </div>
 
-      <h3 className="text-white text-base md:text-lg font-bold mb-2">
-        API Response Formatter
-      </h3>
+      <h2 className="mt-5 text-2xl md:text-4xl font-bold text-white tracking-tight">
+        Apives Developer Tools
+      </h2>
 
-      <p className="text-slate-400 text-sm leading-relaxed">
-        Format, validate, analyze and inspect JSON responses instantly.
+      <p className="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
+        Built for developers who work with APIs every day.
       </p>
 
-      <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
-        Open Tool →
-      </div>
+    </div>
 
-    </Link>
+    {/* Mobile Horizontal Scroll + Desktop Grid */}
 
-    {/* JWT DECODER */}
-
-    <Link
-      to="/jwt-decoder"
-      className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1"
+    <div
+      className="overflow-x-auto scrollbar-hide pb-2"
+      style={{ WebkitOverflowScrolling: "touch" }}
     >
 
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-        <KeyRound className="text-mora-500" size={26} />
+      <div className="flex gap-4 md:grid md:grid-cols-3">
+
+        {/* ================= LIVE API RUNNER ================= */}
+
+        <Link
+          to="/live-api-runner"
+          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1 hover:bg-white/[0.05]"
+        >
+
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+            <Terminal className="text-mora-500" size={26} />
+          </div>
+
+          <h3 className="text-white text-base md:text-lg font-bold mb-2">
+            Live API Runner
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Test APIs, send requests and inspect live responses in real time.
+          </p>
+
+          <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+            Open Tool →
+          </div>
+
+        </Link>
+
+        {/* ================= JWT DECODER ================= */}
+
+        <Link
+          to="/jwt-decoder"
+          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1 hover:bg-white/[0.05]"
+        >
+
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+            <KeyRound className="text-mora-500" size={26} />
+          </div>
+
+          <h3 className="text-white text-base md:text-lg font-bold mb-2">
+            JWT Decoder
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Decode JWT tokens, inspect payloads and verify claims instantly.
+          </p>
+
+          <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+            Open Tool →
+          </div>
+
+        </Link>
+
+        {/* ================= API RESPONSE FORMATTER ================= */}
+
+        <Link
+          to="/api-response-formatter"
+          className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1 hover:bg-white/[0.05]"
+        >
+
+          <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+            <FileJson className="text-mora-500" size={26} />
+          </div>
+
+          <h3 className="text-white text-base md:text-lg font-bold mb-2">
+            API Response Formatter
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Format, validate, analyze and inspect JSON responses instantly.
+          </p>
+
+          <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+            Open Tool →
+          </div>
+
+        </Link>
+
       </div>
 
-      <h3 className="text-white text-base md:text-lg font-bold mb-2">
-        JWT Decoder
-      </h3>
-
-      <p className="text-slate-400 text-sm leading-relaxed">
-        Decode JWT tokens, inspect payloads and verify claims instantly.
-      </p>
-
-      <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
-        Open Tool →
-      </div>
-
-    </Link>
-
-    {/* LIVE API RUNNER */}
-
-    <Link
-      to="/live-api-runner"
-      className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/40 hover:-translate-y-1"
-    >
-
-      <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-        <Terminal className="text-mora-500" size={26} />
-      </div>
-
-      <h3 className="text-white text-base md:text-lg font-bold mb-2">
-        Live API Runner
-      </h3>
-
-      <p className="text-slate-400 text-sm leading-relaxed">
-        Test APIs, send requests and inspect live responses in real time.
-      </p>
-
-      <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
-        Open Tool →
-      </div>
-
-    </Link>
+    </div>
 
   </div>
 
-</div>
-
-  </div>
 </section>
       
       {/* ================= WHAT ARE YOU BUILDING TODAY ================= */}
