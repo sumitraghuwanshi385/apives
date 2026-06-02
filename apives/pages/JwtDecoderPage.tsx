@@ -314,10 +314,14 @@ const JwtDecoderPage = () => {
     <KeyRound className="text-mora-500" size={24} />
   </div>
 
-  <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-white leading-none">
-    JWT Decoder
-    <span className="block text-mora-500">&amp; Validator</span>
-  </h1>
+<h1 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight leading-[0.95]">
+            JWT Decoder
+            <span className="block text-mora-500">
+              &amp; Validator
+            </span>
+          </h1>
+
+  
 
   <p className="text-slate-400 mt-5 max-w-2xl mx-auto text-base lg:text-lg">
     Professional-grade JWT analysis with real-time security scoring and smart insights.
