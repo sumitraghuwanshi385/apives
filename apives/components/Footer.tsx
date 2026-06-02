@@ -85,7 +85,7 @@ return (
 
 {/* Instagram */}
 <a
-href="https://www.instagram.com/apives_ecosystem?igsh=MTNib2NicGF4Z2Zocg=="
+href="https://www.instagram.com/apives.ecosystem?igsh=MTNib2NicGF4Z2Zocg=="
 target="_blank"
 rel="noopener noreferrer"
 className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9
@@ -124,10 +124,35 @@ text-slate-500 hover:text-white transition-all group"
       <div className="md:col-span-2">  
         <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">Platform</h3>  
         <ul className="space-y-2 md:space-y-3">  
-          <li><Link to="/browse" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Marketplace</Link></li>  
-          <li><Link to="/fresh" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Fresh Nodes</Link></li>  
+          <li><Link to="/browse" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Home</Link></li>  
+          <li><Link to="/fresh" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">New Releases</Link></li>  
           <li><Link to="/popular" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Top Rated</Link></li>  
-          <li><Link to="/submit" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">Submit API</Link></li>  
+          <li>
+  <Link
+    to="/live-api-runner"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    Live API Runner
+  </Link>
+</li>
+
+<li>
+  <Link
+    to="/jwt-decoder"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    JWT Decoder
+  </Link>
+</li>
+
+<li>
+  <Link
+    to="/api-response-formatter"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    API Formatter
+  </Link>
+</li>
         </ul>  
       </div>  
 
@@ -143,6 +168,14 @@ text-slate-500 hover:text-white transition-all group"
     className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
   >
     Blogs
+  </Link>
+</li>
+<li>
+  <Link
+    to="/offers/serpapi"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    Special Offers
   </Link>
 </li>
           <li>  
