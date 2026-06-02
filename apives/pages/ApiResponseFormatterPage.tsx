@@ -10,7 +10,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BackButton } from "../components/BackButton";
 import yaml from 'js-yaml';
-import { useAuth } from '@/contexts/AuthContext'; // ← Real auth context
+import { useAuth } from '@/contexts/AuthContext'; // Real auth context
 
 interface HistoryItem {
   id: string;
@@ -34,12 +34,13 @@ interface Stats {
   largestArray: number;
   complexityScore: number;
   efficiencyScore: number;
+  payloadCategory: string;
 }
 
 const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
 
 const ApiResponseFormatterPage: React.FC = () => {
-  const { user } = useAuth(); // Real authentication
+  const { user } = useAuth();
   const isLoggedIn = !!user;
 
   const [jsonInput, setJsonInput] = useState('');
@@ -89,17 +90,20 @@ const ApiResponseFormatterPage: React.FC = () => {
 
     traverse(obj, 1);
     const str = JSON.stringify(obj);
+    const bytes = new Blob([str]).size;
     const complexityScore = Math.min(100, Math.max(15, 100 - (depth * 12) - (objects * 1.2)));
     const efficiencyScore = Math.round(100 - (str.length / 1024));
+    const payloadCategory = bytes < 1024 ? 'Small' : bytes < 10240 ? 'Medium' : 'Large';
 
     return {
       totalKeys, objects, arrays, nodes, depth,
       characters: str.length,
       lines: str.split('\n').length,
-      bytes: new Blob([str]).size,
+      bytes,
       largestObject, largestArray,
       complexityScore: Math.round(complexityScore),
-      efficiencyScore: Math.max(10, efficiencyScore)
+      efficiencyScore: Math.max(10, efficiencyScore),
+      payloadCategory
     };
   }, []);
 
@@ -330,18 +334,10 @@ const ApiResponseFormatterPage: React.FC = () => {
               />
 
               <div className="flex gap-2 mt-5">
-                <button 
-                  onClick={() => document.getElementById('json-upload')?.click()} 
-                  className={glassPill}
-                >
+                <button onClick={() => document.getElementById('json-upload')?.click()} className={glassPill}>
                   <Upload size={16} className="mr-1.5" /> Upload
                 </button>
-                <button 
-                  onClick={handleClear} 
-                  className={`${glassPill} text-red-400`}
-                >
-                  Clear
-                </button>
+                <button onClick={handleClear} className={`${glassPill} text-red-400`}>Clear</button>
               </div>
               <input id="json-upload" type="file" accept=".json" className="hidden" onChange={(e) => e.target.files?.[0] && processFile(e.target.files[0])} />
             </div>
@@ -442,7 +438,7 @@ const ApiResponseFormatterPage: React.FC = () => {
           </div>
         </div>
 
-        {/* History - Only visible to authenticated users */}
+        {/* History - Only for authenticated users */}
         {isLoggedIn && history.length > 0 && (
           <div className="mt-16">
             <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
@@ -456,16 +452,11 @@ const ApiResponseFormatterPage: React.FC = () => {
                   <div className="flex gap-2">
                     <button onClick={() => { setJsonInput(item.input); validateAndFormat(item.input); }} className={glassPill}>Load</button>
                     <button onClick={() => copyToClipboard(item.output, 'history')} className={glassPill}>Copy</button>
-                    <button 
-                      onClick={() => {
-                        const filtered = history.filter(h => h.id !== item.id);
-                        setHistory(filtered);
-                        localStorage.setItem('apives-json-formatter-history', JSON.stringify(filtered));
-                      }} 
-                      className={`${glassPill} text-red-400`}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <button onClick={() => {
+                      const filtered = history.filter(h => h.id !== item.id);
+                      setHistory(filtered);
+                      localStorage.setItem('apives-json-formatter-history', JSON.stringify(filtered));
+                    }} className={`${glassPill} text-red-400`}><Trash2 size={16} /></button>
                   </div>
                 </div>
               ))}
