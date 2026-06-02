@@ -15,7 +15,10 @@ import {
   Check,
   Play,
   Info,
-  Key
+  Key,
+Braces,
+KeyRound,
+PlayCircle
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -252,6 +255,101 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+{/* ================= APIVES TOOLS ================= */}
+
+<section className="py-10 md:py-14 border-t border-white/5 bg-black">
+
+  <div className="max-w-7xl mx-auto px-4 md:px-8">
+
+    <div className="text-center mb-8">
+
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-mora-500/20 bg-mora-500/5 text-mora-400 text-[11px] font-black uppercase tracking-widest">
+        3 Tools Available Now
+      </div>
+
+      <h2 className="mt-4 text-2xl md:text-4xl font-bold text-white tracking-tight">
+        Apives Developer Tools
+      </h2>
+
+      <p className="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
+        Built for developers who work with APIs every day.
+      </p>
+
+    </div>
+
+    <div className="overflow-x-auto scrollbar-hide">
+
+      <div className="flex gap-4 md:grid md:grid-cols-3">
+
+        {/* Formatter */}
+
+        <div className="min-w-[320px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-6 hover:border-mora-500/40 transition-all">
+
+          <div className="w-14 h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-5">
+            <Braces className="text-mora-500" size={28} />
+          </div>
+
+          <h3 className="text-white text-lg font-bold mb-2">
+            API Response Formatter
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Format, validate and analyze JSON API responses instantly.
+          </p>
+
+        </div>
+
+        {/* JWT */}
+
+        <div className="min-w-[320px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-6 hover:border-mora-500/40 transition-all">
+
+          <div className="w-14 h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-5">
+            <KeyRound className="text-mora-500" size={28} />
+          </div>
+
+          <h3 className="text-white text-lg font-bold mb-2">
+            JWT Decoder
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Decode JWT tokens and inspect payloads securely.
+          </p>
+
+        </div>
+
+        {/* Runner */}
+
+        <div className="min-w-[320px] md:min-w-0 bg-[#070707] border border-white/10 rounded-3xl p-6 hover:border-mora-500/40 transition-all">
+
+          <div className="w-14 h-14 rounded-2xl bg-mora-500/10 border border-mora-500/20 flex items-center justify-center mb-5">
+            <PlayCircle className="text-mora-500" size={28} />
+          </div>
+
+          <h3 className="text-white text-lg font-bold mb-2">
+            Live API Runner
+          </h3>
+
+          <p className="text-slate-400 text-sm leading-relaxed">
+            Send API requests and inspect real-time responses instantly.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div className="flex justify-center mt-8">
+
+      <div className="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400">
+        Coming Soon • API Mock Server • cURL Converter • JSON ↔ XML • Base64 Tools
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
      
       
       {/* ================= WHAT ARE YOU BUILDING TODAY ================= */}
