@@ -22,7 +22,8 @@ import {
   Search,
   Check,
   Network,
-Key,
+  Key,
+KeySquare,
 } from "lucide-react";
 import { BackButton } from "../components/BackButton";
 
@@ -335,7 +336,7 @@ const JwtDecoderPage = () => {
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-4 md:p-6 lg:p-8 lg:sticky lg:top-24">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-2xl bg-mora-500/10 flex items-center justify-center">
-                  <KeyRound size={20} className="text-mora-500" />
+                  <KeySquare size={20} className="text-mora-500" />
                 </div>
                 <div>
                   <h2 className="text-white text-xl lg:text-2xl font-semibold">JWT Token</h2>
