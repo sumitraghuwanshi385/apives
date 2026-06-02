@@ -6,6 +6,7 @@ import { ShieldCheck, Activity, FileText, Lock, CheckCircle2, ChevronRight, List
   Users } from 'lucide-react';
 import { BackButton } from '../components/BackButton';
 import { CustomSelect } from '../components/CustomSelect';
+import { QuickStartPlayground } from "../components/QuickStartPlayground";
 
 const PageLayout: React.FC<{ title: string; subtitle: string; icon: React.ElementType; children: React.ReactNode }> = ({ title, subtitle, icon: Icon, children }) => (
   <div className="min-h-screen bg-black pt-28 pb-20 relative selection:bg-mora-500/30">
@@ -513,6 +514,7 @@ export const DocumentationPage: React.FC = () => (
             <p className="leading-relaxed">
                 For power users, Apives supports complex endpoint definitions including custom headers and body parameters. Ensure your mock responses are accurate.
             </p>
+<QuickStartPlayground />
         </section>
     </div>
   </PageLayout>
