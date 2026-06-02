@@ -9,7 +9,7 @@ import BuildAnalytics from "./pages/build/BuildAnalytics";
 import BuildImageGeneration from "./pages/build/BuildImageGeneration";
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 import JwtDecoderPage from "./pages/JwtDecoderPage";
-
+import ApiResponseFormatterPage from "./pages/ApiResponseFormatterPage";
 
 
 import { Navbar } from './components/Navbar';
@@ -84,6 +84,8 @@ return (
 element={<LiveApiRunnerPage />} />
 <Route path="/jwt-decoder"
   element={<JwtDecoderPage />} />
+<Route path="/api-response-formatter"
+  element={<ApiResponseFormatterPage />} />
 
 
 
