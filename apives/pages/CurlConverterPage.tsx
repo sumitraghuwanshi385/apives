@@ -1,13 +1,27 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { 
-  Terminal, Code2, Copy, Download, Upload, Trash2, Clock,
-  CheckCircle2, XCircle, Search, Zap 
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import {
+  Terminal,
+  Code2,
+  Copy,
+  Download,
+  Trash2,
+  Clock,
+  XCircle,
+  Activity,
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { BackButton } from "../components/BackButton";
+import { BackButton } from '../components/BackButton';
+
+// ====================== Types ======================
+interface ParsedRequest {
+  method: string;
+  url: string;
+  headers: Record<string, string>;
+  body: string | null;
+}
 
 interface HistoryItem {
   id: string;
@@ -27,20 +41,199 @@ interface RequestInfo {
   bodySize: number;
   authType: string;
   contentType: string;
-  payloadCategory: string;
+  payloadCategory: 'Small' | 'Medium' | 'Large';
 }
 
-const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
+// ====================== Helpers ======================
+const glassPill =
+  'backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]';
 
+// Robust cURL parser
+function parseCurl(curlCommand: string): ParsedRequest {
+  const result: ParsedRequest = {
+    method: 'GET',
+    url: '',
+    headers: {},
+    body: null,
+  };
+
+  // Extract URL (supports quotes or no quotes)
+  const urlMatch = curlCommand.match(/(?:curl\s+)(['"]?)(https?:\/\/[^\s'"]+)\1/);
+  if (!urlMatch) throw new Error('No valid URL found in cURL command');
+  result.url = urlMatch[2];
+
+  // Method (-X or --request)
+  const methodMatch = curlCommand.match(/(?:-X|--request)\s+([A-Z]+)/);
+  if (methodMatch) result.method = methodMatch[1];
+
+  // Headers (-H or --header)
+  const headerRegex = /(?:-H|--header)\s+['"]([^'"]+)['"]/g;
+  let headerMatch;
+  while ((headerMatch = headerRegex.exec(curlCommand)) !== null) {
+    const [key, ...valueParts] = headerMatch[1].split(':');
+    if (key && valueParts.length) {
+      result.headers[key.trim()] = valueParts.join(':').trim();
+    }
+  }
+
+  // Body: --data, --data-raw, --data-binary, -d
+  const bodyRegex = /(?:--data-raw|--data|--data-binary|-d)\s+(['"])(.*?)\1/s;
+  const bodyMatch = curlCommand.match(bodyRegex);
+  if (bodyMatch) {
+    result.body = bodyMatch[2];
+    if (!methodMatch && result.body) result.method = 'POST';
+  }
+
+  return result;
+}
+
+// Fetch syntax parser (basic but covers most cases)
+function parseFetch(fetchCode: string): ParsedRequest {
+  const result: ParsedRequest = {
+    method: 'GET',
+    url: '',
+    headers: {},
+    body: null,
+  };
+
+  // Extract URL
+  const urlMatch = fetchCode.match(/fetch\(['"`]([^'"`]+)['"`]/);
+  if (!urlMatch) throw new Error('No URL found in Fetch request');
+  result.url = urlMatch[1];
+
+  // Method
+  const methodMatch = fetchCode.match(/method:\s*['"`]([A-Z]+)['"`]/i);
+  if (methodMatch) result.method = methodMatch[1];
+
+  // Headers
+  const headersMatch = fetchCode.match(/headers:\s*\{([^}]+)\}/s);
+  if (headersMatch) {
+    const headerPairs = headersMatch[1].match(/(['"]?)([\w-]+)\1\s*:\s*(['"]?)([^,}\n]+)\3/g);
+    headerPairs?.forEach((pair) => {
+      const [key, value] = pair.split(':').map((s) => s.trim().replace(/['"]/g, ''));
+      if (key && value) result.headers[key] = value;
+    });
+  }
+
+  // Body
+  const bodyMatch = fetchCode.match(/body:\s*(['"`])(.*?)\1/s);
+  if (bodyMatch) {
+    result.body = bodyMatch[2];
+    if (!methodMatch) result.method = 'POST';
+  }
+
+  return result;
+}
+
+// Axios syntax parser
+function parseAxios(axiosCode: string): ParsedRequest {
+  const result: ParsedRequest = {
+    method: 'GET',
+    url: '',
+    headers: {},
+    body: null,
+  };
+
+  // URL
+  const urlMatch = axiosCode.match(/(?:url|axios\.(?:get|post|put|patch|delete))\s*:\s*['"`]([^'"`]+)['"`]/i);
+  if (!urlMatch) throw new Error('No URL found in Axios request');
+  result.url = urlMatch[1];
+
+  // Method
+  const methodMatch = axiosCode.match(/method:\s*['"`]([A-Z]+)['"`]/i);
+  if (methodMatch) {
+    result.method = methodMatch[1];
+  } else {
+    const shorthand = axiosCode.match(/axios\.(get|post|put|patch|delete)/i);
+    if (shorthand) result.method = shorthand[1].toUpperCase();
+  }
+
+  // Headers
+  const headersMatch = axiosCode.match(/headers:\s*\{([^}]+)\}/s);
+  if (headersMatch) {
+    const headerPairs = headersMatch[1].match(/(['"]?)([\w-]+)\1\s*:\s*(['"]?)([^,}\n]+)\3/g);
+    headerPairs?.forEach((pair) => {
+      const [key, value] = pair.split(':').map((s) => s.trim().replace(/['"]/g, ''));
+      if (key && value) result.headers[key] = value;
+    });
+  }
+
+  // Data
+  const dataMatch = axiosCode.match(/data:\s*(['"`])(.*?)\1/s);
+  if (dataMatch) {
+    result.body = dataMatch[2];
+    if (!methodMatch) result.method = 'POST';
+  }
+
+  return result;
+}
+
+// Convert parsed request to Fetch code
+function toFetchCode(req: ParsedRequest): string {
+  const headers = Object.entries(req.headers)
+    .map(([k, v]) => `    "${k}": "${v.replace(/"/g, '\\"')}"`)
+    .join(',\n');
+
+  const bodyPart = req.body
+    ? `,\n  body: ${req.body.startsWith('{') || req.body.startsWith('[') ? req.body : JSON.stringify(req.body)}`
+    : '';
+
+  return `fetch("${req.url}", {
+  method: "${req.method}",
+  headers: {
+${headers || '    "Content-Type": "application/json"'}
+  }${bodyPart}
+})
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error('Error:', err));`;
+}
+
+// Convert parsed request to Axios code
+function toAxiosCode(req: ParsedRequest): string {
+  const headers = Object.entries(req.headers)
+    .map(([k, v]) => `    "${k}": "${v.replace(/"/g, '\\"')}"`)
+    .join(',\n');
+
+  const bodyPart = req.body
+    ? `,\n  data: ${req.body.startsWith('{') || req.body.startsWith('[') ? req.body : JSON.stringify(req.body)}`
+    : '';
+
+  return `axios({
+  method: "${req.method.toLowerCase()}",
+  url: "${req.url}",
+  headers: {${headers ? `\n${headers}\n  ` : ''}}${bodyPart}
+})
+  .then(res => console.log(res.data))
+  .catch(err => console.error('Error:', err));`;
+}
+
+// Convert parsed request to cURL code
+function toCurlCode(req: ParsedRequest): string {
+  let curl = `curl -X ${req.method} "${req.url}"`;
+
+  for (const [key, value] of Object.entries(req.headers)) {
+    curl += ` \\\n  -H "${key}: ${value}"`;
+  }
+
+  if (req.body) {
+    curl += ` \\\n  --data-raw '${req.body.replace(/'/g, "\\'")}'`;
+  }
+
+  return curl;
+}
+
+// ====================== Component ======================
 const CurlConverterPage: React.FC = () => {
-  // Auth check (same pattern as other Apives tools)
+  // Auth
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const user = localStorage.getItem("mora_user");
+    const user = localStorage.getItem('mora_user');
     setIsLoggedIn(!!user);
   }, []);
 
+  // State
   const [input, setInput] = useState('');
   const [inputType, setInputType] = useState<'curl' | 'fetch' | 'axios' | 'unknown'>('unknown');
   const [fetchCode, setFetchCode] = useState('');
@@ -52,7 +245,11 @@ const CurlConverterPage: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState(false);
 
-  // Load History
+  // History ref to avoid stale closures
+  const historyRef = useRef(history);
+  historyRef.current = history;
+
+  // Load history from localStorage
   useEffect(() => {
     if (!isLoggedIn) {
       setHistory([]);
@@ -61,97 +258,49 @@ const CurlConverterPage: React.FC = () => {
     const saved = localStorage.getItem('apives-curl-converter-history');
     if (saved) {
       try {
-        setHistory(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setHistory(Array.isArray(parsed) ? parsed.slice(0, 20) : []);
       } catch {
         setHistory([]);
       }
     }
   }, [isLoggedIn]);
 
-  const saveToHistory = useCallback((data: Omit<HistoryItem, 'id' | 'timestamp'>) => {
-    if (!isLoggedIn) return;
-    const newItem: HistoryItem = {
-      ...data,
-      id: Date.now().toString(36),
-      timestamp: new Date().toISOString()
-    };
-    const updated = [newItem, ...history].slice(0, 20);
-    setHistory(updated);
-    localStorage.setItem('apives-curl-converter-history', JSON.stringify(updated));
-  }, [history, isLoggedIn]);
+  // Save to history with duplicate prevention
+  const saveToHistory = useCallback(
+    (data: Omit<HistoryItem, 'id' | 'timestamp'>) => {
+      if (!isLoggedIn) return;
 
-  const detectInputType = (text: string): 'curl' | 'fetch' | 'axios' | 'unknown' => {
-    const t = text.toLowerCase().trim();
-    if (t.startsWith('curl')) return 'curl';
-    if (t.includes('fetch(') || t.includes('.then(')) return 'fetch';
-    if (t.includes('axios.')) return 'axios';
+      // Prevent duplicate identical inputs
+      const exists = historyRef.current.some((item) => item.input === data.input);
+      if (exists) return;
+
+      const newItem: HistoryItem = {
+        ...data,
+        id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+        timestamp: new Date().toISOString(),
+      };
+      const updated = [newItem, ...historyRef.current].slice(0, 20);
+      setHistory(updated);
+      localStorage.setItem('apives-curl-converter-history', JSON.stringify(updated));
+    },
+    [isLoggedIn]
+  );
+
+  // Detect input type
+  const detectInputType = useCallback((text: string): 'curl' | 'fetch' | 'axios' | 'unknown' => {
+    const trimmed = text.trim();
+    if (trimmed.startsWith('curl')) return 'curl';
+    if (/fetch\s*\(/.test(trimmed)) return 'fetch';
+    if (/axios\.(get|post|put|patch|delete|request)/.test(trimmed)) return 'axios';
     return 'unknown';
-  };
+  }, []);
 
-  const parseCurl = (curlStr: string) => {
-    try {
-      const urlMatch = curlStr.match(/"(https?:\/\/[^"]+)"/) || curlStr.match(/'(https?:\/\/[^']+)'/);
-      const url = urlMatch ? urlMatch[1] : 'https://api.example.com';
-
-      const methodMatch = curlStr.match(/-X\s+([A-Z]+)/);
-      const method = methodMatch ? methodMatch[1] : 'GET';
-
-      const headers: Record<string, string> = {};
-      const headerMatches = [...curlStr.matchAll(/-H\s+"([^"]+)"\s*/g)];
-      headerMatches.forEach(match => {
-        const parts = match[1].split(':');
-        if (parts.length > 1) {
-          const key = parts[0].trim();
-          const value = parts.slice(1).join(':').trim();
-          headers[key] = value;
-        }
-      });
-
-      const bodyMatch = curlStr.match(/--data-raw\s+'([^']+)'|--data\s+'([^']+)'/);
-      const body = bodyMatch ? (bodyMatch[1] || bodyMatch[2]) : '';
-
-      return { method, url, headers, body };
-    } catch {
-      return { method: 'GET', url: 'https://api.example.com', headers: {}, body: '' };
-    }
-  };
-
-  const generateFetchCode = (data: any): string => {
-    const { method, url, headers, body } = data;
-    const headerStr = Object.entries(headers)
-      .map(([k, v]) => `    '\( {k}': ' \){v}'`)
-      .join(',\n');
-
-    return `fetch("${url}", {
-  method: "${method}",
-  headers: {
-${headerStr || "    'Content-Type': 'application/json'"}
-  }${body ? `,\n  body: \( {body.startsWith('{') || body.startsWith('[') ? body : `' \){body}'`}` : ''}
-})
-  .then(res => res.json())
-  .then(data => console.log(data))
-  .catch(err => console.error('Error:', err));`;
-  };
-
-  const generateAxiosCode = (data: any): string => {
-    const { method, url, headers, body } = data;
-    const headerStr = Object.entries(headers)
-      .map(([k, v]) => `    '\( {k}': ' \){v}'`)
-      .join(',\n');
-
-    return `axios({
-  method: '${method.toLowerCase()}',
-  url: '${url}',
-  headers: {${headerStr ? '\n' + headerStr : ''}}
-${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `' \){body}'`}` : ''}
-})
-  .then(res => console.log(res.data))
-  .catch(err => console.error('Error:', err));`;
-  };
-
-  const handleConvert = async () => {
-    if (!input.trim()) {
-      setError("Please paste a request (cURL, Fetch or Axios)");
+  // Main conversion logic
+  const handleConvert = useCallback(async () => {
+    const trimmedInput = input.trim();
+    if (!trimmedInput) {
+      setError('Please paste a request (cURL, Fetch, or Axios)');
       return;
     }
 
@@ -159,64 +308,88 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
     setError('');
 
     try {
-      const type = detectInputType(input);
-      setInputType(type);
+      const detectedType = detectInputType(trimmedInput);
+      setInputType(detectedType);
 
-      let parsedData: any = { method: 'GET', url: '', headers: {}, body: '' };
-
-      if (type === 'curl') {
-        parsedData = parseCurl(input);
-      } else {
-        const urlMatch = input.match(/https?:\/\/[^\s'"]+/);
-        parsedData.url = urlMatch ? urlMatch[0] : 'https://api.example.com';
+      let parsed: ParsedRequest;
+      switch (detectedType) {
+        case 'curl':
+          parsed = parseCurl(trimmedInput);
+          break;
+        case 'fetch':
+          parsed = parseFetch(trimmedInput);
+          break;
+        case 'axios':
+          parsed = parseAxios(trimmedInput);
+          break;
+        default:
+          throw new Error('Unsupported format. Please provide valid cURL, Fetch, or Axios code.');
       }
 
-      const fetchGenerated = generateFetchCode(parsedData);
-      const axiosGenerated = generateAxiosCode(parsedData);
-      const curlGenerated = input;
+      if (!parsed.url) throw new Error('Could not extract a valid URL from the request.');
+
+      const fetchGenerated = toFetchCode(parsed);
+      const axiosGenerated = toAxiosCode(parsed);
+      const curlGenerated = toCurlCode(parsed);
 
       setFetchCode(fetchGenerated);
       setAxiosCode(axiosGenerated);
       setCurlCode(curlGenerated);
 
       // Request Intelligence
+      let queryParamsCount = 0;
+      try {
+        const urlObj = new URL(parsed.url);
+        queryParamsCount = Array.from(urlObj.searchParams.keys()).length;
+      } catch {
+        // ignore invalid URL for counting params
+      }
+
       const info: RequestInfo = {
-        method: parsedData.method,
-        url: parsedData.url,
-        headersCount: Object.keys(parsedData.headers).length,
-        queryParamsCount: parsedData.url.includes('?') ? 
-          (new URL(parsedData.url).searchParams.toString().split('&').length) : 0,
-        bodySize: parsedData.body ? parsedData.body.length : 0,
-        authType: Object.keys(parsedData.headers).some(h => 
-          h.toLowerCase().includes('authorization') || h.toLowerCase().includes('apikey')
-        ) ? 'Token/Bearer' : 'None',
-        contentType: parsedData.headers['Content-Type'] || 'application/json',
-        payloadCategory: parsedData.body && parsedData.body.length > 5000 ? 'Large' : 
-                        parsedData.body && parsedData.body.length > 500 ? 'Medium' : 'Small'
+        method: parsed.method,
+        url: parsed.url,
+        headersCount: Object.keys(parsed.headers).length,
+        queryParamsCount,
+        bodySize: parsed.body?.length || 0,
+        authType: Object.keys(parsed.headers).some(
+          (h) => h.toLowerCase().includes('authorization') || h.toLowerCase().includes('apikey')
+        )
+          ? 'Token/Bearer'
+          : 'None',
+        contentType: parsed.headers['Content-Type'] || parsed.headers['content-type'] || 'application/json',
+        payloadCategory: !parsed.body
+          ? 'Small'
+          : parsed.body.length > 5000
+          ? 'Large'
+          : parsed.body.length > 500
+          ? 'Medium'
+          : 'Small',
       };
       setRequestInfo(info);
 
       saveToHistory({
-        inputType: type,
-        input,
+        inputType: detectedType,
+        input: trimmedInput,
         fetchCode: fetchGenerated,
         axiosCode: axiosGenerated,
-        curlCode: curlGenerated
+        curlCode: curlGenerated,
       });
-    } catch (err) {
-      setError("Failed to parse request. Please check the format.");
+    } catch (err: any) {
+      setError(err.message || 'Failed to parse request. Please check the format.');
     } finally {
       setIsConverting(false);
     }
-  };
+  }, [input, detectInputType, saveToHistory]);
 
-  const copyToClipboard = async (text: string, label: string) => {
+  // Copy to clipboard
+  const copyToClipboard = useCallback(async (text: string, label: string) => {
     await navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 1800);
-  };
+  }, []);
 
-  const downloadCode = (code: string, filename: string) => {
+  // Download code
+  const downloadCode = useCallback((code: string, filename: string) => {
     const blob = new Blob([code], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -224,17 +397,24 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-  };
+  }, []);
 
-  const loadFromHistory = (item: HistoryItem) => {
-    setInput(item.input);
-    setInputType(item.inputType);
-    setFetchCode(item.fetchCode);
-    setAxiosCode(item.axiosCode);
-    setCurlCode(item.curlCode);
-  };
+  // Load from history
+  const loadFromHistory = useCallback(
+    (item: HistoryItem) => {
+      setInput(item.input);
+      setInputType(item.inputType);
+      setFetchCode(item.fetchCode);
+      setAxiosCode(item.axiosCode);
+      setCurlCode(item.curlCode);
+      setError('');
+      setRequestInfo(null);
+    },
+    []
+  );
 
-  const clearAll = () => {
+  // Clear all
+  const clearAll = useCallback(() => {
     setInput('');
     setFetchCode('');
     setAxiosCode('');
@@ -242,9 +422,7 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
     setError('');
     setRequestInfo(null);
     setInputType('unknown');
-  };
-
-  const filteredHistory = useMemo(() => history, [history]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
@@ -267,7 +445,7 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Input */}
+          {/* Input Panel */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -300,12 +478,14 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
                 >
                   {isConverting ? 'Converting...' : 'Convert'}
                 </button>
-                <button onClick={clearAll} className={`${glassPill} text-red-400`}>Clear</button>
+                <button onClick={clearAll} className={`${glassPill} text-red-400`}>
+                  Clear
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Output */}
+          {/* Output Panel */}
           <div className="lg:col-span-7 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -322,37 +502,63 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
                 </div>
               )}
 
-              {(fetchCode || axiosCode) ? (
+              {fetchCode || axiosCode ? (
                 <div className="space-y-8">
+                  {/* Fetch Block */}
                   <div>
                     <div className="flex justify-between items-center mb-3">
                       <div className="font-medium">Fetch</div>
                       <div className="flex gap-2">
-                        <button onClick={() => copyToClipboard(fetchCode, 'fetch')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
+                        <button
+                          onClick={() => copyToClipboard(fetchCode, 'fetch')}
+                          className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full"
+                        >
                           {copied === 'fetch' ? '✓ Copied' : 'Copy'}
                         </button>
-                        <button onClick={() => downloadCode(fetchCode, 'fetch-request.js')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">Download</button>
+                        <button
+                          onClick={() => downloadCode(fetchCode, 'fetch-request.js')}
+                          className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full"
+                        >
+                          Download
+                        </button>
                       </div>
                     </div>
                     <div className="bg-black rounded-2xl overflow-hidden border border-white/10">
-                      <SyntaxHighlighter language="javascript" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '20px' }}>
+                      <SyntaxHighlighter
+                        language="javascript"
+                        style={vscDarkPlus}
+                        customStyle={{ background: 'transparent', padding: '20px' }}
+                      >
                         {fetchCode}
                       </SyntaxHighlighter>
                     </div>
                   </div>
 
+                  {/* Axios Block */}
                   <div>
                     <div className="flex justify-between items-center mb-3">
                       <div className="font-medium">Axios</div>
                       <div className="flex gap-2">
-                        <button onClick={() => copyToClipboard(axiosCode, 'axios')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
+                        <button
+                          onClick={() => copyToClipboard(axiosCode, 'axios')}
+                          className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full"
+                        >
                           {copied === 'axios' ? '✓ Copied' : 'Copy'}
                         </button>
-                        <button onClick={() => downloadCode(axiosCode, 'axios-request.js')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">Download</button>
+                        <button
+                          onClick={() => downloadCode(axiosCode, 'axios-request.js')}
+                          className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full"
+                        >
+                          Download
+                        </button>
                       </div>
                     </div>
                     <div className="bg-black rounded-2xl overflow-hidden border border-white/10">
-                      <SyntaxHighlighter language="javascript" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '20px' }}>
+                      <SyntaxHighlighter
+                        language="javascript"
+                        style={vscDarkPlus}
+                        customStyle={{ background: 'transparent', padding: '20px' }}
+                      >
                         {axiosCode}
                       </SyntaxHighlighter>
                     </div>
@@ -373,32 +579,68 @@ ${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `
                   <h3 className="text-xl font-semibold">Request Intelligence</h3>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {Object.entries(requestInfo).map(([key, value]) => (
-                    <div key={key} className="bg-black/60 rounded-2xl p-4">
-                      <div className="text-xs text-white/50 tracking-widest">{key.replace(/([A-Z])/g, ' $1')}</div>
-                      <div className="font-semibold text-lg tabular-nums">{value}</div>
-                    </div>
-                  ))}
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Method</div>
+                    <div className="font-semibold text-lg tabular-nums">{requestInfo.method}</div>
+                  </div>
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Headers</div>
+                    <div className="font-semibold text-lg tabular-nums">{requestInfo.headersCount}</div>
+                  </div>
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Query Params</div>
+                    <div className="font-semibold text-lg tabular-nums">{requestInfo.queryParamsCount}</div>
+                  </div>
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Body Size</div>
+                    <div className="font-semibold text-lg tabular-nums">{requestInfo.bodySize} bytes</div>
+                  </div>
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Auth Type</div>
+                    <div className="font-semibold text-lg tabular-nums">{requestInfo.authType}</div>
+                  </div>
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Content-Type</div>
+                    <div className="font-semibold text-lg truncate">{requestInfo.contentType}</div>
+                  </div>
+                  <div className="bg-black/60 rounded-2xl p-4">
+                    <div className="text-xs text-white/50 tracking-widest">Payload</div>
+                    <div className="font-semibold text-lg">{requestInfo.payloadCategory}</div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* History */}
+        {/* History Section */}
         {isLoggedIn && history.length > 0 && (
           <div className="mt-16">
             <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
               <Clock size={18} className="text-mora-500" /> Recent Conversions
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {history.map(item => (
-                <div key={item.id} className="bg-[#070707] border border-white/10 rounded-3xl p-5 hover:border-mora-500/30 transition-all">
-                  <div className="text-xs text-white/50 mb-3">{new Date(item.timestamp).toLocaleString()}</div>
-                  <div className="font-mono text-xs line-clamp-2 mb-4 text-white/70">{item.input.substring(0, 140)}...</div>
+              {history.map((item) => (
+                <div
+                  key={item.id}
+                  className="bg-[#070707] border border-white/10 rounded-3xl p-5 hover:border-mora-500/30 transition-all"
+                >
+                  <div className="text-xs text-white/50 mb-3">
+                    {new Date(item.timestamp).toLocaleString()}
+                  </div>
+                  <div className="font-mono text-xs line-clamp-2 mb-4 text-white/70">
+                    {item.input.substring(0, 140)}...
+                  </div>
                   <div className="flex gap-2">
-                    <button onClick={() => loadFromHistory(item)} className={glassPill}>Load</button>
-                    <button onClick={() => copyToClipboard(item.fetchCode, 'history')} className={glassPill}>Copy Fetch</button>
+                    <button onClick={() => loadFromHistory(item)} className={glassPill}>
+                      Load
+                    </button>
+                    <button
+                      onClick={() => copyToClipboard(item.fetchCode, 'history')}
+                      className={glassPill}
+                    >
+                      Copy Fetch
+                    </button>
                   </div>
                 </div>
               ))}
