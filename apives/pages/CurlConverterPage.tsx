@@ -18,6 +18,8 @@ import {
   Key,
   FileText,
   Layers,
+ArrowLeftRight,
+FileInput
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -568,11 +570,16 @@ const CurlConverterPage: React.FC = () => {
         {/* Hero */}
         <div className="flex flex-col items-center text-center mb-8 md:mb-12">
           <div className="inline-flex items-center justify-center p-2 md:p-3 bg-white/10 rounded-xl md:rounded-2xl mb-4 md:mb-6">
-            <Terminal size={28} className="text-mora-500 md:w-[42px] md:h-[42px]" strokeWidth={1.5} />
+            <ArrowLeftRight size={28} className="text-mora-500 md:w-[42px] md:h-[42px]" strokeWidth={1.5} />
           </div>
-          <h1 className="text-2xl md:text-6xl font-semibold tracking-tighter text-white mb-2 md:mb-4">
-            cURL ↔ Fetch ↔ Axios <span className="text-mora-500">Converter</span>
+
+<h1 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight leading-[0.95]">
+            cURL ↔ Fetch ↔ Axios
+            <span className="block text-mora-500">
+              Converter 
+            </span>
           </h1>
+          
           <p className="max-w-md text-sm md:text-lg text-white/60">
             Convert API requests between cURL, Fetch, and Axios instantly
           </p>
@@ -591,7 +598,7 @@ const CurlConverterPage: React.FC = () => {
             <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
               <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 flex-wrap">
                 <div className="p-2 bg-white/5 rounded-xl md:rounded-2xl">
-                  <Terminal size={20} className="text-mora-500 md:w-6 md:h-6" />
+                  <FileInput size={20} className="text-mora-500 md:w-6 md:h-6" />
                 </div>
                 <div>
                   <h2 className="text-lg md:text-2xl font-semibold">Input Request</h2>
