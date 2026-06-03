@@ -7,10 +7,11 @@ import {
   Database, BarChart3, Info, FileJson, AlertCircle, Edit3, Save,
   Layers, Hash, TrendingUp, Activity
 } from 'lucide-react';
+
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-// FIX: Use CommonJS path for Next.js compatibility
+
 import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus';
-// Direct named import (component exports BackButton as named export)
+
 import { BackButton } from "../components/BackButton";
 
 // ---------- Types ----------
@@ -24,18 +25,6 @@ interface MockEndpoint {
   response: string;
   headers: Record<string, string>;
   timestamp: string;
-}
-
-type HistoryAction = 'create' | 'edit' | 'delete' | 'import' | 'export';
-
-interface HistoryItem {
-  id: string;
-  action: HistoryAction;
-  endpointName: string;
-  endpointMethod?: string;
-  endpointPath?: string;
-  timestamp: string;
-  details?: string;
 }
 
 // ---------- Helper: compute response intelligence (safe) ----------
@@ -213,8 +202,6 @@ const MockServerPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterMethod, setFilterMethod] = useState<string>('All');
   const [copied, setCopied] = useState<string | null>(null);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [historySearchTerm, setHistorySearchTerm] = useState('');
   const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [animateEndpointId, setAnimateEndpointId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -222,7 +209,7 @@ const MockServerPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isClient, setIsClient] = useState(false);
 
-  // --- Auth check (for history) ---
+  // --- Auth check ---
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     setIsClient(true);
@@ -235,7 +222,7 @@ const MockServerPage: React.FC = () => {
     }
   }, []);
 
-  // --- Load endpoints & history (with safe JSON.parse) ---
+  // --- Load endpoints only (no history) ---
   useEffect(() => {
     if (!isClient) return;
     try {
@@ -248,20 +235,7 @@ const MockServerPage: React.FC = () => {
       console.error("Failed to load endpoints:", e);
       setEndpoints([]);
     }
-
-    if (isLoggedIn) {
-      try {
-        const savedHistory = localStorage.getItem('apives-mock-history');
-        if (savedHistory) {
-          const parsed = JSON.parse(savedHistory);
-          setHistory(Array.isArray(parsed) ? parsed : []);
-        }
-      } catch (e) {
-        console.error("Failed to load history:", e);
-        setHistory([]);
-      }
-    }
-  }, [isClient, isLoggedIn]);
+  }, [isClient]);
 
   // --- Persist endpoints ---
   const saveEndpoints = useCallback((updated: MockEndpoint[]) => {
@@ -271,26 +245,8 @@ const MockServerPage: React.FC = () => {
     } catch (e) { console.error("Save failed:", e); }
   }, []);
 
-  // --- Add history entry (with safe storage) ---
-  const addHistory = useCallback((action: HistoryAction, endpoint: MockEndpoint | null, details?: string) => {
-    if (!isLoggedIn) return;
-    const newEntry: HistoryItem = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2, 4),
-      action,
-      endpointName: endpoint?.name || 'N/A',
-      endpointMethod: endpoint?.method,
-      endpointPath: endpoint?.path,
-      timestamp: new Date().toISOString(),
-      details
-    };
-    setHistory(prev => {
-      const updated = [newEntry, ...prev].slice(0, 20);
-      try {
-        localStorage.setItem('apives-mock-history', JSON.stringify(updated));
-      } catch (e) { console.error("History save failed:", e); }
-      return updated;
-    });
-  }, [isLoggedIn]);
+  // --- No‑op history (kept to avoid errors in existing calls) ---
+  const addHistory = useCallback(() => {}, []);
 
   // --- Helper: generate mock URL ---
   const generateMockUrl = useCallback((endpoint: MockEndpoint) => {
@@ -340,7 +296,7 @@ const MockServerPage: React.FC = () => {
       updatedEndpoints[existingIndex] = updatedEndpoint;
       saveEndpoints(updatedEndpoints);
       setActiveEndpoint(updatedEndpoint);
-      addHistory('edit', updatedEndpoint, `Edited from ${endpoints[existingIndex].name}`);
+      addHistory(); // no‑op
       setIsEditing(false);
       setEditEndpointId(null);
       setAnimateEndpointId(updatedEndpoint.id);
@@ -359,7 +315,7 @@ const MockServerPage: React.FC = () => {
       const updated = [endpoint, ...endpoints];
       saveEndpoints(updated);
       setActiveEndpoint(endpoint);
-      addHistory('create', endpoint);
+      addHistory(); // no‑op
       setAnimateEndpointId(endpoint.id);
       setTimeout(() => setAnimateEndpointId(null), 500);
     }
@@ -401,7 +357,7 @@ const MockServerPage: React.FC = () => {
       const updated = endpoints.filter(e => e.id !== id);
       saveEndpoints(updated);
       if (activeEndpoint?.id === id) setActiveEndpoint(null);
-      addHistory('delete', endpointToDelete);
+      addHistory(); // no‑op
     }
   };
 
@@ -431,7 +387,7 @@ const MockServerPage: React.FC = () => {
   const exportCollection = () => {
     const data = JSON.stringify(endpoints, null, 2);
     downloadCode(data, 'mock-collection.json');
-    addHistory('export', null, `Exported ${endpoints.length} endpoints`);
+    addHistory(); // no‑op
     setImportStatus({ type: 'success', message: 'Collection exported!' });
     setTimeout(() => setImportStatus(null), 2000);
   };
@@ -476,7 +432,7 @@ const MockServerPage: React.FC = () => {
           };
           newEndpoints.push(newEp);
           addedCount++;
-          addHistory('import', newEp, `Imported from file`);
+          addHistory(); // no‑op
         });
 
         saveEndpoints(newEndpoints);
@@ -489,25 +445,6 @@ const MockServerPage: React.FC = () => {
     };
     reader.readAsText(file);
     if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  // --- History handlers ---
-  const deleteHistoryItem = (id: string) => {
-    setHistory(prev => {
-      const updated = prev.filter(item => item.id !== id);
-      try { localStorage.setItem('apives-mock-history', JSON.stringify(updated)); } catch(e) {}
-      return updated;
-    });
-  };
-
-  const clearAllHistory = () => {
-    setHistory([]);
-    try { localStorage.setItem('apives-mock-history', JSON.stringify([])); } catch(e) {}
-  };
-
-  const exportHistory = () => {
-    const data = JSON.stringify(history, null, 2);
-    downloadCode(data, 'mock-history.json');
   };
 
   // --- Computed data (stats, intelligence, filtered lists) ---
@@ -535,14 +472,6 @@ const MockServerPage: React.FC = () => {
       return matchesSearch && matchesFilter;
     });
   }, [endpoints, searchTerm, filterMethod]);
-
-  const filteredHistory = useMemo(() => {
-    const term = historySearchTerm.toLowerCase();
-    return history.filter(item =>
-      item.endpointName.toLowerCase().includes(term) ||
-      (item.endpointPath && item.endpointPath.toLowerCase().includes(term))
-    );
-  }, [history, historySearchTerm]);
 
   // --- Options for selects ---
   const methodOptions = [
@@ -801,122 +730,77 @@ const MockServerPage: React.FC = () => {
               </div>
             </div>
 
-            {/* MERGED SECTION: Mock Endpoints + Recent Activity (only history part conditionally shown) */}
-            <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 md:mb-6">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <h3 className="text-base md:text-xl font-semibold">Mock Endpoints</h3>
-                  <div className="flex gap-1 text-xs">
-                    <span className="px-2 py-0.5 bg-white/10 rounded-full">Total: {stats.total}</span>
-                    <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">GET: {stats.getCount}</span>
-                    <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">POST: {stats.postCount}</span>
-                    <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">PUT: {stats.putCount}</span>
-                    <span className="px-2 py-0.5 bg-red-500/20 text-red-400 rounded-full">DEL: {stats.deleteCount}</span>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 md:py-2 text-xs md:text-sm w-32 md:w-40 focus:border-mora-500 outline-none"
-                    />
-                  </div>
-                  <CustomSelect options={filterOptions} value={filterMethod} onChange={(val) => setFilterMethod(val as string)} className="w-24" />
-                </div>
-              </div>
-
-              <div className="flex gap-2 mb-4">
-                <button onClick={exportCollection} className={glassPill + " text-xs md:text-sm py-1.5 md:py-2"}><Upload size={14} /> Export Collection</button>
-                <button onClick={() => fileInputRef.current?.click()} className={glassPill + " text-xs md:text-sm py-1.5 md:py-2"}><Download size={14} /> Import Collection</button>
-                <input ref={fileInputRef} type="file" accept=".json" onChange={importCollection} className="hidden" />
-              </div>
-
-              <div className="space-y-2 max-h-80 overflow-y-auto">
-                {filteredEndpoints.length > 0 ? (
-                  filteredEndpoints.map(ep => {
-                    const isActive = activeEndpoint?.id === ep.id;
-                    return (
-                      <div
-                        key={ep.id}
-                        onClick={() => loadEndpoint(ep)}
-                        className={`flex items-center justify-between bg-black/60 hover:bg-black/80 border rounded-xl md:rounded-2xl p-2 md:p-3 cursor-pointer transition-all group ${
-                          isActive ? 'border-mora-500 shadow-[0_0_12px_rgba(34,197,94,0.3)] bg-black/80' : 'border-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
-                          <span className="px-2 py-0.5 md:px-2 md:py-0.5 text-[10px] md:text-xs rounded-full bg-white/10 flex-shrink-0">{ep.method}</span>
-                          <div className="truncate">
-                            <div className="text-sm md:text-base font-medium truncate">{ep.name}</div>
-                            <div className="font-mono text-[10px] md:text-xs text-white/50 truncate">{ep.path}</div>
-                          </div>
-                        </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                          <button onClick={(e) => { e.stopPropagation(); startEdit(ep); }} className="text-white/60 hover:text-mora-400 p-1" title="Edit"><Edit3 size={14} /></button>
-                          <button onClick={(e) => { e.stopPropagation(); deleteEndpoint(ep.id); }} className="text-white/40 hover:text-red-400 p-1" title="Delete"><Trash2 size={14} /></button>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-center py-8 md:py-16 text-white/40">
-                    <Waypoints size={32} className="mx-auto mb-3 text-white/20" />
-                    <p className="text-sm">No mock endpoints created yet</p>
-                    <p className="text-xs mt-1">Create your first endpoint to start testing APIs</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Recent Activity - only visible when logged in */}
-              {isLoggedIn && (
-                <div className="mt-6 pt-6 border-t border-white/10">
-                  <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                    <h3 className="text-base md:text-xl font-semibold flex items-center gap-2"><History size={18} className="text-mora-500" /> Recent Activity</h3>
-                    <div className="flex gap-2">
-                      <button onClick={exportHistory} className={glassPill + " text-xs py-1 px-3"}>Export JSON</button>
-                      <button onClick={clearAllHistory} className={glassPill + " text-xs py-1 px-3 text-red-400 hover:text-red-500"}>Clear All</button>
+            {/* Recent Mock Endpoints - visible ONLY when logged in */}
+            {isLoggedIn && (
+              <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 md:mb-6">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h3 className="text-base md:text-xl font-semibold">Recent Mock Endpoints</h3>
+                    <div className="flex gap-1 text-xs">
+                      <span className="px-2 py-0.5 bg-white/10 rounded-full">Total: {stats.total}</span>
+                      <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">GET: {stats.getCount}</span>
+                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">POST: {stats.postCount}</span>
+                      <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">PUT: {stats.putCount}</span>
+                      <span className="px-2 py-0.5 bg-red-500/20 text-red-400 rounded-full">DEL: {stats.deleteCount}</span>
                     </div>
                   </div>
-                  <div className="relative mb-3">
-                    <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
-                    <input
-                      type="text"
-                      placeholder="Search history..."
-                      value={historySearchTerm}
-                      onChange={(e) => setHistorySearchTerm(e.target.value)}
-                      className="w-full bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 text-xs focus:border-mora-500 outline-none"
-                    />
-                  </div>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {filteredHistory.length > 0 ? (
-                      filteredHistory.map(item => (
-                        <div key={item.id} className="flex items-center justify-between bg-black/40 hover:bg-black/60 rounded-xl p-2 transition-all group">
-                          <div className="flex items-center gap-2 overflow-hidden">
-                            <span className={`px-2 py-0.5 text-[10px] rounded-full ${
-                              item.action === 'create' ? 'bg-green-500/20 text-green-400' :
-                              item.action === 'edit' ? 'bg-blue-500/20 text-blue-400' :
-                              item.action === 'delete' ? 'bg-red-500/20 text-red-400' :
-                              'bg-white/10'
-                            }`}>{item.action}</span>
-                            <div className="truncate">
-                              <div className="text-xs font-medium truncate">{item.endpointName}</div>
-                              <div className="text-[10px] text-white/40 truncate">{item.endpointMethod && item.endpointPath ? `${item.endpointMethod} ${item.endpointPath}` : item.details || ''}</div>
-                              <div className="text-[10px] text-white/30">{new Date(item.timestamp).toLocaleString()}</div>
-                            </div>
-                          </div>
-                          <button onClick={() => deleteHistoryItem(item.id)} className="text-white/20 hover:text-red-400 p-1"><Trash2 size={12} /></button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-6 text-white/40 text-sm"><Activity size={24} className="mx-auto mb-2 text-white/20" />No activity yet</div>
-                    )}
+                  <div className="flex gap-2">
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 md:py-2 text-xs md:text-sm w-32 md:w-40 focus:border-mora-500 outline-none"
+                      />
+                    </div>
+                    <CustomSelect options={filterOptions} value={filterMethod} onChange={(val) => setFilterMethod(val as string)} className="w-24" />
                   </div>
                 </div>
-              )}
-            </div>
+
+                <div className="flex gap-2 mb-4">
+                  <button onClick={exportCollection} className={glassPill + " text-xs md:text-sm py-1.5 md:py-2"}><Upload size={14} /> Export Collection</button>
+                  <button onClick={() => fileInputRef.current?.click()} className={glassPill + " text-xs md:text-sm py-1.5 md:py-2"}><Download size={14} /> Import Collection</button>
+                  <input ref={fileInputRef} type="file" accept=".json" onChange={importCollection} className="hidden" />
+                </div>
+
+                <div className="space-y-2 max-h-80 overflow-y-auto">
+                  {filteredEndpoints.length > 0 ? (
+                    filteredEndpoints.map(ep => {
+                      const isActive = activeEndpoint?.id === ep.id;
+                      return (
+                        <div
+                          key={ep.id}
+                          onClick={() => loadEndpoint(ep)}
+                          className={`flex items-center justify-between bg-black/60 hover:bg-black/80 border rounded-xl md:rounded-2xl p-2 md:p-3 cursor-pointer transition-all group ${
+                            isActive ? 'border-mora-500 shadow-[0_0_12px_rgba(34,197,94,0.3)] bg-black/80' : 'border-white/10'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
+                            <span className="px-2 py-0.5 md:px-2 md:py-0.5 text-[10px] md:text-xs rounded-full bg-white/10 flex-shrink-0">{ep.method}</span>
+                            <div className="truncate">
+                              <div className="text-sm md:text-base font-medium truncate">{ep.name}</div>
+                              <div className="font-mono text-[10px] md:text-xs text-white/50 truncate">{ep.path}</div>
+                            </div>
+                          </div>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                            <button onClick={(e) => { e.stopPropagation(); startEdit(ep); }} className="text-white/60 hover:text-mora-400 p-1" title="Edit"><Edit3 size={14} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); deleteEndpoint(ep.id); }} className="text-white/40 hover:text-red-400 p-1" title="Delete"><Trash2 size={14} /></button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center py-8 md:py-16 text-white/40">
+                      <Waypoints size={32} className="mx-auto mb-3 text-white/20" />
+                      <p className="text-sm">No mock endpoints created yet</p>
+                      <p className="text-xs mt-1">Create your first endpoint to start testing APIs</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
