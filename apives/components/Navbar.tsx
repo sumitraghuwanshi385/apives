@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound, FileJson } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound, FileJson, ArrowLeftRight } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -243,6 +243,13 @@ transition-all
   API Response Formatter
 </MobileNavLink>
 
+<MobileNavLink
+  to="/curl-converter"
+  icon={ArrowLeftRight}
+  onClick={() => setIsOpen(false)}
+>
+  cURL Converter
+</MobileNavLink>
 
 <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
 
