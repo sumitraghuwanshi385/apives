@@ -11,6 +11,7 @@ import SponsorAnalytics from "./pages/SponsorAnalytics";
 import JwtDecoderPage from "./pages/JwtDecoderPage";
 import ApiResponseFormatterPage from "./pages/ApiResponseFormatterPage";
 import CurlConverterPage from "./pages/CurlConverterPage";
+import MockServerPage from "./pages/MockServerPage";
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -88,6 +89,8 @@ element={<LiveApiRunnerPage />} />
   element={<ApiResponseFormatterPage />} />
 <Route path="/curl-converter"
   element={<CurlConverterPage />} />
+<Route path="/mock-server"
+  element={<MockServerPage />} />
 
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
