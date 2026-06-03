@@ -36,7 +36,7 @@ interface HistoryItem {
   details?: string;
 }
 
-// ---------- Helper: compute response intelligence ----------
+// ---------- Helper: compute response intelligence (safe) ----------
 interface ResponseIntelligenceData {
   isValidJson: boolean;
   responseType: string;
@@ -83,10 +83,10 @@ const computeResponseIntelligence = (endpoint: MockEndpoint | null): ResponseInt
     }
   } catch (e) { /* invalid JSON */ }
 
-  const responseSize = new Blob([endpoint.response]).size;
+  const responseSize = new Blob([endpoint.response || '']).size;
   let responseType = 'Plain Text';
-  if (endpoint.headers['Content-Type']?.includes('json')) responseType = 'JSON';
-  else if (endpoint.headers['Content-Type']?.includes('xml')) responseType = 'XML';
+  if (endpoint.headers && endpoint.headers['Content-Type']?.includes('json')) responseType = 'JSON';
+  else if (endpoint.headers && endpoint.headers['Content-Type']?.includes('xml')) responseType = 'XML';
   else responseType = 'Plain Text';
 
   let dataComplexity: 'Low' | 'Medium' | 'High' = 'Low';
@@ -103,8 +103,8 @@ const computeResponseIntelligence = (endpoint: MockEndpoint | null): ResponseInt
     estimatedTransferSize: responseSize + 128,
     statusCode: endpoint.statusCode,
     delay: endpoint.delay,
-    createdDate: new Date(endpoint.timestamp).toLocaleDateString(),
-    headersCount: Object.keys(endpoint.headers).length,
+    createdDate: endpoint.timestamp ? new Date(endpoint.timestamp).toLocaleDateString() : 'Unknown',
+    headersCount: endpoint.headers ? Object.keys(endpoint.headers).length : 0,
     isArray,
     rootKeysCount,
     nestedObjectCount,
@@ -134,7 +134,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, c
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const selectedLabel = options.find(opt => opt.value === value)?.label || value;
+  const selectedLabel = options.find(opt => opt.value === value)?.label ?? value;
 
   return (
     <div ref={selectRef} className={`relative ${className}`}>
@@ -194,10 +194,12 @@ const MockServerPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editEndpointId, setEditEndpointId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isClient, setIsClient] = useState(false);
 
   // --- Auth check (for history) ---
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
+    setIsClient(true);
     try {
       const user = localStorage.getItem("mora_user");
       setIsLoggedIn(!!user);
@@ -209,6 +211,7 @@ const MockServerPage: React.FC = () => {
 
   // --- Load endpoints & history (with safe JSON.parse) ---
   useEffect(() => {
+    if (!isClient) return;
     try {
       const savedEndpoints = localStorage.getItem('apives-mock-endpoints');
       if (savedEndpoints) {
@@ -232,7 +235,7 @@ const MockServerPage: React.FC = () => {
         setHistory([]);
       }
     }
-  }, [isLoggedIn]);
+  }, [isClient, isLoggedIn]);
 
   // --- Persist endpoints ---
   const saveEndpoints = useCallback((updated: MockEndpoint[]) => {
@@ -270,7 +273,7 @@ const MockServerPage: React.FC = () => {
 
   // --- Validate JSON response ---
   const isValidResponse = (response: string): boolean => {
-    const trimmed = response.trim();
+    const trimmed = response?.trim();
     if (!trimmed) return false;
     try {
       JSON.parse(trimmed);
@@ -379,16 +382,18 @@ const MockServerPage: React.FC = () => {
   };
 
   const loadEndpoint = (endpoint: MockEndpoint) => {
-    setActiveEndpoint(endpoint); // explicitly set, never auto-closes
+    setActiveEndpoint(endpoint);
   };
 
   const copyToClipboard = async (text: string, label: string) => {
+    if (!text) return;
     await navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 1800);
   };
 
   const downloadCode = (content: string, filename: string) => {
+    if (!content) return;
     const blob = new Blob([content], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -488,7 +493,7 @@ const MockServerPage: React.FC = () => {
     const postCount = endpoints.filter(e => e.method === 'POST').length;
     const putCount = endpoints.filter(e => e.method === 'PUT').length;
     const deleteCount = endpoints.filter(e => e.method === 'DELETE').length;
-    const totalSizeBytes = endpoints.reduce((sum, e) => sum + new Blob([e.response]).size, 0);
+    const totalSizeBytes = endpoints.reduce((sum, e) => sum + (e.response ? new Blob([e.response]).size : 0), 0);
     const storageUsed = totalSizeBytes / 1024;
     const avgResponseSize = total > 0 ? totalSizeBytes / total : 0;
     return { total, getCount, postCount, putCount, deleteCount, storageUsed, avgResponseSize };
@@ -567,7 +572,6 @@ const MockServerPage: React.FC = () => {
     { name: "Multi User Team", json: JSON.stringify({ teamId: "team_1", members: [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }] }, null, 2) },
     { name: "Search Results", json: JSON.stringify({ query: "laptop", results: [{ id: 1, name: "Gaming Laptop" }], totalResults: 42 }, null, 2) },
     { name: "Empty State", json: JSON.stringify({ data: [], message: "No items found" }, null, 2) },
-    // New templates
     { name: "JWT Auth", json: JSON.stringify({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", type: "Bearer" }, null, 2) },
     { name: "Users Dashboard", json: JSON.stringify({ totalUsers: 1250, activeUsers: 980, newUsers: 45, chartData: [10,20,30] }, null, 2) },
     { name: "Admin Dashboard", json: JSON.stringify({ metrics: { revenue: 50000, orders: 320 }, recentActivities: ["Order #123 placed"] }, null, 2) },
@@ -588,6 +592,10 @@ const MockServerPage: React.FC = () => {
   };
 
   // --- Render ---
+  if (!isClient) {
+    return null; // or a loading spinner
+  }
+
   return (
     <div className="min-h-screen bg-black pt-20 md:pt-24 pb-20 relative overflow-x-hidden">
       <div className="absolute top-20 left-4 lg:left-8 z-30">
@@ -595,7 +603,7 @@ const MockServerPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6">
-        {/* Hero Section - "Mock Server" + green subtitle line */}
+        {/* Hero Section - "Mock Server" only, no extra line */}
         <div className="flex flex-col items-center text-center mb-8 md:mb-12">
           <div className="inline-flex items-center justify-center p-2 bg-white/10 rounded-xl md:rounded-2xl mb-4 md:mb-6">
             <Waypoints size={28} className="text-mora-500" strokeWidth={1.5} />
@@ -603,9 +611,6 @@ const MockServerPage: React.FC = () => {
           <h1 className="text-2xl md:text-5xl font-semibold tracking-tighter text-white mb-2">
             Mock Server
           </h1>
-          <p className="text-mora-500 text-sm md:text-base font-medium tracking-wide mb-2">
-            Mock API Development Environment
-          </p>
           <p className="max-w-md text-xs md:text-base text-white/60 px-2">
             Create realistic mock APIs with dynamic data, error simulation and instant sharing
           </p>
@@ -772,7 +777,7 @@ const MockServerPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Mock Endpoints List with improved active highlight */}
+            {/* Mock Endpoints List - always visible */}
             <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 md:mb-6">
                 <div className="flex items-center gap-3 flex-wrap">
