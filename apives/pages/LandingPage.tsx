@@ -267,7 +267,7 @@ export const LandingPage: React.FC = () => {
     <div className="text-center mb-10">
 
       <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.03] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[10px] font-black uppercase tracking-[0.18em] shadow-[0_0_20px_rgba(34,197,94,0.10)]">
-        ✦ 3 Tools Available Now
+        ✦ 4 Tools Available Now
       </div>
 
       <h2 className="mt-5 text-2xl md:text-4xl font-bold text-white tracking-tight">
@@ -362,6 +362,27 @@ export const LandingPage: React.FC = () => {
           </div>
 
         </Link>
+
+<Link
+  to="/curl-converter"
+  className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
+>
+  <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+    <Braces className="text-mora-500" size={26} />
+  </div>
+
+  <h3 className="text-white text-base md:text-lg font-bold mb-2">
+    cURL Converter
+  </h3>
+
+  <p className="text-slate-400 text-sm leading-relaxed">
+    Convert cURL, Fetch and Axios requests instantly with request intelligence.
+  </p>
+
+  <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+    Open Tool →
+  </div>
+</Link>
 
       </div>
 
