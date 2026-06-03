@@ -10,6 +10,7 @@ import BuildImageGeneration from "./pages/build/BuildImageGeneration";
 import SponsorAnalytics from "./pages/SponsorAnalytics";
 import JwtDecoderPage from "./pages/JwtDecoderPage";
 import ApiResponseFormatterPage from "./pages/ApiResponseFormatterPage";
+import CurlConverterPage from "./pages/CurlConverterPage";
 
 
 import { Navbar } from './components/Navbar';
@@ -86,7 +87,8 @@ element={<LiveApiRunnerPage />} />
   element={<JwtDecoderPage />} />
 <Route path="/api-response-formatter"
   element={<ApiResponseFormatterPage />} />
-
+<Route path="/curl-converter"
+  element={<CurlConverterPage />} />
 
 
     {/* Footer */}    
