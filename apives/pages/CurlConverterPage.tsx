@@ -1,9 +1,20 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { 
-  Terminal, Code2, Copy, Download, Upload, Trash2, Clock,
-  CheckCircle2, XCircle, Search, Zap 
+import {
+  Terminal,
+  Code2,
+  Copy,
+  Download,
+  Upload,
+  Trash2,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  Search,
+  Zap,
+  Braces,
+  Activity
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
