@@ -7,8 +7,23 @@ import {
   Database, BarChart3, Info, Loader2, FileJson, AlertCircle, Edit3, Save,
   Layers, Hash, TrendingUp, Activity
 } from 'lucide-react';
+
+// ---------- SAFE SYNTAX HIGHLIGHTER IMPORT (fix crash #1) ----------
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+let vscDarkPlus: any;
+try {
+  vscDarkPlus = require('react-syntax-highlighter/dist/esm/styles/prism').vscDarkPlus;
+} catch {
+  try {
+    vscDarkPlus = require('react-syntax-highlighter/dist/cjs/styles/prism').vscDarkPlus;
+  } catch {
+    vscDarkPlus = {
+      'pre[class*="language-"]': { background: '#1e1e1e', color: '#d4d4d4' },
+      'code[class*="language-"]': { color: '#d4d4d4' }
+    };
+  }
+}
+
 import { BackButton } from "../components/BackButton";
 
 // ---------- Types ----------
@@ -195,6 +210,35 @@ const MockServerPage: React.FC = () => {
   const [editEndpointId, setEditEndpointId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isClient, setIsClient] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  // --- Global error boundary ---
+  useEffect(() => {
+    const errorHandler = (event: ErrorEvent) => {
+      console.error("Caught runtime error:", event.error);
+      setHasError(true);
+    };
+    window.addEventListener('error', errorHandler);
+    return () => window.removeEventListener('error', errorHandler);
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center text-white">
+        <div className="text-center p-6">
+          <AlertCircle size={48} className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+          <p className="text-white/60">Please refresh the page or contact support.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-mora-500 text-black rounded-full"
+          >
+            Reload Page
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // --- Auth check (for history) ---
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -592,9 +636,7 @@ const MockServerPage: React.FC = () => {
   };
 
   // --- Render ---
-  if (!isClient) {
-    return null; // or a loading spinner
-  }
+  if (!isClient) return null;
 
   return (
     <div className="min-h-screen bg-black pt-20 md:pt-24 pb-20 relative overflow-x-hidden">
@@ -744,9 +786,21 @@ const MockServerPage: React.FC = () => {
                 <div>
                   <div className="font-medium mb-2 text-sm">Response Preview</div>
                   <div className="bg-black rounded-xl md:rounded-2xl overflow-hidden border border-white/10 max-h-64 overflow-y-auto">
-                    <SyntaxHighlighter language="json" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '12px', fontSize: '12px' }}>
-                      {activeEndpoint.response}
-                    </SyntaxHighlighter>
+                    {(() => {
+                      try {
+                        return (
+                          <SyntaxHighlighter
+                            language="json"
+                            style={vscDarkPlus}
+                            customStyle={{ background: 'transparent', padding: '12px', fontSize: '12px' }}
+                          >
+                            {activeEndpoint.response}
+                          </SyntaxHighlighter>
+                        );
+                      } catch (err) {
+                        return <pre className="p-3 text-xs text-red-400 whitespace-pre-wrap">{activeEndpoint.response}</pre>;
+                      }
+                    })()}
                   </div>
                 </div>
 
