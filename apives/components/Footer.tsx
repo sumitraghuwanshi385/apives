@@ -161,6 +161,14 @@ text-slate-500 hover:text-white transition-all group"
     cURL Converter
   </Link>
 </li>
+<li>
+  <Link
+    to="/mock-server"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    Mock Server
+  </Link>
+</li>
         </ul>  
       </div>  
 
