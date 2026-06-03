@@ -19,7 +19,8 @@ import {
 Braces,
 KeyRound,
 Terminal,
-FileJson
+FileJson,
+ArrowLeftRight 
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter/dist/esm";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -368,7 +369,7 @@ export const LandingPage: React.FC = () => {
   className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
 >
   <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-    <Braces className="text-mora-500" size={26} />
+    <ArrowLeftRight className="text-mora-500" size={26} />
   </div>
 
   <h3 className="text-white text-base md:text-lg font-bold mb-2">
