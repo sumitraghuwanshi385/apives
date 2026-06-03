@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound, FileJson, ArrowLeftRight } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound, FileJson, ArrowLeftRight, Server } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -249,6 +249,14 @@ transition-all
   onClick={() => setIsOpen(false)}
 >
   cURL Converter
+</MobileNavLink>
+
+<MobileNavLink
+  to="/mock-server"
+  icon={Server}
+  onClick={() => setIsOpen(false)}
+>
+  Mock Server
 </MobileNavLink>
 
 <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
