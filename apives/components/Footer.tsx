@@ -153,6 +153,14 @@ text-slate-500 hover:text-white transition-all group"
     API Formatter
   </Link>
 </li>
+<li>
+  <Link
+    to="/curl-converter"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    cURL Converter
+  </Link>
+</li>
         </ul>  
       </div>  
 
