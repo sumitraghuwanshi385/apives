@@ -1,20 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Terminal,
-  Code2,
-  Copy,
-  Download,
-  Upload,
-  Trash2,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Search,
-  Zap,
-  Braces,
-  Activity
+import { 
+  Terminal, Code2, Copy, Download, Upload, Trash2, Clock,
+  CheckCircle2, XCircle, Search, Zap 
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -44,6 +33,14 @@ interface RequestInfo {
 const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
 
 const CurlConverterPage: React.FC = () => {
+  // Auth check (same pattern as other Apives tools)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem("mora_user");
+    setIsLoggedIn(!!user);
+  }, []);
+
   const [input, setInput] = useState('');
   const [inputType, setInputType] = useState<'curl' | 'fetch' | 'axios' | 'unknown'>('unknown');
   const [fetchCode, setFetchCode] = useState('');
@@ -55,14 +52,20 @@ const CurlConverterPage: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
   const [isConverting, setIsConverting] = useState(false);
 
-  // Auth simulation (same as other Apives tools)
-  const isLoggedIn = typeof window !== 'undefined' && !!localStorage.getItem("mora_user");
-
   // Load History
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      setHistory([]);
+      return;
+    }
     const saved = localStorage.getItem('apives-curl-converter-history');
-    if (saved) setHistory(JSON.parse(saved));
+    if (saved) {
+      try {
+        setHistory(JSON.parse(saved));
+      } catch {
+        setHistory([]);
+      }
+    }
   }, [isLoggedIn]);
 
   const saveToHistory = useCallback((data: Omit<HistoryItem, 'id' | 'timestamp'>) => {
@@ -80,8 +83,8 @@ const CurlConverterPage: React.FC = () => {
   const detectInputType = (text: string): 'curl' | 'fetch' | 'axios' | 'unknown' => {
     const t = text.toLowerCase().trim();
     if (t.startsWith('curl')) return 'curl';
-    if (t.includes('fetch(') || t.includes('.then(') || t.includes('response.json')) return 'fetch';
-    if (t.includes('axios.') || t.includes('axios(')) return 'axios';
+    if (t.includes('fetch(') || t.includes('.then(')) return 'fetch';
+    if (t.includes('axios.')) return 'axios';
     return 'unknown';
   };
 
@@ -89,19 +92,23 @@ const CurlConverterPage: React.FC = () => {
     try {
       const urlMatch = curlStr.match(/"(https?:\/\/[^"]+)"/) || curlStr.match(/'(https?:\/\/[^']+)'/);
       const url = urlMatch ? urlMatch[1] : 'https://api.example.com';
-      
+
       const methodMatch = curlStr.match(/-X\s+([A-Z]+)/);
       const method = methodMatch ? methodMatch[1] : 'GET';
 
       const headers: Record<string, string> = {};
-      const headerMatches = [...curlStr.matchAll(/-H\s+"([^"]+)"/g)];
+      const headerMatches = [...curlStr.matchAll(/-H\s+"([^"]+)"\s*/g)];
       headerMatches.forEach(match => {
-        const [key, value] = match[1].split(':').map(s => s.trim());
-        if (key && value) headers[key] = value;
+        const parts = match[1].split(':');
+        if (parts.length > 1) {
+          const key = parts[0].trim();
+          const value = parts.slice(1).join(':').trim();
+          headers[key] = value;
+        }
       });
 
       const bodyMatch = curlStr.match(/--data-raw\s+'([^']+)'|--data\s+'([^']+)'/);
-      const body = bodyMatch ? bodyMatch[1] || bodyMatch[2] : '';
+      const body = bodyMatch ? (bodyMatch[1] || bodyMatch[2]) : '';
 
       return { method, url, headers, body };
     } catch {
@@ -109,30 +116,34 @@ const CurlConverterPage: React.FC = () => {
     }
   };
 
-  const generateFetchCode = (data: any) => {
+  const generateFetchCode = (data: any): string => {
     const { method, url, headers, body } = data;
-    const headerStr = Object.entries(headers).map(([k, v]) => `    '\( {k}': ' \){v}'`).join(',\n');
-    
+    const headerStr = Object.entries(headers)
+      .map(([k, v]) => `    '\( {k}': ' \){v}'`)
+      .join(',\n');
+
     return `fetch("${url}", {
   method: "${method}",
   headers: {
 ${headerStr || "    'Content-Type': 'application/json'"}
-  }${body ? `,\n  body: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
+  }${body ? `,\n  body: \( {body.startsWith('{') || body.startsWith('[') ? body : `' \){body}'`}` : ''}
 })
   .then(res => res.json())
   .then(data => console.log(data))
   .catch(err => console.error('Error:', err));`;
   };
 
-  const generateAxiosCode = (data: any) => {
+  const generateAxiosCode = (data: any): string => {
     const { method, url, headers, body } = data;
-    const headerStr = Object.entries(headers).map(([k, v]) => `    '\( {k}': ' \){v}'`).join(',\n');
-    
+    const headerStr = Object.entries(headers)
+      .map(([k, v]) => `    '\( {k}': ' \){v}'`)
+      .join(',\n');
+
     return `axios({
   method: '${method.toLowerCase()}',
   url: '${url}',
   headers: {${headerStr ? '\n' + headerStr : ''}}
-${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
+${body ? `,\n  data: \( {body.startsWith('{') || body.startsWith('[') ? body : `' \){body}'`}` : ''}
 })
   .then(res => console.log(res.data))
   .catch(err => console.error('Error:', err));`;
@@ -140,7 +151,7 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
 
   const handleConvert = async () => {
     if (!input.trim()) {
-      setError("Please enter a request");
+      setError("Please paste a request (cURL, Fetch or Axios)");
       return;
     }
 
@@ -156,8 +167,8 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
       if (type === 'curl') {
         parsedData = parseCurl(input);
       } else {
-        // Basic fallback for Fetch/Axios
-        parsedData.url = input.match(/https?:\/\/[^\s'"]+/)?.[0] || 'https://api.example.com';
+        const urlMatch = input.match(/https?:\/\/[^\s'"]+/);
+        parsedData.url = urlMatch ? urlMatch[0] : 'https://api.example.com';
       }
 
       const fetchGenerated = generateFetchCode(parsedData);
@@ -173,12 +184,15 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
         method: parsedData.method,
         url: parsedData.url,
         headersCount: Object.keys(parsedData.headers).length,
-        queryParamsCount: new URL(parsedData.url).searchParams.toString().length > 0 ? 
-          new URL(parsedData.url).searchParams.toString().split('&').length : 0,
+        queryParamsCount: parsedData.url.includes('?') ? 
+          (new URL(parsedData.url).searchParams.toString().split('&').length) : 0,
         bodySize: parsedData.body ? parsedData.body.length : 0,
-        authType: Object.keys(parsedData.headers).some(h => h.toLowerCase().includes('authorization')) ? 'Bearer/Token' : 'None',
+        authType: Object.keys(parsedData.headers).some(h => 
+          h.toLowerCase().includes('authorization') || h.toLowerCase().includes('apikey')
+        ) ? 'Token/Bearer' : 'None',
         contentType: parsedData.headers['Content-Type'] || 'application/json',
-        payloadCategory: parsedData.body && parsedData.body.length > 5000 ? 'Large' : parsedData.body && parsedData.body.length > 500 ? 'Medium' : 'Small'
+        payloadCategory: parsedData.body && parsedData.body.length > 5000 ? 'Large' : 
+                        parsedData.body && parsedData.body.length > 500 ? 'Medium' : 'Small'
       };
       setRequestInfo(info);
 
@@ -190,7 +204,7 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
         curlCode: curlGenerated
       });
     } catch (err) {
-      setError("Failed to parse request. Please check format.");
+      setError("Failed to parse request. Please check the format.");
     } finally {
       setIsConverting(false);
     }
@@ -228,16 +242,9 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
     setError('');
     setRequestInfo(null);
     setInputType('unknown');
-    setSearchTerm('');
   };
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredHistory = useMemo(() => {
-    return history.filter(h => 
-      h.input.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [history, searchTerm]);
+  const filteredHistory = useMemo(() => history, [history]);
 
   return (
     <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
@@ -255,24 +262,24 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
             cURL ↔ Fetch ↔ Axios <span className="text-mora-500">Converter</span>
           </h1>
           <p className="max-w-md text-lg text-white/60">
-            Convert API requests between cURL, Fetch, and Axios instantly with precision
+            Convert API requests between cURL, Fetch, and Axios instantly
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Input Panel */}
+          {/* Input */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2.5 bg-white/5 rounded-2xl">
-                  <Braces size={24} className="text-mora-500" />
+                  <Terminal size={24} className="text-mora-500" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-semibold">Input Request</h2>
-                  <p className="text-sm text-white/50">Paste cURL, Fetch or Axios code</p>
+                  <p className="text-sm text-white/50">Paste cURL, Fetch or Axios</p>
                 </div>
                 {inputType !== 'unknown' && (
-                  <div className="ml-auto px-3 py-1 text-xs bg-mora-500/10 text-mora-400 rounded-full font-medium">
+                  <div className="ml-auto px-3 py-1 bg-mora-500/10 text-mora-400 text-xs rounded-full">
                     {inputType.toUpperCase()}
                   </div>
                 )}
@@ -289,16 +296,11 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
                 <button
                   onClick={handleConvert}
                   disabled={isConverting || !input.trim()}
-                  className="flex-1 bg-mora-500 hover:bg-mora-600 disabled:bg-white/10 text-black font-semibold py-3.5 rounded-2xl transition-all disabled:cursor-not-allowed"
+                  className="flex-1 bg-mora-500 hover:bg-mora-600 disabled:bg-white/10 text-black font-semibold py-3.5 rounded-2xl transition-all"
                 >
                   {isConverting ? 'Converting...' : 'Convert'}
                 </button>
-                <button
-                  onClick={clearAll}
-                  className="px-8 border border-white/20 hover:bg-white/5 py-3.5 rounded-2xl text-red-400 transition-all"
-                >
-                  Clear
-                </button>
+                <button onClick={clearAll} className={`${glassPill} text-red-400`}>Clear</button>
               </div>
             </div>
           </div>
@@ -314,18 +316,17 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
               </div>
 
               {error && (
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 flex items-start gap-3">
-                  <XCircle size={20} className="mt-0.5" />
-                  <div>{error}</div>
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 flex gap-3">
+                  <XCircle size={20} />
+                  {error}
                 </div>
               )}
 
-              {(fetchCode || axiosCode) && (
+              {(fetchCode || axiosCode) ? (
                 <div className="space-y-8">
-                  {/* Fetch */}
                   <div>
-                    <div className="flex justify-between mb-3">
-                      <div className="font-medium flex items-center gap-2">Fetch <span className="text-xs text-white/40">JavaScript</span></div>
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="font-medium">Fetch</div>
                       <div className="flex gap-2">
                         <button onClick={() => copyToClipboard(fetchCode, 'fetch')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
                           {copied === 'fetch' ? '✓ Copied' : 'Copy'}
@@ -340,10 +341,9 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
                     </div>
                   </div>
 
-                  {/* Axios */}
                   <div>
-                    <div className="flex justify-between mb-3">
-                      <div className="font-medium flex items-center gap-2">Axios <span className="text-xs text-white/40">JavaScript</span></div>
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="font-medium">Axios</div>
                       <div className="flex gap-2">
                         <button onClick={() => copyToClipboard(axiosCode, 'axios')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
                           {copied === 'axios' ? '✓ Copied' : 'Copy'}
@@ -358,10 +358,8 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
                     </div>
                   </div>
                 </div>
-              )}
-
-              {!fetchCode && !axiosCode && (
-                <div className="h-96 flex items-center justify-center text-white/40 border border-dashed border-white/10 rounded-3xl">
+              ) : (
+                <div className="h-80 flex items-center justify-center text-white/40 border border-dashed border-white/10 rounded-3xl">
                   Paste a request and click Convert
                 </div>
               )}
@@ -377,8 +375,8 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {Object.entries(requestInfo).map(([key, value]) => (
                     <div key={key} className="bg-black/60 rounded-2xl p-4">
-                      <div className="text-xs text-white/50 tracking-widest mb-1">{key.replace(/([A-Z])/g, ' $1')}</div>
-                      <div className="font-semibold text-lg">{value}</div>
+                      <div className="text-xs text-white/50 tracking-widest">{key.replace(/([A-Z])/g, ' $1')}</div>
+                      <div className="font-semibold text-lg tabular-nums">{value}</div>
                     </div>
                   ))}
                 </div>
@@ -386,6 +384,27 @@ ${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
             )}
           </div>
         </div>
+
+        {/* History */}
+        {isLoggedIn && history.length > 0 && (
+          <div className="mt-16">
+            <h3 className="text-lg font-medium mb-6 flex items-center gap-2">
+              <Clock size={18} className="text-mora-500" /> Recent Conversions
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {history.map(item => (
+                <div key={item.id} className="bg-[#070707] border border-white/10 rounded-3xl p-5 hover:border-mora-500/30 transition-all">
+                  <div className="text-xs text-white/50 mb-3">{new Date(item.timestamp).toLocaleString()}</div>
+                  <div className="font-mono text-xs line-clamp-2 mb-4 text-white/70">{item.input.substring(0, 140)}...</div>
+                  <div className="flex gap-2">
+                    <button onClick={() => loadFromHistory(item)} className={glassPill}>Load</button>
+                    <button onClick={() => copyToClipboard(item.fetchCode, 'history')} className={glassPill}>Copy Fetch</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
