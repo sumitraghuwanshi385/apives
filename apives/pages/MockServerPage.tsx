@@ -8,11 +8,9 @@ import {
   Layers, Hash, TrendingUp, Activity
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-
-// FIX: Use CommonJS path for Next.js compatibility (avoids undefined style)
+// FIX: Use CommonJS path for Next.js compatibility
 import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus';
-
-
+// Direct named import (component exports BackButton as named export)
 import { BackButton } from "../components/BackButton";
 
 // ---------- Types ----------
@@ -186,7 +184,6 @@ const SafeSyntaxHighlighter: React.FC<{ language: string; children: string }> = 
     );
   }
   try {
-    // Guard against undefined style
     if (!vscDarkPlus) throw new Error('Style not loaded');
     return (
       <SyntaxHighlighter language={language} style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '12px', fontSize: '12px' }}>
@@ -326,7 +323,6 @@ const MockServerPage: React.FC = () => {
     const endpointPath = newEndpoint.path.startsWith('/') ? newEndpoint.path : '/' + newEndpoint.path;
 
     if (isEditing && editEndpointId) {
-      // Update existing
       const existingIndex = endpoints.findIndex(e => e.id === editEndpointId);
       if (existingIndex === -1) return;
       const updatedEndpoint: MockEndpoint = {
@@ -350,7 +346,6 @@ const MockServerPage: React.FC = () => {
       setAnimateEndpointId(updatedEndpoint.id);
       setTimeout(() => setAnimateEndpointId(null), 500);
     } else {
-      // Create new
       if (endpoints.some(e => e.method === newEndpoint.method && e.path === endpointPath)) {
         alert("Endpoint with same method and path already exists");
         return;
@@ -622,7 +617,7 @@ const MockServerPage: React.FC = () => {
 
   // --- Render ---
   if (!isClient) {
-    return null; // or a loading spinner
+    return null;
   }
 
   return (
@@ -632,7 +627,7 @@ const MockServerPage: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6">
-        {/* Hero Section - "Mock Server" only, no extra line */}
+        {/* Hero Section */}
         <div className="flex flex-col items-center text-center mb-8 md:mb-12">
           <div className="inline-flex items-center justify-center p-2 bg-white/10 rounded-xl md:rounded-2xl mb-4 md:mb-6">
             <Waypoints size={28} className="text-mora-500" strokeWidth={1.5} />
@@ -806,7 +801,7 @@ const MockServerPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Mock Endpoints List - always visible */}
+            {/* MERGED SECTION: Mock Endpoints + Recent Activity (only history part conditionally shown) */}
             <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 md:mb-6">
                 <div className="flex items-center gap-3 flex-wrap">
@@ -820,8 +815,17 @@ const MockServerPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <div className="relative"><Search size={14} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40" /><input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 md:py-2 text-xs md:text-sm w-32 md:w-40 focus:border-mora-500 outline-none" /></div>
-                  <CustomSelect options={filterOptions} value={filterMethod} onChange={(val) => setFilterMethod(val as string)} className="w-28 md:w-32" />
+                  <div className="relative">
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 md:py-2 text-xs md:text-sm w-32 md:w-40 focus:border-mora-500 outline-none"
+                    />
+                  </div>
+                  <CustomSelect options={filterOptions} value={filterMethod} onChange={(val) => setFilterMethod(val as string)} className="w-24" />
                 </div>
               </div>
 
@@ -865,45 +869,54 @@ const MockServerPage: React.FC = () => {
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* History Panel (Logged-in only) */}
-            {isLoggedIn && (
-              <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-                  <h3 className="text-base md:text-xl font-semibold flex items-center gap-2"><History size={18} className="text-mora-500" /> Recent Activity</h3>
-                  <div className="flex gap-2">
-                    <button onClick={exportHistory} className={glassPill + " text-xs py-1 px-3"}>Export JSON</button>
-                    <button onClick={clearAllHistory} className={glassPill + " text-xs py-1 px-3 text-red-400 hover:text-red-500"}>Clear All</button>
+              {/* Recent Activity - only visible when logged in */}
+              {isLoggedIn && (
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <h3 className="text-base md:text-xl font-semibold flex items-center gap-2"><History size={18} className="text-mora-500" /> Recent Activity</h3>
+                    <div className="flex gap-2">
+                      <button onClick={exportHistory} className={glassPill + " text-xs py-1 px-3"}>Export JSON</button>
+                      <button onClick={clearAllHistory} className={glassPill + " text-xs py-1 px-3 text-red-400 hover:text-red-500"}>Clear All</button>
+                    </div>
+                  </div>
+                  <div className="relative mb-3">
+                    <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                    <input
+                      type="text"
+                      placeholder="Search history..."
+                      value={historySearchTerm}
+                      onChange={(e) => setHistorySearchTerm(e.target.value)}
+                      className="w-full bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 text-xs focus:border-mora-500 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {filteredHistory.length > 0 ? (
+                      filteredHistory.map(item => (
+                        <div key={item.id} className="flex items-center justify-between bg-black/40 hover:bg-black/60 rounded-xl p-2 transition-all group">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span className={`px-2 py-0.5 text-[10px] rounded-full ${
+                              item.action === 'create' ? 'bg-green-500/20 text-green-400' :
+                              item.action === 'edit' ? 'bg-blue-500/20 text-blue-400' :
+                              item.action === 'delete' ? 'bg-red-500/20 text-red-400' :
+                              'bg-white/10'
+                            }`}>{item.action}</span>
+                            <div className="truncate">
+                              <div className="text-xs font-medium truncate">{item.endpointName}</div>
+                              <div className="text-[10px] text-white/40 truncate">{item.endpointMethod && item.endpointPath ? `${item.endpointMethod} ${item.endpointPath}` : item.details || ''}</div>
+                              <div className="text-[10px] text-white/30">{new Date(item.timestamp).toLocaleString()}</div>
+                            </div>
+                          </div>
+                          <button onClick={() => deleteHistoryItem(item.id)} className="text-white/20 hover:text-red-400 p-1"><Trash2 size={12} /></button>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 text-white/40 text-sm"><Activity size={24} className="mx-auto mb-2 text-white/20" />No activity yet</div>
+                    )}
                   </div>
                 </div>
-                <div className="relative mb-3"><Search size={12} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40" /><input type="text" placeholder="Search history..." value={historySearchTerm} onChange={(e) => setHistorySearchTerm(e.target.value)} className="w-full bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 text-xs focus:border-mora-500 outline-none" /></div>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {filteredHistory.length > 0 ? (
-                    filteredHistory.map(item => (
-                      <div key={item.id} className="flex items-center justify-between bg-black/40 hover:bg-black/60 rounded-xl p-2 transition-all group">
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <span className={`px-2 py-0.5 text-[10px] rounded-full ${
-                            item.action === 'create' ? 'bg-green-500/20 text-green-400' :
-                            item.action === 'edit' ? 'bg-blue-500/20 text-blue-400' :
-                            item.action === 'delete' ? 'bg-red-500/20 text-red-400' :
-                            'bg-white/10'
-                          }`}>{item.action}</span>
-                          <div className="truncate">
-                            <div className="text-xs font-medium truncate">{item.endpointName}</div>
-                            <div className="text-[10px] text-white/40 truncate">{item.endpointMethod && item.endpointPath ? `${item.endpointMethod} ${item.endpointPath}` : item.details || ''}</div>
-                            <div className="text-[10px] text-white/30">{new Date(item.timestamp).toLocaleString()}</div>
-                          </div>
-                        </div>
-                        <button onClick={() => deleteHistoryItem(item.id)} className="text-white/20 hover:text-red-400 p-1"><Trash2 size={12} /></button>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-6 text-white/40 text-sm"><Activity size={24} className="mx-auto mb-2 text-white/20" />No activity yet</div>
-                  )}
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
