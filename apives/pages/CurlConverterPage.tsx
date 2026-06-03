@@ -1,25 +1,36 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
-  Terminal, Code2, Copy, Download, Upload, Trash2, Clock, 
-  CheckCircle2, AlertCircle, Zap 
+  Terminal, Code2, Copy, Download, Upload, Trash2, Clock,
+  CheckCircle2, XCircle, Search, Zap 
 } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BackButton } from "../components/BackButton";
 
-interface ConversionHistory {
+interface HistoryItem {
   id: string;
   timestamp: string;
-  inputType: string;
+  inputType: 'curl' | 'fetch' | 'axios';
   input: string;
-  fetch: string;
-  axios: string;
-  curl: string;
+  fetchCode: string;
+  axiosCode: string;
+  curlCode: string;
 }
 
-const MoraColor = "#c026d3";
+interface RequestInfo {
+  method: string;
+  url: string;
+  headersCount: number;
+  queryParamsCount: number;
+  bodySize: number;
+  authType: string;
+  contentType: string;
+  payloadCategory: string;
+}
+
+const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]";
 
 const CurlConverterPage: React.FC = () => {
   const [input, setInput] = useState('');
@@ -28,117 +39,150 @@ const CurlConverterPage: React.FC = () => {
   const [axiosCode, setAxiosCode] = useState('');
   const [curlCode, setCurlCode] = useState('');
   const [error, setError] = useState('');
-  const [history, setHistory] = useState<ConversionHistory[]>([]);
+  const [requestInfo, setRequestInfo] = useState<RequestInfo | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const [copied, setCopied] = useState<string | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
+
+  // Auth simulation (same as other Apives tools)
+  const isLoggedIn = typeof window !== 'undefined' && !!localStorage.getItem("mora_user");
 
   // Load History
   useEffect(() => {
+    if (!isLoggedIn) return;
     const saved = localStorage.getItem('apives-curl-converter-history');
     if (saved) setHistory(JSON.parse(saved));
-  }, []);
+  }, [isLoggedIn]);
 
-  const saveToHistory = (data: Omit<ConversionHistory, 'id' | 'timestamp'>) => {
-    const newEntry: ConversionHistory = {
+  const saveToHistory = useCallback((data: Omit<HistoryItem, 'id' | 'timestamp'>) => {
+    if (!isLoggedIn) return;
+    const newItem: HistoryItem = {
       ...data,
       id: Date.now().toString(36),
       timestamp: new Date().toISOString()
     };
-    const updated = [newEntry, ...history].slice(0, 15);
+    const updated = [newItem, ...history].slice(0, 20);
     setHistory(updated);
     localStorage.setItem('apives-curl-converter-history', JSON.stringify(updated));
-  };
+  }, [history, isLoggedIn]);
 
   const detectInputType = (text: string): 'curl' | 'fetch' | 'axios' | 'unknown' => {
-    const lower = text.toLowerCase().trim();
-    if (lower.startsWith('curl')) return 'curl';
-    if (lower.includes('fetch(') || lower.includes('.then(')) return 'fetch';
-    if (lower.includes('axios.') || lower.includes('axios(')) return 'axios';
+    const t = text.toLowerCase().trim();
+    if (t.startsWith('curl')) return 'curl';
+    if (t.includes('fetch(') || t.includes('.then(') || t.includes('response.json')) return 'fetch';
+    if (t.includes('axios.') || t.includes('axios(')) return 'axios';
     return 'unknown';
   };
 
-  const convertCurlToFetch = (curl: string): { fetch: string; axios: string } => {
-    // Basic cURL parser
-    let url = '';
-    let method = 'GET';
-    const headers: Record<string, string> = {};
-    let body = '';
+  const parseCurl = (curlStr: string) => {
+    try {
+      const urlMatch = curlStr.match(/"(https?:\/\/[^"]+)"/) || curlStr.match(/'(https?:\/\/[^']+)'/);
+      const url = urlMatch ? urlMatch[1] : 'https://api.example.com';
+      
+      const methodMatch = curlStr.match(/-X\s+([A-Z]+)/);
+      const method = methodMatch ? methodMatch[1] : 'GET';
 
-    // Extract URL
-    const urlMatch = curl.match(/-X\s+([A-Z]+)\s+"([^"]+)"/) || curl.match(/"(https?:\/\/[^"]+)"/);
-    if (urlMatch) url = urlMatch[2] || urlMatch[1];
+      const headers: Record<string, string> = {};
+      const headerMatches = [...curlStr.matchAll(/-H\s+"([^"]+)"/g)];
+      headerMatches.forEach(match => {
+        const [key, value] = match[1].split(':').map(s => s.trim());
+        if (key && value) headers[key] = value;
+      });
 
-    // Method
-    const methodMatch = curl.match(/-X\s+([A-Z]+)/);
-    if (methodMatch) method = methodMatch[1];
+      const bodyMatch = curlStr.match(/--data-raw\s+'([^']+)'|--data\s+'([^']+)'/);
+      const body = bodyMatch ? bodyMatch[1] || bodyMatch[2] : '';
 
-    // Headers
-    const headerMatches = curl.matchAll(/-H\s+"([^"]+)"\s*/g);
-    for (const match of headerMatches) {
-      const [key, value] = match[1].split(': ').map(s => s.trim());
-      if (key && value) headers[key] = value;
+      return { method, url, headers, body };
+    } catch {
+      return { method: 'GET', url: 'https://api.example.com', headers: {}, body: '' };
     }
-
-    // Body
-    const bodyMatch = curl.match(/--data-raw\s+'([^']+)'|--data\s+'([^']+)'/);
-    if (bodyMatch) body = bodyMatch[1] || bodyMatch[2];
-
-    const headerStr = Object.entries(headers).map(([k, v]) => `  '\( {k}': ' \){v}'`).join(',\n');
-
-    const fetchCode = `fetch("${url}", {
-  method: "${method}",
-  headers: {
-${headerStr ? headerStr : '    "Content-Type": "application/json"'}
-  }\( {body ? `,\n  body: JSON.stringify( \){body})` : ''}
-}).then(res => res.json())
-  .then(data => console.log(data))
-  .catch(err => console.error(err));`;
-
-    const axiosCode = `axios({
-  method: "${method.toLowerCase()}",
-  url: "${url}",
-  headers: {${headerStr ? '\n' + headerStr : ''}},
-  data: ${body ? body : 'null'}
-}).then(res => console.log(res.data))
-  .catch(err => console.error(err));`;
-
-    return { fetch: fetchCode, axios: axiosCode };
   };
 
-  const handleConvert = () => {
+  const generateFetchCode = (data: any) => {
+    const { method, url, headers, body } = data;
+    const headerStr = Object.entries(headers).map(([k, v]) => `    '\( {k}': ' \){v}'`).join(',\n');
+    
+    return `fetch("${url}", {
+  method: "${method}",
+  headers: {
+${headerStr || "    'Content-Type': 'application/json'"}
+  }${body ? `,\n  body: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
+})
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error('Error:', err));`;
+  };
+
+  const generateAxiosCode = (data: any) => {
+    const { method, url, headers, body } = data;
+    const headerStr = Object.entries(headers).map(([k, v]) => `    '\( {k}': ' \){v}'`).join(',\n');
+    
+    return `axios({
+  method: '${method.toLowerCase()}',
+  url: '${url}',
+  headers: {${headerStr ? '\n' + headerStr : ''}}
+${body ? `,\n  data: \( {body.startsWith('{') ? body : `' \){body}'`}` : ''}
+})
+  .then(res => console.log(res.data))
+  .catch(err => console.error('Error:', err));`;
+  };
+
+  const handleConvert = async () => {
     if (!input.trim()) {
-      setError("Please paste a request");
+      setError("Please enter a request");
       return;
     }
 
+    setIsConverting(true);
     setError('');
-    const type = detectInputType(input);
-    setInputType(type);
 
-    let result = { fetch: '', axios: '', curl: input };
+    try {
+      const type = detectInputType(input);
+      setInputType(type);
 
-    if (type === 'curl') {
-      const converted = convertCurlToFetch(input);
-      result.fetch = converted.fetch;
-      result.axios = converted.axios;
-    } else if (type === 'fetch') {
-      result.axios = '// Converted from Fetch to Axios\n' + input.replace('fetch', 'axios');
-      result.curl = '// cURL equivalent would be generated here';
-    } else if (type === 'axios') {
-      result.fetch = '// Converted from Axios to Fetch\n' + input;
-      result.curl = '// cURL equivalent would be generated here';
+      let parsedData: any = { method: 'GET', url: '', headers: {}, body: '' };
+
+      if (type === 'curl') {
+        parsedData = parseCurl(input);
+      } else {
+        // Basic fallback for Fetch/Axios
+        parsedData.url = input.match(/https?:\/\/[^\s'"]+/)?.[0] || 'https://api.example.com';
+      }
+
+      const fetchGenerated = generateFetchCode(parsedData);
+      const axiosGenerated = generateAxiosCode(parsedData);
+      const curlGenerated = input;
+
+      setFetchCode(fetchGenerated);
+      setAxiosCode(axiosGenerated);
+      setCurlCode(curlGenerated);
+
+      // Request Intelligence
+      const info: RequestInfo = {
+        method: parsedData.method,
+        url: parsedData.url,
+        headersCount: Object.keys(parsedData.headers).length,
+        queryParamsCount: new URL(parsedData.url).searchParams.toString().length > 0 ? 
+          new URL(parsedData.url).searchParams.toString().split('&').length : 0,
+        bodySize: parsedData.body ? parsedData.body.length : 0,
+        authType: Object.keys(parsedData.headers).some(h => h.toLowerCase().includes('authorization')) ? 'Bearer/Token' : 'None',
+        contentType: parsedData.headers['Content-Type'] || 'application/json',
+        payloadCategory: parsedData.body && parsedData.body.length > 5000 ? 'Large' : parsedData.body && parsedData.body.length > 500 ? 'Medium' : 'Small'
+      };
+      setRequestInfo(info);
+
+      saveToHistory({
+        inputType: type,
+        input,
+        fetchCode: fetchGenerated,
+        axiosCode: axiosGenerated,
+        curlCode: curlGenerated
+      });
+    } catch (err) {
+      setError("Failed to parse request. Please check format.");
+    } finally {
+      setIsConverting(false);
     }
-
-    setFetchCode(result.fetch);
-    setAxiosCode(result.axios);
-    setCurlCode(result.curl);
-
-    saveToHistory({
-      inputType: type,
-      input,
-      fetch: result.fetch,
-      axios: result.axios,
-      curl: result.curl
-    });
   };
 
   const copyToClipboard = async (text: string, label: string) => {
@@ -157,13 +201,32 @@ ${headerStr ? headerStr : '    "Content-Type": "application/json"'}
     URL.revokeObjectURL(url);
   };
 
-  const loadFromHistory = (item: ConversionHistory) => {
+  const loadFromHistory = (item: HistoryItem) => {
     setInput(item.input);
-    setInputType(item.inputType as any);
-    setFetchCode(item.fetch);
-    setAxiosCode(item.axios);
-    setCurlCode(item.curl);
+    setInputType(item.inputType);
+    setFetchCode(item.fetchCode);
+    setAxiosCode(item.axiosCode);
+    setCurlCode(item.curlCode);
   };
+
+  const clearAll = () => {
+    setInput('');
+    setFetchCode('');
+    setAxiosCode('');
+    setCurlCode('');
+    setError('');
+    setRequestInfo(null);
+    setInputType('unknown');
+    setSearchTerm('');
+  };
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredHistory = useMemo(() => {
+    return history.filter(h => 
+      h.input.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [history, searchTerm]);
 
   return (
     <div className="min-h-screen bg-black pt-24 md:pt-32 pb-20 relative overflow-x-hidden">
@@ -181,12 +244,12 @@ ${headerStr ? headerStr : '    "Content-Type": "application/json"'}
             cURL ↔ Fetch ↔ Axios <span className="text-mora-500">Converter</span>
           </h1>
           <p className="max-w-md text-lg text-white/60">
-            Convert API requests between cURL, Fetch and Axios instantly
+            Convert API requests between cURL, Fetch, and Axios instantly with precision
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Input */}
+          {/* Input Panel */}
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-[#070707] border border-white/10 rounded-3xl p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -197,24 +260,30 @@ ${headerStr ? headerStr : '    "Content-Type": "application/json"'}
                   <h2 className="text-2xl font-semibold">Input Request</h2>
                   <p className="text-sm text-white/50">Paste cURL, Fetch or Axios code</p>
                 </div>
+                {inputType !== 'unknown' && (
+                  <div className="ml-auto px-3 py-1 text-xs bg-mora-500/10 text-mora-400 rounded-full font-medium">
+                    {inputType.toUpperCase()}
+                  </div>
+                )}
               </div>
 
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 className="w-full h-96 bg-black border border-white/10 focus:border-mora-500 rounded-2xl p-5 font-mono text-sm resize-y min-h-[380px]"
-                placeholder="Paste your cURL command, Fetch or Axios request here..."
+                placeholder="Paste your cURL command, Fetch request, or Axios call here..."
               />
 
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleConvert}
-                  className="flex-1 bg-mora-500 hover:bg-mora-600 text-black font-semibold py-3.5 rounded-2xl transition-all"
+                  disabled={isConverting || !input.trim()}
+                  className="flex-1 bg-mora-500 hover:bg-mora-600 disabled:bg-white/10 text-black font-semibold py-3.5 rounded-2xl transition-all disabled:cursor-not-allowed"
                 >
-                  Convert Now
+                  {isConverting ? 'Converting...' : 'Convert'}
                 </button>
                 <button
-                  onClick={() => { setInput(''); setFetchCode(''); setAxiosCode(''); setCurlCode(''); setError(''); }}
+                  onClick={clearAll}
                   className="px-8 border border-white/20 hover:bg-white/5 py-3.5 rounded-2xl text-red-400 transition-all"
                 >
                   Clear
@@ -230,68 +299,80 @@ ${headerStr ? headerStr : '    "Content-Type": "application/json"'}
                 <div className="p-2.5 bg-white/5 rounded-2xl">
                   <Code2 size={24} className="text-mora-500" />
                 </div>
-                <h2 className="text-2xl font-semibold">Converted Code</h2>
-                {inputType !== 'unknown' && (
-                  <div className="ml-auto px-3 py-1 bg-mora-500/10 text-mora-400 text-xs rounded-full font-medium">
-                    {inputType.toUpperCase()}
-                  </div>
-                )}
+                <h2 className="text-2xl font-semibold">Converted Output</h2>
               </div>
 
               {error && (
-                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 text-sm">
-                  {error}
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 flex items-start gap-3">
+                  <XCircle size={20} className="mt-0.5" />
+                  <div>{error}</div>
                 </div>
               )}
 
               {(fetchCode || axiosCode) && (
                 <div className="space-y-8">
+                  {/* Fetch */}
                   <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <div className="font-medium">Fetch</div>
+                    <div className="flex justify-between mb-3">
+                      <div className="font-medium flex items-center gap-2">Fetch <span className="text-xs text-white/40">JavaScript</span></div>
                       <div className="flex gap-2">
                         <button onClick={() => copyToClipboard(fetchCode, 'fetch')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
                           {copied === 'fetch' ? '✓ Copied' : 'Copy'}
                         </button>
-                        <button onClick={() => downloadCode(fetchCode, 'fetch-request.js')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
-                          Download
-                        </button>
+                        <button onClick={() => downloadCode(fetchCode, 'fetch-request.js')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">Download</button>
                       </div>
                     </div>
                     <div className="bg-black rounded-2xl overflow-hidden border border-white/10">
                       <SyntaxHighlighter language="javascript" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '20px' }}>
-                        {fetchCode || '// No Fetch code generated yet'}
+                        {fetchCode}
                       </SyntaxHighlighter>
                     </div>
                   </div>
 
+                  {/* Axios */}
                   <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <div className="font-medium">Axios</div>
+                    <div className="flex justify-between mb-3">
+                      <div className="font-medium flex items-center gap-2">Axios <span className="text-xs text-white/40">JavaScript</span></div>
                       <div className="flex gap-2">
                         <button onClick={() => copyToClipboard(axiosCode, 'axios')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
                           {copied === 'axios' ? '✓ Copied' : 'Copy'}
                         </button>
-                        <button onClick={() => downloadCode(axiosCode, 'axios-request.js')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">
-                          Download
-                        </button>
+                        <button onClick={() => downloadCode(axiosCode, 'axios-request.js')} className="text-xs px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-full">Download</button>
                       </div>
                     </div>
                     <div className="bg-black rounded-2xl overflow-hidden border border-white/10">
                       <SyntaxHighlighter language="javascript" style={vscDarkPlus} customStyle={{ background: 'transparent', padding: '20px' }}>
-                        {axiosCode || '// No Axios code generated yet'}
+                        {axiosCode}
                       </SyntaxHighlighter>
                     </div>
                   </div>
                 </div>
               )}
 
-              {!fetchCode && !axiosCode && !error && (
-                <div className="h-80 flex items-center justify-center text-white/40 border border-dashed border-white/10 rounded-3xl">
-                  Paste a request above and click Convert
+              {!fetchCode && !axiosCode && (
+                <div className="h-96 flex items-center justify-center text-white/40 border border-dashed border-white/10 rounded-3xl">
+                  Paste a request and click Convert
                 </div>
               )}
             </div>
+
+            {/* Request Intelligence */}
+            {requestInfo && (
+              <div className="bg-[#070707] border border-white/10 rounded-3xl p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <Activity size={20} className="text-mora-500" />
+                  <h3 className="text-xl font-semibold">Request Intelligence</h3>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Object.entries(requestInfo).map(([key, value]) => (
+                    <div key={key} className="bg-black/60 rounded-2xl p-4">
+                      <div className="text-xs text-white/50 tracking-widest mb-1">{key.replace(/([A-Z])/g, ' $1')}</div>
+                      <div className="font-semibold text-lg">{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
