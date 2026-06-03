@@ -2,16 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
-  Waypoints, CirclePlus, History, WandSparkles, Copy, Download, Upload,
-  Trash2, Clock, Plus, CheckCircle2, XCircle, Search, Filter, ChevronDown,
-  Database, BarChart3, Info, FileJson, AlertCircle, Edit3, Save,
-  Layers, Hash, TrendingUp, Activity
+  Waypoints, CirclePlus, WandSparkles, Copy, Download, Upload,
+  Trash2, CheckCircle2, XCircle, Search, ChevronDown,
+  Database, BarChart3, Edit3, Activity
 } from 'lucide-react';
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-
 import vscDarkPlus from 'react-syntax-highlighter/dist/cjs/styles/prism/vsc-dark-plus';
-
 import { BackButton } from "../components/BackButton";
 
 // ---------- Types ----------
@@ -87,6 +83,15 @@ const computeResponseIntelligence = (endpoint: MockEndpoint | null): ResponseInt
     else dataComplexity = 'Low';
   }
 
+  // Safe date formatting
+  let createdDate = 'Unknown';
+  try {
+    if (endpoint.timestamp) {
+      const d = new Date(endpoint.timestamp);
+      if (!isNaN(d.getTime())) createdDate = d.toLocaleDateString();
+    }
+  } catch (e) { /* ignore */ }
+
   return {
     isValidJson,
     responseType,
@@ -94,7 +99,7 @@ const computeResponseIntelligence = (endpoint: MockEndpoint | null): ResponseInt
     estimatedTransferSize: responseSize + 128,
     statusCode: endpoint.statusCode,
     delay: endpoint.delay,
-    createdDate: endpoint.timestamp ? new Date(endpoint.timestamp).toLocaleDateString() : 'Unknown',
+    createdDate,
     headersCount: endpoint.headers ? Object.keys(endpoint.headers).length : 0,
     isArray,
     rootKeysCount,
@@ -103,7 +108,7 @@ const computeResponseIntelligence = (endpoint: MockEndpoint | null): ResponseInt
   };
 };
 
-// ---------- Custom Select (stable, no glitches) ----------
+// ---------- Custom Select (compact version) ----------
 interface CustomSelectProps {
   options: { value: string | number; label: string }[];
   value: string | number;
@@ -132,10 +137,10 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, c
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97]"
+        className="w-full flex items-center justify-between backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-3 py-1.5 text-xs font-medium transition-all active:scale-[0.97]"
       >
         <span>{selectedLabel}</span>
-        <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={12} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
         <div className="absolute z-50 w-full mt-1 backdrop-blur-xl bg-black/90 border border-white/10 rounded-2xl shadow-xl overflow-hidden">
@@ -147,7 +152,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, c
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors"
+              className="w-full text-left px-3 py-1.5 text-xs hover:bg-white/10 transition-colors"
             >
               {option.label}
             </button>
@@ -159,9 +164,9 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options, value, onChange, c
 };
 
 // ---------- Glass pill style ----------
-const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-[0.97] inline-flex items-center gap-2";
+const glassPill = "backdrop-blur-md bg-white/5 border border-white/10 hover:bg-white/10 rounded-full px-3 py-1.5 text-xs font-medium transition-all active:scale-[0.97] inline-flex items-center gap-1.5";
 
-// ---------- Safe SyntaxHighlighter with error boundary ----------
+// ---------- Safe SyntaxHighlighter ----------
 const SafeSyntaxHighlighter: React.FC<{ language: string; children: string }> = ({ language, children }) => {
   const [hasError, setHasError] = useState(false);
   if (hasError) {
@@ -185,6 +190,24 @@ const SafeSyntaxHighlighter: React.FC<{ language: string; children: string }> = 
   }
 };
 
+// ---------- Storage key helpers ----------
+const getUserId = (): string | null => {
+  try {
+    const userStr = localStorage.getItem("mora_user");
+    if (!userStr) return null;
+    const user = JSON.parse(userStr);
+    return user?.email || user?.id || null;
+  } catch {
+    return null;
+  }
+};
+
+const getStorageKey = (isLoggedIn: boolean): string => {
+  if (!isLoggedIn) return 'apives-mock-endpoints-guest';
+  const userId = getUserId();
+  return userId ? `apives-mock-endpoints-${userId}` : 'apives-mock-endpoints-guest';
+};
+
 // ---------- Main Component ----------
 const MockServerPage: React.FC = () => {
   // --- State ---
@@ -203,14 +226,13 @@ const MockServerPage: React.FC = () => {
   const [filterMethod, setFilterMethod] = useState<string>('All');
   const [copied, setCopied] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [animateEndpointId, setAnimateEndpointId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editEndpointId, setEditEndpointId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isClient, setIsClient] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // --- Auth check ---
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
     setIsClient(true);
     try {
@@ -222,31 +244,36 @@ const MockServerPage: React.FC = () => {
     }
   }, []);
 
-  // --- Load endpoints only (no history) ---
-  useEffect(() => {
-    if (!isClient) return;
+  // --- Load endpoints with correct storage key (runs on mount & auth change) ---
+  const loadEndpoints = useCallback(() => {
+    const key = getStorageKey(isLoggedIn);
     try {
-      const savedEndpoints = localStorage.getItem('apives-mock-endpoints');
-      if (savedEndpoints) {
-        const parsed = JSON.parse(savedEndpoints);
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        const parsed = JSON.parse(saved);
         setEndpoints(Array.isArray(parsed) ? parsed : []);
+      } else {
+        setEndpoints([]);
       }
     } catch (e) {
       console.error("Failed to load endpoints:", e);
       setEndpoints([]);
     }
-  }, [isClient]);
+  }, [isLoggedIn]);
 
-  // --- Persist endpoints ---
+  useEffect(() => {
+    if (!isClient) return;
+    loadEndpoints();
+  }, [isClient, isLoggedIn, loadEndpoints]);
+
+  // --- Persist endpoints to current user's storage ---
   const saveEndpoints = useCallback((updated: MockEndpoint[]) => {
     setEndpoints(updated);
+    const key = getStorageKey(isLoggedIn);
     try {
-      localStorage.setItem('apives-mock-endpoints', JSON.stringify(updated));
+      localStorage.setItem(key, JSON.stringify(updated));
     } catch (e) { console.error("Save failed:", e); }
-  }, []);
-
-  // --- No‑op history (kept to avoid errors in existing calls) ---
-  const addHistory = useCallback(() => {}, []);
+  }, [isLoggedIn]);
 
   // --- Helper: generate mock URL ---
   const generateMockUrl = useCallback((endpoint: MockEndpoint) => {
@@ -296,11 +323,8 @@ const MockServerPage: React.FC = () => {
       updatedEndpoints[existingIndex] = updatedEndpoint;
       saveEndpoints(updatedEndpoints);
       setActiveEndpoint(updatedEndpoint);
-      addHistory(); // no‑op
       setIsEditing(false);
       setEditEndpointId(null);
-      setAnimateEndpointId(updatedEndpoint.id);
-      setTimeout(() => setAnimateEndpointId(null), 500);
     } else {
       if (endpoints.some(e => e.method === newEndpoint.method && e.path === endpointPath)) {
         alert("Endpoint with same method and path already exists");
@@ -315,13 +339,11 @@ const MockServerPage: React.FC = () => {
       const updated = [endpoint, ...endpoints];
       saveEndpoints(updated);
       setActiveEndpoint(endpoint);
-      addHistory(); // no‑op
-      setAnimateEndpointId(endpoint.id);
-      setTimeout(() => setAnimateEndpointId(null), 500);
     }
     resetForm();
   };
 
+  // Fixed resetForm: clears all fields and exits edit mode
   const resetForm = () => {
     setNewEndpoint({
       name: '',
@@ -357,7 +379,6 @@ const MockServerPage: React.FC = () => {
       const updated = endpoints.filter(e => e.id !== id);
       saveEndpoints(updated);
       if (activeEndpoint?.id === id) setActiveEndpoint(null);
-      addHistory(); // no‑op
     }
   };
 
@@ -387,7 +408,6 @@ const MockServerPage: React.FC = () => {
   const exportCollection = () => {
     const data = JSON.stringify(endpoints, null, 2);
     downloadCode(data, 'mock-collection.json');
-    addHistory(); // no‑op
     setImportStatus({ type: 'success', message: 'Collection exported!' });
     setTimeout(() => setImportStatus(null), 2000);
   };
@@ -432,7 +452,6 @@ const MockServerPage: React.FC = () => {
           };
           newEndpoints.push(newEp);
           addedCount++;
-          addHistory(); // no‑op
         });
 
         saveEndpoints(newEndpoints);
@@ -492,7 +511,7 @@ const MockServerPage: React.FC = () => {
   ];
   const filterOptions = [{ value: 'All', label: 'All Methods' }, ...methodOptions];
 
-  // --- Templates (expanded) ---
+  // --- Templates (unchanged) ---
   const templates = [
     { name: "User List", json: JSON.stringify({ users: [{ id: 1, name: "John Doe", email: "john@example.com" }] }, null, 2) },
     { name: "Single User", json: JSON.stringify({ id: 1, name: "Jane Smith", email: "jane@example.com" }, null, 2) },
@@ -716,52 +735,40 @@ const MockServerPage: React.FC = () => {
               </div>
             )}
 
-            {/* Stats Dashboard */}
-            <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
-              <h3 className="text-base md:text-xl font-semibold mb-3 md:mb-4 flex items-center gap-2"><Database size={18} className="text-mora-500" /> Endpoint Stats</h3>
-              <div className="grid grid-cols-2 md:grid-cols-7 gap-2 md:gap-3">
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-lg md:text-2xl font-bold text-mora-400">{stats.total}</div><div className="text-[10px] md:text-xs text-white/50">Total</div></div>
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-lg md:text-2xl font-bold text-green-400">{stats.getCount}</div><div className="text-[10px] md:text-xs text-white/50">GET</div></div>
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-lg md:text-2xl font-bold text-blue-400">{stats.postCount}</div><div className="text-[10px] md:text-xs text-white/50">POST</div></div>
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-lg md:text-2xl font-bold text-yellow-400">{stats.putCount}</div><div className="text-[10px] md:text-xs text-white/50">PUT</div></div>
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-lg md:text-2xl font-bold text-red-400">{stats.deleteCount}</div><div className="text-[10px] md:text-xs text-white/50">DELETE</div></div>
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-sm md:text-lg font-bold">{stats.storageUsed.toFixed(1)} KB</div><div className="text-[10px] md:text-xs text-white/50">Storage</div></div>
-                <div className="bg-black/60 rounded-xl p-2 md:p-3 text-center"><div className="text-sm md:text-lg font-bold">{stats.avgResponseSize.toFixed(0)} B</div><div className="text-[10px] md:text-xs text-white/50">Avg Size</div></div>
-              </div>
-            </div>
-
             {/* Recent Mock Endpoints - visible ONLY when logged in */}
             {isLoggedIn && (
               <div className="bg-[#070707] border border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 md:mb-6">
-                  <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-base md:text-xl font-semibold">Recent Mock Endpoints</h3>
-                    <div className="flex gap-1 text-xs">
+                    <div className="flex flex-wrap gap-1.5 text-xs">
                       <span className="px-2 py-0.5 bg-white/10 rounded-full">Total: {stats.total}</span>
                       <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">GET: {stats.getCount}</span>
                       <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">POST: {stats.postCount}</span>
                       <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">PUT: {stats.putCount}</span>
                       <span className="px-2 py-0.5 bg-red-500/20 text-red-400 rounded-full">DEL: {stats.deleteCount}</span>
+                      <span className="px-2 py-0.5 bg-white/10 rounded-full">Storage: {stats.storageUsed.toFixed(1)} KB</span>
+                      <span className="px-2 py-0.5 bg-white/10 rounded-full">Avg Size: {stats.avgResponseSize.toFixed(0)} B</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <div className="relative">
-                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+                    <div className="relative inline-block">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
                       <input
                         type="text"
                         placeholder="Search..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 md:py-2 text-xs md:text-sm w-32 md:w-40 focus:border-mora-500 outline-none"
+                        className="bg-black border border-white/10 rounded-full pl-8 pr-3 py-1.5 text-xs w-32 md:w-40 focus:border-mora-500 outline-none"
                       />
                     </div>
-                    <CustomSelect options={filterOptions} value={filterMethod} onChange={(val) => setFilterMethod(val as string)} className="w-24" />
+                    <CustomSelect options={filterOptions} value={filterMethod} onChange={(val) => setFilterMethod(val as string)} className="w-20" />
                   </div>
                 </div>
 
                 <div className="flex gap-2 mb-4">
-                  <button onClick={exportCollection} className={glassPill + " text-xs md:text-sm py-1.5 md:py-2"}><Upload size={14} /> Export Collection</button>
-                  <button onClick={() => fileInputRef.current?.click()} className={glassPill + " text-xs md:text-sm py-1.5 md:py-2"}><Download size={14} /> Import Collection</button>
+                  <button onClick={exportCollection} className={glassPill}><Upload size={12} /> Export Collection</button>
+                  <button onClick={() => fileInputRef.current?.click()} className={glassPill}><Download size={12} /> Import Collection</button>
                   <input ref={fileInputRef} type="file" accept=".json" onChange={importCollection} className="hidden" />
                 </div>
 
