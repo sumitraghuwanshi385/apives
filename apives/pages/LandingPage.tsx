@@ -269,7 +269,7 @@ export const LandingPage: React.FC = () => {
     <div className="text-center mb-10">
 
       <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.03] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[10px] font-black uppercase tracking-[0.18em] shadow-[0_0_20px_rgba(34,197,94,0.10)]">
-        ✦ 4 Tools Available Now
+        ✦ 5 Tools Available Now
       </div>
 
       <h2 className="mt-5 text-2xl md:text-4xl font-bold text-white tracking-tight">
