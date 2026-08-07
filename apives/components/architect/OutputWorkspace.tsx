@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Play, Download, Copy, Code2, Activity, GitCompare, GitBranch, Terminal, Package, Database, FileText, FolderTree, ExternalLink, Share2, FileJson, Link as LinkIcon } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Play, Download, Copy, Code2, Activity, GitBranch, Terminal, Package, Database, FileText, FolderTree, ExternalLink, Share2, FileJson, Link as LinkIcon, GitCompare } from 'lucide-react';
 import { ArchitectProject } from '../../services/architectEngine';
 import { SupportedFramework, FrameworkCodePreview } from '../../services/backendGenerators/types';
 import { downloadFile, exportPostmanCollection } from '../../utils/download';
@@ -35,6 +35,18 @@ export const OutputWorkspace: React.FC<OutputWorkspaceProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [isChangesetPanelOpen, setIsChangesetPanelOpen] = useState<boolean>(false);
   const [isExportConfigOpen, setIsExportConfigOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close Export Config dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsExportConfigOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleCopyShareLink = () => {
     const shareUrl = `${window.location.origin}${window.location.pathname}?project=${currentProject.id}`;
@@ -66,48 +78,48 @@ export const OutputWorkspace: React.FC<OutputWorkspaceProps> = ({
   return (
     <div id="output-preview-section" className="space-y-6 animate-fade-in scroll-mt-28">
       {/* TOP HEADER & QUICK ACTIONS */}
-      <div className="bg-dark-900 border border-mora-500/40 rounded-3xl p-5 md:p-6 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+      <div className="bg-dark-900 border border-mora-500/40 rounded-3xl p-4 sm:p-5 backdrop-blur-xl shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-mora-500 via-mora-400 to-transparent"></div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-mono bg-mora-500/20 text-mora-300 border border-mora-500/40 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="text-[9px] font-mono bg-mora-500/20 text-mora-300 border border-mora-500/40 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                 {currentProject.config.architecture} Architecture
               </span>
-              <span className="text-[10px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+              <span className="text-[9px] font-mono text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
                 ID: {currentProject.id}
               </span>
             </div>
-            <h2 className="text-xl md:text-2xl font-display font-extrabold text-white">{currentProject.name}</h2>
-            <p className="text-xs text-slate-400 font-light mt-1 max-w-2xl">{currentProject.description}</p>
+            <h2 className="text-lg md:text-xl font-display font-extrabold text-white leading-tight">{currentProject.name}</h2>
+            <p className="text-[11px] sm:text-xs text-slate-400 font-light mt-0.5 max-w-2xl leading-relaxed">{currentProject.description}</p>
           </div>
 
-          {/* QUICK ACTIONS */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* QUICK ACTIONS - COMPACT PILL BUTTONS */}
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {/* EXPORT CONFIGURATION DROPDOWN */}
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsExportConfigOpen(!isExportConfigOpen)}
-                className="bg-mora-500/10 hover:bg-mora-500/20 border border-mora-500/40 text-mora-300 font-mono text-xs font-bold px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-md active:scale-95"
+                className="bg-mora-500/10 hover:bg-mora-500/20 border border-mora-500/40 text-mora-300 font-mono text-[11px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer h-7"
               >
-                <Share2 size={13} /> Export Config
+                <Share2 size={12} /> Export Config
               </button>
 
               {isExportConfigOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-dark-900 border border-mora-500/40 rounded-2xl p-2 shadow-2xl z-[80] font-mono text-xs space-y-1 backdrop-blur-xl animate-fade-in">
+                <div className="absolute right-0 sm:right-0 left-auto mt-2 w-52 sm:w-56 bg-dark-900 border border-mora-500/40 rounded-2xl p-2 shadow-2xl z-[80] font-mono text-[11px] space-y-1 backdrop-blur-2xl animate-fade-in max-w-[calc(100vw-2.5rem)]">
                   <button
                     onClick={handleDownloadConfigJson}
-                    className="w-full text-left px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-mora-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                    className="w-full text-left px-2.5 py-1.5 rounded-xl text-slate-200 hover:text-white hover:bg-mora-500/20 transition-all flex items-center gap-2 cursor-pointer"
                   >
-                    <FileJson size={14} className="text-mora-400" />
+                    <FileJson size={13} className="text-mora-400" />
                     <span>Download JSON Config</span>
                   </button>
                   <button
                     onClick={handleCopyShareLink}
-                    className="w-full text-left px-3 py-2 rounded-xl text-slate-200 hover:text-white hover:bg-mora-500/20 transition-all flex items-center gap-2 cursor-pointer"
+                    className="w-full text-left px-2.5 py-1.5 rounded-xl text-slate-200 hover:text-white hover:bg-mora-500/20 transition-all flex items-center gap-2 cursor-pointer"
                   >
-                    <LinkIcon size={14} className="text-mora-400" />
+                    <LinkIcon size={13} className="text-mora-400" />
                     <span>Copy Shareable Link</span>
                   </button>
                 </div>
@@ -116,35 +128,35 @@ export const OutputWorkspace: React.FC<OutputWorkspaceProps> = ({
 
             <button
               onClick={() => setIsChangesetPanelOpen(true)}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shadow-md active:scale-95"
+              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-[11px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer h-7"
             >
-              <GitCompare size={13} /> View Changeset
+              <GitCompare size={12} /> View Changeset
             </button>
 
             <button
               onClick={onOpenLiveRunner}
-              className="bg-mora-600 hover:bg-mora-500 text-white font-mono text-xs font-bold px-3.5 py-2 rounded-xl shadow-lg transition-all flex items-center gap-1.5 active:scale-95"
+              className="bg-mora-600 hover:bg-mora-500 text-white font-mono text-[11px] font-bold px-3 py-1.5 rounded-full shadow-md transition-all flex items-center gap-1.5 active:scale-95 cursor-pointer h-7"
             >
-              <Play size={13} /> Live API Runner
+              <Play size={12} /> Live API Runner
             </button>
 
             <button
               onClick={() => downloadFile(currentProject.openApiJson, `${currentProject.name.toLowerCase().replace(/\s+/g, '_')}_openapi.json`, 'application/json')}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5"
+              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-[11px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer h-7"
             >
               <Download size={12} /> Export OpenAPI
             </button>
 
             <button
               onClick={() => exportPostmanCollection(currentProject)}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5"
+              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-[11px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer h-7"
             >
               <Download size={12} /> Export Postman
             </button>
 
             <button
               onClick={() => onCopy(currentProject.documentationMarkdown, 'Documentation')}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1.5"
+              className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-[11px] font-bold px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 cursor-pointer h-7"
             >
               <Copy size={12} /> Copy Docs
             </button>
@@ -226,7 +238,15 @@ export const OutputWorkspace: React.FC<OutputWorkspaceProps> = ({
         />
       )}
 
-      {(activeTab === 'heatmap' || activeTab === 'changeset' || activeTab === 'flow' || activeTab === 'cicd' || activeTab === 'schema' || activeTab === 'structure' || activeTab === 'docs') && (
+      {activeTab === 'changeset' && (
+        <ChangesetSidePanel
+          currentProject={currentProject}
+          previousProject={previousProject}
+          isSidePanelMode={false}
+        />
+      )}
+
+      {(activeTab === 'heatmap' || activeTab === 'flow' || activeTab === 'cicd' || activeTab === 'schema' || activeTab === 'structure' || activeTab === 'docs') && (
         <ArchitectureDiagram
           currentProject={currentProject}
           previousProject={previousProject}
