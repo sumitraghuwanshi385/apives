@@ -12,6 +12,8 @@ import JwtDecoderPage from "./pages/JwtDecoderPage";
 import ApiResponseFormatterPage from "./pages/ApiResponseFormatterPage";
 import CurlConverterPage from "./pages/CurlConverterPage";
 import MockServerPage from "./pages/MockServerPage";
+import ApivesArchitect from "./pages/ApivesArchitect";
+
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -30,6 +32,7 @@ import AskApivesPage from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
 import Blogs from "./pages/Blogs";
 import LiveApiRunnerPage from "./pages/LiveApiRunnerPage";
+
 
 import {
 EnterprisePage,
@@ -91,6 +94,7 @@ element={<LiveApiRunnerPage />} />
   element={<CurlConverterPage />} />
 <Route path="/mock-server"
   element={<MockServerPage />} />
+  <Route path="/architect" element={<ApivesArchitect />} />
 
 
 
