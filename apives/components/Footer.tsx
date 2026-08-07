@@ -169,6 +169,14 @@ text-slate-500 hover:text-white transition-all group"
     Mock Server
   </Link>
 </li>
+<li>
+  <Link
+    to="/architect"
+    className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+  >
+    API Architect
+  </Link>
+</li>
         </ul>  
       </div>  
 
