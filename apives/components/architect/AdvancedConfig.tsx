@@ -31,12 +31,12 @@ export const AdvancedConfig: React.FC<AdvancedConfigProps> = ({
         <div className="flex items-center gap-2">
           <Layers size={14} className="text-mora-500" />
           <span className="text-[11px] md:text-xs font-mono font-bold text-white uppercase tracking-wider">
-            Advanced Architectural Configuration
+            Configuration
           </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-[8px] md:text-[9px] font-mono text-mora-400 bg-mora-500/10 px-2.5 py-0.5 rounded-full border border-mora-500/20 font-semibold tracking-tight shadow-sm">
-            v{config.version.major}.{config.version.minor}.{config.version.patch} • {config.architecture} • {config.auth} • {config.database}
+            v{config.version.major}.{config.version.minor}.{config.version.patch}
           </span>
           {isAdvancedOpen ? <ChevronUp size={14} className="text-slate-400" /> : <ChevronDown size={14} className="text-slate-400" />}
         </div>
