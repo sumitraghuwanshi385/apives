@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Copy, Check, ArrowUp, ArrowDown, GripVertical, RotateCcw, Layers } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from "framer-motion";
 import { EndpointSpec } from '../../services/architectEngine';
 
 interface EndpointCardsProps {
