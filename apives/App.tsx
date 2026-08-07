@@ -12,7 +12,6 @@ import JwtDecoderPage from "./pages/JwtDecoderPage";
 import ApiResponseFormatterPage from "./pages/ApiResponseFormatterPage";
 import CurlConverterPage from "./pages/CurlConverterPage";
 import MockServerPage from "./pages/MockServerPage";
-import ApivesArchitect from "./pages/ApivesArchitect";
 
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -92,7 +91,6 @@ element={<LiveApiRunnerPage />} />
   element={<CurlConverterPage />} />
 <Route path="/mock-server"
   element={<MockServerPage />} />
-<Route path="/architect" element={<ApivesArchitect />} />
 
 
 
