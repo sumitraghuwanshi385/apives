@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Sparkles, Wand2 } from 'lucide-react';
 import { BackButton } from '../components/BackButton';
 import { Hero } from '../components/architect/Hero';
@@ -126,6 +127,8 @@ export const ApivesArchitect: React.FC = () => {
     }, 3000);
   };
 
+  const navigate = useNavigate();
+
   const handleChipClick = (chip: string) => {
     setPromptText(prev => (prev ? `${prev}\n• Include ${chip}` : `Build API with ${chip}`));
   };
@@ -137,6 +140,13 @@ export const ApivesArchitect: React.FC = () => {
 
   const handleGenerate = () => {
     if (!promptText.trim() || isGenerating) return;
+
+    // Redirect to auth page if non-logged user
+    const userStr = localStorage.getItem('mora_user');
+    if (!userStr) {
+      navigate('/access?returnUrl=/architect');
+      return;
+    }
 
     setIsGenerating(true);
     setGenerationStep(1);
@@ -157,7 +167,7 @@ export const ApivesArchitect: React.FC = () => {
 
       setIsGenerating(false);
       setGenerationStep(0);
-      showToast(`Architecture "${generated.name}" synthesized!`);
+      // Success toast removed as requested (silent transition)
 
       setTimeout(() => {
         const outputElem = document.getElementById('output-preview-section');
@@ -236,7 +246,7 @@ export const ApivesArchitect: React.FC = () => {
       });
 
   return (
-    <div className="min-h-screen bg-black text-slate-100 pt-20 md:pt-28 pb-20 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-black text-slate-100 pt-24 sm:pt-28 md:pt-32 pt-[calc(env(safe-area-inset-top)+5.5rem)] pb-20 relative overflow-hidden font-sans">
       {/* Background Neon Elements */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-mora-500/5 blur-[140px] pointer-events-none rounded-full"></div>
       <div className="absolute top-10 right-10 w-96 h-96 bg-emerald-500/5 blur-[100px] pointer-events-none"></div>
