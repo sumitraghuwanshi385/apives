@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound, FileJson, ArrowLeftRight, Server, Waypoints } from 'lucide-react';
+import { Menu, X, Terminal, LayoutDashboard, LogOut, Radio, Home as HomeIcon, Search, PlusCircle, Cpu, ShieldCheck, Box, Trophy, Handshake, Zap, Bot, Fingerprint, KeyRound, FileJson, ArrowLeftRight, Server, Waypoints, Wand2 } from 'lucide-react';
 
 const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
@@ -93,6 +93,10 @@ return (
       <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">    
         <NavLink to="/" icon={HomeIcon}>Home</NavLink>    
         <NavLink to="/browse" icon={Search}>Explore APIs</NavLink>    
+
+<NavLink to="/architect" icon={Wand2}>
+  Architect
+</NavLink>
         
 <NavLink to="/ask-apives-ai" icon={Bot}>
   ApivesAI
@@ -167,6 +171,28 @@ return (
   <Bot size={16} className="md:w-5 md:h-5" />
 </Link>
 
+{/* 🪄 Architect */}
+
+<Link
+  to="/architect"
+  onClick={() => setIsOpen(false)}
+  className="
+  md:hidden
+  w-7 h-7 md:w-10 md:h-10
+  flex items-center justify-center
+  rounded-full
+  border
+  bg-white/[0.05]
+  backdrop-blur-[20px]
+  border-white/20
+  text-slate-300
+  hover:bg-white/[0.1]
+  active:scale-90
+  transition-all
+  "
+>
+  <Wand2 size={16} className="md:w-5 md:h-5" />
+</Link>
 
 
 {/* 🔍 Mobile-only Search icon */}
@@ -257,6 +283,14 @@ transition-all
   onClick={() => setIsOpen(false)}
 >
   Mock Server
+</MobileNavLink>
+
+<MobileNavLink
+  to="/architect"
+  icon={Wand2}
+  onClick={() => setIsOpen(false)}
+>
+  Architect
 </MobileNavLink>
 
 <MobileNavLink to="/submit" icon={PlusCircle} onClick={() => setIsOpen(false)}>Submit API</MobileNavLink>
