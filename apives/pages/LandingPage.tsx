@@ -28,7 +28,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { ApiListing } from '../types';
 import { apiService } from '../services/apiClient';
 import { ApivesAIHighlight } from '../components/ApivesAIHighlight';
-import ApiCard from '../components/ApiCard';
+import LandingApiCard from '../components/LandingApiCard';
 import SponsorsSection from "../components/SponsorsSection";
 
 let LANDING_API_CACHE:
