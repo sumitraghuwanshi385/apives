@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Instagram,
-  Youtube,
+  Twitter,
   MessageSquare,
   X,
 } from 'lucide-react';
@@ -32,15 +32,14 @@ export const Footer: React.FC = () => {
   if (location.pathname === '/access') return null;
 
   return (
-    <footer className="bg-black mt-auto relative overflow-hidden font-display">
+    <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
 
-      {/* FOOTER CONTENT */}
-      <div className="max-w-7xl mx-auto py-8 md:py-11 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
 
           {/* BRAND */}
-          <div className="md:col-span-4">
+          <div className="md:col-span-3">
 
             <div className="flex items-center mb-4 md:mb-5">
               <img
@@ -50,11 +49,10 @@ export const Footer: React.FC = () => {
               />
             </div>
 
-            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light tracking-[0.01em] max-w-xs">
+            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light">
               A next-gen API ecosystem where builders easily discover and understand APIs.
             </p>
 
-            {/* SOCIAL LINKS */}
             <div className="flex items-center gap-3">
 
               {/* X */}
@@ -76,12 +74,16 @@ export const Footer: React.FC = () => {
                   group
                 "
               >
-                <span className="text-[14px] md:text-[16px] font-semibold leading-none group-hover:scale-110 transition-transform">
-                  𝕏
-                </span>
+                <Twitter
+                  className="
+                    w-3.5 h-3.5 md:w-4 md:h-4
+                    group-hover:scale-110
+                    transition-transform
+                  "
+                />
               </a>
 
-              {/* INSTAGRAM */}
+              {/* Instagram */}
               <a
                 href="https://www.instagram.com/apives.ecosystem?igsh=MTNib2NicGF4Z2Zocg=="
                 target="_blank"
@@ -101,35 +103,15 @@ export const Footer: React.FC = () => {
                 "
               >
                 <Instagram
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
+                  className="
+                    w-3.5 h-3.5 md:w-4 md:h-4
+                    group-hover:scale-110
+                    transition-transform
+                  "
                 />
               </a>
 
-              {/* YOUTUBE */}
-              <a
-                href="https://www.youtube.com/@usestartives"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Apives on YouTube"
-                className="
-                  flex items-center justify-center
-                  w-8 h-8 md:w-9 md:h-9
-                  rounded-full
-                  bg-white/5
-                  hover:bg-white/10
-                  border border-white/5
-                  text-slate-500
-                  hover:text-white
-                  transition-all
-                  group
-                "
-              >
-                <Youtube
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
-                />
-              </a>
-
-              {/* GLOWING /// */}
+              {/* /// */}
               <span
                 className="
                   text-mora-500
@@ -138,19 +120,23 @@ export const Footer: React.FC = () => {
                   text-[10px] md:text-[12px]
                   select-none
                   animate-pulse
-                  drop-shadow-[0_0_6px_rgba(34,197,94,0.8)]
+                  drop-shadow-[0_0_6px_rgba(34,197,94,0.7)]
                 "
               >
                 ///
               </span>
 
-              {/* BUY ME A COFFEE */}
+              {/* Buy Me a Coffee */}
               <a
                 href="https://buymeacoffee.com/apives"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Buy me a coffee"
-                className="transition-transform hover:scale-105 active:scale-95"
+                className="
+                  transition-transform
+                  hover:scale-105
+                  active:scale-95
+                "
               >
                 <img
                   src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
@@ -165,16 +151,25 @@ export const Footer: React.FC = () => {
           {/* PLATFORM */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
+            <h3
+              className="
+                text-[11px] md:text-sm
+                font-semibold
+                text-mora-400
+                tracking-[0.18em]
+                uppercase
+                mb-4 md:mb-5
+              "
+            >
               Platform
             </h3>
 
-            <ul className="space-y-2.5 md:space-y-3">
+            <ul className="space-y-2 md:space-y-3">
 
               <li>
                 <Link
                   to="/browse"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Explore APIs
                 </Link>
@@ -183,7 +178,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/popular"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Top Rated
                 </Link>
@@ -195,16 +190,25 @@ export const Footer: React.FC = () => {
           {/* TOOLS */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
+            <h3
+              className="
+                text-[11px] md:text-sm
+                font-semibold
+                text-mora-400
+                tracking-[0.18em]
+                uppercase
+                mb-4 md:mb-5
+              "
+            >
               Tools
             </h3>
 
-            <ul className="space-y-2.5 md:space-y-3">
+            <ul className="space-y-2 md:space-y-3">
 
               <li>
                 <Link
                   to="/live-api-runner"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Live API Runner
                 </Link>
@@ -213,7 +217,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/jwt-decoder"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   JWT Decoder
                 </Link>
@@ -222,7 +226,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/api-response-formatter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   API Formatter
                 </Link>
@@ -231,7 +235,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/curl-converter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   cURL Converter
                 </Link>
@@ -240,7 +244,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/mock-server"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Mock Server
                 </Link>
@@ -249,7 +253,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/architect"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   API Architect
                 </Link>
@@ -261,16 +265,25 @@ export const Footer: React.FC = () => {
           {/* COMMUNITY */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
+            <h3
+              className="
+                text-[11px] md:text-sm
+                font-semibold
+                text-mora-400
+                tracking-[0.18em]
+                uppercase
+                mb-4 md:mb-5
+              "
+            >
               Community
             </h3>
 
-            <ul className="space-y-2.5 md:space-y-3">
+            <ul className="space-y-2 md:space-y-3">
 
               <li>
                 <Link
                   to="/support"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Help & Support
                 </Link>
@@ -279,7 +292,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/blogs"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Blogs
                 </Link>
@@ -288,7 +301,13 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => setIsFeedbackOpen(true)}
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors text-left tracking-[0.01em]"
+                  className="
+                    text-[13px] md:text-sm
+                    text-slate-400
+                    hover:text-white
+                    transition-colors
+                    text-left
+                  "
                 >
                   Feedback
                 </button>
@@ -300,16 +319,25 @@ export const Footer: React.FC = () => {
           {/* LEGAL */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
+            <h3
+              className="
+                text-[11px] md:text-sm
+                font-semibold
+                text-mora-400
+                tracking-[0.18em]
+                uppercase
+                mb-4 md:mb-5
+              "
+            >
               Legal
             </h3>
 
-            <ul className="space-y-2.5 md:space-y-3">
+            <ul className="space-y-2 md:space-y-3">
 
               <li>
                 <Link
                   to="/privacy"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Privacy Policy
                 </Link>
@@ -318,7 +346,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/terms"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
                 >
                   Terms of Service
                 </Link>
@@ -328,158 +356,180 @@ export const Footer: React.FC = () => {
           </div>
 
         </div>
-      </div>
 
-      {/* =====================================================
-          COMPACT PREMIUM 3D FOOTER EFFECT
-         ===================================================== */}
-      <div
-        className="
-          relative
-          w-full
-          h-[88px]
-          md:h-[96px]
-          bg-black
-          overflow-hidden
-          flex
-          items-end
-          justify-center
-        "
-      >
-
-        {/* SOFT ATMOSPHERIC GREEN GLOW */}
+        {/* FINAL COPYRIGHT AREA */}
         <div
           className="
-            absolute
-            left-1/2
-            bottom-[-82px]
-            -translate-x-1/2
-            w-[86%]
-            md:w-[64%]
-            h-[190px]
-            rounded-[50%]
-            pointer-events-none
-            blur-[36px]
-          "
-          style={{
-            background:
-              'radial-gradient(ellipse, rgba(34,197,94,0.264) 0%, rgba(34,197,94,0.10) 38%, transparent 72%)',
-          }}
-        />
-
-        {/* OUTER 3D PLATFORM */}
-        <div
-          className="
-            absolute
-            left-1/2
-            bottom-[-66px]
-            w-[98%]
-            md:w-[72%]
-            h-[112px]
-            rounded-[50%]
-            border
-            border-mora-500/20
-            pointer-events-none
-          "
-          style={{
-            transform:
-              'translateX(-50%) perspective(500px) rotateX(63deg)',
-            boxShadow:
-              '0 -13px 52px rgba(34,197,94,0.154), inset 0 9px 26px rgba(34,197,94,0.066)',
-          }}
-        />
-
-        {/* INNER 3D PLATFORM */}
-        <div
-          className="
-            absolute
-            left-1/2
-            bottom-[-43px]
-            w-[66%]
-            md:w-[46%]
-            h-[82px]
-            rounded-[50%]
-            border
-            border-mora-500/15
-            pointer-events-none
-          "
-          style={{
-            transform:
-              'translateX(-50%) perspective(500px) rotateX(63deg)',
-            boxShadow:
-              '0 -6px 30px rgba(34,197,94,0.099)',
-          }}
-        />
-
-        {/* SUBTLE FLOOR LIGHT */}
-        <div
-          className="
-            absolute
-            inset-x-0
-            bottom-0
-            h-[48px]
-            pointer-events-none
-          "
-          style={{
-            background:
-              'linear-gradient(to top, rgba(34,197,94,0.082), transparent)',
-          }}
-        />
-
-        {/* COPYRIGHT */}
-        <div
-          className="
-            absolute
-            inset-x-0
-            bottom-[8px]
-            md:bottom-[10px]
-            flex
-            justify-center
-            pointer-events-none
-            z-10
+            relative
+            mt-7 md:mt-8
+            h-[58px] md:h-[62px]
+            overflow-hidden
+            flex items-center justify-center
           "
         >
+
+          {/* SMALL ANIMATED EDGE-TO-EDGE STRIPE */}
+          <div
+            className="
+              absolute
+              left-0
+              top-1/2
+              -translate-y-1/2
+              w-[70px]
+              md:w-[100px]
+              h-[1.5px]
+              rounded-full
+              bg-mora-500
+              pointer-events-none
+              animate-footer-stripe
+            "
+            style={{
+              boxShadow:
+                '0 0 7px rgba(34,197,94,0.55), 0 0 14px rgba(34,197,94,0.18)',
+            }}
+          />
+
+          {/* COPYRIGHT */}
           <span
             className="
-              text-white/50
+              relative
+              z-10
+              bg-black
+              px-3
+              text-white/40
               text-[8px]
               md:text-[9px]
+              font-mono
               font-medium
-              tracking-[0.22em]
+              tracking-[0.28em]
               uppercase
+              whitespace-nowrap
             "
           >
             © 2026 Apives Ecosystem
           </span>
+
+          <style>
+            {`
+              @keyframes footerStripe {
+                0% {
+                  transform: translate3d(100vw, -50%, 0);
+                  opacity: 0;
+                }
+
+                8% {
+                  opacity: 1;
+                }
+
+                88% {
+                  opacity: 1;
+                }
+
+                100% {
+                  transform: translate3d(-120px, -50%, 0);
+                  opacity: 0;
+                }
+              }
+
+              .animate-footer-stripe {
+                animation: footerStripe 4.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+                will-change: transform, opacity;
+              }
+            `}
+          </style>
+
         </div>
 
       </div>
 
       {/* FEEDBACK MODAL */}
       {isFeedbackOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+        <div
+          className="
+            fixed inset-0
+            z-[100]
+            flex items-center justify-center
+            p-4
+            bg-black/80
+            backdrop-blur-md
+            animate-fade-in
+          "
+        >
 
-          <div className="relative w-full max-w-sm bg-dark-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden">
+          <div
+            className="
+              relative
+              w-full
+              max-w-sm
+              bg-dark-900
+              border border-white/10
+              rounded-3xl
+              p-6
+              shadow-2xl
+              overflow-hidden
+            "
+          >
 
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mora-500 to-transparent" />
+            <div
+              className="
+                absolute
+                top-0
+                left-0
+                w-full
+                h-1
+                bg-gradient-to-r
+                from-transparent
+                via-mora-500
+                to-transparent
+              "
+            />
 
             <button
               onClick={() => setIsFeedbackOpen(false)}
-              className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors"
+              className="
+                absolute
+                top-3
+                right-3
+                text-slate-500
+                hover:text-white
+                transition-colors
+              "
+              aria-label="Close feedback"
             >
               <X size={18} />
             </button>
 
             <div className="text-center mb-6">
 
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
+              <div
+                className="
+                  inline-flex
+                  items-center
+                  justify-center
+                  w-10
+                  h-10
+                  rounded-full
+                  bg-mora-500/10
+                  mb-3
+                  border
+                  border-mora-500/20
+                "
+              >
                 <MessageSquare
                   className="text-mora-500"
                   size={20}
                 />
               </div>
 
-              <h2 className="text-xl font-display font-bold text-white mb-1.5">
+              <h2
+                className="
+                  text-xl
+                  font-display
+                  font-bold
+                  text-white
+                  mb-1.5
+                "
+              >
                 Share Feedback
               </h2>
 
@@ -502,7 +552,16 @@ export const Footer: React.FC = () => {
 
               <div className="space-y-1">
 
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
+                <label
+                  className="
+                    text-[9px]
+                    font-bold
+                    text-slate-500
+                    uppercase
+                    tracking-wider
+                    ml-1
+                  "
+                >
                   Name
                 </label>
 
@@ -514,17 +573,15 @@ export const Footer: React.FC = () => {
                   className="
                     w-full
                     bg-black
-                    border
-                    border-white/10
+                    border border-white/10
                     rounded-xl
-                    px-4
-                    py-2.5
+                    px-4 py-2.5
                     text-xs
                     text-white
                     focus:border-mora-500
                     focus:outline-none
                     transition-all
-                    placeholder:text-slate-700
+                    placeholder-slate-700
                   "
                 />
 
@@ -532,7 +589,16 @@ export const Footer: React.FC = () => {
 
               <div className="space-y-1">
 
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
+                <label
+                  className="
+                    text-[9px]
+                    font-bold
+                    text-slate-500
+                    uppercase
+                    tracking-wider
+                    ml-1
+                  "
+                >
                   Email{' '}
                   <span className="text-slate-600 normal-case">
                     (optional)
@@ -546,17 +612,15 @@ export const Footer: React.FC = () => {
                   className="
                     w-full
                     bg-black
-                    border
-                    border-white/10
+                    border border-white/10
                     rounded-xl
-                    px-4
-                    py-2.5
+                    px-4 py-2.5
                     text-xs
                     text-white
                     focus:border-mora-500
                     focus:outline-none
                     transition-all
-                    placeholder:text-slate-700
+                    placeholder-slate-700
                   "
                 />
 
@@ -564,7 +628,16 @@ export const Footer: React.FC = () => {
 
               <div className="space-y-1">
 
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
+                <label
+                  className="
+                    text-[9px]
+                    font-bold
+                    text-slate-500
+                    uppercase
+                    tracking-wider
+                    ml-1
+                  "
+                >
                   Feedback
                 </label>
 
@@ -576,17 +649,15 @@ export const Footer: React.FC = () => {
                   className="
                     w-full
                     bg-black
-                    border
-                    border-white/10
+                    border border-white/10
                     rounded-xl
-                    px-4
-                    py-2.5
+                    px-4 py-2.5
                     text-xs
                     text-white
                     focus:border-mora-500
                     focus:outline-none
                     transition-all
-                    placeholder:text-slate-700
+                    placeholder-slate-700
                     resize-none
                   "
                 />
@@ -597,16 +668,12 @@ export const Footer: React.FC = () => {
                 <div
                   className="
                     bg-green-500/10
-                    border
-                    border-green-500/20
+                    border border-green-500/20
                     text-green-400
                     text-xs
                     rounded-xl
-                    px-4
-                    py-3
-                    flex
-                    items-center
-                    gap-2
+                    px-4 py-3
+                    flex items-center gap-2
                   "
                 >
                   <span>✓</span>
