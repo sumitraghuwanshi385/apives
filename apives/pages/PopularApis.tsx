@@ -223,7 +223,7 @@ export const PopularApis: React.FC = () => {
             ))
           ) : apis.length > 0 ? (
             apis.map(api => (
-              <ApiCard key={api.id} api={api} topIds={topIds} />
+              <LandingApiCard key={api.id} api={api} topIds={topIds} />
             ))
           ) : (
             <div className="col-span-full text-center py-20">
