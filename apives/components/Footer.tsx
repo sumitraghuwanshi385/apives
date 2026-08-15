@@ -113,7 +113,15 @@ export const Footer: React.FC = () => {
                   to="/popular"
                   className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
-                  Top Rated
+                  Community Favourite
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/apives-ai"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                >
+                  ApivesAI
                 </Link>
               </li>
             </ul>
@@ -143,14 +151,6 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  to="/api-response-formatter"
-                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
-                >
-                  API Formatter
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/curl-converter"
                   className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
@@ -168,10 +168,10 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* RESOURCES */}
+          {/* DEVELOPER TOOLKIT (was Resources) */}
           <div className="md:col-span-2">
             <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
-              Resources
+              Developer ToolKit
             </h3>
             <ul className="space-y-2">
               <li>
