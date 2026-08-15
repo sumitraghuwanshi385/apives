@@ -444,21 +444,21 @@ export const LandingPage: React.FC = () => {
       {/* DEVELOPER TOOLS — Compact Clean Section */}
 
       <section className="py-10 md:py-12 border-t border-white/5 bg-black">
-        <div className="max-w-3xl mx-auto px-4 md:px-6">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 lg:px-8">
 
           <div
-            className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-7"
+            className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-9"
             style={{
-              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786812699/IMG_20260815_222103_acna7k.png)',
+              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786813303/IMG_20260815_223056_anahew.png)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'
             }}
           >
 
-            {/* Top-right glass liquid fingerprint button */}
+            {/* Top-right glass liquid fingerprint button → /access */}
             <Link
-              to="/login"
+              to="/access"
               className="absolute top-3.5 right-3.5 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all active:scale-90"
               style={{
                 background: 'rgba(255, 255, 255, 0.12)',
@@ -801,6 +801,7 @@ export const LandingPage: React.FC = () => {
         .apives-ai-static [style*="rgb(34"] {
           background-image: none !important;
           box-shadow: none !important;
+          background-color: transparent !important;
         }
       `}</style>
 
