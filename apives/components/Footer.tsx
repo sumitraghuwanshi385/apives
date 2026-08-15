@@ -257,12 +257,9 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* BOTTOM EFFECT + COPYRIGHT (slightly lower) */}
+      {/* BOTTOM EFFECT + COPYRIGHT */}
       <div className="relative h-20 md:h-24 w-full overflow-hidden">
-        {/* Base black to green fade */}
         <div className="absolute inset-0 bg-gradient-to-t from-mora-600/25 via-mora-900/15 to-transparent" />
-
-        {/* Vertical scan lines */}
         <div
           className="absolute inset-0 opacity-40"
           style={{
@@ -275,101 +272,124 @@ export const Footer: React.FC = () => {
             )`,
           }}
         />
-
-        {/* Soft bottom glow */}
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-mora-500/20 to-transparent" />
-
-        {/* Extra depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-mora-950/40" />
 
-        {/* Copyright – slightly lower than center */}
         <div className="absolute inset-0 flex items-end justify-center pb-5 md:pb-6 z-10">
-          <p className="text-[11px] md:text-xs text-slate-400 font-mono tracking-wide">
-            © 2026 Apives Ecosystem
+          <p className="text-[11px] md:text-xs text-slate-400 font-mono tracking-wide uppercase">
+            © 2026 APIVES ECOSYSTEM
           </p>
         </div>
       </div>
 
-      {/* FEEDBACK MODAL */}
+      {/* FEEDBACK MODAL — iOS 27 Liquid Glass */}
       {isFeedbackOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-sm bg-dark-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mora-500 to-transparent" />
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+          <div className="relative w-full max-w-[340px] rounded-3xl overflow-hidden
+            bg-white/[0.07] backdrop-blur-2xl
+            border border-white/15
+            shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)]
+          ">
+            {/* Top glass highlight */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+
+            {/* Soft green accent line */}
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-mora-500/80 to-transparent" />
 
             <button
               onClick={() => setIsFeedbackOpen(false)}
-              className="absolute top-3 right-3 text-slate-500 hover:text-white transition-colors"
+              className="absolute top-3.5 right-3.5 w-7 h-7 flex items-center justify-center rounded-full
+                bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
             >
-              <X size={18} />
+              <X size={14} />
             </button>
 
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
-                <MessageSquare className="text-mora-500" size={20} />
-              </div>
-              <h2 className="text-xl font-display font-bold text-white mb-1.5">
-                Share Feedback
-              </h2>
-              <p className="text-slate-400 text-xs">
-                Help us refine the ecosystem.
-              </p>
-            </div>
-
-            <form onSubmit={handleFeedbackSubmit} className="space-y-3">
-              <input type="hidden" name="_subject" value="User Feedback - Apives" />
-
-              <div className="space-y-1">
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  placeholder="Your Name"
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Email <span className="text-slate-600 normal-case">(optional)</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email (optional)"
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Feedback
-                </label>
-                <textarea
-                  name="message"
-                  required
-                  rows={3}
-                  placeholder="What can we improve?"
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700 resize-none"
-                />
-              </div>
-
-              {feedbackSuccess && (
-                <div className="bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
-                  <span>✓</span>
-                  Thanks! Your feedback really helps 💚
+            <div className="px-5 pt-6 pb-5">
+              {/* Header */}
+              <div className="text-center mb-5">
+                <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl
+                  bg-mora-500/15 border border-mora-500/25 mb-3
+                  shadow-[0_0_20px_rgba(34,197,94,0.15)]">
+                  <MessageSquare className="text-mora-400" size={20} />
                 </div>
-              )}
+                <h2 className="text-[17px] font-semibold text-white tracking-tight">
+                  Share Feedback
+                </h2>
+                <p className="text-[12px] text-slate-400 mt-1">
+                  Help us refine the ecosystem
+                </p>
+              </div>
 
-              <button
-                type="submit"
-                className="w-full bg-mora-600 hover:bg-mora-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all uppercase tracking-widest text-[10px] mt-2"
-              >
-                Send Feedback
-              </button>
-            </form>
+              {/* Form */}
+              <form onSubmit={handleFeedbackSubmit} className="space-y-3.5">
+                <input type="hidden" name="_subject" value="User Feedback - Apives" />
+
+                <div>
+                  <label className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1.5 ml-0.5">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="Your name"
+                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3.5 py-2.5
+                      text-[13px] text-white placeholder-slate-500
+                      focus:border-mora-500/60 focus:outline-none focus:ring-1 focus:ring-mora-500/30
+                      transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1.5 ml-0.5">
+                    Email <span className="text-slate-600 normal-case">(optional)</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3.5 py-2.5
+                      text-[13px] text-white placeholder-slate-500
+                      focus:border-mora-500/60 focus:outline-none focus:ring-1 focus:ring-mora-500/30
+                      transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1.5 ml-0.5">
+                    Feedback
+                  </label>
+                  <textarea
+                    name="message"
+                    required
+                    rows={3}
+                    placeholder="What can we improve?"
+                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3.5 py-2.5
+                      text-[13px] text-white placeholder-slate-500 resize-none
+                      focus:border-mora-500/60 focus:outline-none focus:ring-1 focus:ring-mora-500/30
+                      transition-all"
+                  />
+                </div>
+
+                {feedbackSuccess && (
+                  <div className="bg-mora-500/10 border border-mora-500/20 text-mora-300 text-[12px]
+                    rounded-xl px-3.5 py-2.5 flex items-center gap-2">
+                    <span>✓</span>
+                    Thanks! Your feedback really helps
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full mt-1 bg-mora-600 hover:bg-mora-500 text-white font-semibold
+                    py-2.5 rounded-xl text-[12px] tracking-wide
+                    shadow-[0_4px_20px_rgba(34,197,94,0.25)]
+                    transition-all active:scale-[0.98]"
+                >
+                  Send Feedback
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}
