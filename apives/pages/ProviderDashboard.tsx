@@ -3,7 +3,8 @@ import {
     Plus, Terminal, RefreshCw, BarChart2, Settings, Shield, 
     CheckCircle2, User, Mail, Key, Edit3, Trash2, Save, X, PauseCircle, PlayCircle,
     Cpu, Activity, Zap, Bookmark, LogOut, Globe, TrendingUp, Clock, LayoutGrid, Radio,
-    Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info
+    Trash, Image as ImageIcon, ListPlus, Hash, ShieldAlert, AlertTriangle, Info,
+    KeyRound, ArrowLeftRight, Waypoints
 } from 'lucide-react';
 
 import { apiService } from '../services/apiClient'; // ✅ backend calls
@@ -733,22 +734,59 @@ const addEditFeature = () => {
                  </div>
              </div>
 
-             <div className="mt-4 md:mt-0 flex gap-2 md:gap-3 relative z-10 w-full md:w-auto">
-                <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-mora-500/20 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
-                    <span className="text-[8px] md:text-[10px] font-black text-mora-400 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
-                        <Radio size={8} md:size={10} className="animate-pulse" /> Active
-                    </span>
-                    <div className="text-xl md:text-3xl font-display font-black text-white">
-                        {myNodes.filter(n => n.status === 'active').length}
-                    </div>
+             <div className="mt-4 md:mt-0 flex flex-col gap-3 relative z-10 w-full md:w-auto">
+                <div className="flex gap-2 md:gap-3">
+                  <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-mora-500/20 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
+                      <span className="text-[8px] md:text-[10px] font-black text-mora-400 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
+                          <Radio size={8} md:size={10} className="animate-pulse" /> Active
+                      </span>
+                      <div className="text-xl md:text-3xl font-display font-black text-white">
+                          {myNodes.filter(n => n.status === 'active').length}
+                      </div>
+                  </div>
+                  <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-white/10 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
+                      <span className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
+                          <LayoutGrid size={8} md:size={10} /> Total
+                      </span>
+                      <div className="text-xl md:text-3xl font-display font-black text-white">
+                          {myNodes.length}
+                      </div>
+                  </div>
                 </div>
-                <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-white/10 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
-                    <span className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
-                        <LayoutGrid size={8} md:size={10} /> Total
-                    </span>
-                    <div className="text-xl md:text-3xl font-display font-black text-white">
-                        {myNodes.length}
-                    </div>
+
+                {/* Developer Toolkit - 4 compact boxes */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                  <Link
+                    to="/live-api-runner"
+                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
+                  >
+                    <Terminal size={16} className="text-mora-400 group-hover:text-mora-300" />
+                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">Live API Runner</span>
+                  </Link>
+
+                  <Link
+                    to="/jwt-decoder"
+                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
+                  >
+                    <KeyRound size={16} className="text-mora-400 group-hover:text-mora-300" />
+                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">JWT Decoder</span>
+                  </Link>
+
+                  <Link
+                    to="/curl-converter"
+                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
+                  >
+                    <ArrowLeftRight size={16} className="text-mora-400 group-hover:text-mora-300" />
+                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">cURL Converter</span>
+                  </Link>
+
+                  <Link
+                    to="/mock-server"
+                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
+                  >
+                    <Waypoints size={16} className="text-mora-400 group-hover:text-mora-300" />
+                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">Mock Server</span>
+                  </Link>
                 </div>
              </div>
         </div>
