@@ -17,7 +17,7 @@ import {
   KeyRound,
   ArrowLeftRight,
   Waypoints,
-  BrainCircuit
+  Bot
 } from 'lucide-react';
 
 
@@ -267,7 +267,7 @@ export const Navbar: React.FC = () => {
                 <img
                   src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
                   alt="Apives Logo"
-                  className="w-9 h-9 md:w-16 md:h-16 object-contain transition-transform group-hover:rotate-12 duration-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                  className="w-10 h-10 md:w-[70px] md:h-[70px] object-contain transition-transform group-hover:rotate-12 duration-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                 />
 
               </Link>
@@ -293,7 +293,7 @@ export const Navbar: React.FC = () => {
 
                 <NavLink
                   to="/ask-apives-ai"
-                  icon={BrainCircuit}
+                  icon={Bot}
                 >
                   ApivesAI
                 </NavLink>
@@ -423,7 +423,7 @@ export const Navbar: React.FC = () => {
                 "
               >
 
-                <BrainCircuit
+                <Bot
                   size={16}
                   className="md:w-5 md:h-5"
                 />
@@ -546,7 +546,7 @@ export const Navbar: React.FC = () => {
 
               <MobileNavLink
                 to="/ask-apives-ai"
-                icon={BrainCircuit}
+                icon={Bot}
                 onClick={() => {
                   setIsOpen(false);
                   navigate(
