@@ -7,6 +7,14 @@ import {
   X,
 } from 'lucide-react';
 
+// Custom X (Twitter) logo — lucide's "Twitter" icon is the old bird mark,
+// this is the current X wordmark icon.
+const XLogo: React.FC<{ className?: string }> = ({ className }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
 export const Footer: React.FC = () => {
   const location = useLocation();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -32,7 +40,7 @@ export const Footer: React.FC = () => {
   if (location.pathname === '/access') return null;
 
   return (
-    <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
+    <footer className="bg-black border-t border-white/5 mt-auto relative">
 
       <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -63,9 +71,7 @@ export const Footer: React.FC = () => {
                 aria-label="Apives on X"
                 className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
               >
-                <span className="text-[14px] md:text-[16px] font-semibold leading-none group-hover:scale-110 transition-transform">
-                  𝕏
-                </span>
+                <XLogo className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
 
               {/* Instagram */}
@@ -76,9 +82,7 @@ export const Footer: React.FC = () => {
                 aria-label="Apives on Instagram"
                 className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
               >
-                <Instagram
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
-                />
+                <Instagram className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
 
               {/* YouTube */}
@@ -89,10 +93,12 @@ export const Footer: React.FC = () => {
                 aria-label="Apives on YouTube"
                 className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
               >
-                <Youtube
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
-                />
+                <Youtube className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
+
+              <span className="text-mora-500 font-black tracking-widest text-[10px] md:text-[12px] select-none">
+                ///
+              </span>
 
               {/* Buy Me a Coffee */}
               <a
@@ -121,82 +127,55 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 md:space-y-3">
 
               <li>
-                <Link
-                  to="/browse"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/browse" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Explore APIs
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/fresh"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/fresh" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   New Releases
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/popular"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/popular" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Top Rated
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/live-api-runner"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/live-api-runner" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Live API Runner
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/jwt-decoder"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/jwt-decoder" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   JWT Decoder
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/api-response-formatter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/api-response-formatter" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   API Formatter
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/curl-converter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/curl-converter" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   cURL Converter
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/mock-server"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/mock-server" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Mock Server
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/architect"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/architect" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   API Architect
                 </Link>
               </li>
@@ -214,46 +193,31 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 md:space-y-3">
 
               <li>
-                <Link
-                  to="/support"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/support" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Help & Support
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/docs"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/docs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Documentation
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/sponsorship"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/sponsorship" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   For Sponsorship
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/blogs"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/blogs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Blogs
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/offers/serpapi"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/offers/serpapi" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Special Offers
                 </Link>
               </li>
@@ -280,28 +244,19 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2 md:space-y-3">
 
               <li>
-                <Link
-                  to="/privacy"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/privacy" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/cookies"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/cookies" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Cookie Policy
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/terms"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
+                <Link to="/terms" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -311,56 +266,22 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* BOTTOM VISUAL */}
-        <div className="mt-10 md:mt-14 relative left-1/2 -translate-x-1/2 w-screen h-[150px] md:h-[190px] overflow-hidden">
+        {/* BOTTOM */}
+        <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8">
 
-          {/* Green horizon */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `
-                linear-gradient(
-                  to bottom,
-                  #000000 0%,
-                  rgba(0,0,0,0.96) 12%,
-                  rgba(5,45,24,0.75) 38%,
-                  rgba(10,105,52,0.92) 68%,
-                  #22c55e 100%
-                )
-              `,
-            }}
-          />
+          <div className="flex flex-col items-center">
 
-          {/* Horizontal glow */}
-          <div
-            className="absolute left-0 right-0 bottom-0 h-[75%]"
-            style={{
-              background:
-                'radial-gradient(ellipse at center bottom, rgba(34,197,94,0.95) 0%, rgba(34,197,94,0.55) 30%, rgba(34,197,94,0.12) 58%, transparent 78%)',
-            }}
-          />
+            <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2">
+              {/* glowing /// */}
+              <span className="text-mora-500 font-black tracking-widest drop-shadow-[0_0_6px_rgba(34,197,94,0.9)] animate-pulse">
+                ///
+              </span>
 
-          {/* Technical grid */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-[78%] opacity-30"
-            style={{
-              backgroundImage: `
-                linear-gradient(to right, rgba(255,255,255,0.22) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.14) 1px, transparent 1px)
-              `,
-              backgroundSize: '110px 100%',
-            }}
-          />
+              <span>
+                &copy; 2025 Apives Ecosystem
+              </span>
+            </p>
 
-          {/* Vertical light columns */}
-          <div className="absolute inset-x-0 bottom-0 h-[72%] flex justify-around opacity-20">
-            <span className="w-px h-full bg-white"></span>
-            <span className="w-px h-full bg-white"></span>
-            <span className="w-px h-full bg-white"></span>
-            <span className="w-px h-full bg-white"></span>
-            <span className="w-px h-full bg-white"></span>
-            <span className="w-px h-full bg-white"></span>
-            <span className="w-px h-full bg-white"></span>
           </div>
 
         </div>
@@ -385,10 +306,7 @@ export const Footer: React.FC = () => {
             <div className="text-center mb-6">
 
               <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
-                <MessageSquare
-                  className="text-mora-500"
-                  size={20}
-                />
+                <MessageSquare className="text-mora-500" size={20} />
               </div>
 
               <h2 className="text-xl font-display font-bold text-white mb-1.5">
@@ -401,23 +319,14 @@ export const Footer: React.FC = () => {
 
             </div>
 
-            <form
-              onSubmit={handleFeedbackSubmit}
-              className="space-y-3"
-            >
+            <form onSubmit={handleFeedbackSubmit} className="space-y-3">
 
-              <input
-                type="hidden"
-                name="_subject"
-                value="User Feedback - Apives"
-              />
+              <input type="hidden" name="_subject" value="User Feedback - Apives" />
 
               <div className="space-y-1">
-
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                   Name
                 </label>
-
                 <input
                   type="text"
                   name="name"
@@ -425,30 +334,24 @@ export const Footer: React.FC = () => {
                   placeholder="Your Name"
                   className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
                 />
-
               </div>
 
               <div className="space-y-1">
-
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                   Email <span className="text-slate-600 normal-case">(optional)</span>
                 </label>
-
                 <input
                   type="email"
                   name="email"
                   placeholder="Email (optional)"
                   className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
                 />
-
               </div>
 
               <div className="space-y-1">
-
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                   Feedback
                 </label>
-
                 <textarea
                   name="message"
                   required
@@ -456,7 +359,6 @@ export const Footer: React.FC = () => {
                   placeholder="What can we improve?"
                   className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700 resize-none"
                 ></textarea>
-
               </div>
 
               {feedbackSuccess && (
