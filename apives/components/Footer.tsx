@@ -5,8 +5,6 @@ import {
   Youtube,
   MessageSquare,
   X,
-  Cookie,
-  ChevronRight,
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -34,10 +32,10 @@ export const Footer: React.FC = () => {
   if (location.pathname === '/access') return null;
 
   return (
-    <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
+    <footer className="bg-black mt-auto relative overflow-hidden">
 
       {/* MAIN FOOTER */}
-      <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8">
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
 
@@ -128,7 +126,7 @@ export const Footer: React.FC = () => {
                 />
               </a>
 
-              {/* PULSE DIVIDER */}
+              {/* GLOWING DIVIDER */}
               <span
                 className="
                   text-mora-500
@@ -137,7 +135,7 @@ export const Footer: React.FC = () => {
                   text-[10px] md:text-[12px]
                   select-none
                   animate-pulse
-                  drop-shadow-[0_0_6px_rgba(34,197,94,0.95)]
+                  drop-shadow-[0_0_5px_rgba(34,197,94,0.75)]
                 "
               >
                 ///
@@ -362,146 +360,150 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* =========================================================
-          PREMIUM GREEN GRID FOOTER END
-         ========================================================= */}
+      {/* =====================================================
+          PREMIUM 3D FOOTER END
+         ===================================================== */}
       <div
         className="
           relative
           w-full
-          h-[180px]
+          h-[125px]
+          md:h-[140px]
           bg-black
           overflow-hidden
           flex
           items-end
-          px-6
-          py-5
+          justify-center
         "
       >
 
-        {/* GREEN GLOW */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(
-                circle at 50% 120%,
-                rgba(34, 197, 94, 0.80) 0%,
-                rgba(21, 128, 61, 0.40) 45%,
-                rgba(0, 0, 0, 0) 75%
-              ),
-              linear-gradient(
-                to top,
-                rgba(34, 197, 94, 0.60) 0%,
-                rgba(0, 0, 0, 0) 100%
-              )
-            `,
-          }}
-        />
-
-        {/* DASHED GRID */}
-        <div className="absolute inset-0 flex justify-around pointer-events-none">
-
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
-
-        </div>
-
-        {/* SUBTLE GREEN HORIZON */}
+        {/* SOFT ATMOSPHERIC GLOW */}
         <div
           className="
             absolute
-            left-0
-            right-0
-            bottom-0
-            h-[2px]
-            bg-mora-500/70
-            shadow-[0_0_25px_rgba(34,197,94,0.75)]
+            left-1/2
+            bottom-[-95px]
+            -translate-x-1/2
+            w-[75%]
+            md:w-[55%]
+            h-[190px]
+            rounded-[50%]
+            pointer-events-none
+            blur-[35px]
           "
+          style={{
+            background:
+              'radial-gradient(ellipse, rgba(34,197,94,0.22) 0%, rgba(34,197,94,0.08) 38%, transparent 72%)',
+          }}
+        />
+
+        {/* 3D HORIZON */}
+        <div
+          className="
+            absolute
+            left-1/2
+            bottom-[-72px]
+            -translate-x-1/2
+            w-[85%]
+            md:w-[62%]
+            h-[115px]
+            rounded-[50%]
+            border
+            border-mora-500/20
+            pointer-events-none
+          "
+          style={{
+            transform:
+              'translateX(-50%) perspective(500px) rotateX(62deg)',
+            boxShadow:
+              '0 -10px 45px rgba(34,197,94,0.12), inset 0 8px 25px rgba(34,197,94,0.05)',
+          }}
+        />
+
+        {/* INNER 3D RING */}
+        <div
+          className="
+            absolute
+            left-1/2
+            bottom-[-48px]
+            -translate-x-1/2
+            w-[58%]
+            md:w-[40%]
+            h-[78px]
+            rounded-[50%]
+            border
+            border-mora-500/15
+            pointer-events-none
+          "
+          style={{
+            transform:
+              'translateX(-50%) perspective(500px) rotateX(62deg)',
+            boxShadow:
+              '0 -5px 25px rgba(34,197,94,0.08)',
+          }}
+        />
+
+        {/* CENTER LIGHT */}
+        <div
+          className="
+            absolute
+            left-1/2
+            bottom-[24px]
+            -translate-x-1/2
+            w-[180px]
+            md:w-[300px]
+            h-[2px]
+            rounded-full
+            bg-mora-500/20
+            blur-[1px]
+            pointer-events-none
+          "
+          style={{
+            boxShadow:
+              '0 0 22px rgba(34,197,94,0.18)',
+          }}
+        />
+
+        {/* SOFT FLOOR GRADIENT */}
+        <div
+          className="
+            absolute
+            inset-x-0
+            bottom-0
+            h-[65px]
+            pointer-events-none
+          "
+          style={{
+            background:
+              'linear-gradient(to top, rgba(34,197,94,0.07), transparent)',
+          }}
         />
 
         {/* COPYRIGHT */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-
+        <div
+          className="
+            absolute
+            inset-0
+            flex
+            items-center
+            justify-center
+            pointer-events-none
+            z-10
+          "
+        >
           <span
             className="
-              text-white/70
-              text-[10px]
-              md:text-xs
+              text-white/55
+              text-[9px]
+              md:text-[10px]
               font-medium
               tracking-[0.18em]
               uppercase
-              drop-shadow-[0_0_8px_rgba(34,197,94,0.25)]
+              translate-y-[2px]
             "
           >
             © 2026 Apives Ecosystem
           </span>
-
-        </div>
-
-        {/* COOKIE + LANGUAGE CONTROLS */}
-        <div className="relative z-10 flex flex-col items-start gap-3">
-
-          {/* COOKIE */}
-          <button
-            type="button"
-            aria-label="Cookie Settings"
-            className="
-              w-11
-              h-11
-              rounded-full
-              bg-[#0d161a]
-              border
-              border-white/15
-              flex
-              items-center
-              justify-center
-              text-white
-              shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-              hover:bg-[#16242b]
-              transition-colors
-            "
-          >
-            <Cookie
-              size={20}
-              strokeWidth={1.8}
-            />
-          </button>
-
-          {/* LANGUAGE */}
-          <button
-            type="button"
-            className="
-              inline-flex
-              items-center
-              gap-1.5
-              px-3.5
-              py-2
-              bg-[#0d161a]
-              border
-              border-white/15
-              rounded-md
-              text-white
-              text-[12px]
-              font-medium
-              shadow-[0_4px_12px_rgba(0,0,0,0.5)]
-              hover:bg-[#16242b]
-              transition-colors
-            "
-          >
-            <span>English</span>
-
-            <ChevronRight
-              size={12}
-              strokeWidth={2}
-            />
-          </button>
-
         </div>
 
       </div>
