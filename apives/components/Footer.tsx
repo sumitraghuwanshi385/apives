@@ -171,7 +171,7 @@ export const Footer: React.FC = () => {
           {/* CONTACT (was Developer ToolKit / Resources) */}
           <div className="md:col-span-2">
             <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
-              Contact
+              Resources
             </h3>
             <ul className="space-y-2">
               <li>
