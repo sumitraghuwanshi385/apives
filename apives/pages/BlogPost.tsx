@@ -12,27 +12,14 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-import { ARTICLES } from "./BlogArticles";
+import {
+  ARTICLES,
+  type Article,
+} from "../components/BlogArticles";
 
 /* =========================================================
    TYPES
 ========================================================= */
-
-interface FAQ {
-  question: string;
-  answer: string;
-}
-
-interface Article {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  content: string;
-  keywords: string[];
-  faq: FAQ[];
-}
 
 interface BlogPostProps {
   article?: Article | null;
@@ -178,7 +165,7 @@ function updateArticleSEO(
   );
 
   const canonicalUrl =
-    `${window.location.origin}/blog/${article.slug}`;
+    `${window.location.origin}/blogs/${article.slug}`;
 
   let canonical =
     document.head.querySelector(
@@ -279,7 +266,7 @@ function updateArticleSchema(
           "WebPage",
 
         "@id":
-          `${window.location.origin}/blog/${article.slug}`,
+          `${window.location.origin}/blogs/${article.slug}`,
       },
     });
 
@@ -575,7 +562,7 @@ export default function BlogPost({
 
   const shareUrl =
     article
-      ? `${window.location.origin}/blog/${article.slug}`
+      ? `${window.location.origin}/blogs/${article.slug}`
       : window.location.href;
 
   const encodedUrl =
@@ -739,7 +726,7 @@ export default function BlogPost({
       }
 
       window.location.assign(
-        "/blog"
+        "/blogs"
       );
     };
 
@@ -820,6 +807,7 @@ export default function BlogPost({
             <span>
               Back to Blog
             </span>
+
           </button>
 
         </div>
@@ -1088,7 +1076,7 @@ export default function BlogPost({
                         }
 
                         window.location.assign(
-                          `/blog/${related.slug}`
+                          `/blogs/${related.slug}`
                         );
                       }}
                     >
