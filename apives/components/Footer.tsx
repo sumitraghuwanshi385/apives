@@ -2,18 +2,10 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Instagram,
-  Youtube,
   MessageSquare,
   X,
+  Youtube,
 } from 'lucide-react';
-
-// Custom X (Twitter) logo — lucide's "Twitter" icon is the old bird mark,
-// this is the current X wordmark icon.
-const XLogo: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-);
 
 export const Footer: React.FC = () => {
   const location = useLocation();
@@ -40,15 +32,11 @@ export const Footer: React.FC = () => {
   if (location.pathname === '/access') return null;
 
   return (
-    <footer className="bg-black border-t border-white/5 mt-auto relative">
-
+    <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
       <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
-
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
-
           {/* BRAND */}
           <div className="md:col-span-3">
-
             <div className="flex items-center mb-4 md:mb-5">
               <img
                 src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
@@ -62,8 +50,7 @@ export const Footer: React.FC = () => {
             </p>
 
             <div className="flex items-center gap-3">
-
-              {/* X */}
+              {/* X (Twitter) */}
               <a
                 href="https://x.com/useapives"
                 target="_blank"
@@ -71,7 +58,13 @@ export const Footer: React.FC = () => {
                 aria-label="Apives on X"
                 className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
               >
-                <XLogo className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform fill-current"
+                  aria-hidden="true"
+                >
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
               </a>
 
               {/* Instagram */}
@@ -113,115 +106,138 @@ export const Footer: React.FC = () => {
                   className="h-8 md:h-9 object-contain"
                 />
               </a>
-
             </div>
           </div>
 
           {/* PLATFORM */}
           <div className="md:col-span-2">
-
             <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
               Platform
             </h3>
 
             <ul className="space-y-2 md:space-y-3">
-
               <li>
-                <Link to="/browse" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/browse"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Explore APIs
                 </Link>
               </li>
-
               <li>
-                <Link to="/fresh" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/fresh"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   New Releases
                 </Link>
               </li>
-
               <li>
-                <Link to="/popular" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/popular"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Top Rated
                 </Link>
               </li>
-
               <li>
-                <Link to="/live-api-runner" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/live-api-runner"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Live API Runner
                 </Link>
               </li>
-
               <li>
-                <Link to="/jwt-decoder" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/jwt-decoder"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   JWT Decoder
                 </Link>
               </li>
-
               <li>
-                <Link to="/api-response-formatter" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/api-response-formatter"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   API Formatter
                 </Link>
               </li>
-
               <li>
-                <Link to="/curl-converter" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/curl-converter"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   cURL Converter
                 </Link>
               </li>
-
               <li>
-                <Link to="/mock-server" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/mock-server"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Mock Server
                 </Link>
               </li>
-
               <li>
-                <Link to="/architect" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/architect"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   API Architect
                 </Link>
               </li>
-
             </ul>
           </div>
 
           {/* SUPPORT */}
           <div className="md:col-span-2">
-
             <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
               Support
             </h3>
 
             <ul className="space-y-2 md:space-y-3">
-
               <li>
-                <Link to="/support" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/support"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Help & Support
                 </Link>
               </li>
-
               <li>
-                <Link to="/docs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/docs"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Documentation
                 </Link>
               </li>
-
               <li>
-                <Link to="/sponsorship" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/sponsorship"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   For Sponsorship
                 </Link>
               </li>
-
               <li>
-                <Link to="/blogs" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/blogs"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Blogs
                 </Link>
               </li>
-
               <li>
-                <Link to="/offers/serpapi" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/offers/serpapi"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Special Offers
                 </Link>
               </li>
-
               <li>
                 <button
                   onClick={() => setIsFeedbackOpen(true)}
@@ -230,70 +246,67 @@ export const Footer: React.FC = () => {
                   Feedback
                 </button>
               </li>
-
             </ul>
           </div>
 
           {/* LEGAL */}
           <div className="md:col-span-2">
-
             <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
               Legal
             </h3>
 
             <ul className="space-y-2 md:space-y-3">
-
               <li>
-                <Link to="/privacy" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/privacy"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
-
               <li>
-                <Link to="/cookies" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/cookies"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Cookie Policy
                 </Link>
               </li>
-
               <li>
-                <Link to="/terms" className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors">
+                <Link
+                  to="/terms"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   Terms of Service
                 </Link>
               </li>
-
             </ul>
           </div>
-
         </div>
 
         {/* BOTTOM */}
         <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8">
-
           <div className="flex flex-col items-center">
-
             <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2">
               {/* glowing /// */}
-              <span className="text-mora-500 font-black tracking-widest drop-shadow-[0_0_6px_rgba(34,197,94,0.9)] animate-pulse">
+              <span
+                className="text-mora-500 font-black tracking-widest
+                drop-shadow-[0_0_6px_rgba(34,197,94,0.9)]
+                animate-pulse"
+              >
                 ///
               </span>
 
-              <span>
-                &copy; 2025 Apives Ecosystem
-              </span>
+              <span>© 2026 Apives</span>
             </p>
-
           </div>
-
         </div>
-
       </div>
 
       {/* FEEDBACK MODAL */}
       {isFeedbackOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-
           <div className="relative w-full max-w-sm bg-dark-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden">
-
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mora-500 to-transparent"></div>
 
             <button
@@ -304,7 +317,6 @@ export const Footer: React.FC = () => {
             </button>
 
             <div className="text-center mb-6">
-
               <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
                 <MessageSquare className="text-mora-500" size={20} />
               </div>
@@ -316,12 +328,14 @@ export const Footer: React.FC = () => {
               <p className="text-slate-400 text-xs">
                 Help us refine the ecosystem.
               </p>
-
             </div>
 
             <form onSubmit={handleFeedbackSubmit} className="space-y-3">
-
-              <input type="hidden" name="_subject" value="User Feedback - Apives" />
+              <input
+                type="hidden"
+                name="_subject"
+                value="User Feedback - Apives"
+              />
 
               <div className="space-y-1">
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
@@ -374,14 +388,10 @@ export const Footer: React.FC = () => {
               >
                 Send Feedback
               </button>
-
             </form>
-
           </div>
-
         </div>
       )}
-
     </footer>
   );
 };
