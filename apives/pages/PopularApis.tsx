@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BackButton } from '../components/BackButton';
 import { Skeleton } from '../components/Skeleton';
-import ApiCard from '../components/ApiCard';
+import LandingApiCard from '../components/LandingApiCard';
 import { ApiListing } from '../types';
 
 import { 
