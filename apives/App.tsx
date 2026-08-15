@@ -14,7 +14,6 @@ import CurlConverterPage from "./pages/CurlConverterPage";
 import MockServerPage from "./pages/MockServerPage";
 import ApivesArchitect from "./pages/ApivesArchitect";
 
-
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { CookieBanner } from "./components/CookieBanner";
@@ -31,98 +30,311 @@ import { OnboardingPage } from './pages/Onboarding';
 import AskApivesPage from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
 import Blogs from "./pages/Blogs";
-import BlogPost from"./pages/BlogPost";
+import BlogPost from "./pages/BlogPost";
 import LiveApiRunnerPage from "./pages/LiveApiRunnerPage";
 
-
 import {
-EnterprisePage,
-DocumentationPage,
-StatusPage,
-CookiesPage,
-PrivacyPage,
-TermsPage,
-SupportPage,
-SponsorshipPage
+  EnterprisePage,
+  DocumentationPage,
+  StatusPage,
+  CookiesPage,
+  PrivacyPage,
+  TermsPage,
+  SupportPage,
+  SponsorshipPage
 } from './pages/StaticPages';
+
+/* =========================================================
+   PROTECTED ROUTE
+   Logged-out users are redirected to /access
+========================================================= */
+
+const ProtectedRoute = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const location = useLocation();
+
+  const isAuthenticated =
+    !!localStorage.getItem("mora_user");
+
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/access"
+        replace
+        state={{
+          from: location.pathname,
+        }}
+      />
+    );
+  }
+
+  return <>{children}</>;
+};
 
 /* 🔥 Scroll to top on route change */
 const ScrollToTop = () => {
-const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
-React.useEffect(() => {
-window.scrollTo(0, 0);
-}, [pathname]);
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-return null;
+  return null;
 };
 
 function App() {
-return (
-<>
-<CookieBanner />
-<ScrollToTop />
+  return (
+    <>
+      <CookieBanner />
 
-<div className="flex flex-col min-h-screen bg-black font-sans text-slate-50 selection:bg-mora-500 selection:text-black">    
-    <Navbar />    <main className="flex-grow">    
-  <Routes>    
-    <Route path="/" element={<LandingPage />} />    
-    <Route path="/browse" element={<BrowseApis />} />    
+      <ScrollToTop />
 
-    {/* 🔥 BUILD */}    
-    <Route path="/build/chatbots" element={<BuildChatbots />} />    
-    <Route path="/build/voice" element={<BuildVoiceToText />} />
-    <Route path="/build/payments" element={<BuildPayments />} />
-<Route path="/build/authentication" element={<BuildAuthentication />} />
-            <Route path="/build/analytics" element={<BuildAnalytics />} />
-<Route path="/build/image-generation" element={<BuildImageGeneration />} />
-    <Route path="/submit" element={<SubmitApi />} />    
-    <Route path="/api/:id" element={<ApiDetails />} />    
-<Route path="/ask-apives-ai" element={<AskApivesPage />} />
-    <Route path="/provider" element={<ProviderDashboard />} />    
-    <Route path="/access" element={<AccessPage />} />    
-    <Route path="/fresh" element={<FreshApis />} />    
-    <Route path="/popular" element={<PopularApis />} />    
-    <Route path="/onboarding" element={<OnboardingPage />} />    
-<Route path="/offers/serpapi" element={<SerpApiOffer />} />
-<Route path="/live-api-runner"
-element={<LiveApiRunnerPage />} />
-<Route path="/jwt-decoder"
-  element={<JwtDecoderPage />} />
-<Route path="/api-response-formatter"
-  element={<ApiResponseFormatterPage />} />
-<Route path="/curl-converter"
-  element={<CurlConverterPage />} />
-<Route path="/mock-server"
-  element={<MockServerPage />} />
-  <Route path="/architect" element={<ApivesArchitect />} />
+      <div className="flex flex-col min-h-screen bg-black font-sans text-slate-50 selection:bg-mora-500 selection:text-black">
 
+        <Navbar />
 
-    {/* Footer */}    
-    <Route path="/enterprise" element={<EnterprisePage />} />    
-    <Route path="/docs" element={<DocumentationPage />} />    
-    <Route path="/status" element={<StatusPage />} />    
-<Route path="/blogs"
- element={<Blogs />} />
-<Route path="/blogs/:slug"
-element={<BlogPost />} />
-    <Route path="/cookies" element={<CookiesPage />} />    
-    <Route path="/privacy" element={<PrivacyPage />} />    
-    <Route path="/terms" element={<TermsPage />} />    
-    <Route path="/support" element={<SupportPage />} />    
-    <Route path="/sponsorship" element={<SponsorshipPage />} />    
+        <main className="flex-grow">
 
-    {/* Admin */}    
-    <Route path="/admin/sponsors" element={<SponsorAnalytics />} />    
+          <Routes>
 
-    <Route path="*" element={<Navigate to="/" replace />} />    
-  </Routes>    
-</main>    
+            <Route
+              path="/"
+              element={<LandingPage />}
+            />
 
-<Footer />
+            <Route
+              path="/browse"
+              element={<BrowseApis />}
+            />
 
-  </div>    
-</>  );
+            {/* 🔥 BUILD */}
+
+            <Route
+              path="/build/chatbots"
+              element={<BuildChatbots />}
+            />
+
+            <Route
+              path="/build/voice"
+              element={<BuildVoiceToText />}
+            />
+
+            <Route
+              path="/build/payments"
+              element={<BuildPayments />}
+            />
+
+            <Route
+              path="/build/authentication"
+              element={<BuildAuthentication />}
+            />
+
+            <Route
+              path="/build/analytics"
+              element={<BuildAnalytics />}
+            />
+
+            <Route
+              path="/build/image-generation"
+              element={<BuildImageGeneration />}
+            />
+
+            <Route
+              path="/submit"
+              element={<SubmitApi />}
+            />
+
+            <Route
+              path="/api/:id"
+              element={<ApiDetails />}
+            />
+
+            <Route
+              path="/ask-apives-ai"
+              element={<AskApivesPage />}
+            />
+
+            <Route
+              path="/provider"
+              element={<ProviderDashboard />}
+            />
+
+            <Route
+              path="/access"
+              element={<AccessPage />}
+            />
+
+            <Route
+              path="/fresh"
+              element={<FreshApis />}
+            />
+
+            <Route
+              path="/popular"
+              element={<PopularApis />}
+            />
+
+            <Route
+              path="/onboarding"
+              element={<OnboardingPage />}
+            />
+
+            <Route
+              path="/offers/serpapi"
+              element={<SerpApiOffer />}
+            />
+
+            {/* =================================================
+                🔒 PROTECTED DEVELOPER TOOLS
+            ================================================= */}
+
+            <Route
+              path="/live-api-runner"
+              element={
+                <ProtectedRoute>
+                  <LiveApiRunnerPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/jwt-decoder"
+              element={
+                <ProtectedRoute>
+                  <JwtDecoderPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/api-response-formatter"
+              element={
+                <ProtectedRoute>
+                  <ApiResponseFormatterPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/curl-converter"
+              element={
+                <ProtectedRoute>
+                  <CurlConverterPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/mock-server"
+              element={
+                <ProtectedRoute>
+                  <MockServerPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* =================================================
+                🔒 PROTECTED APIVES ARCHITECT / DEVELOPER TOOLKIT
+            ================================================= */}
+
+            <Route
+              path="/architect"
+              element={
+                <ProtectedRoute>
+                  <ApivesArchitect />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* =================================================
+                FOOTER
+            ================================================= */}
+
+            <Route
+              path="/enterprise"
+              element={<EnterprisePage />}
+            />
+
+            <Route
+              path="/docs"
+              element={<DocumentationPage />}
+            />
+
+            <Route
+              path="/status"
+              element={<StatusPage />}
+            />
+
+            <Route
+              path="/blogs"
+              element={<Blogs />}
+            />
+
+            <Route
+              path="/blogs/:slug"
+              element={<BlogPost />}
+            />
+
+            <Route
+              path="/cookies"
+              element={<CookiesPage />}
+            />
+
+            <Route
+              path="/privacy"
+              element={<PrivacyPage />}
+            />
+
+            <Route
+              path="/terms"
+              element={<TermsPage />}
+            />
+
+            <Route
+              path="/support"
+              element={<SupportPage />}
+            />
+
+            <Route
+              path="/sponsorship"
+              element={<SponsorshipPage />}
+            />
+
+            {/* =================================================
+                ADMIN
+            ================================================= */}
+
+            <Route
+              path="/admin/sponsors"
+              element={<SponsorAnalytics />}
+            />
+
+            {/* =================================================
+                FALLBACK
+            ================================================= */}
+
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  to="/"
+                  replace
+                />
+              }
+            />
+
+          </Routes>
+
+        </main>
+
+        <Footer />
+
+      </div>
+    </>
+  );
 }
 
 export default App;
