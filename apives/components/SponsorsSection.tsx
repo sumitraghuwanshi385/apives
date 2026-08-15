@@ -15,13 +15,13 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
     <section className="bg-black border-t border-white/10 py-12 md:py-14">
       <div className="max-w-2xl mx-auto px-5 text-center">
 
-        {/* Main heading — +5% */}
-        <h2 className="text-[22px] md:text-[30px] font-bold text-white mb-1.5">
+        {/* Main heading — +10% */}
+        <h2 className="text-[24px] md:text-[33px] font-bold text-white mb-1.5">
           Our Sponsors
         </h2>
 
-        {/* Subtitle — +5% */}
-        <p className="text-slate-400 text-[13px] max-w-xs mx-auto mb-9">
+        {/* Subtitle — +10% */}
+        <p className="text-slate-400 text-[14px] max-w-xs mx-auto mb-9">
           Companies helping power the Apives ecosystem.
         </p>
 
@@ -36,7 +36,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
             {/* APEX — Gold */}
             <div className="flex flex-col items-center gap-2">
               <p
-                className="text-[8px] uppercase tracking-[0.4em] font-black"
+                className="text-[9px] uppercase tracking-[0.4em] font-black"
                 style={{
                   background: "linear-gradient(90deg, #f59e0b, #d97706)",
                   WebkitBackgroundClip: "text",
@@ -56,7 +56,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 <img
                   src="https://i.postimg.cc/CLGMddt9/Picsart-26-06-01-11-37-35-003.png"
                   alt="ScoutPanels"
-                  className="max-h-[48px] max-w-[150px] w-auto h-auto object-contain"
+                  className="max-h-[50px] max-w-[158px] w-auto h-auto object-contain"
                 />
               </a>
             </div>
@@ -64,7 +64,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
             {/* PRIME — Silver */}
             <div className="flex flex-col items-center gap-2">
               <p
-                className="text-[8px] uppercase tracking-[0.4em] font-black"
+                className="text-[9px] uppercase tracking-[0.4em] font-black"
                 style={{
                   background: "linear-gradient(90deg, #e2e8f0, #94a3b8)",
                   WebkitBackgroundClip: "text",
@@ -84,7 +84,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 <img
                   src="https://i.postimg.cc/1tBGHWnW/Picsart-26-06-01-10-26-25-532.png"
                   alt="SerpApi"
-                  className="max-h-[48px] max-w-[150px] w-auto h-auto object-contain"
+                  className="max-h-[50px] max-w-[158px] w-auto h-auto object-contain"
                 />
               </a>
             </div>
@@ -92,7 +92,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
             {/* ZENITH — Bronze */}
             <div className="flex flex-col items-center gap-2">
               <p
-                className="text-[8px] uppercase tracking-[0.4em] font-black"
+                className="text-[9px] uppercase tracking-[0.4em] font-black"
                 style={{
                   background: "linear-gradient(90deg, #cd7f32, #a0522d)",
                   WebkitBackgroundClip: "text",
@@ -112,7 +112,7 @@ const SponsorsSection: React.FC<SponsorsSectionProps> = ({
                 <img
                   src="https://i.postimg.cc/6q7hprq4/Picsart-26-06-01-10-35-38-466.png"
                   alt="Startives"
-                  className="max-h-[48px] max-w-[150px] w-auto h-auto object-contain"
+                  className="max-h-[50px] max-w-[158px] w-auto h-auto object-contain"
                 />
               </a>
             </div>
