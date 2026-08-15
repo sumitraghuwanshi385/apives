@@ -440,143 +440,54 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* APIVES TOOLS */}
+      {/* DEVELOPER TOOLS — Compact Clean Section */}
 
-      <section className="py-10 md:py-14 border-t border-white/5 bg-black">
+      <section className="py-10 md:py-12 border-t border-white/5 bg-black">
+        <div className="max-w-3xl mx-auto px-4 md:px-6">
 
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm px-5 py-6 md:px-8 md:py-7">
 
-          <div className="text-center mb-8 md:mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1.5">
+                  Developer Toolkit
+                </p>
+                <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
+                  4 Tools. Login to unlock.
+                </h2>
+              </div>
 
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.03] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_0_20px_rgba(34,197,94,0.10)]">
-              ✦ 4 Tools Available Now
+              <Link
+                to="/login"
+                className="shrink-0 self-start sm:self-auto px-4 py-2 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-mora-500 transition-colors active:scale-95"
+              >
+                Get Started
+              </Link>
             </div>
 
-            <h2 className="mt-4 text-xl md:text-3xl font-bold text-white tracking-tight">
-              Apives Developer Tools
-            </h2>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
+                <Terminal size={12} className="text-mora-500" />
+                Live API Runner
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
+                <KeyRound size={12} className="text-mora-500" />
+                JWT Decoder
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
+                <ArrowLeftRight size={12} className="text-mora-500" />
+                cURL Converter
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
+                <Waypoints size={12} className="text-mora-500" />
+                Mock Server
+              </span>
+            </div>
 
-            <p className="mt-2.5 text-slate-400 text-xs md:text-sm max-w-2xl mx-auto">
-              Built for developers who work with APIs every day.
+            <p className="mt-4 text-[11px] text-slate-500 leading-relaxed">
+              Sign in to test endpoints, decode tokens, convert requests and spin up mock APIs — all in one place.
             </p>
 
-          </div>
-
-          <div
-            className="overflow-x-auto overflow-y-visible scrollbar-hide pb-4 pt-2"
-            style={{
-              WebkitOverflowScrolling:
-                "touch"
-            }}
-          >
-
-            <div className="flex gap-3 md:grid md:grid-cols-3">
-
-              <Link
-                to="/live-api-runner"
-                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
-              >
-
-                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-                  <Terminal
-                    className="text-mora-500"
-                    size={21}
-                  />
-                </div>
-
-                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
-                  Live API Runner
-                </h3>
-
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  Test APIs, send requests and inspect live responses in real time.
-                </p>
-
-                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
-                  Open Tool →
-                </div>
-
-              </Link>
-
-              <Link
-                to="/jwt-decoder"
-                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
-              >
-
-                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-                  <KeyRound
-                    className="text-mora-500"
-                    size={21}
-                  />
-                </div>
-
-                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
-                  JWT Decoder
-                </h3>
-
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  Decode JWT tokens, inspect payloads and verify claims instantly.
-                </p>
-
-                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
-                  Open Tool →
-                </div>
-
-              </Link>
-
-              <Link
-                to="/curl-converter"
-                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
-              >
-
-                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-                  <ArrowLeftRight
-                    className="text-mora-500"
-                    size={21}
-                  />
-                </div>
-
-                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
-                  cURL Converter
-                </h3>
-
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  Convert cURL, Fetch and Axios requests instantly with request intelligence.
-                </p>
-
-                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
-                  Open Tool →
-                </div>
-
-              </Link>
-
-              <Link
-                to="/mock-server"
-                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
-              >
-
-                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
-                  <Waypoints
-                    className="text-mora-500"
-                    size={21}
-                  />
-                </div>
-
-                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
-                  Mock Server
-                </h3>
-
-                <p className="text-slate-400 text-xs leading-relaxed">
-                  Create mock APIs with custom endpoints, delays, status codes and realistic JSON responses.
-                </p>
-
-                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
-                  Open Tool →
-                </div>
-
-              </Link>
-
-            </div>
           </div>
         </div>
       </section>
@@ -693,9 +604,9 @@ export const LandingPage: React.FC = () => {
               )
             )}
 
-            {/* Apives AI — static, no green animation/effect */}
+            {/* Apives AI — full width, no green effects */}
 
-            <div className="apives-ai-static">
+            <div className="apives-ai-static col-span-2">
               <ApivesAIHighlight />
             </div>
 
@@ -738,7 +649,7 @@ export const LandingPage: React.FC = () => {
                     idx
                   ) => (
                     <LandingApiCard
-                      key={`${api.id}-${idx}`}
+                      key={`\( {api.id}- \){idx}`}
                       api={api}
                       topIds={top3Ids}
                       onLikeChange={
@@ -857,6 +768,19 @@ export const LandingPage: React.FC = () => {
         .apives-ai-static::after {
           animation: none !important;
           opacity: 0 !important;
+        }
+
+        /* Remove any green glow / background effects from the AI box */
+        .apives-ai-static,
+        .apives-ai-static * {
+          box-shadow: none !important;
+        }
+
+        .apives-ai-static [class*="mora"],
+        .apives-ai-static [class*="green"],
+        .apives-ai-static [style*="34,197,94"],
+        .apives-ai-static [style*="rgba(34"] {
+          background-image: none !important;
         }
       `}</style>
 
