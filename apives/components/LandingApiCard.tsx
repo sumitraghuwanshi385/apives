@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Bookmark,
-  Heart,
-  Globe,
-} from "lucide-react";
+import { Bookmark, Heart } from "lucide-react";
 import { ApiListing } from "../types";
 import { apiService } from "../services/apiClient";
 
@@ -66,17 +62,10 @@ const LandingApiCard: React.FC<Props> = ({
       ? RANK_BADGE_STYLES[rankIndex]
       : null;
 
-  /*
-   * Sync real API like count whenever
-   * the API data changes/refetches.
-   */
   useEffect(() => {
     setLikeCount(api.upvotes || 0);
   }, [api.id, api.upvotes]);
 
-  /*
-   * Sync saved + liked state from localStorage.
-   */
   useEffect(() => {
     try {
       const likedApis = JSON.parse(
@@ -94,9 +83,6 @@ const LandingApiCard: React.FC<Props> = ({
     }
   }, [api.id]);
 
-  /*
-   * SAVE API
-   */
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -142,12 +128,6 @@ const LandingApiCard: React.FC<Props> = ({
     }
   };
 
-  /*
-   * REAL LIKE / UNLIKE
-   *
-   * Uses the same apiService logic from
-   * the functional old API card.
-   */
   const handleLike = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -262,7 +242,7 @@ const LandingApiCard: React.FC<Props> = ({
 
           {/* LIKE COUNT + SAVE - TOP RIGHT */}
           <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
-            {/* REAL LIKE COUNT */}
+            {/* LIKE COUNT */}
             <button
               onClick={handleLike}
               className="
@@ -385,43 +365,91 @@ const LandingApiCard: React.FC<Props> = ({
         <span className="inline-flex items-center flex-wrap gap-0.5">
           {api.name}
 
+          {/* VERIFIED BADGE */}
           {isVerified && (
-            <span className="relative">
+            <span className="relative inline-flex items-center">
               <button
+                type="button"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-
                   setShowVerifyInfo((v) => !v);
                 }}
                 className="
                   h-5 w-5
                   md:h-6 md:w-6
                   flex items-center justify-center
+                  p-0
+                  m-0
+                  shrink-0
                 "
+                aria-label="Verified by Apives"
               >
                 <svg
                   viewBox="0 0 24 24"
                   className="w-full h-full"
+                  aria-hidden="true"
                 >
                   <path
                     fill="#22C55E"
-                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4.2-1.2 1.6-2 2.8.4 1.2 1.6 2 2.8 2 1.2 0 2.3-.8 2.8-2 1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2-1.6 2-2.8z"
+                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4.4-1.2.1-2.6-.8-3.4z"
                   />
                   <path
                     d="M9.2 12.3l2 2.1 4.6-4.8"
                     stroke="#000"
                     strokeWidth="2"
                     fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
                 </svg>
               </button>
 
+              {/* VERIFIED TOOLTIP */}
               {showVerifyInfo && (
-                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-[200] pointer-events-none">
-                  <div className="relative bg-green-600 border border-green-700 rounded-full px-3 py-1 text-[10px] text-white font-medium shadow-xl whitespace-nowrap">
-                    <span className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 bg-green-600 rotate-45 border-l border-t border-green-700" />
-                    Manually verified by Apives
+                <div
+                  className="
+                    absolute
+                    left-1/2
+                    -translate-x-1/2
+                    top-full
+                    mt-2
+                    z-[200]
+                    pointer-events-none
+                  "
+                >
+                  <div
+                    className="
+                      relative
+                      bg-green-600
+                      border border-green-700
+                      rounded-full
+                      px-3
+                      py-1
+                      text-[10px]
+                      text-white
+                      font-medium
+                      shadow-xl
+                      whitespace-nowrap
+                    "
+                  >
+                    <span
+                      className="
+                        absolute
+                        left-1/2
+                        -translate-x-1/2
+                        -top-1
+                        w-2
+                        h-2
+                        bg-green-600
+                        rotate-45
+                        border-l
+                        border-t
+                        border-green-700
+                      "
+                    />
+
+                    Verified by Apives
                   </div>
                 </div>
               )}
