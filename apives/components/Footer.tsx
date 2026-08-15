@@ -34,8 +34,8 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-9 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-9 md:gap-7">
+      <div className="max-w-7xl mx-auto py-8 md:py-10 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-6">
 
           {/* BRAND */}
           <div className="md:col-span-3">
@@ -90,7 +90,12 @@ export const Footer: React.FC = () => {
                 <Youtube className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
 
-              <span className="text-mora-500 font-black tracking-[0.3em] text-[10px] select-none">
+              {/* Pulsing /// */}
+              <span
+                className="text-mora-500 font-black tracking-[0.3em] text-[10px] select-none
+                drop-shadow-[0_0_6px_rgba(34,197,94,0.9)]
+                animate-pulse"
+              >
                 ///
               </span>
 
@@ -112,10 +117,10 @@ export const Footer: React.FC = () => {
 
           {/* PLATFORM */}
           <div className="md:col-span-2">
-            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
               Platform
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               <li>
                 <Link
                   to="/browse"
@@ -137,10 +142,10 @@ export const Footer: React.FC = () => {
 
           {/* TOOLS */}
           <div className="md:col-span-2">
-            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
               Tools
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               <li>
                 <Link
                   to="/live-api-runner"
@@ -194,10 +199,10 @@ export const Footer: React.FC = () => {
 
           {/* RESOURCES */}
           <div className="md:col-span-2">
-            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
               Resources
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               <li>
                 <Link
                   to="/support"
@@ -227,10 +232,10 @@ export const Footer: React.FC = () => {
 
           {/* LEGAL */}
           <div className="md:col-span-2">
-            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
               Legal
             </h3>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               <li>
                 <Link
                   to="/privacy"
@@ -252,11 +257,8 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Thin divider */}
-      <div className="border-t border-white/5 mx-4 sm:mx-6 lg:mx-8" />
-
-      {/* BOTTOM EFFECT + COPYRIGHT in the middle */}
-      <div className="relative h-24 md:h-28 w-full overflow-hidden">
+      {/* BOTTOM EFFECT + COPYRIGHT (no divider, reduced padding) */}
+      <div className="relative h-20 md:h-24 w-full overflow-hidden">
         {/* Base black to green fade */}
         <div className="absolute inset-0 bg-gradient-to-t from-mora-600/25 via-mora-900/15 to-transparent" />
 
@@ -275,22 +277,15 @@ export const Footer: React.FC = () => {
         />
 
         {/* Soft bottom glow */}
-        <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-mora-500/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-mora-500/20 to-transparent" />
 
         {/* Extra depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-mora-950/40" />
 
         {/* Copyright centered in the middle of the effect */}
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <p className="text-[11px] md:text-xs text-slate-400 flex items-center gap-2 font-mono tracking-wide">
-            <span
-              className="text-mora-500 font-black tracking-[0.35em]
-              drop-shadow-[0_0_8px_rgba(34,197,94,0.9)]
-              animate-pulse"
-            >
-              ///
-            </span>
-            <span>© 2026 Apives Ecosystem</span>
+          <p className="text-[11px] md:text-xs text-slate-400 font-mono tracking-wide">
+            © 2026 Apives Ecosystem
           </p>
         </div>
       </div>
