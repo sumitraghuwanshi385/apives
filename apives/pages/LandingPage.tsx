@@ -449,7 +449,7 @@ export const LandingPage: React.FC = () => {
           <div
             className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-7"
             style={{
-              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786811390/ec21de5aed22d8441b1d6c0f17c9db3e_f6jcif.gif)',
+              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786812401/fede8efd99a6b9de59708b62fc2446c1_l6qtqb.gif)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'
