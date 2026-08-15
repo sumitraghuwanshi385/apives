@@ -5,7 +5,16 @@ import React, {
   useState,
 } from "react";
 
-import { Search, X, Check, ChevronRight, ArrowLeft, Mail } from "lucide-react";
+import {
+  Search,
+  X,
+  Check,
+  ChevronRight,
+  ArrowLeft,
+  Mail,
+  Share2,
+} from "lucide-react";
+
 import { BackButton } from "../components/BackButton";
 
 /* =========================================================
@@ -46,9 +55,10 @@ const ARTICLES: Article[] = [
   {
     id: 1,
     slug: "rest-vs-graphql-vs-grpc",
-    title: "REST vs GraphQL vs gRPC: Which API Should You Use?",
+    title:
+      "REST vs GraphQL vs gRPC: Which API Should You Use?",
     excerpt:
-      "REST, GraphQL, and gRPC solve different API problems. Learn how they compare, where each architecture works best, and how to choose the right API technology for your product.",
+      "REST, GraphQL, and gRPC solve different API architecture problems. This practical guide compares their performance, flexibility, developer experience, scalability, tooling, and ideal use cases so you can choose the right API technology for your product.",
     date: "August 14, 2026",
     keywords: [
       "REST API",
@@ -57,20 +67,23 @@ const ARTICLES: Article[] = [
       "gRPC",
       "API architecture",
       "API design",
+      "REST API development",
+      "GraphQL API",
+      "gRPC API",
       "best API architecture",
     ],
     content: `
 ## Choosing an API Architecture Is a Product Decision
 
-When developers start a new application, the API architecture is often one of the first technical decisions they make. REST, GraphQL, and gRPC are all mature technologies, but they were designed around different problems and different communication patterns.
+When developers start a new application, the API architecture is one of the most important technical decisions they make. REST, GraphQL, and gRPC are all mature technologies, but each was designed around different communication patterns and application requirements.
 
-The right choice is therefore not about finding the technology that is technically most advanced. It is about understanding how your clients communicate with your backend, how your data is structured, how much flexibility clients need, and what kind of performance your application actually requires.
+The right choice is not necessarily the technology that looks the most modern. It is the architecture that matches how your clients consume data, how your backend services communicate, how much flexibility your consumers need, and what kind of performance your application actually requires.
 
-For most startups and public developer platforms, REST remains the easiest place to begin. GraphQL becomes particularly attractive when applications need highly flexible data fetching, while gRPC is often a strong fit for communication between internal services.
+For most startups and public developer platforms, [REST APIs](https://developer.mozilla.org/en-US/docs/Glossary/REST) remain one of the easiest places to start. GraphQL becomes attractive when clients need highly flexible data fetching, while [gRPC](https://grpc.io/) is particularly useful for efficient service-to-service communication.
 
 ## REST: The Practical Default
 
-REST APIs are built around resources and standard HTTP semantics. A typical application might expose endpoints such as users, products, orders, invoices, payments, or subscriptions.
+REST APIs are built around resources and standard HTTP semantics. A typical application might expose endpoints for users, products, orders, invoices, payments, subscriptions, or projects.
 
 This approach is easy for developers to understand because HTTP already provides many of the concepts required by a REST API: methods, status codes, headers, caching, authentication middleware, and content negotiation.
 
@@ -80,17 +93,17 @@ A developer integrating a public REST API can usually make requests with curl, J
 
 REST is particularly suitable for SaaS products, public APIs, ecommerce platforms, mobile backends, dashboards, and CRUD-heavy applications.
 
-The official HTTP Semantics specification is also useful when designing APIs that make proper use of HTTP methods and status codes.
+When designing HTTP APIs, the [HTTP Semantics specification](https://www.rfc-editor.org/rfc/rfc9110) is a useful reference for understanding methods, status codes, caching behavior, and other protocol semantics.
 
 ## GraphQL: Flexible Data for Complex Clients
 
-GraphQL approaches API design differently.
+[GraphQL](https://graphql.org/) approaches API design differently.
 
 Instead of defining many fixed response structures, a GraphQL server exposes a schema and allows clients to describe the data they need.
 
 This becomes valuable when multiple clients have different requirements.
 
-A desktop application might need twenty fields while a mobile application only needs five. With traditional REST endpoints, developers sometimes create multiple endpoints or return larger responses than necessary. GraphQL gives the client more control over the requested shape.
+A desktop application might need twenty fields while a mobile application only needs five. With traditional REST endpoints, developers sometimes create multiple endpoints or return larger responses than necessary. GraphQL gives the client more control over the requested data shape.
 
 This flexibility makes GraphQL particularly useful for complex dashboards, applications with highly connected data, and products where frontend requirements change frequently.
 
@@ -100,7 +113,7 @@ Poor resolver design can create excessive database queries, expensive nested req
 
 ## gRPC: Efficient Service-to-Service Communication
 
-gRPC was designed with a different use case in mind.
+[gRPC](https://grpc.io/docs/) was designed with a different use case in mind.
 
 It is particularly useful when multiple backend services need to communicate efficiently and reliably. gRPC uses Protocol Buffers for strongly typed contracts and supports streaming and efficient binary serialization.
 
@@ -143,22 +156,26 @@ The best API architecture is therefore the one that matches the actual requireme
           "Neither is universally better. REST is simpler and works extremely well for most public APIs, while GraphQL is useful when clients need flexible access to complex and connected data.",
       },
       {
-        question: "When should I use gRPC instead of REST?",
+        question:
+          "When should I use gRPC instead of REST?",
         answer:
           "gRPC is particularly useful for internal microservices, high-performance service communication, streaming, and systems that benefit from strongly typed contracts.",
       },
       {
-        question: "Can REST and GraphQL be used together?",
+        question:
+          "Can REST and GraphQL be used together?",
         answer:
           "Yes. Many systems expose REST endpoints publicly while using GraphQL for specific frontend workloads or internal aggregation layers.",
       },
       {
-        question: "Is GraphQL faster than REST?",
+        question:
+          "Is GraphQL faster than REST?",
         answer:
           "Not automatically. GraphQL can reduce unnecessary data fetching, but poorly designed resolvers can make database performance worse. Actual performance depends on implementation.",
       },
       {
-        question: "What should a startup choose first?",
+        question:
+          "What should a startup choose first?",
         answer:
           "REST is usually the simplest starting point. GraphQL or gRPC can be introduced later when the product has a clear requirement for their strengths.",
       },
@@ -168,9 +185,10 @@ The best API architecture is therefore the one that matches the actual requireme
   {
     id: 2,
     slug: "best-llm-apis-2026",
-    title: "Best LLM APIs in 2026: OpenAI vs Anthropic vs Gemini",
+    title:
+      "Best LLM APIs in 2026: OpenAI vs Anthropic vs Gemini",
     excerpt:
-      "A practical guide to modern LLM APIs covering model selection, latency, context windows, structured output, reliability, cost control, and multi-model AI architecture.",
+      "Compare the leading LLM APIs for modern AI applications. Learn how OpenAI, Anthropic, and Gemini differ across reasoning, multimodal capabilities, context, latency, structured output, reliability, pricing, and production AI architecture.",
     date: "August 12, 2026",
     keywords: [
       "LLM APIs",
@@ -180,21 +198,24 @@ The best API architecture is therefore the one that matches the actual requireme
       "Gemini API",
       "best AI API 2026",
       "AI infrastructure",
+      "AI model APIs",
+      "LLM comparison",
+      "AI application development",
     ],
     content: `
 ## LLM APIs Have Become Application Infrastructure
 
-Language models are no longer limited to chat interfaces. Developers now use LLM APIs for customer support, document extraction, coding assistants, semantic search, workflow automation, data classification, research systems, and autonomous agents.
+Language models are no longer limited to chat interfaces. Developers now use LLM APIs for customer support, document extraction, coding assistants, semantic search, workflow automation, data classification, research systems, content generation, and autonomous agents.
 
 That shift has changed the API selection problem.
 
-Choosing an LLM provider is no longer simply about asking which model produces the best answer. Production teams have to think about latency, token costs, context length, structured responses, tool calling, reliability, rate limits, privacy requirements, and how easily the application can move between models.
+Choosing an LLM provider is no longer simply about asking which model produces the best answer. Production teams have to think about latency, token costs, context length, structured responses, tool calling, reliability, rate limits, privacy requirements, observability, and how easily an application can move between models.
 
 For startups, these decisions matter even more because early architecture choices can directly affect product margins and the speed at which new AI features can be shipped.
 
 ## OpenAI
 
-OpenAI provides a mature developer platform for building AI-powered applications.
+[OpenAI](https://platform.openai.com/) provides a mature developer platform for building AI-powered applications.
 
 Its ecosystem is particularly useful for applications that need general-purpose language understanding, structured outputs, tool use, reasoning workflows, and developer-friendly APIs.
 
@@ -204,7 +225,7 @@ The OpenAI API can be used for everything from conversational applications and c
 
 ## Anthropic
 
-Anthropic's Claude family has become particularly popular for coding, long-form analysis, document workflows, and tasks where following complex instructions is important.
+[Anthropic](https://www.anthropic.com/api) and its Claude models have become particularly popular for coding, long-form analysis, document workflows, and tasks where following complex instructions is important.
 
 Claude can be useful for applications where the model needs to reason over large amounts of context while maintaining a consistent response style.
 
@@ -212,7 +233,7 @@ This makes it interesting for research applications, coding assistants, knowledg
 
 ## Google Gemini
 
-Gemini is particularly interesting for multimodal AI applications.
+[Google Gemini](https://ai.google.dev/) is particularly interesting for multimodal AI applications.
 
 Depending on the model, applications can work with combinations of text, images, audio, video, and code. This makes Gemini relevant for applications that need to understand more than plain text.
 
@@ -268,27 +289,32 @@ The best LLM API is ultimately the one that gives your application the right bal
 `,
     faq: [
       {
-        question: "Which LLM API is best in 2026?",
+        question:
+          "Which LLM API is best in 2026?",
         answer:
           "There is no universal winner. OpenAI, Anthropic, and Gemini each have different strengths, so the right choice depends on your application's workload and requirements.",
       },
       {
-        question: "Should startups use multiple LLM providers?",
+        question:
+          "Should startups use multiple LLM providers?",
         answer:
           "A startup can begin with one provider. Multiple providers become useful later when cost optimization, reliability, model specialization, or fallback requirements justify the added complexity.",
       },
       {
-        question: "How should I reduce LLM API costs?",
+        question:
+          "How should I reduce LLM API costs?",
         answer:
           "Use smaller models for simple tasks, control context size, cache repeatable results, monitor token usage, and route complex requests only to models that actually need their additional capability.",
       },
       {
-        question: "Why is streaming important for AI applications?",
+        question:
+          "Why is streaming important for AI applications?",
         answer:
           "Streaming allows users to see a response while it is being generated, significantly improving perceived responsiveness for chat and interactive AI applications.",
       },
       {
-        question: "What should I monitor when using an LLM API?",
+        question:
+          "What should I monitor when using an LLM API?",
         answer:
           "Track request volume, latency, error rates, token consumption, model usage, cost per task, rate limits, and failed or retried requests.",
       },
@@ -298,9 +324,10 @@ The best LLM API is ultimately the one that gives your application the right bal
   {
     id: 3,
     slug: "api-security-best-practices",
-    title: "API Security Best Practices: 10 Common API Security Risks",
+    title:
+      "API Security Best Practices: 10 Common API Security Risks",
     excerpt:
-      "Learn the most important API security practices, from broken authorization and weak authentication to rate limiting, validation, secret management, and secure error handling.",
+      "Protect your API from the most common security failures. This guide covers broken authorization, authentication, rate limiting, input validation, excessive data exposure, secret management, secure errors, HTTPS, logging, and OWASP API security principles.",
     date: "August 10, 2026",
     keywords: [
       "API security",
@@ -309,6 +336,9 @@ The best LLM API is ultimately the one that gives your application the right bal
       "API vulnerabilities",
       "secure REST API",
       "API authentication",
+      "API authorization",
+      "API security risks",
+      "API protection",
     ],
     content: `
 ## API Security Starts With the Design
@@ -318,6 +348,8 @@ APIs frequently sit between users and sensitive application data. They expose ac
 That makes an API a major part of an application's security boundary.
 
 The most dangerous API vulnerabilities are often not complicated cryptographic failures. They are ordinary authorization mistakes, predictable IDs, overly permissive responses, weak authentication, missing rate limits, unsafe input handling, and secrets that were never meant to be public.
+
+The [OWASP API Security Top 10](https://owasp.org/API-Security/) is an excellent reference when reviewing the security posture of a production API.
 
 ## Broken Object Level Authorization
 
@@ -397,7 +429,7 @@ Give developers enough information to understand the error without exposing inte
 
 Authentication credentials and sensitive data should be transmitted over HTTPS.
 
-TLS protects information while it moves between the client and server.
+[TLS](https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security) protects information while it moves between the client and server.
 
 HTTP should not be used for production authentication flows simply because it is easier to test.
 
@@ -413,27 +445,32 @@ API security is not one middleware package or one authentication library. It is 
 `,
     faq: [
       {
-        question: "What is the biggest API security risk?",
+        question:
+          "What is the biggest API security risk?",
         answer:
           "Broken authorization, especially failing to verify access to individual objects, is one of the most important and common API security problems.",
       },
       {
-        question: "Should every public API have rate limiting?",
+        question:
+          "Should every public API have rate limiting?",
         answer:
           "Most public APIs should have rate limits, particularly for authentication, search, AI, file processing, and other resource-intensive endpoints.",
       },
       {
-        question: "Can API keys be exposed in frontend code?",
+        question:
+          "Can API keys be exposed in frontend code?",
         answer:
           "Sensitive API keys should not be placed in frontend code because users can inspect and extract them. Secrets should remain on trusted backend infrastructure.",
       },
       {
-        question: "Why is authorization different from authentication?",
+        question:
+          "Why is authorization different from authentication?",
         answer:
           "Authentication identifies the caller, while authorization determines which resources and actions that authenticated identity is allowed to access.",
       },
       {
-        question: "What is OWASP API Security?",
+        question:
+          "What is OWASP API Security?",
         answer:
           "OWASP API Security is a security project that documents common API risks and provides guidance for building and reviewing secure APIs.",
       },
@@ -443,9 +480,10 @@ API security is not one middleware package or one authentication library. It is 
   {
     id: 4,
     slug: "how-to-build-production-ready-api",
-    title: "How to Build a Production-Ready API: 7 Essential Steps",
+    title:
+      "How to Build a Production-Ready API: 7 Essential Steps",
     excerpt:
-      "A practical guide to building a production-ready API with clear contracts, authentication, validation, consistent errors, testing, monitoring, documentation, and scalability in mind.",
+      "Build an API that is ready for real users, not just local development. Learn how API contracts, authentication, authorization, validation, errors, testing, monitoring, documentation, and scalability fit together in production.",
     date: "August 8, 2026",
     keywords: [
       "build API",
@@ -454,6 +492,9 @@ API security is not one middleware package or one authentication library. It is 
       "REST API development",
       "API best practices",
       "production ready API",
+      "API architecture",
+      "API documentation",
+      "API testing",
     ],
     content: `
 ## A Production API Is More Than Working Endpoints
@@ -478,9 +519,7 @@ The architecture should reflect the actual consumer rather than forcing every AP
 
 Design endpoints and response structures before implementing every backend detail.
 
-An OpenAPI specification can become a shared contract between frontend developers, backend developers, QA teams, and external consumers.
-
-The OpenAPI Specification provides a machine-readable standard for describing HTTP APIs.
+An [OpenAPI](https://www.openapis.org/) specification can become a shared contract between frontend developers, backend developers, QA teams, and external consumers.
 
 A clear contract also reduces the amount of back-and-forth required when different teams build against the same backend.
 
@@ -527,6 +566,8 @@ Unit tests are valuable, but production APIs also need integration and end-to-en
 
 Test authentication, authorization, invalid requests, database failures, external API failures, rate limits, large payloads, pagination, and realistic user workflows.
 
+[Postman](https://www.postman.com/) and other API testing tools can make these workflows easier to reproduce, automate, and share across a team.
+
 Load-testing tools can also help teams understand how an API behaves under increasing traffic.
 
 ## 7. Monitor Before Users Complain
@@ -549,27 +590,32 @@ A production-ready API is ultimately a combination of good engineering and good 
 `,
     faq: [
       {
-        question: "What makes an API production-ready?",
+        question:
+          "What makes an API production-ready?",
         answer:
           "A production-ready API should have authentication, authorization, validation, consistent errors, testing, monitoring, documentation, reliability controls, and a clear strategy for future changes.",
       },
       {
-        question: "Should APIs use OpenAPI?",
+        question:
+          "Should APIs use OpenAPI?",
         answer:
           "OpenAPI is highly useful for documenting HTTP APIs and can also power generated types, SDKs, mock servers, validation, and developer tooling.",
       },
       {
-        question: "What API tests are important before launch?",
+        question:
+          "What API tests are important before launch?",
         answer:
           "Test authentication, authorization, invalid input, database failures, external services, rate limits, pagination, realistic workflows, and performance under expected traffic.",
       },
       {
-        question: "What does API observability include?",
+        question:
+          "What does API observability include?",
         answer:
           "API observability typically includes request volume, latency, error rates, database performance, external dependency failures, logs, traces, and infrastructure metrics.",
       },
       {
-        question: "Why is API documentation important?",
+        question:
+          "Why is API documentation important?",
         answer:
           "Clear documentation reduces integration time and gives developers confidence about authentication, requests, responses, errors, limits, and expected API behavior.",
       },
@@ -579,9 +625,10 @@ A production-ready API is ultimately a combination of good engineering and good 
   {
     id: 5,
     slug: "openapi-specification-guide",
-    title: "OpenAPI Specification: Why Your API Needs It",
+    title:
+      "OpenAPI Specification: Why Your API Needs It",
     excerpt:
-      "OpenAPI is more than documentation. Learn how one API specification can power SDKs, mock servers, generated types, tests, validation, and better developer experiences.",
+      "OpenAPI is more than API documentation. Discover how a single machine-readable API contract can power SDK generation, mock servers, generated types, validation, testing, documentation, and better developer experiences.",
     date: "August 6, 2026",
     keywords: [
       "OpenAPI",
@@ -590,11 +637,14 @@ A production-ready API is ultimately a combination of good engineering and good 
       "API documentation",
       "API SDK generation",
       "API contract",
+      "OpenAPI guide",
+      "API specification",
+      "API developer experience",
     ],
     content: `
 ## What Is OpenAPI?
 
-OpenAPI is a standard machine-readable format for describing HTTP APIs.
+[OpenAPI](https://spec.openapis.org/oas/latest.html) is a standard machine-readable format for describing HTTP APIs.
 
 It can describe endpoints, parameters, request bodies, response structures, authentication mechanisms, schemas, examples, and other parts of an API contract.
 
@@ -686,27 +736,32 @@ For teams building public APIs, keeping this contract accurate can significantly
 `,
     faq: [
       {
-        question: "What is OpenAPI used for?",
+        question:
+          "What is OpenAPI used for?",
         answer:
           "OpenAPI can describe API endpoints and contracts and can also support documentation, SDK generation, mock servers, type generation, validation, and testing.",
       },
       {
-        question: "Is OpenAPI the same as Swagger?",
+        question:
+          "Is OpenAPI the same as Swagger?",
         answer:
           "OpenAPI is the specification standard. Swagger refers to a family of tools that work with OpenAPI documents.",
       },
       {
-        question: "Can OpenAPI generate SDKs?",
+        question:
+          "Can OpenAPI generate SDKs?",
         answer:
           "Yes. Many tools can generate client libraries and types from OpenAPI specifications.",
       },
       {
-        question: "What is spec-first API development?",
+        question:
+          "What is spec-first API development?",
         answer:
           "Spec-first development means designing and reviewing the API contract before implementing the backend, allowing teams to agree on behavior early.",
       },
       {
-        question: "Why does an outdated OpenAPI file cause problems?",
+        question:
+          "Why does an outdated OpenAPI file cause problems?",
         answer:
           "If documentation and production behavior disagree, developers cannot confidently integrate the API. Keeping the specification synchronized is therefore essential.",
       },
@@ -716,9 +771,10 @@ For teams building public APIs, keeping this contract accurate can significantly
   {
     id: 6,
     slug: "webhook-best-practices",
-    title: "Webhook Best Practices: How to Build Reliable Webhooks",
+    title:
+      "Webhook Best Practices: How to Build Reliable Webhooks",
     excerpt:
-      "Learn how to build reliable webhooks with signature verification, retries, idempotency, queues, fast responses, delivery logs, and failure handling.",
+      "Build webhooks that survive retries, duplicate events, timeouts, failures, and traffic spikes. Learn signature verification, idempotency, queues, asynchronous processing, delivery logs, ordering, and reliable webhook architecture.",
     date: "August 4, 2026",
     keywords: [
       "webhooks",
@@ -727,6 +783,9 @@ For teams building public APIs, keeping this contract accurate can significantly
       "webhook retries",
       "webhook idempotency",
       "reliable webhooks",
+      "webhook architecture",
+      "webhook events",
+      "API webhooks",
     ],
     content: `
 ## Webhooks Are Simple Until They Fail
@@ -744,6 +803,8 @@ A subscription is cancelled.
 The provider sends an HTTP request to a URL controlled by the receiving application.
 
 The basic mechanism is simple, but reliable webhook delivery requires careful engineering because networks fail, servers timeout, requests are duplicated, and events can arrive in an unexpected order.
+
+The [Stripe webhook documentation](https://docs.stripe.com/webhooks) is a useful real-world example of how a mature API provider approaches webhook verification, retries, and event handling.
 
 ## Respond Quickly
 
@@ -831,27 +892,32 @@ Reliable webhook infrastructure is therefore a combination of secure delivery, p
 `,
     faq: [
       {
-        question: "Should webhook processing be asynchronous?",
+        question:
+          "Should webhook processing be asynchronous?",
         answer:
           "For most non-trivial workloads, yes. Store or queue the event and process expensive work asynchronously so the webhook endpoint can respond quickly.",
       },
       {
-        question: "Can webhook events be delivered twice?",
+        question:
+          "Can webhook events be delivered twice?",
         answer:
           "Yes. Providers may retry events, so consumers should use idempotency techniques to safely handle duplicate deliveries.",
       },
       {
-        question: "Why should webhook signatures be verified?",
+        question:
+          "Why should webhook signatures be verified?",
         answer:
           "Signature verification helps confirm that the event came from the expected provider and was not modified before your application processed it.",
       },
       {
-        question: "What should webhook logs contain?",
+        question:
+          "What should webhook logs contain?",
         answer:
           "Useful webhook logs include event ID, delivery attempt, timestamp, HTTP status, response, duration, retry count, and final delivery state.",
       },
       {
-        question: "Can webhook events arrive out of order?",
+        question:
+          "Can webhook events arrive out of order?",
         answer:
           "Yes. Applications should not blindly assume chronological delivery and should use event versions, timestamps, or current-state validation when ordering matters.",
       },
@@ -861,9 +927,10 @@ Reliable webhook infrastructure is therefore a combination of secure delivery, p
   {
     id: 7,
     slug: "oauth-2-pkce-client-credentials",
-    title: "OAuth 2.0 Explained: PKCE vs Client Credentials",
+    title:
+      "OAuth 2.0 Explained: PKCE vs Client Credentials",
     excerpt:
-      "Understand the OAuth 2.0 flows developers actually use, including Authorization Code with PKCE, Client Credentials, access tokens, refresh tokens, scopes, and security best practices.",
+      "Understand the OAuth 2.0 flows modern developers actually use. Learn how Authorization Code with PKCE, Client Credentials, access tokens, refresh tokens, scopes, and secure token handling work in real API applications.",
     date: "August 2, 2026",
     keywords: [
       "OAuth 2.0",
@@ -872,17 +939,20 @@ Reliable webhook infrastructure is therefore a combination of secure delivery, p
       "OAuth authentication",
       "API authentication",
       "OAuth security",
+      "access tokens",
+      "refresh tokens",
+      "OAuth scopes",
     ],
     content: `
 ## What OAuth 2.0 Actually Solves
 
-OAuth 2.0 is an authorization framework designed to allow applications to access resources without requiring users to share their passwords with those applications.
+[OAuth 2.0](https://oauth.net/2/) is an authorization framework designed to allow applications to access resources without requiring users to share their passwords with those applications.
 
 This distinction matters because OAuth is often described simply as an authentication system.
 
 Its primary purpose is delegated authorization.
 
-The official OAuth 2.0 specification provides the formal protocol definitions, while modern security recommendations provide additional guidance for secure deployments.
+The [OAuth 2.0 RFC](https://www.rfc-editor.org/rfc/rfc6749) provides the formal protocol definitions, while modern security recommendations provide additional guidance for secure deployments.
 
 ## Authorization Code With PKCE
 
@@ -954,27 +1024,32 @@ For public APIs, clear authentication documentation is just as important as the 
 `,
     faq: [
       {
-        question: "What is PKCE in OAuth 2.0?",
+        question:
+          "What is PKCE in OAuth 2.0?",
         answer:
           "PKCE adds a temporary verifier and challenge to the authorization flow, helping protect authorization codes from interception.",
       },
       {
-        question: "When should I use Client Credentials?",
+        question:
+          "When should I use Client Credentials?",
         answer:
           "Client Credentials is designed for machine-to-machine authentication where a backend service needs to authenticate itself without a user being involved.",
       },
       {
-        question: "Is OAuth authentication or authorization?",
+        question:
+          "Is OAuth authentication or authorization?",
         answer:
           "OAuth is primarily an authorization framework. Authentication and identity are often implemented with related standards such as OpenID Connect.",
       },
       {
-        question: "Why should access tokens expire?",
+        question:
+          "Why should access tokens expire?",
         answer:
           "Short-lived tokens reduce the amount of time a compromised credential can be used, limiting potential damage.",
       },
       {
-        question: "What are OAuth scopes?",
+        question:
+          "What are OAuth scopes?",
         answer:
           "Scopes describe the permissions an access token grants, allowing applications to receive limited access instead of unrestricted access to a user's resources.",
       },
@@ -984,9 +1059,10 @@ For public APIs, clear authentication documentation is just as important as the 
   {
     id: 8,
     slug: "graphql-n-plus-one-dataloader",
-    title: "GraphQL at Scale: How to Fix the N+1 Query Problem",
+    title:
+      "GraphQL at Scale: How to Fix the N+1 Query Problem",
     excerpt:
-      "Learn why GraphQL applications can accidentally create hundreds of database queries and how batching, DataLoader, caching, pagination, and query limits solve the problem.",
+      "GraphQL gives clients powerful data-fetching flexibility, but poorly designed resolvers can create hundreds of database queries. Learn how batching, DataLoader, caching, pagination, query limits, and monitoring solve the N+1 problem.",
     date: "July 30, 2026",
     keywords: [
       "GraphQL",
@@ -995,11 +1071,14 @@ For public APIs, clear authentication documentation is just as important as the 
       "GraphQL performance",
       "GraphQL scalability",
       "GraphQL optimization",
+      "GraphQL resolvers",
+      "GraphQL database",
+      "GraphQL pagination",
     ],
     content: `
 ## GraphQL Gives Clients Flexibility
 
-One of GraphQL's biggest strengths is the ability for clients to request connected data in a single operation.
+One of [GraphQL](https://graphql.org/)'s biggest strengths is the ability for clients to request connected data in a single operation.
 
 A dashboard might request users, organizations, projects, billing information, activity, and permissions in one query.
 
@@ -1037,7 +1116,7 @@ The result is many small database queries instead of a few efficient ones.
 
 ## DataLoader and Batching
 
-DataLoader is a common approach to solving many N+1 patterns.
+[DataLoader](https://github.com/graphql/dataloader) is a common approach to solving many N+1 patterns.
 
 Instead of immediately querying the database for every company, the application collects the requested company IDs and performs a batched query.
 
@@ -1085,27 +1164,32 @@ GraphQL scales well when its flexibility is paired with disciplined backend arch
 `,
     faq: [
       {
-        question: "What causes the GraphQL N+1 problem?",
+        question:
+          "What causes the GraphQL N+1 problem?",
         answer:
           "N+1 usually happens when nested resolvers execute separate database queries for each returned object instead of batching related data.",
       },
       {
-        question: "How does DataLoader help?",
+        question:
+          "How does DataLoader help?",
         answer:
           "DataLoader collects related requests and batches them into fewer database operations while also providing request-level caching.",
       },
       {
-        question: "Should GraphQL APIs use pagination?",
+        question:
+          "Should GraphQL APIs use pagination?",
         answer:
           "Yes. Production GraphQL APIs should use sensible page sizes and pagination to prevent clients from requesting extremely large datasets.",
       },
       {
-        question: "Can caching solve every GraphQL performance issue?",
+        question:
+          "Can caching solve every GraphQL performance issue?",
         answer:
           "No. Caching can help repeated work, but inefficient queries, missing indexes, excessive resolver calls, and poor pagination still need to be fixed.",
       },
       {
-        question: "Why should public GraphQL APIs limit query complexity?",
+        question:
+          "Why should public GraphQL APIs limit query complexity?",
         answer:
           "Complexity limits prevent clients from accidentally or intentionally sending extremely expensive nested queries that consume excessive backend resources.",
       },
@@ -1115,9 +1199,10 @@ GraphQL scales well when its flexibility is paired with disciplined backend arch
   {
     id: 9,
     slug: "api-load-testing-guide",
-    title: "API Load Testing: How to Test an API Before Launch",
+    title:
+      "API Load Testing: How to Test an API Before Launch",
     excerpt:
-      "A practical API load testing guide covering realistic traffic, P95 and P99 latency, error rates, database bottlenecks, capacity planning, and performance testing tools.",
+      "Find API bottlenecks before real users do. This practical load-testing guide explains realistic traffic simulation, P95 and P99 latency, throughput, database bottlenecks, error rates, capacity planning, and performance testing workflows.",
     date: "July 28, 2026",
     keywords: [
       "API load testing",
@@ -1126,6 +1211,9 @@ GraphQL scales well when its flexibility is paired with disciplined backend arch
       "API stress testing",
       "API testing tools",
       "API scalability",
+      "API benchmarking",
+      "API latency",
+      "performance testing",
     ],
     content: `
 ## A Fast API Is Not Necessarily a Scalable API
@@ -1164,7 +1252,7 @@ These metrics are especially useful when evaluating APIs with unpredictable work
 
 ## k6 for Developer-Focused Load Testing
 
-k6 is a popular load-testing tool that allows developers to define virtual users, scenarios, thresholds, and traffic patterns.
+[k6](https://grafana.com/docs/k6/latest/) is a popular load-testing tool that allows developers to define virtual users, scenarios, thresholds, and traffic patterns.
 
 The purpose of a load test is not to create the largest possible number.
 
@@ -1210,27 +1298,32 @@ The goal is simple: understand how your API behaves before your users are the on
 `,
     faq: [
       {
-        question: "What is API load testing?",
+        question:
+          "What is API load testing?",
         answer:
           "API load testing measures how an API behaves under expected or increasing levels of traffic and helps identify performance and infrastructure bottlenecks.",
       },
       {
-        question: "What is the difference between load testing and stress testing?",
+        question:
+          "What is the difference between load testing and stress testing?",
         answer:
           "Load testing evaluates expected traffic levels, while stress testing intentionally pushes the system beyond normal capacity to understand failure behavior.",
       },
       {
-        question: "Why are P95 and P99 important?",
+        question:
+          "Why are P95 and P99 important?",
         answer:
           "They expose slower requests that averages can hide, making them useful for understanding real user-facing latency.",
       },
       {
-        question: "What should I monitor during load testing?",
+        question:
+          "What should I monitor during load testing?",
         answer:
           "Monitor latency, throughput, error rates, CPU, memory, database queries, connection pools, external dependencies, and infrastructure utilization.",
       },
       {
-        question: "Should every API be load tested before launch?",
+        question:
+          "Should every API be load tested before launch?",
         answer:
           "Important production APIs should be tested at realistic traffic levels, especially when they handle expensive operations, large datasets, or significant expected traffic.",
       },
@@ -1240,9 +1333,10 @@ The goal is simple: understand how your API behaves before your users are the on
   {
     id: 10,
     slug: "best-serverless-platforms-api",
-    title: "Best Serverless Platforms for APIs in 2026",
+    title:
+      "Best Serverless Platforms for APIs in 2026",
     excerpt:
-      "Compare AWS Lambda, Cloudflare Workers, and Vercel Functions for API hosting, including runtime models, edge execution, scalability, deployment, and real-world use cases.",
+      "Compare AWS Lambda, Cloudflare Workers, and Vercel Functions for modern API hosting. Understand edge execution, scalability, cold starts, database connectivity, deployment experience, pricing considerations, and when each platform makes sense.",
     date: "July 25, 2026",
     keywords: [
       "serverless API",
@@ -1251,6 +1345,9 @@ The goal is simple: understand how your API behaves before your users are the on
       "Vercel Functions",
       "API hosting",
       "serverless architecture",
+      "serverless backend",
+      "edge functions",
+      "serverless platforms",
     ],
     content: `
 ## Serverless APIs Changed Backend Deployment
@@ -1263,7 +1360,7 @@ This can dramatically simplify application development, particularly for startup
 
 But serverless is not one technology.
 
-AWS Lambda, Cloudflare Workers, and Vercel Functions have different runtime models, deployment environments, networking capabilities, and strengths.
+[AWS Lambda](https://aws.amazon.com/lambda/), [Cloudflare Workers](https://developers.cloudflare.com/workers/), and [Vercel Functions](https://vercel.com/docs/functions) have different runtime models, deployment environments, networking capabilities, and strengths.
 
 ## AWS Lambda
 
@@ -1329,27 +1426,32 @@ For an early-stage product, simplicity is often more valuable than adopting a hi
 `,
     faq: [
       {
-        question: "Which serverless platform is best for APIs?",
+        question:
+          "Which serverless platform is best for APIs?",
         answer:
           "It depends on the workload. Lambda is strong for AWS-based systems, Cloudflare Workers for edge workloads, and Vercel Functions for simple full-stack deployments.",
       },
       {
-        question: "Are serverless APIs always faster?",
+        question:
+          "Are serverless APIs always faster?",
         answer:
           "No. Database latency, external APIs, networking, application code, caching, and region selection can have a larger impact than the function runtime itself.",
       },
       {
-        question: "What are cold starts?",
+        question:
+          "What are cold starts?",
         answer:
           "A cold start occurs when a serverless platform needs to initialize a new execution environment before processing a request.",
       },
       {
-        question: "Can serverless overload a database?",
+        question:
+          "Can serverless overload a database?",
         answer:
           "Yes. Large numbers of concurrent serverless executions can create many database connections unless the architecture uses appropriate pooling or serverless-compatible database patterns.",
       },
       {
-        question: "Can one product use multiple serverless platforms?",
+        question:
+          "Can one product use multiple serverless platforms?",
         answer:
           "Yes. Different services can run on different platforms when there is a clear technical reason for doing so.",
       },
@@ -1359,9 +1461,10 @@ For an early-stage product, simplicity is often more valuable than adopting a hi
   {
     id: 11,
     slug: "why-apives-verifies-apis",
-    title: "Why Apives Verifies APIs Before Listing Them",
+    title:
+      "Why Apives Verifies APIs Before Listing Them",
     excerpt:
-      "API discovery should be more than a directory of links. Learn why verification, clear documentation, pricing, authentication details, and real API information matter to developers.",
+      "API discovery should be more than a directory of links. Learn why verification, clear documentation, pricing, authentication details, real endpoint information, examples, and developer experience matter when choosing an API.",
     date: "July 22, 2026",
     keywords: [
       "Apives",
@@ -1371,6 +1474,9 @@ For an early-stage product, simplicity is often more valuable than adopting a hi
       "API marketplace",
       "API verification",
       "find APIs",
+      "API discovery platform",
+      "API research",
+      "developer tools",
     ],
     content: `
 ## Finding an API Is Easy. Finding the Right API Is Not.
@@ -1405,7 +1511,7 @@ Developers need useful information.
 
 They need to understand what an API does, how they can access it, how much it costs, what limitations exist, and whether it is suitable for their specific project.
 
-That is the problem Apives is designed around.
+That is the problem [Apives](https://apives.com/) is designed around.
 
 The goal is not simply to collect API links.
 
@@ -1447,7 +1553,7 @@ Two APIs can provide the same underlying functionality while creating completely
 
 A well-documented API provides a clear quickstart, authentication instructions, request examples, response examples, error explanations, rate limits, and useful endpoint descriptions.
 
-OpenAPI can also make API documentation machine-readable and easier to integrate into developer tooling.
+[OpenAPI](https://www.openapis.org/) can also make API documentation machine-readable and easier to integrate into developer tooling.
 
 Good documentation does not just explain the API. It reduces the time between discovering a service and successfully making the first request.
 
@@ -1485,27 +1591,32 @@ That is the difference between a basic API directory and a developer-focused API
 `,
     faq: [
       {
-        question: "What is Apives?",
+        question:
+          "What is Apives?",
         answer:
           "Apives is an API discovery platform designed to help developers find, understand, compare, and evaluate APIs more efficiently.",
       },
       {
-        question: "Why does API verification matter?",
+        question:
+          "Why does API verification matter?",
         answer:
           "Verification can help developers avoid wasting time on APIs that are unavailable, poorly documented, incorrectly represented, or difficult to evaluate.",
       },
       {
-        question: "What should an API listing include?",
+        question:
+          "What should an API listing include?",
         answer:
           "A useful listing should provide information such as the API's purpose, authentication, pricing, limits, documentation, endpoints, examples, and important integration details.",
       },
       {
-        question: "Why is API pricing important during discovery?",
+        question:
+          "Why is API pricing important during discovery?",
         answer:
           "Pricing affects whether an API is practical for a project. Clear pricing and quota information lets developers compare options before investing in integration work.",
       },
       {
-        question: "What is the goal of API discovery?",
+        question:
+          "What is the goal of API discovery?",
         answer:
           "The goal is to reduce the time between having a technical requirement and finding an API that developers can confidently understand, test, and integrate.",
       },
@@ -1526,12 +1637,14 @@ function setMeta(
     ? "property"
     : "name";
 
-  let element = document.head.querySelector(
-    `meta[${attribute}="${name}"]`
-  ) as HTMLMetaElement | null;
+  let element =
+    document.head.querySelector(
+      `meta[${attribute}="${name}"]`
+    ) as HTMLMetaElement | null;
 
   if (!element) {
-    element = document.createElement("meta");
+    element =
+      document.createElement("meta");
 
     element.setAttribute(
       attribute,
@@ -1556,11 +1669,11 @@ function updateSEO(
 
   const description = article
     ? article.excerpt
-    : "Practical API guides covering REST APIs, GraphQL, API security, authentication, AI APIs, webhooks, OpenAPI, testing and infrastructure.";
+    : "Explore practical API engineering guides covering REST APIs, GraphQL, API security, authentication, AI APIs, webhooks, OpenAPI, API testing, serverless infrastructure and developer tools.";
 
   const keywords = article
     ? article.keywords.join(", ")
-    : "API blog, API guides, REST API, GraphQL, API security, AI APIs, OpenAPI, webhooks, API testing";
+    : "API blog, API guides, REST API, GraphQL, API security, AI APIs, OpenAPI, webhooks, API testing, developer tools";
 
   document.title = title;
 
@@ -1595,6 +1708,12 @@ function updateSEO(
   );
 
   setMeta(
+    "og:site_name",
+    "Apives",
+    true
+  );
+
+  setMeta(
     "twitter:card",
     "summary"
   );
@@ -1609,9 +1728,10 @@ function updateSEO(
     description
   );
 
-  const canonicalUrl = article
-    ? `${window.location.origin}/blog/${article.slug}`
-    : `${window.location.origin}/blog`;
+  const canonicalUrl =
+    article
+      ? `${window.location.origin}/blog/${article.slug}`
+      : `${window.location.origin}/blog`;
 
   let canonical =
     document.head.querySelector(
@@ -1620,7 +1740,9 @@ function updateSEO(
 
   if (!canonical) {
     canonical =
-      document.createElement("link");
+      document.createElement(
+        "link"
+      );
 
     canonical.rel = "canonical";
 
@@ -1658,42 +1780,31 @@ function updateStructuredData(
       JSON.stringify({
         "@context":
           "https://schema.org",
-
         "@type":
           "Article",
-
         headline:
           article.title,
-
         description:
           article.excerpt,
-
         datePublished:
           article.date,
-
         author: {
           "@type":
             "Person",
-
           name:
             "Priince Gupta",
-
           url:
             "https://x.com/priiincegupta",
         },
-
         publisher: {
           "@type":
             "Organization",
-
           name:
             "Apives",
         },
-
         mainEntityOfPage: {
           "@type":
             "WebPage",
-
           "@id":
             `${window.location.origin}/blog/${article.slug}`,
         },
@@ -1703,23 +1814,17 @@ function updateStructuredData(
       JSON.stringify({
         "@context":
           "https://schema.org",
-
         "@type":
           "Blog",
-
         name:
           "Apives Blog",
-
         description:
-          "Practical guides for building, securing and scaling APIs.",
-
+          "Practical guides for building, securing, testing and scaling APIs.",
         url:
           `${window.location.origin}/blog`,
-
         publisher: {
           "@type":
             "Organization",
-
           name:
             "Apives",
         },
@@ -1732,7 +1837,7 @@ function updateStructuredData(
 }
 
 /* =========================================================
-   INLINE MARKDOWN
+   INLINE MARKDOWN LINK RENDERER
 ========================================================= */
 
 function renderInlineText(
@@ -1777,14 +1882,16 @@ function renderInlineText(
 }
 
 /* =========================================================
-   CONTENT RENDERER
+   ARTICLE CONTENT RENDERER
 ========================================================= */
 
 function renderContent(
   text: string
 ) {
   const lines =
-    text.trim().split("\n");
+    text
+      .trim()
+      .split("\n");
 
   return lines.map(
     (line, index) => {
@@ -1801,7 +1908,9 @@ function renderContent(
       }
 
       if (
-        clean.startsWith("## ")
+        clean.startsWith(
+          "## "
+        )
       ) {
         return (
           <h2
@@ -1843,7 +1952,7 @@ function renderContent(
 }
 
 /* =========================================================
-   SOCIAL ICONS
+   BRAND ICONS
 ========================================================= */
 
 function FacebookIcon() {
@@ -1853,6 +1962,7 @@ function FacebookIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
+      aria-hidden="true"
     >
       <path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.7.3-1 1-1Z" />
     </svg>
@@ -1866,6 +1976,7 @@ function LinkedinIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
+      aria-hidden="true"
     >
       <path d="M5.1 7.2A2.1 2.1 0 1 0 5.1 3a2.1 2.1 0 0 0 0 4.2ZM3.2 9h3.8v11H3.2V9Zm6.1 0h3.6v1.5h.1c.5-.9 1.7-1.9 3.5-1.9 3.8 0 4.5 2.5 4.5 5.7V20h-3.8v-5c0-1.2 0-2.8-1.8-2.8s-2.1 1.3-2.1 2.7V20H9.3V9Z" />
     </svg>
@@ -1879,6 +1990,7 @@ function RedditIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
+      aria-hidden="true"
     >
       <path d="M21 12.1c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.4-.9-3.1-1.5-5-1.6l.8-3.5 2.4.5a1.9 1.9 0 1 0 .4-1.4l-3-.6c-.4-.1-.8.2-.9.6l-1 4.4c-1.9.1-3.7.7-5.1 1.6-.4-.4-1-.6-1.5-.6A2.2 2.2 0 0 0 2 12.1c0 .8.4 1.5 1 1.9v.5c0 3.4 4 6.2 9 6.2s9-2.8 9-6.2V14c.6-.4 1-1.1 1-1.9ZM8.2 14.4a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm7.7 2.8c-1 .9-2.3 1.3-3.9 1.3s-2.9-.4-3.9-1.3a.7.7 0 0 1 1-1c.7.6 1.7.9 2.9.9s2.2-.3 2.9-.9a.7.7 0 0 1 1 1Zm0-2.8a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Z" />
     </svg>
@@ -1892,20 +2004,22 @@ function WhatsappIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
+      aria-hidden="true"
     >
       <path d="M20.5 3.5A11.9 11.9 0 0 0 12.05 0C5.48 0 .14 5.34.14 11.91c0 2.1.55 4.15 1.6 5.96L.04 24l6.27-1.65a11.86 11.86 0 0 0 5.74 1.46h.01c6.56 0 11.9-5.34 11.9-11.91 0-3.18-1.23-6.17-3.46-8.4Zm-8.45 18.27h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.72.98.99-3.63-.23-.37a9.88 9.88 0 1 1 8.36 4.61Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z" />
     </svg>
   );
 }
 
-function XIcon() {
+function XBrandIcon() {
   return (
     <span
       style={{
         fontSize: 15,
-        fontWeight: 700,
+        fontWeight: 800,
         lineHeight: 1,
       }}
+      aria-hidden="true"
     >
       𝕏
     </span>
@@ -1943,6 +2057,34 @@ function ShareButton({
 }
 
 /* =========================================================
+   BLOG RETURN
+   IMPORTANT:
+   ALWAYS GOES TO /blog
+========================================================= */
+
+function BlogReturnButton() {
+  const goToBlog = () => {
+    /*
+      Do NOT use history.back() here.
+      That could send the user to the landing page.
+
+      This always opens the external Blog listing route.
+    */
+    window.location.assign(
+      "/blog"
+    );
+  };
+
+  return (
+    <div className="blog-return-wrapper">
+      <BackButton
+        onClick={goToBlog}
+      />
+    </div>
+  );
+}
+
+/* =========================================================
    ARTICLE DETAIL
 ========================================================= */
 
@@ -1950,17 +2092,17 @@ function ArticleDetail({
   article,
   articles,
   onSelect,
-  onBack,
 }: {
   article: Article;
   articles: Article[];
   onSelect: (
     article: Article
   ) => void;
-  onBack: () => void;
 }) {
-  const [copied, setCopied] =
-    useState(false);
+  const [
+    sharing,
+    setSharing,
+  ] = useState(false);
 
   useEffect(() => {
     updateSEO(article);
@@ -1990,50 +2132,9 @@ function ArticleDetail({
       shareUrl
     );
 
-  const copyLink =
-    async () => {
-      try {
-        await navigator.clipboard.writeText(
-          shareUrl
-        );
-
-        setCopied(true);
-
-        window.setTimeout(
-          () =>
-            setCopied(false),
-          1800
-        );
-      } catch {
-        const input =
-          document.createElement(
-            "input"
-          );
-
-        input.value =
-          shareUrl;
-
-        document.body.appendChild(
-          input
-        );
-
-        input.select();
-
-        document.execCommand(
-          "copy"
-        );
-
-        input.remove();
-
-        setCopied(true);
-
-        window.setTimeout(
-          () =>
-            setCopied(false),
-          1800
-        );
-      }
-    };
+  /* =========================================
+     NATIVE SHARE
+  ========================================= */
 
   const nativeShare =
     async () => {
@@ -2044,6 +2145,8 @@ function ArticleDetail({
           "function"
       ) {
         try {
+          setSharing(true);
+
           await navigator.share({
             title:
               article.title,
@@ -2052,15 +2155,43 @@ function ArticleDetail({
             url:
               shareUrl,
           });
-
-          return;
         } catch {
-          return;
+          /*
+            User cancelling the native
+            share sheet is normal.
+          */
+        } finally {
+          setSharing(false);
         }
+
+        return;
       }
 
-      await copyLink();
+      /*
+        Desktop browsers without Web Share API:
+        gracefully copy the URL.
+      */
+
+      try {
+        await navigator.clipboard.writeText(
+          shareUrl
+        );
+
+        setSharing(true);
+
+        window.setTimeout(
+          () =>
+            setSharing(false),
+          1400
+        );
+      } catch {
+        // Nothing else required.
+      }
     };
+
+  /* =========================================
+     SOCIAL SHARING
+  ========================================= */
 
   const share = (
     platform:
@@ -2130,15 +2261,20 @@ function ArticleDetail({
   return (
     <main className="blog-root">
 
-      {/* SAME BACK BUTTON POSITION AS BROWSE APIS */}
+      {/* =========================================
+          RETURN BUTTON
+          SEPARATE FROM TITLE
+      ========================================= */}
 
-      <div className="blog-back-button">
-        <BackButton />
+      <div className="article-return-area">
+        <BlogReturnButton />
       </div>
 
       <article className="article-page">
 
-        {/* HEADER */}
+        {/* =========================================
+            HEADER
+        ========================================= */}
 
         <header className="article-header">
 
@@ -2151,6 +2287,7 @@ function ArticleDetail({
           </p>
 
           <div className="article-meta">
+
             <span className="article-date">
               {article.date}
             </span>
@@ -2170,12 +2307,34 @@ function ArticleDetail({
                 @priiincegupta
               </a>
             </span>
+
           </div>
 
-          {/* SOCIAL */}
+          {/* =====================================
+              SOCIAL SHARE ROW
+          ===================================== */}
 
           <div className="share-row">
 
+            {/* NATIVE SHARE */}
+            <ShareButton
+              label={
+                sharing
+                  ? "Shared"
+                  : "Share"
+              }
+              onClick={
+                nativeShare
+              }
+            >
+              {sharing ? (
+                <Check size={16} />
+              ) : (
+                <Share2 size={16} />
+              )}
+            </ShareButton>
+
+            {/* EMAIL */}
             <ShareButton
               label="Email"
               onClick={() =>
@@ -2185,6 +2344,7 @@ function ArticleDetail({
               <Mail size={16} />
             </ShareButton>
 
+            {/* FACEBOOK */}
             <ShareButton
               label="Facebook"
               onClick={() =>
@@ -2194,6 +2354,7 @@ function ArticleDetail({
               <FacebookIcon />
             </ShareButton>
 
+            {/* REDDIT */}
             <ShareButton
               label="Reddit"
               onClick={() =>
@@ -2203,15 +2364,17 @@ function ArticleDetail({
               <RedditIcon />
             </ShareButton>
 
+            {/* X */}
             <ShareButton
               label="X"
               onClick={() =>
                 share("x")
               }
             >
-              <XIcon />
+              <XBrandIcon />
             </ShareButton>
 
+            {/* LINKEDIN */}
             <ShareButton
               label="LinkedIn"
               onClick={() =>
@@ -2221,6 +2384,7 @@ function ArticleDetail({
               <LinkedinIcon />
             </ShareButton>
 
+            {/* WHATSAPP */}
             <ShareButton
               label="WhatsApp"
               onClick={() =>
@@ -2230,37 +2394,15 @@ function ArticleDetail({
               <WhatsappIcon />
             </ShareButton>
 
-            <ShareButton
-              label={
-                copied
-                  ? "Copied"
-                  : "Copy link"
-              }
-              onClick={copyLink}
-            >
-              {copied ? (
-                <Check size={16} />
-              ) : (
-                <span
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 700,
-                  }}
-                >
-                  ↗
-                </span>
-              )}
-            </ShareButton>
-
           </div>
-
-          {/* NORMAL GREY DIVIDER */}
 
           <div className="article-divider" />
 
         </header>
 
-        {/* ARTICLE */}
+        {/* =========================================
+            ARTICLE CONTENT
+        ========================================= */}
 
         <div className="article-content">
           {renderContent(
@@ -2268,7 +2410,9 @@ function ArticleDetail({
           )}
         </div>
 
-        {/* FAQ */}
+        {/* =========================================
+            FAQ
+        ========================================= */}
 
         <section className="faq-section">
 
@@ -2283,6 +2427,7 @@ function ArticleDetail({
           </p>
 
           <div className="faq-list">
+
             {article.faq.map(
               (
                 item,
@@ -2293,6 +2438,7 @@ function ArticleDetail({
                   className="faq-item"
                 >
                   <summary>
+
                     <span>
                       {
                         item.question
@@ -2302,19 +2448,24 @@ function ArticleDetail({
                     <ChevronRight
                       size={17}
                     />
+
                   </summary>
 
                   <p>
                     {item.answer}
                   </p>
+
                 </details>
               )
             )}
+
           </div>
 
         </section>
 
-        {/* RELATED */}
+        {/* =========================================
+            RELATED ARTICLES
+        ========================================= */}
 
         <section className="related-section">
 
@@ -2323,6 +2474,7 @@ function ArticleDetail({
           </h2>
 
           <div>
+
             {related.map(
               (
                 relatedArticle
@@ -2345,6 +2497,7 @@ function ArticleDetail({
                     });
                   }}
                 >
+
                   <div>
 
                     <span className="related-date">
@@ -2370,9 +2523,11 @@ function ArticleDetail({
                   <ChevronRight
                     size={18}
                   />
+
                 </button>
               )
             )}
+
           </div>
 
         </section>
@@ -2402,6 +2557,7 @@ const ArticleListItem =
           onClick={onClick}
           className="article-list-item"
         >
+
           <div className="list-date">
             {article.date}
           </div>
@@ -2413,6 +2569,7 @@ const ArticleListItem =
           <p>
             {article.excerpt}
           </p>
+
         </button>
       );
     }
@@ -2434,8 +2591,7 @@ export default function ApivesBlog() {
   const [
     searchQuery,
     setSearchQuery,
-  ] =
-    useState("");
+  ] = useState("");
 
   useEffect(() => {
     updateSEO(null);
@@ -2481,6 +2637,10 @@ export default function ApivesBlog() {
       );
     }, [searchQuery]);
 
+  /* =========================================
+     DETAIL PAGE
+  ========================================= */
+
   if (selectedArticle) {
     return (
       <>
@@ -2506,21 +2666,14 @@ export default function ApivesBlog() {
                 "auto",
             });
           }}
-          onBack={() => {
-            setSelectedArticle(
-              null
-            );
-
-            window.scrollTo({
-              top: 0,
-              behavior:
-                "auto",
-            });
-          }}
         />
       </>
     );
   }
+
+  /* =========================================
+     BLOG LIST PAGE
+  ========================================= */
 
   return (
     <>
@@ -2528,7 +2681,9 @@ export default function ApivesBlog() {
 
       <main className="blog-root">
 
-        {/* HERO */}
+        {/* =====================================
+            HERO
+        ===================================== */}
 
         <section className="blog-hero">
 
@@ -2541,12 +2696,16 @@ export default function ApivesBlog() {
 
           <p>
             Practical ideas for
-            building better APIs.
+            building better APIs,
+            smarter developer tools,
+            and scalable software.
           </p>
 
         </section>
 
-        {/* SEARCH */}
+        {/* =====================================
+            SEARCH
+        ===================================== */}
 
         <section className="search-section">
 
@@ -2559,8 +2718,12 @@ export default function ApivesBlog() {
 
             <input
               type="text"
-              value={searchQuery}
-              onChange={(event) =>
+              value={
+                searchQuery
+              }
+              onChange={(
+                event
+              ) =>
                 setSearchQuery(
                   event.target.value
                 )
@@ -2574,7 +2737,9 @@ export default function ApivesBlog() {
                 type="button"
                 className="clear-search"
                 onClick={() =>
-                  setSearchQuery("")
+                  setSearchQuery(
+                    ""
+                  )
                 }
                 aria-label="Clear search"
               >
@@ -2586,7 +2751,9 @@ export default function ApivesBlog() {
 
         </section>
 
-        {/* ARTICLES */}
+        {/* =====================================
+            ARTICLES
+        ===================================== */}
 
         <section className="articles-section">
 
@@ -2620,8 +2787,7 @@ export default function ApivesBlog() {
             <div className="empty-state">
 
               <p>
-                No articles
-                found.
+                No articles found.
               </p>
 
               <button
@@ -2692,9 +2858,14 @@ function BlogStyles() {
         background: ${GREEN};
       }
 
+      /* ============================================
+         ROOT
+      ============================================ */
+
       .blog-root {
         min-height: 100vh;
         width: 100%;
+
         background: #000;
         color: #fff;
 
@@ -2709,23 +2880,36 @@ function BlogStyles() {
       }
 
       /* ============================================
-         BACK BUTTON
-         SAME POSITION AS BROWSE APIS
+         DETAIL RETURN AREA
+
+         IMPORTANT:
+         Separate area so the BackButton does NOT
+         collapse into the article title.
       ============================================ */
 
-      .blog-back-button {
-        position: absolute;
+      .article-return-area {
+        position: relative;
 
-        top: 6rem;
-        left: 1rem;
+        width: 100%;
 
-        z-index: 30;
+        max-width: 900px;
+
+        margin: 0 auto;
+
+        padding:
+          78px 24px 0;
+
+        z-index: 20;
       }
 
-      @media (min-width: 1024px) {
-        .blog-back-button {
-          left: 2rem;
-        }
+      .blog-return-wrapper {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        width: 100%;
       }
 
       /* ============================================
@@ -2734,10 +2918,11 @@ function BlogStyles() {
 
       .blog-hero {
         max-width: 900px;
+
         margin: 0 auto;
 
         padding:
-          105px 24px
+          55px 24px
           55px;
 
         text-align: center;
@@ -2757,7 +2942,7 @@ function BlogStyles() {
       }
 
       .blog-hero p {
-        max-width: 620px;
+        max-width: 650px;
 
         margin:
           24px auto 0;
@@ -2778,6 +2963,7 @@ function BlogStyles() {
 
       .search-section {
         max-width: 900px;
+
         margin: 0 auto;
 
         padding:
@@ -2871,10 +3057,12 @@ function BlogStyles() {
         height: 29px;
 
         display: flex;
+
         align-items: center;
         justify-content: center;
 
         border: 0;
+
         border-radius: 50%;
 
         background: transparent;
@@ -2897,6 +3085,7 @@ function BlogStyles() {
 
       .articles-section {
         max-width: 900px;
+
         margin: 0 auto;
 
         padding:
@@ -3019,6 +3208,9 @@ function BlogStyles() {
 
       /* ============================================
          ARTICLE PAGE
+
+         Return button has its OWN AREA above.
+         Title does not collapse into it.
       ============================================ */
 
       .article-page {
@@ -3029,7 +3221,7 @@ function BlogStyles() {
         margin: 0 auto;
 
         padding:
-          110px 24px
+          27px 24px
           105px;
       }
 
@@ -3065,7 +3257,7 @@ function BlogStyles() {
         max-width: 720px;
 
         margin:
-          24px auto 0;
+          22px auto 0;
 
         color: #696969;
 
@@ -3086,7 +3278,7 @@ function BlogStyles() {
 
         gap: 8px;
 
-        margin-top: 21px;
+        margin-top: 19px;
 
         color: #555;
 
@@ -3123,19 +3315,20 @@ function BlogStyles() {
       }
 
       /* ============================================
-         SHARE
-         10% SMALLER
+         SHARE ROW
+         CIRCULAR GLASS
       ============================================ */
 
       .share-row {
         display: flex;
 
         align-items: center;
+
         justify-content: center;
 
         gap: 7px;
 
-        margin-top: 24px;
+        margin-top: 22px;
       }
 
       .share-button {
@@ -3176,7 +3369,15 @@ function BlogStyles() {
         transition:
           transform .18s ease,
           background .18s ease,
-          border-color .18s ease;
+          border-color .18s ease,
+          color .18s ease;
+      }
+
+      .share-button svg {
+        width: 16px;
+        height: 16px;
+
+        color: ${GREEN};
       }
 
       .share-button:hover {
@@ -3186,12 +3387,19 @@ function BlogStyles() {
         border-color:
           rgba(34,197,94,.28);
 
+        color: ${GREEN_SOFT};
+
         transform:
           translateY(-2px);
       }
 
+      .share-button:hover svg {
+        color: ${GREEN_SOFT};
+      }
+
       .share-button:active {
-        transform: scale(.91);
+        transform:
+          scale(.91);
       }
 
       .share-tooltip {
@@ -3242,7 +3450,7 @@ function BlogStyles() {
       }
 
       /* ============================================
-         NORMAL GREY DIVIDER
+         DIVIDER
       ============================================ */
 
       .article-divider {
@@ -3250,7 +3458,7 @@ function BlogStyles() {
 
         height: 1px;
 
-        margin-top: 32px;
+        margin-top: 30px;
 
         background:
           rgba(255,255,255,.10);
@@ -3305,12 +3513,14 @@ function BlogStyles() {
       .article-link {
         color: ${GREEN};
 
-        text-decoration: underline;
+        text-decoration:
+          underline;
 
         text-decoration-color:
           rgba(34,197,94,.30);
 
-        text-underline-offset: 4px;
+        text-underline-offset:
+          4px;
 
         transition:
           color .15s ease,
@@ -3556,7 +3766,8 @@ function BlogStyles() {
 
         line-height: 1.4;
 
-        letter-spacing: -.25px;
+        letter-spacing:
+          -.25px;
 
         font-weight: 620;
 
@@ -3610,14 +3821,14 @@ function BlogStyles() {
 
       @media (max-width: 640px) {
 
-        .blog-back-button {
-          top: 6rem;
-          left: 1rem;
+        .article-return-area {
+          padding:
+            70px 20px 0;
         }
 
         .blog-hero {
           padding:
-            78px 20px
+            55px 20px
             43px;
         }
 
@@ -3627,6 +3838,7 @@ function BlogStyles() {
 
         .blog-hero p {
           margin-top: 20px;
+
           font-size: 16px;
         }
 
@@ -3650,17 +3862,24 @@ function BlogStyles() {
 
         .article-list-item h2 {
           font-size: 23px;
-          letter-spacing: -.55px;
+
+          letter-spacing:
+            -.55px;
         }
 
         .article-list-item p {
           font-size: 14px;
+
           line-height: 1.75;
         }
 
+        /* ======================================
+           DETAIL
+        ====================================== */
+
         .article-page {
           padding:
-            105px 20px
+            24px 20px
             80px;
         }
 
@@ -3673,17 +3892,21 @@ function BlogStyles() {
         }
 
         .article-excerpt {
+          margin-top: 19px;
+
           font-size: 15px;
+
           line-height: 1.75;
         }
 
         .article-meta {
-          margin-top: 18px;
+          margin-top: 17px;
         }
 
         .share-row {
           gap: 6px;
-          margin-top: 21px;
+
+          margin-top: 20px;
         }
 
         .share-button {
@@ -3692,23 +3915,27 @@ function BlogStyles() {
         }
 
         .article-divider {
-          margin-top: 27px;
+          margin-top: 26px;
         }
 
         .article-paragraph {
           font-size: 15.5px;
+
           line-height: 1.9;
+
           margin-bottom: 24px;
         }
 
         .article-heading {
           margin-top: 43px;
+
           margin-bottom: 18px;
         }
 
         .faq-section,
         .related-section {
           margin-top: 62px;
+
           padding-top: 35px;
         }
 
