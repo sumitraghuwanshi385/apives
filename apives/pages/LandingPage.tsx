@@ -442,73 +442,102 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* DEVELOPER TOOLS — Compact Clean Section */}
+      {/* DEVELOPER TOOLS — LOGGED OUT USERS ONLY */}
 
-      <section className="py-10 md:py-12 border-t border-white/5 bg-black">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 lg:px-8">
+      {!isAuthenticated && (
+        <section className="py-10 md:py-12 border-t border-white/5 bg-black">
+          <div className="max-w-5xl mx-auto px-4 md:px-6 lg:px-8">
 
-          <div
-            className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-9"
-            style={{
-              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786813792/IMG_20260815_222938_qcmkam.png)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          >
-
-            {/* Top-right glass liquid fingerprint button → /access */}
-            <Link
-              to="/access"
-              className="absolute top-3.5 right-3.5 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all active:scale-90"
+            <div
+              className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-9"
               style={{
-                background: 'rgba(255, 255, 255, 0.12)',
-                backdropFilter: 'blur(18px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(18px) saturate(180%)',
-                border: '1px solid rgba(255, 255, 255, 0.22)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.25)'
+                backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786813792/IMG_20260815_222938_qcmkam.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
               }}
             >
-              <Fingerprint size={18} className="text-mora-500 drop-shadow-sm" strokeWidth={1.75} />
-            </Link>
 
-            <div className="relative z-10 pr-12">
-              <div className="mb-5">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 mb-1.5">
-                  Developer Toolkit
+              {/* Top-right glass liquid fingerprint button → /access */}
+
+              <Link
+                to="/access"
+                className="absolute top-3.5 right-3.5 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all active:scale-90"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.12)',
+                  backdropFilter: 'blur(18px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(18px) saturate(180%)',
+                  border: '1px solid rgba(255, 255, 255, 0.22)',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.25)'
+                }}
+              >
+                <Fingerprint
+                  size={18}
+                  className="text-mora-500 drop-shadow-sm"
+                  strokeWidth={1.75}
+                />
+              </Link>
+
+              <div className="relative z-10 pr-12">
+
+                <div className="mb-5">
+
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 mb-1.5">
+                    Developer Toolkit
+                  </p>
+
+                  <h2 className="text-lg md:text-xl font-bold text-white tracking-tight drop-shadow-sm">
+                    4 Tools. Login to unlock.
+                  </h2>
+
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                    <Terminal
+                      size={12}
+                      className="text-mora-400"
+                    />
+                    Live API Runner
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                    <KeyRound
+                      size={12}
+                      className="text-mora-400"
+                    />
+                    JWT Decoder
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                    <ArrowLeftRight
+                      size={12}
+                      className="text-mora-400"
+                    />
+                    cURL Converter
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                    <Waypoints
+                      size={12}
+                      className="text-mora-400"
+                    />
+                    Mock Server
+                  </span>
+
+                </div>
+
+                <p className="mt-4 text-[11px] text-white/75 leading-relaxed drop-shadow-sm">
+                  Sign in to test endpoints, decode tokens, convert requests and spin up mock APIs — all in one place.
                 </p>
-                <h2 className="text-lg md:text-xl font-bold text-white tracking-tight drop-shadow-sm">
-                  4 Tools. Login to unlock.
-                </h2>
+
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
-                  <Terminal size={12} className="text-mora-400" />
-                  Live API Runner
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
-                  <KeyRound size={12} className="text-mora-400" />
-                  JWT Decoder
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
-                  <ArrowLeftRight size={12} className="text-mora-400" />
-                  cURL Converter
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
-                  <Waypoints size={12} className="text-mora-400" />
-                  Mock Server
-                </span>
-              </div>
-
-              <p className="mt-4 text-[11px] text-white/75 leading-relaxed drop-shadow-sm">
-                Sign in to test endpoints, decode tokens, convert requests and spin up mock APIs — all in one place.
-              </p>
             </div>
-
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* WHAT ARE YOU BUILDING TODAY */}
 
@@ -667,7 +696,7 @@ export const LandingPage: React.FC = () => {
                     idx
                   ) => (
                     <LandingApiCard
-                      key={`\( {api.id}- \){idx}`}
+                      key={`${api.id}-${idx}`}
                       api={api}
                       topIds={top3Ids}
                       onLikeChange={
