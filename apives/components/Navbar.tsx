@@ -1,119 +1,243 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+
 import {
   Menu,
   X,
   Terminal,
   LayoutDashboard,
   LogOut,
-  Radio,
   Home as HomeIcon,
   Search,
   PlusCircle,
   Cpu,
   ShieldCheck,
-  Box,
   Trophy,
-  Handshake,
-  Zap,
-  BrainCircuit,
   Fingerprint,
   KeyRound,
-  FileJson,
   ArrowLeftRight,
-  Server,
   Waypoints,
-  Wand2
+  Orbit
 } from 'lucide-react';
 
-const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
-  <Link to={to} className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
-    {Icon && <Icon size={14} className="text-mora-500/70 group-hover:text-mora-500 transition-colors" />}
+const NavLink = ({
+  to,
+  children,
+  icon: Icon
+}: React.PropsWithChildren<{
+  to: string;
+  icon?: React.ElementType;
+}>) => (
+
+  <Link
+    to={to}
+    className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
+  >
+
+    {Icon && (
+      <Icon
+        size={14}
+        className="text-mora-500/70 group-hover:text-mora-500 transition-colors"
+      />
+    )}
+
     {children}
+
     <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-mora-500 transition-all group-hover:w-1/2 duration-300 rounded-full"></span>
+
   </Link>
 );
 
-const MobileNavLink = ({ to, children, onClick, icon: Icon }: React.PropsWithChildren<{ to: string; onClick: () => void; icon: React.ElementType }>) => (
-  <Link to={to} onClick={onClick} className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-300 hover:text-mora-400 hover:bg-mora-500/5 border border-transparent hover:border-white/10 transition-all uppercase tracking-wide">
-    <Icon size={13} className="text-mora-500/60" />
+
+const MobileNavLink = ({
+  to,
+  children,
+  onClick,
+  icon: Icon
+}: React.PropsWithChildren<{
+  to: string;
+  onClick: () => void;
+  icon: React.ElementType;
+}>) => (
+
+  <Link
+    to={to}
+    onClick={onClick}
+    className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-300 hover:text-mora-400 hover:bg-mora-500/5 border border-transparent hover:border-white/10 transition-all uppercase tracking-wide"
+  >
+
+    <Icon
+      size={13}
+      className="text-mora-500/60"
+    />
+
     {children}
+
   </Link>
 );
+
 
 export const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const [isOpen, setIsOpen] =
+    React.useState(false);
+
+  const [isScrolled, setIsScrolled] =
+    useState(false);
+
+  const [isAuthenticated, setIsAuthenticated] =
+    useState(false);
+
+  const [isLoggingOut, setIsLoggingOut] =
+    useState(false);
+
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isAuthPage = location.pathname === '/access';
-  const isOnboardingPage = location.pathname === '/onboarding';
 
-  const userRaw = localStorage.getItem("mora_user");
-  const user = userRaw ? JSON.parse(userRaw) : null;
-  const isAdmin = user?.email === "beatslevelone@gmail.com";
+  const isAuthPage =
+    location.pathname === '/access';
+
+  const isOnboardingPage =
+    location.pathname === '/onboarding';
+
+
+  const userRaw =
+    localStorage.getItem("mora_user");
+
+  const user =
+    userRaw
+      ? JSON.parse(userRaw)
+      : null;
+
+  const isAdmin =
+    user?.email === "beatslevelone@gmail.com";
+
 
   useEffect(() => {
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(
+        window.scrollY > 20
+      );
     };
 
+
     const checkAuth = () => {
-      setIsAuthenticated(!!localStorage.getItem('mora_user'));
+
+      setIsAuthenticated(
+        !!localStorage.getItem(
+          'mora_user'
+        )
+      );
+
     };
+
 
     checkAuth();
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('auth-change', checkAuth);
+
+    window.addEventListener(
+      'scroll',
+      handleScroll,
+      { passive: true }
+    );
+
+    window.addEventListener(
+      'auth-change',
+      checkAuth
+    );
+
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('auth-change', checkAuth);
+
+      window.removeEventListener(
+        'scroll',
+        handleScroll
+      );
+
+      window.removeEventListener(
+        'auth-change',
+        checkAuth
+      );
+
     };
+
   }, []);
 
+
   const handleLogout = () => {
+
     setIsLoggingOut(true);
 
+
     setTimeout(() => {
-      localStorage.removeItem('mora_user');
+
+      localStorage.removeItem(
+        'mora_user'
+      );
+
       setIsAuthenticated(false);
+
       setIsLoggingOut(false);
+
       setIsOpen(false);
+
       navigate('/');
+
     }, 1000);
+
   };
 
-  if (isAuthPage || isOnboardingPage) return null;
 
-  const navContainerStyle = isScrolled && !isOpen
-    ? "top-4 md:top-6 w-[92%] max-w-7xl rounded-full border border-white/20 bg-white/[0.03] backdrop-blur-[40px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] py-1.5 md:py-2"
-    : isOpen
-    ? "top-0 w-full bg-black border-b border-white/10 py-2.5 md:py-4"
-    : "top-0 w-full border-b border-white/5 bg-black/50 backdrop-blur-sm py-2 md:py-3";
+  if (
+    isAuthPage ||
+    isOnboardingPage
+  ) {
+    return null;
+  }
+
+
+  const navContainerStyle =
+    isScrolled && !isOpen
+
+      ? "top-4 md:top-6 w-[92%] max-w-7xl rounded-full border border-white/20 bg-white/[0.03] backdrop-blur-[40px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] py-1.5 md:py-2"
+
+      : isOpen
+
+      ? "top-0 w-full bg-black border-b border-white/10 py-2.5 md:py-4"
+
+      : "top-0 w-full border-b border-white/5 bg-black/50 backdrop-blur-sm py-2 md:py-3";
+
 
   return (
+
     <>
+
       {isLoggingOut && (
 
         <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-fade-in">
+
           <div className="w-6 h-6 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
 
           <span className="text-white font-mono text-[10px] font-bold uppercase tracking-widest">
             Logging out...
           </span>
+
         </div>
+
       )}
 
-      <nav className={`fixed z-50 left-1/2 -translate-x-1/2 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${navContainerStyle}`}>
+
+      <nav
+        className={`fixed z-50 left-1/2 -translate-x-1/2 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${navContainerStyle}`}
+      >
 
         {isScrolled && !isOpen && (
+
           <div className="absolute inset-0 rounded-full pointer-events-none">
 
             <div className="absolute top-0 bottom-0 left-0 w-[50%] border-l-[2px] md:border-l-[3.5px] border-mora-500 rounded-l-full opacity-90"></div>
@@ -121,40 +245,67 @@ export const Navbar: React.FC = () => {
             <div className="absolute top-0 bottom-0 right-0 w-[50%] border-r-[2px] md:border-r-[3.5px] border-mora-500 rounded-r-full opacity-90"></div>
 
           </div>
+
         )}
+
 
         <div className="mx-auto px-4 md:px-6 w-full relative">
 
           <div className="flex justify-between items-center">
 
+
             <div className="flex items-center">
 
-              <Link to="/" className="flex items-center group" onClick={() => setIsOpen(false)}>
+
+              <Link
+                to="/"
+                className="flex items-center group"
+                onClick={() =>
+                  setIsOpen(false)
+                }
+              >
+
                 <img
                   src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
                   alt="Apives Logo"
                   className="w-9 h-9 md:w-16 md:h-16 object-contain transition-transform group-hover:rotate-12 duration-500 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"
                 />
+
               </Link>
+
 
               <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">
 
-                <NavLink to="/" icon={HomeIcon}>
+                <NavLink
+                  to="/"
+                  icon={HomeIcon}
+                >
                   Home
                 </NavLink>
 
-                <NavLink to="/browse" icon={Search}>
+
+                <NavLink
+                  to="/browse"
+                  icon={Search}
+                >
                   Explore APIs
                 </NavLink>
 
-                <NavLink to="/ask-apives-ai" icon={BrainCircuit}>
+
+                <NavLink
+                  to="/ask-apives-ai"
+                  icon={Orbit}
+                >
                   ApivesAI
                 </NavLink>
 
               </div>
+
             </div>
 
+
             <div className="flex items-center gap-2 md:gap-3">
+
 
               <div className="hidden lg:flex items-center space-x-3">
 
@@ -162,35 +313,52 @@ export const Navbar: React.FC = () => {
 
                   <div className="flex items-center gap-2">
 
+
                     <Link
                       to="/provider"
                       className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 border border-white/10 hover:border-mora-500/50 text-slate-300 hover:text-mora-400 px-5 py-2 rounded-full transition-all duration-300"
                     >
-                      <LayoutDashboard size={14} />
+
+                      <LayoutDashboard
+                        size={14}
+                      />
 
                       <span className="text-[10px] font-bold uppercase tracking-widest">
                         Console
                       </span>
+
                     </Link>
 
+
                     {isAdmin && (
+
                       <Link
                         to="/admin/sponsors"
                         className="flex items-center space-x-2 bg-white/5 hover:bg-mora-500/20 border border-white/10 hover:border-mora-500/50 text-slate-300 hover:text-mora-400 px-5 py-2 rounded-full transition-all duration-300"
                       >
-                        <ShieldCheck size={14} />
+
+                        <ShieldCheck
+                          size={14}
+                        />
 
                         <span className="text-[10px] font-bold uppercase tracking-widest">
                           Sponsor Analytics
                         </span>
+
                       </Link>
+
                     )}
+
 
                     <button
                       onClick={handleLogout}
                       className="bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-slate-400 p-2.5 rounded-full border border-white/10 transition-all"
                     >
-                      <LogOut size={14} />
+
+                      <LogOut
+                        size={14}
+                      />
+
                     </button>
 
                   </div>
@@ -201,31 +369,45 @@ export const Navbar: React.FC = () => {
                     to="/access"
                     className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]"
                   >
-                    <Fingerprint size={14} />
+
+                    <Fingerprint
+                      size={14}
+                    />
 
                     <span className="text-[10px] font-black uppercase tracking-widest">
                       Sign in
                     </span>
+
                   </Link>
 
                 )}
 
               </div>
 
+
               {isAuthenticated && (
+
                 <Link
                   to="/provider"
                   className="lg:hidden flex items-center gap-1.5 bg-mora-500/10 border border-mora-500/30 text-mora-400 px-3.5 py-1 rounded-full text-[8px] font-black uppercase tracking-tighter shadow-md"
                 >
+
                   <Cpu size={10} />
+
                   Console
+
                 </Link>
+
               )}
 
+
               {/* APIVES AI — MOBILE HEADER */}
+
               <Link
                 to="/ask-apives-ai"
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
                 className="
                   md:hidden
                   w-7 h-7 md:w-10 md:h-10
@@ -241,12 +423,21 @@ export const Navbar: React.FC = () => {
                   transition-all
                 "
               >
-                <BrainCircuit size={16} className="md:w-5 md:h-5" />
+
+                <Orbit
+                  size={16}
+                  className="md:w-5 md:h-5"
+                />
+
               </Link>
 
+
               {/* MOBILE SEARCH */}
+
               <button
-                onClick={() => navigate('/browse')}
+                onClick={() =>
+                  navigate('/browse')
+                }
                 className="
                   md:hidden
                   w-7 h-7 md:w-10 md:h-10
@@ -262,31 +453,54 @@ export const Navbar: React.FC = () => {
                   transition-all
                 "
               >
-                <Search size={14} className="md:w-5 md:h-5" />
+
+                <Search
+                  size={14}
+                  className="md:w-5 md:h-5"
+                />
+
               </button>
+
 
               <div className="relative">
 
                 <button
-                  onClick={() => setIsOpen(!isOpen)}
+                  onClick={() =>
+                    setIsOpen(!isOpen)
+                  }
                   className={`w-7 h-7 md:w-10 md:h-10 flex items-center justify-center rounded-full border shadow-lg transition-all duration-300 ${
                     isOpen
-                    ? 'bg-mora-500/20 border-mora-500 text-mora-400'
-                    : 'bg-white/[0.05] backdrop-blur-[20px] border-white/20 text-slate-300 hover:bg-white/[0.1] active:scale-90'
+                      ? 'bg-mora-500/20 border-mora-500 text-mora-400'
+                      : 'bg-white/[0.05] backdrop-blur-[20px] border-white/20 text-slate-300 hover:bg-white/[0.1] active:scale-90'
                   }`}
                 >
+
                   {isOpen ? (
-                    <X size={14} className="md:w-5 md:h-5" />
+
+                    <X
+                      size={14}
+                      className="md:w-5 md:h-5"
+                    />
+
                   ) : (
-                    <Menu size={14} className="md:w-5 md:h-5" />
+
+                    <Menu
+                      size={14}
+                      className="md:w-5 md:h-5"
+                    />
+
                   )}
+
                 </button>
 
               </div>
 
             </div>
+
           </div>
+
         </div>
+
 
         {isOpen && (
 
@@ -294,141 +508,197 @@ export const Navbar: React.FC = () => {
 
             <div className="px-4 pt-3 pb-4 space-y-1">
 
+
               <MobileNavLink
                 to="/"
                 icon={HomeIcon}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 Home
               </MobileNavLink>
 
+
               <MobileNavLink
                 to="/browse"
                 icon={Search}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 Explore APIs
               </MobileNavLink>
 
+
               {/* NEW RELEASES REMOVED */}
+
 
               <MobileNavLink
                 to="/popular"
                 icon={Trophy}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 Top Rated
               </MobileNavLink>
 
+
               <MobileNavLink
-                to="/ask-apives"
-                icon={BrainCircuit}
+                to="/ask-apives-ai"
+                icon={Orbit}
                 onClick={() => {
                   setIsOpen(false);
-                  navigate("/ask-apives-ai");
+                  navigate(
+                    "/ask-apives-ai"
+                  );
                 }}
               >
                 ApivesAI
               </MobileNavLink>
 
+
               <MobileNavLink
                 to="/live-api-runner"
                 icon={Terminal}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 API Runner
               </MobileNavLink>
 
+
               <MobileNavLink
                 to="/jwt-decoder"
                 icon={KeyRound}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 JWT Decoder
               </MobileNavLink>
 
-              <MobileNavLink
-                to="/api-response-formatter"
-                icon={FileJson}
-                onClick={() => setIsOpen(false)}
-              >
-                API Response Formatter
-              </MobileNavLink>
+
+              {/* API RESPONSE FORMATTER REMOVED FROM MENU */}
+
 
               <MobileNavLink
                 to="/curl-converter"
                 icon={ArrowLeftRight}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 cURL Converter
               </MobileNavLink>
 
+
               <MobileNavLink
                 to="/mock-server"
                 icon={Waypoints}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 Mock Server
               </MobileNavLink>
 
+
               {/* ARCHITECT REMOVED FROM MENU */}
+
 
               <MobileNavLink
                 to="/submit"
                 icon={PlusCircle}
-                onClick={() => setIsOpen(false)}
+                onClick={() =>
+                  setIsOpen(false)
+                }
               >
                 Submit API
               </MobileNavLink>
 
+
               <div className="border-t border-white/10 my-2 opacity-30"></div>
 
+
               {isAuthenticated ? (
+
                 <>
+
                   <MobileNavLink
                     to="/provider"
                     icon={LayoutDashboard}
-                    onClick={() => setIsOpen(false)}
+                    onClick={() =>
+                      setIsOpen(false)
+                    }
                   >
                     Console
                   </MobileNavLink>
 
+
                   {isAdmin && (
+
                     <MobileNavLink
                       to="/admin/sponsors"
                       icon={ShieldCheck}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() =>
+                        setIsOpen(false)
+                      }
                     >
                       Sponsor Analytics
                     </MobileNavLink>
+
                   )}
 
+
                   <button
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                     className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-red-400 hover:bg-red-500/5 transition-all uppercase tracking-wide mt-1"
                   >
-                    <LogOut size={13} className="text-red-500/60" />
+
+                    <LogOut
+                      size={13}
+                      className="text-red-500/60"
+                    />
 
                     Terminate Session
+
                   </button>
+
                 </>
+
               ) : (
+
                 <MobileNavLink
                   to="/access"
                   icon={Fingerprint}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() =>
+                    setIsOpen(false)
+                  }
                 >
                   Sign in
                 </MobileNavLink>
+
               )}
 
             </div>
+
           </div>
+
         )}
 
       </nav>
 
-      {!isScrolled && <div className="h-0"></div>}
+
+      {!isScrolled && (
+        <div className="h-0"></div>
+      )}
+
     </>
+
   );
 };
