@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 
 import {
+  useParams,
+} from "react-router-dom";
+
+import {
   ARTICLES,
   type Article,
 } from "../components/BlogArticles";
-
-/* =========================================================
-   TYPES
-========================================================= */
 
 interface BlogPostProps {
   article?: Article | null;
@@ -30,16 +30,8 @@ interface BlogPostProps {
   ) => void;
 }
 
-/* =========================================================
-   CONSTANTS
-========================================================= */
-
 const GREEN = "#22c55e";
 const GREEN_SOFT = "#4ade80";
-
-/* =========================================================
-   SEO
-========================================================= */
 
 function setMeta(
   name: string,
@@ -47,8 +39,7 @@ function setMeta(
   property = false
 ) {
   if (
-    typeof document ===
-    "undefined"
+    typeof document === "undefined"
   ) {
     return;
   }
@@ -64,9 +55,7 @@ function setMeta(
 
   if (!element) {
     element =
-      document.createElement(
-        "meta"
-      );
+      document.createElement("meta");
 
     element.setAttribute(
       attribute,
@@ -88,16 +77,13 @@ function updateArticleSEO(
   article: Article | null
 ) {
   if (
-    typeof document ===
-    "undefined"
+    typeof document === "undefined"
   ) {
     return;
   }
 
   if (!article) {
-    document.title =
-      "Apives Blog";
-
+    document.title = "Apives Blog";
     return;
   }
 
@@ -108,12 +94,9 @@ function updateArticleSEO(
     article.excerpt;
 
   const keywords =
-    article.keywords.join(
-      ", "
-    );
+    article.keywords.join(", ");
 
-  document.title =
-    title;
+  document.title = title;
 
   setMeta(
     "description",
@@ -174,12 +157,9 @@ function updateArticleSEO(
 
   if (!canonical) {
     canonical =
-      document.createElement(
-        "link"
-      );
+      document.createElement("link");
 
-    canonical.rel =
-      "canonical";
+    canonical.rel = "canonical";
 
     document.head.appendChild(
       canonical
@@ -190,16 +170,11 @@ function updateArticleSEO(
     canonicalUrl;
 }
 
-/* =========================================================
-   STRUCTURED DATA
-========================================================= */
-
 function updateArticleSchema(
   article: Article | null
 ) {
   if (
-    typeof document ===
-    "undefined"
+    typeof document === "undefined"
   ) {
     return;
   }
@@ -215,9 +190,7 @@ function updateArticleSchema(
   }
 
   const script =
-    document.createElement(
-      "script"
-    );
+    document.createElement("script");
 
   script.id =
     "apives-blog-post-schema";
@@ -275,10 +248,6 @@ function updateArticleSchema(
   );
 }
 
-/* =========================================================
-   INLINE MARKDOWN LINKS
-========================================================= */
-
 function renderInlineText(
   text: string,
   keyPrefix: string
@@ -320,10 +289,6 @@ function renderInlineText(
   );
 }
 
-/* =========================================================
-   CONTENT RENDERER
-========================================================= */
-
 function renderArticleContent(
   text: string
 ) {
@@ -347,9 +312,7 @@ function renderArticleContent(
       }
 
       if (
-        clean.startsWith(
-          "## "
-        )
+        clean.startsWith("## ")
       ) {
         return (
           <h2
@@ -392,10 +355,6 @@ function renderArticleContent(
     }
   );
 }
-
-/* =========================================================
-   BRAND ICONS
-========================================================= */
 
 function FacebookMark() {
   return (
@@ -468,10 +427,6 @@ function XMark() {
   );
 }
 
-/* =========================================================
-   SHARE BUTTON
-========================================================= */
-
 function PostShareButton({
   label,
   children,
@@ -498,24 +453,22 @@ function PostShareButton({
   );
 }
 
-/* =========================================================
-   MAIN BLOG POST COMPONENT
-========================================================= */
-
 export default function BlogPost({
   article: suppliedArticle,
   slug,
   onBack,
   onSelectArticle,
 }: BlogPostProps) {
+  const {
+    slug: routeSlug,
+  } = useParams<{
+    slug: string;
+  }>();
+
   const [
     sharing,
     setSharing,
   ] = useState(false);
-
-  /* =======================================================
-     FIND ARTICLE
-  ======================================================= */
 
   const article =
     useMemo(() => {
@@ -523,11 +476,14 @@ export default function BlogPost({
         return suppliedArticle;
       }
 
-      if (slug) {
+      const currentSlug =
+        slug || routeSlug;
+
+      if (currentSlug) {
         return (
           ARTICLES.find(
             (item) =>
-              item.slug === slug
+              item.slug === currentSlug
           ) || null
         );
       }
@@ -536,11 +492,8 @@ export default function BlogPost({
     }, [
       suppliedArticle,
       slug,
+      routeSlug,
     ]);
-
-  /* =======================================================
-     SEO + SCROLL
-  ======================================================= */
 
   useEffect(() => {
     updateArticleSEO(article);
@@ -555,10 +508,6 @@ export default function BlogPost({
       updateArticleSchema(null);
     };
   }, [article]);
-
-  /* =======================================================
-     SHARE URL
-  ======================================================= */
 
   const shareUrl =
     article
@@ -575,10 +524,6 @@ export default function BlogPost({
       article?.title ||
         "Apives Blog"
     );
-
-  /* =======================================================
-     NATIVE SHARE
-  ======================================================= */
 
   const nativeShare =
     async () => {
@@ -606,7 +551,6 @@ export default function BlogPost({
               shareUrl,
           });
         } catch {
-          // User cancelled native share.
         } finally {
           setSharing(false);
         }
@@ -628,13 +572,8 @@ export default function BlogPost({
           1400
         );
       } catch {
-        // Clipboard unavailable.
       }
     };
-
-  /* =======================================================
-     SOCIAL SHARE
-  ======================================================= */
 
   const shareTo =
     (
@@ -697,10 +636,6 @@ export default function BlogPost({
       }
     };
 
-  /* =======================================================
-     RELATED ARTICLES
-  ======================================================= */
-
   const relatedArticles =
     useMemo(() => {
       if (!article) {
@@ -709,14 +644,9 @@ export default function BlogPost({
 
       return ARTICLES.filter(
         (item) =>
-          item.id !==
-          article.id
+          item.id !== article.id
       ).slice(0, 3);
     }, [article]);
-
-  /* =======================================================
-     BACK
-  ======================================================= */
 
   const handleBack =
     () => {
@@ -730,25 +660,17 @@ export default function BlogPost({
       );
     };
 
-  /* =======================================================
-     ARTICLE NOT FOUND
-  ======================================================= */
-
   if (!article) {
     return (
       <>
         <BlogPostStyles />
 
         <main className="post-root">
-
           <div className="post-not-found">
-
             <button
               type="button"
               className="post-back-button"
-              onClick={
-                handleBack
-              }
+              onClick={handleBack}
             >
               <ArrowLeft
                 size={16}
@@ -769,36 +691,22 @@ export default function BlogPost({
               exist or may have been
               moved.
             </p>
-
           </div>
-
         </main>
       </>
     );
   }
-
-  /* =======================================================
-     PAGE
-  ======================================================= */
 
   return (
     <>
       <BlogPostStyles />
 
       <main className="post-root">
-
-        {/* =================================================
-            TOP RETURN
-        ================================================= */}
-
         <div className="post-return-area">
-
           <button
             type="button"
             className="post-back-button"
-            onClick={
-              handleBack
-            }
+            onClick={handleBack}
           >
             <ArrowLeft
               size={16}
@@ -807,23 +715,11 @@ export default function BlogPost({
             <span>
               Back to Blog
             </span>
-
           </button>
-
         </div>
 
-        {/* =================================================
-            ARTICLE
-        ================================================= */}
-
         <article className="post-page">
-
-          {/* =================================================
-              HEADER
-          ================================================= */}
-
           <header className="post-header">
-
             <div className="post-category">
               {article.keywords
                 .slice(0, 2)
@@ -839,7 +735,6 @@ export default function BlogPost({
             </p>
 
             <div className="post-meta">
-
               <span className="post-date">
                 {article.date}
               </span>
@@ -859,21 +754,13 @@ export default function BlogPost({
                   @priiincegupta
                 </a>
               </span>
-
             </div>
 
-            {/* =================================================
-                SHARE
-            ================================================= */}
-
             <div className="post-share-row">
-
               <PostShareButton
                 label="Email"
                 onClick={() =>
-                  shareTo(
-                    "email"
-                  )
+                  shareTo("email")
                 }
               >
                 <Mail
@@ -884,9 +771,7 @@ export default function BlogPost({
               <PostShareButton
                 label="Facebook"
                 onClick={() =>
-                  shareTo(
-                    "facebook"
-                  )
+                  shareTo("facebook")
                 }
               >
                 <FacebookMark />
@@ -895,9 +780,7 @@ export default function BlogPost({
               <PostShareButton
                 label="Reddit"
                 onClick={() =>
-                  shareTo(
-                    "reddit"
-                  )
+                  shareTo("reddit")
                 }
               >
                 <RedditMark />
@@ -915,9 +798,7 @@ export default function BlogPost({
               <PostShareButton
                 label="LinkedIn"
                 onClick={() =>
-                  shareTo(
-                    "linkedin"
-                  )
+                  shareTo("linkedin")
                 }
               >
                 <LinkedInMark />
@@ -926,9 +807,7 @@ export default function BlogPost({
               <PostShareButton
                 label="WhatsApp"
                 onClick={() =>
-                  shareTo(
-                    "whatsapp"
-                  )
+                  shareTo("whatsapp")
                 }
               >
                 <WhatsAppMark />
@@ -940,9 +819,7 @@ export default function BlogPost({
                     ? "Shared"
                     : "Share"
                 }
-                onClick={
-                  nativeShare
-                }
+                onClick={nativeShare}
               >
                 {sharing ? (
                   <Check
@@ -954,33 +831,19 @@ export default function BlogPost({
                   />
                 )}
               </PostShareButton>
-
             </div>
 
             <div className="post-divider" />
-
           </header>
 
-          {/* =================================================
-              CONTENT
-          ================================================= */}
-
           <div className="post-content">
-
             {renderArticleContent(
               article.content
             )}
-
           </div>
 
-          {/* =================================================
-              FAQ
-          ================================================= */}
-
-          {article.faq.length >
-            0 && (
+          {article.faq.length > 0 && (
             <section className="post-faq">
-
               <h2>
                 Frequently Asked
                 Questions
@@ -994,7 +857,6 @@ export default function BlogPost({
               </p>
 
               <div className="post-faq-list">
-
                 {article.faq.map(
                   (
                     item,
@@ -1004,9 +866,7 @@ export default function BlogPost({
                       key={index}
                       className="post-faq-item"
                     >
-
                       <summary>
-
                         <span>
                           {
                             item.question
@@ -1016,42 +876,27 @@ export default function BlogPost({
                         <ChevronRight
                           size={17}
                         />
-
                       </summary>
 
                       <p>
-                        {
-                          item.answer
-                        }
+                        {item.answer}
                       </p>
-
                     </details>
                   )
                 )}
-
               </div>
-
             </section>
           )}
 
-          {/* =================================================
-              RELATED
-          ================================================= */}
-
-          {relatedArticles.length >
-            0 && (
+          {relatedArticles.length > 0 && (
             <section className="post-related">
-
               <h2>
                 More from Apives
               </h2>
 
               <div className="post-related-list">
-
                 {relatedArticles.map(
-                  (
-                    related
-                  ) => (
+                  (related) => (
                     <button
                       key={
                         related.id
@@ -1080,9 +925,7 @@ export default function BlogPost({
                         );
                       }}
                     >
-
                       <div>
-
                         <span className="post-related-date">
                           {
                             related.date
@@ -1100,40 +943,26 @@ export default function BlogPost({
                             related.excerpt
                           }
                         </p>
-
                       </div>
 
                       <ChevronRight
                         size={18}
                       />
-
                     </button>
                   )
                 )}
-
               </div>
-
             </section>
           )}
-
         </article>
-
       </main>
     </>
   );
 }
 
-/* =========================================================
-   STYLES
-========================================================= */
-
 function BlogPostStyles() {
   return (
     <style>{`
-
-      /* =====================================================
-         GLOBAL
-      ===================================================== */
 
       html {
         background: #000;
@@ -1154,21 +983,13 @@ function BlogPostStyles() {
       ::selection {
         background:
           rgba(34,197,94,.22);
-
         color: #fff;
       }
 
-      /* =====================================================
-         ROOT
-      ===================================================== */
-
       .post-root {
         min-height: 100vh;
-
         width: 100%;
-
         background: #000;
-
         color: #fff;
 
         font-family:
@@ -1181,17 +1002,10 @@ function BlogPostStyles() {
           sans-serif;
       }
 
-      /* =====================================================
-         RETURN AREA
-      ===================================================== */
-
       .post-return-area {
         width: 100%;
-
         max-width: 900px;
-
         margin: 0 auto;
-
         padding:
           110px 24px
           0;
@@ -1199,9 +1013,7 @@ function BlogPostStyles() {
 
       .post-back-button {
         display: inline-flex;
-
         align-items: center;
-
         gap: 8px;
 
         padding:
@@ -1219,9 +1031,7 @@ function BlogPostStyles() {
         color: #777;
 
         font: inherit;
-
         font-size: 11px;
-
         font-weight: 600;
 
         cursor: pointer;
@@ -1254,15 +1064,9 @@ function BlogPostStyles() {
           translateX(-2px);
       }
 
-      /* =====================================================
-         PAGE
-      ===================================================== */
-
       .post-page {
         width: 100%;
-
         max-width: 820px;
-
         margin: 0 auto;
 
         padding:
@@ -1270,13 +1074,8 @@ function BlogPostStyles() {
           110px;
       }
 
-      /* =====================================================
-         HEADER
-      ===================================================== */
-
       .post-header {
         text-align: center;
-
         padding-bottom: 25px;
       }
 
@@ -1286,17 +1085,14 @@ function BlogPostStyles() {
         color: ${GREEN};
 
         font-size: 10px;
-
         font-weight: 700;
 
         letter-spacing: .08em;
-
         text-transform: uppercase;
       }
 
       .post-title {
         max-width: 820px;
-
         margin: 0 auto;
 
         color: #fff;
@@ -1328,11 +1124,8 @@ function BlogPostStyles() {
 
       .post-meta {
         display: flex;
-
         flex-wrap: wrap;
-
         align-items: center;
-
         justify-content: center;
 
         gap: 8px;
@@ -1346,7 +1139,6 @@ function BlogPostStyles() {
 
       .post-date {
         color: ${GREEN};
-
         font-weight: 650;
       }
 
@@ -1356,9 +1148,7 @@ function BlogPostStyles() {
 
       .post-author {
         color: ${GREEN};
-
         font-weight: 650;
-
         text-decoration: none;
 
         border-bottom:
@@ -1373,15 +1163,9 @@ function BlogPostStyles() {
           rgba(34,197,94,.65);
       }
 
-      /* =====================================================
-         SHARE
-      ===================================================== */
-
       .post-share-row {
         display: flex;
-
         align-items: center;
-
         justify-content: center;
 
         gap: 7px;
@@ -1396,7 +1180,6 @@ function BlogPostStyles() {
         height: 39px;
 
         display: flex;
-
         align-items: center;
         justify-content: center;
 
@@ -1434,7 +1217,6 @@ function BlogPostStyles() {
       .post-share-button svg {
         width: 16px;
         height: 16px;
-
         color: ${GREEN};
       }
 
@@ -1509,13 +1291,8 @@ function BlogPostStyles() {
           translateY(0);
       }
 
-      /* =====================================================
-         DIVIDER
-      ===================================================== */
-
       .post-divider {
         width: 100%;
-
         height: 1px;
 
         margin-top: 22px;
@@ -1523,10 +1300,6 @@ function BlogPostStyles() {
         background:
           rgba(255,255,255,.10);
       }
-
-      /* =====================================================
-         ARTICLE CONTENT
-      ===================================================== */
 
       .post-content {
         width: 100%;
@@ -1635,13 +1408,8 @@ function BlogPostStyles() {
         line-height: 1.7;
       }
 
-      /* =====================================================
-         FAQ
-      ===================================================== */
-
       .post-faq {
         margin-top: 75px;
-
         padding-top: 45px;
 
         border-top:
@@ -1691,9 +1459,7 @@ function BlogPostStyles() {
 
       .post-faq-item summary {
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
 
         gap: 20px;
@@ -1758,13 +1524,8 @@ function BlogPostStyles() {
         line-height: 1.85;
       }
 
-      /* =====================================================
-         RELATED
-      ===================================================== */
-
       .post-related {
         margin-top: 75px;
-
         padding-top: 45px;
 
         border-top:
@@ -1786,7 +1547,6 @@ function BlogPostStyles() {
         display: flex;
 
         align-items: center;
-
         justify-content: space-between;
 
         gap: 25px;
@@ -1886,13 +1646,8 @@ function BlogPostStyles() {
           translateX(3px);
       }
 
-      /* =====================================================
-         NOT FOUND
-      ===================================================== */
-
       .post-not-found {
         width: 100%;
-
         max-width: 700px;
 
         margin: 0 auto;
@@ -1931,12 +1686,7 @@ function BlogPostStyles() {
         line-height: 1.8;
       }
 
-      /* =====================================================
-         MOBILE
-      ===================================================== */
-
       @media (max-width: 640px) {
-
         .post-return-area {
           padding:
             76px 20px
@@ -1951,7 +1701,6 @@ function BlogPostStyles() {
 
         .post-category {
           margin-bottom: 16px;
-
           font-size: 9px;
         }
 
@@ -1977,7 +1726,6 @@ function BlogPostStyles() {
 
         .post-share-row {
           gap: 6px;
-
           margin-top: 20px;
         }
 
@@ -2000,7 +1748,6 @@ function BlogPostStyles() {
 
         .post-content-heading {
           margin-top: 43px;
-
           margin-bottom: 18px;
         }
 
@@ -2012,7 +1759,6 @@ function BlogPostStyles() {
         .post-faq,
         .post-related {
           margin-top: 62px;
-
           padding-top: 35px;
         }
 
@@ -2021,9 +1767,7 @@ function BlogPostStyles() {
             140px 20px
             80px;
         }
-
       }
-
     `}</style>
   );
 }
