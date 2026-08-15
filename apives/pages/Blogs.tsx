@@ -7,10 +7,6 @@ import {
   type Article,
 } from "../components/BlogArticles";
 
-/* =========================================================
-   TYPES
-========================================================= */
-
 interface BlogPost {
   id: number;
   slug: string;
@@ -24,17 +20,7 @@ type BlogItem =
   | (Article & { type: "article" })
   | BlogPost;
 
-/* =========================================================
-   CONSTANTS
-========================================================= */
-
 const GREEN = "#22c55e";
-
-/* =========================================================
-   ARTICLES
-   Article content lives in BlogArticles.tsx.
-   This page only uses the shared article data.
-========================================================= */
 
 const BLOG_ARTICLES: BlogItem[] = ARTICLES.map(
   (article) => ({
@@ -43,40 +29,12 @@ const BLOG_ARTICLES: BlogItem[] = ARTICLES.map(
   })
 );
 
-/* =========================================================
-   POSTS
-   Keep your existing posts here.
-   These also appear in the same Blog UI and open
-   their own separate Post page.
-========================================================= */
-
-const POSTS: BlogPost[] = [
-  /*
-    Example:
-
-    {
-      id: 1,
-      slug: "your-post-slug",
-      title: "Your Post Title",
-      excerpt: "Your post excerpt...",
-      date: "August 15, 2026",
-      type: "post",
-    },
-  */
-];
-
-/* =========================================================
-   ALL BLOG ITEMS
-========================================================= */
+const POSTS: BlogPost[] = [];
 
 const BLOG_ITEMS: BlogItem[] = [
   ...BLOG_ARTICLES,
   ...POSTS,
 ];
-
-/* =========================================================
-   SEO
-========================================================= */
 
 function updateSEO() {
   document.title =
@@ -113,10 +71,6 @@ function updateSEO() {
     `${window.location.origin}/blogs`;
 }
 
-/* =========================================================
-   BLOG LIST ITEM
-========================================================= */
-
 const BlogListItem = memo(
   function BlogListItem({
     item,
@@ -147,10 +101,6 @@ const BlogListItem = memo(
   }
 );
 
-/* =========================================================
-   MAIN BLOG PAGE
-========================================================= */
-
 export default function Blogs() {
   const [
     searchQuery,
@@ -165,10 +115,6 @@ export default function Blogs() {
       behavior: "auto",
     });
   }, []);
-
-  /* =======================================================
-     SEARCH
-  ======================================================= */
 
   const filteredItems = useMemo(() => {
     const query =
@@ -194,16 +140,12 @@ export default function Blogs() {
     );
   }, [searchQuery]);
 
-  /* =======================================================
-     OPEN SEPARATE PAGE
-  ======================================================= */
-
   const openItem = (
     item: BlogItem
   ) => {
     if (item.type === "article") {
       window.location.assign(
-        `/articles/${item.slug}`
+        `/blogs/${item.slug}`
       );
 
       return;
@@ -219,10 +161,6 @@ export default function Blogs() {
       <BlogStyles />
 
       <main className="blog-root">
-
-        {/* =================================================
-            HERO
-        ================================================= */}
 
         <section className="blog-hero">
 
@@ -241,10 +179,6 @@ export default function Blogs() {
           </p>
 
         </section>
-
-        {/* =================================================
-            SEARCH
-        ================================================= */}
 
         <section className="search-section">
 
@@ -283,10 +217,6 @@ export default function Blogs() {
           </div>
 
         </section>
-
-        {/* =================================================
-            BLOG ITEMS
-        ================================================= */}
 
         <section className="articles-section">
 
@@ -329,10 +259,6 @@ export default function Blogs() {
     </>
   );
 }
-
-/* =========================================================
-   STYLES
-========================================================= */
 
 function BlogStyles() {
   return (
@@ -377,10 +303,6 @@ function BlogStyles() {
         background: ${GREEN};
       }
 
-      /* ============================================
-         ROOT
-      ============================================ */
-
       .blog-root {
         min-height: 100vh;
         width: 100%;
@@ -397,10 +319,6 @@ function BlogStyles() {
           "Segoe UI",
           sans-serif;
       }
-
-      /* ============================================
-         HERO
-      ============================================ */
 
       .blog-hero {
         max-width: 900px;
@@ -442,10 +360,6 @@ function BlogStyles() {
 
         letter-spacing: -.15px;
       }
-
-      /* ============================================
-         SEARCH
-      ============================================ */
 
       .search-section {
         max-width: 900px;
@@ -564,10 +478,6 @@ function BlogStyles() {
         background:
           rgba(255,255,255,.07);
       }
-
-      /* ============================================
-         BLOG LIST
-      ============================================ */
 
       .articles-section {
         max-width: 900px;
@@ -691,10 +601,6 @@ function BlogStyles() {
 
         cursor: pointer;
       }
-
-      /* ============================================
-         MOBILE
-      ============================================ */
 
       @media (max-width: 640px) {
 
