@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Instagram,
+  Youtube,
   MessageSquare,
   X,
-  Youtube,
+  Cookie,
+  ChevronRight,
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -33,10 +35,15 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
+
+      {/* MAIN FOOTER */}
       <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
+
           {/* BRAND */}
           <div className="md:col-span-3">
+
             <div className="flex items-center mb-4 md:mb-5">
               <img
                 src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
@@ -49,22 +56,30 @@ export const Footer: React.FC = () => {
               A next-gen API ecosystem where builders easily discover and understand APIs.
             </p>
 
+            {/* SOCIAL LINKS */}
             <div className="flex items-center gap-3">
-              {/* X (Twitter) */}
+
+              {/* X */}
               <a
                 href="https://x.com/useapives"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Apives on X"
-                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
+                className="
+                  flex items-center justify-center
+                  w-8 h-8 md:w-9 md:h-9
+                  rounded-full
+                  bg-white/5
+                  hover:bg-white/10
+                  border border-white/5
+                  text-slate-500 hover:text-white
+                  transition-all
+                  group
+                "
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform fill-current"
-                  aria-hidden="true"
-                >
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
+                <span className="text-[14px] md:text-[16px] font-semibold leading-none group-hover:scale-110 transition-transform">
+                  𝕏
+                </span>
               </a>
 
               {/* Instagram */}
@@ -73,9 +88,21 @@ export const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Apives on Instagram"
-                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
+                className="
+                  flex items-center justify-center
+                  w-8 h-8 md:w-9 md:h-9
+                  rounded-full
+                  bg-white/5
+                  hover:bg-white/10
+                  border border-white/5
+                  text-slate-500 hover:text-white
+                  transition-all
+                  group
+                "
               >
-                <Instagram className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
+                <Instagram
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
+                />
               </a>
 
               {/* YouTube */}
@@ -84,20 +111,44 @@ export const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Apives on YouTube"
-                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
+                className="
+                  flex items-center justify-center
+                  w-8 h-8 md:w-9 md:h-9
+                  rounded-full
+                  bg-white/5
+                  hover:bg-white/10
+                  border border-white/5
+                  text-slate-500 hover:text-white
+                  transition-all
+                  group
+                "
               >
-                <Youtube className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
+                <Youtube
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
+                />
               </a>
 
-              <span className="text-mora-500 font-black tracking-widest text-[10px] md:text-[12px] select-none">
+              {/* PULSE DIVIDER */}
+              <span
+                className="
+                  text-mora-500
+                  font-black
+                  tracking-widest
+                  text-[10px] md:text-[12px]
+                  select-none
+                  animate-pulse
+                  drop-shadow-[0_0_6px_rgba(34,197,94,0.95)]
+                "
+              >
                 ///
               </span>
 
-              {/* Buy Me a Coffee */}
+              {/* BUY ME A COFFEE */}
               <a
                 href="https://buymeacoffee.com/apives"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Buy me a coffee"
                 className="transition-transform hover:scale-105 active:scale-95"
               >
                 <img
@@ -106,16 +157,19 @@ export const Footer: React.FC = () => {
                   className="h-8 md:h-9 object-contain"
                 />
               </a>
+
             </div>
           </div>
 
           {/* PLATFORM */}
           <div className="md:col-span-2">
+
             <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
               Platform
             </h3>
 
             <ul className="space-y-2 md:space-y-3">
+
               <li>
                 <Link
                   to="/browse"
@@ -124,6 +178,7 @@ export const Footer: React.FC = () => {
                   Explore APIs
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/fresh"
@@ -132,6 +187,7 @@ export const Footer: React.FC = () => {
                   New Releases
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/popular"
@@ -140,6 +196,7 @@ export const Footer: React.FC = () => {
                   Top Rated
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/live-api-runner"
@@ -148,6 +205,7 @@ export const Footer: React.FC = () => {
                   Live API Runner
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/jwt-decoder"
@@ -156,6 +214,7 @@ export const Footer: React.FC = () => {
                   JWT Decoder
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/api-response-formatter"
@@ -164,6 +223,7 @@ export const Footer: React.FC = () => {
                   API Formatter
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/curl-converter"
@@ -172,6 +232,7 @@ export const Footer: React.FC = () => {
                   cURL Converter
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/mock-server"
@@ -180,6 +241,7 @@ export const Footer: React.FC = () => {
                   Mock Server
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/architect"
@@ -188,16 +250,19 @@ export const Footer: React.FC = () => {
                   API Architect
                 </Link>
               </li>
+
             </ul>
           </div>
 
           {/* SUPPORT */}
           <div className="md:col-span-2">
+
             <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
               Support
             </h3>
 
             <ul className="space-y-2 md:space-y-3">
+
               <li>
                 <Link
                   to="/support"
@@ -206,6 +271,7 @@ export const Footer: React.FC = () => {
                   Help & Support
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/docs"
@@ -214,6 +280,7 @@ export const Footer: React.FC = () => {
                   Documentation
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/sponsorship"
@@ -222,6 +289,7 @@ export const Footer: React.FC = () => {
                   For Sponsorship
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/blogs"
@@ -230,6 +298,7 @@ export const Footer: React.FC = () => {
                   Blogs
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/offers/serpapi"
@@ -238,6 +307,7 @@ export const Footer: React.FC = () => {
                   Special Offers
                 </Link>
               </li>
+
               <li>
                 <button
                   onClick={() => setIsFeedbackOpen(true)}
@@ -246,16 +316,19 @@ export const Footer: React.FC = () => {
                   Feedback
                 </button>
               </li>
+
             </ul>
           </div>
 
           {/* LEGAL */}
           <div className="md:col-span-2">
+
             <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
               Legal
             </h3>
 
             <ul className="space-y-2 md:space-y-3">
+
               <li>
                 <Link
                   to="/privacy"
@@ -264,6 +337,7 @@ export const Footer: React.FC = () => {
                   Privacy Policy
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/cookies"
@@ -272,6 +346,7 @@ export const Footer: React.FC = () => {
                   Cookie Policy
                 </Link>
               </li>
+
               <li>
                 <Link
                   to="/terms"
@@ -280,34 +355,164 @@ export const Footer: React.FC = () => {
                   Terms of Service
                 </Link>
               </li>
+
             </ul>
           </div>
+
+        </div>
+      </div>
+
+      {/* =========================================================
+          PREMIUM GREEN GRID FOOTER END
+         ========================================================= */}
+      <div
+        className="
+          relative
+          w-full
+          h-[180px]
+          bg-black
+          overflow-hidden
+          flex
+          items-end
+          px-6
+          py-5
+        "
+      >
+
+        {/* GREEN GLOW */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `
+              radial-gradient(
+                circle at 50% 120%,
+                rgba(34, 197, 94, 0.80) 0%,
+                rgba(21, 128, 61, 0.40) 45%,
+                rgba(0, 0, 0, 0) 75%
+              ),
+              linear-gradient(
+                to top,
+                rgba(34, 197, 94, 0.60) 0%,
+                rgba(0, 0, 0, 0) 100%
+              )
+            `,
+          }}
+        />
+
+        {/* DASHED GRID */}
+        <div className="absolute inset-0 flex justify-around pointer-events-none">
+
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+          <span className="w-px h-full border-l border-dashed border-white/[0.18]" />
+
         </div>
 
-        {/* BOTTOM */}
-        <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8">
-          <div className="flex flex-col items-center">
-            <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2">
-              {/* glowing /// */}
-              <span
-                className="text-mora-500 font-black tracking-widest
-                drop-shadow-[0_0_6px_rgba(34,197,94,0.9)]
-                animate-pulse"
-              >
-                ///
-              </span>
+        {/* SUBTLE GREEN HORIZON */}
+        <div
+          className="
+            absolute
+            left-0
+            right-0
+            bottom-0
+            h-[2px]
+            bg-mora-500/70
+            shadow-[0_0_25px_rgba(34,197,94,0.75)]
+          "
+        />
 
-              <span>© 2026 Apives</span>
-            </p>
-          </div>
+        {/* COPYRIGHT */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+
+          <span
+            className="
+              text-white/70
+              text-[10px]
+              md:text-xs
+              font-medium
+              tracking-[0.18em]
+              uppercase
+              drop-shadow-[0_0_8px_rgba(34,197,94,0.25)]
+            "
+          >
+            © 2026 Apives Ecosystem
+          </span>
+
         </div>
+
+        {/* COOKIE + LANGUAGE CONTROLS */}
+        <div className="relative z-10 flex flex-col items-start gap-3">
+
+          {/* COOKIE */}
+          <button
+            type="button"
+            aria-label="Cookie Settings"
+            className="
+              w-11
+              h-11
+              rounded-full
+              bg-[#0d161a]
+              border
+              border-white/15
+              flex
+              items-center
+              justify-center
+              text-white
+              shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+              hover:bg-[#16242b]
+              transition-colors
+            "
+          >
+            <Cookie
+              size={20}
+              strokeWidth={1.8}
+            />
+          </button>
+
+          {/* LANGUAGE */}
+          <button
+            type="button"
+            className="
+              inline-flex
+              items-center
+              gap-1.5
+              px-3.5
+              py-2
+              bg-[#0d161a]
+              border
+              border-white/15
+              rounded-md
+              text-white
+              text-[12px]
+              font-medium
+              shadow-[0_4px_12px_rgba(0,0,0,0.5)]
+              hover:bg-[#16242b]
+              transition-colors
+            "
+          >
+            <span>English</span>
+
+            <ChevronRight
+              size={12}
+              strokeWidth={2}
+            />
+          </button>
+
+        </div>
+
       </div>
 
       {/* FEEDBACK MODAL */}
       {isFeedbackOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+
           <div className="relative w-full max-w-sm bg-dark-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mora-500 to-transparent"></div>
+
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mora-500 to-transparent" />
 
             <button
               onClick={() => setIsFeedbackOpen(false)}
@@ -317,8 +522,14 @@ export const Footer: React.FC = () => {
             </button>
 
             <div className="text-center mb-6">
+
               <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
-                <MessageSquare className="text-mora-500" size={20} />
+
+                <MessageSquare
+                  className="text-mora-500"
+                  size={20}
+                />
+
               </div>
 
               <h2 className="text-xl font-display font-bold text-white mb-1.5">
@@ -328,9 +539,14 @@ export const Footer: React.FC = () => {
               <p className="text-slate-400 text-xs">
                 Help us refine the ecosystem.
               </p>
+
             </div>
 
-            <form onSubmit={handleFeedbackSubmit} className="space-y-3">
+            <form
+              onSubmit={handleFeedbackSubmit}
+              className="space-y-3"
+            >
+
               <input
                 type="hidden"
                 name="_subject"
@@ -338,45 +554,112 @@ export const Footer: React.FC = () => {
               />
 
               <div className="space-y-1">
+
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                   Name
                 </label>
+
                 <input
                   type="text"
                   name="name"
                   required
                   placeholder="Your Name"
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
+                  className="
+                    w-full
+                    bg-black
+                    border
+                    border-white/10
+                    rounded-xl
+                    px-4
+                    py-2.5
+                    text-xs
+                    text-white
+                    focus:border-mora-500
+                    focus:outline-none
+                    transition-all
+                    placeholder:text-slate-700
+                  "
                 />
+
               </div>
 
               <div className="space-y-1">
+
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Email <span className="text-slate-600 normal-case">(optional)</span>
+                  Email{' '}
+                  <span className="text-slate-600 normal-case">
+                    (optional)
+                  </span>
                 </label>
+
                 <input
                   type="email"
                   name="email"
                   placeholder="Email (optional)"
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700"
+                  className="
+                    w-full
+                    bg-black
+                    border
+                    border-white/10
+                    rounded-xl
+                    px-4
+                    py-2.5
+                    text-xs
+                    text-white
+                    focus:border-mora-500
+                    focus:outline-none
+                    transition-all
+                    placeholder:text-slate-700
+                  "
                 />
+
               </div>
 
               <div className="space-y-1">
+
                 <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider ml-1">
                   Feedback
                 </label>
+
                 <textarea
                   name="message"
                   required
                   rows={3}
                   placeholder="What can we improve?"
-                  className="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-mora-500 focus:outline-none transition-all placeholder-slate-700 resize-none"
-                ></textarea>
+                  className="
+                    w-full
+                    bg-black
+                    border
+                    border-white/10
+                    rounded-xl
+                    px-4
+                    py-2.5
+                    text-xs
+                    text-white
+                    focus:border-mora-500
+                    focus:outline-none
+                    transition-all
+                    placeholder:text-slate-700
+                    resize-none
+                  "
+                />
+
               </div>
 
               {feedbackSuccess && (
-                <div className="bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl px-4 py-3 flex items-center gap-2">
+                <div className="
+                  bg-green-500/10
+                  border
+                  border-green-500/20
+                  text-green-400
+                  text-xs
+                  rounded-xl
+                  px-4
+                  py-3
+                  flex
+                  items-center
+                  gap-2
+                ">
                   <span>✓</span>
                   Thanks! Your feedback really helps 💚
                 </div>
@@ -384,14 +667,32 @@ export const Footer: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full bg-mora-600 hover:bg-mora-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all uppercase tracking-widest text-[10px] mt-2"
+                className="
+                  w-full
+                  bg-mora-600
+                  hover:bg-mora-500
+                  text-white
+                  font-bold
+                  py-3
+                  rounded-xl
+                  shadow-lg
+                  transition-all
+                  uppercase
+                  tracking-widest
+                  text-[10px]
+                  mt-2
+                "
               >
                 Send Feedback
               </button>
+
             </form>
+
           </div>
+
         </div>
       )}
+
     </footer>
   );
 };
