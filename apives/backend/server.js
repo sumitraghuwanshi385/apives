@@ -41,21 +41,17 @@ app.get("/ping", (req, res) => {
   res.status(200).send("OK");
 });
 
-// 🔥 Optimized Landing APIs (6 + 3 + 3 split)
+// 🔥 Optimized Landing APIs (15 + 3 split)
 app.get("/api/landing", async (req, res) => {
   try {
 
-    const [universal, fresh, community] = await Promise.all([
+    const [universal, community] = await Promise.all([
 
-      // 🔥 Universal (6 random)
+      // 🔥 Universal (15 random)
       Api.aggregate([
-        { $sample: { size: 9 } }
+        { $sample: { size: 15 } }
       ]),
-
-      // 🔥 Fresh (latest 3)
-      Api.find({})
-        .sort({ createdAt: -1 })
-        .limit(6),
+      
 
       // 🔥 Community (most liked 3)
       Api.find({})
@@ -65,7 +61,6 @@ app.get("/api/landing", async (req, res) => {
 
     res.json({
       universal,
-      fresh,
       community
     });
 
