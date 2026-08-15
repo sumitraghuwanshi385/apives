@@ -118,7 +118,7 @@ export const Footer: React.FC = () => {
               </li>
               <li>
                 <Link
-                  to="/apives-ai"
+                  to="/ask-apives-ai"
                   className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   ApivesAI
@@ -127,10 +127,10 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* TOOLS */}
+          {/* DEVELOPER TOOLKIT (was Tools) */}
           <div className="md:col-span-2">
             <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
-              Tools
+              Developer ToolKit
             </h3>
             <ul className="space-y-2">
               <li>
@@ -168,10 +168,10 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* DEVELOPER TOOLKIT (was Resources) */}
+          {/* CONTACT (was Developer ToolKit / Resources) */}
           <div className="md:col-span-2">
             <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-3.5">
-              Developer ToolKit
+              Contact
             </h3>
             <ul className="space-y-2">
               <li>
