@@ -104,8 +104,7 @@ element={<LiveApiRunnerPage />} />
     <Route path="/docs" element={<DocumentationPage />} />    
     <Route path="/status" element={<StatusPage />} />    
 <Route path="/blogs" element={<Blogs />} />
-<Route path="/blogs/:slug"
-element=f<BlogPost 1>1>
+<Route path="/articles/:slug" element={<BlogPost />} />
     <Route path="/cookies" element={<CookiesPage />} />    
     <Route path="/privacy" element={<PrivacyPage />} />    
     <Route path="/terms" element={<TermsPage />} />    
