@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Globe, Bookmark, Tag } from "lucide-react";
+import { Globe, Bookmark, Heart } from "lucide-react";
 import { ApiListing } from "../types";
 
 interface Props {
@@ -102,29 +102,27 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
 
           {/* CATEGORY - TOP LEFT */}
           <div className="absolute top-2.5 left-2.5 z-10">
-            <span className="inline-flex items-center gap-1.5 text-[8px] px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-200 uppercase tracking-wider">
-              <Tag size={9} strokeWidth={2} />
+            <span className="inline-flex items-center gap-1.5 text-[8px] px-[9px] py-[3px] rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-200 uppercase tracking-wider">
+              <span className="text-mora-400 flex items-center justify-center">
+                <Globe size={9} strokeWidth={2.2} />
+              </span>
               {api.category}
             </span>
           </div>
 
-          {/* BROWSE + SAVE - TOP RIGHT */}
+          {/* SAVE + LIKES - TOP RIGHT */}
           <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
-            {/* BROWSE */}
-            {api.externalUrl && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-
-                  window.open(api.externalUrl, "_blank");
-                }}
-                className="h-7 w-7 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-300 flex items-center justify-center hover:bg-green-500 hover:text-black hover:border-green-500 transition"
-                aria-label="Browse API"
-              >
-                <Globe size={12} />
-              </button>
-            )}
+            {/* LIKE COUNT */}
+            <div className="h-7 px-2 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-300 flex items-center gap-1.5">
+              <Heart
+                size={12}
+                strokeWidth={2}
+                className="text-mora-400"
+              />
+              <span className="text-[9px] font-medium">
+                {api.likes ?? 0}
+              </span>
+            </div>
 
             {/* SAVE */}
             <button
@@ -143,7 +141,6 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
           {/* RANK + NEW */}
           {(rankStyle || isNew(api.createdAt)) && (
             <div className="absolute bottom-2.5 left-2.5 z-10 flex items-center gap-1.5">
-              {/* RANK BADGE */}
               {rankStyle && (
                 <span
                   className={`text-[8px] px-2.5 py-1 rounded-full uppercase tracking-wider bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}`}
@@ -152,7 +149,6 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
                 </span>
               )}
 
-              {/* NEW BADGE */}
               {isNew(api.createdAt) && (
                 <span className="text-[8px] px-2.5 py-1 rounded-full bg-white text-black uppercase font-bold">
                   New
@@ -184,7 +180,7 @@ const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
                 >
                   <path
                     fill="#22C55E"
-                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4.1.2 1.2-.5 2-1.6 2-2.8z"
+                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6-.1 3.4-.8.9-.9 1.2-2.2.8-3.4.4-1.2.1-2.6-.8-3.4z"
                   />
                   <path
                     d="M9.2 12.3l2 2.1 4.6-4.8"
