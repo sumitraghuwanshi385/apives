@@ -97,7 +97,6 @@ element={<LiveApiRunnerPage />} />
   <Route path="/architect" element={<ApivesArchitect />} />
 
 
-
     {/* Footer */}    
     <Route path="/enterprise" element={<EnterprisePage />} />    
     <Route path="/docs" element={<DocumentationPage />} />    
