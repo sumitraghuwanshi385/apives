@@ -12,7 +12,8 @@ import {
   Terminal,
   KeyRound,
   ArrowLeftRight,
-  Waypoints
+  Waypoints,
+  Fingerprint
 } from 'lucide-react';
 
 import { ApiListing } from '../types';
@@ -445,48 +446,64 @@ export const LandingPage: React.FC = () => {
       <section className="py-10 md:py-12 border-t border-white/5 bg-black">
         <div className="max-w-3xl mx-auto px-4 md:px-6">
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm px-5 py-6 md:px-8 md:py-7">
+          <div
+            className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-7"
+            style={{
+              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786811390/ec21de5aed22d8441b1d6c0f17c9db3e_f6jcif.gif)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
 
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1.5">
+            {/* Top-right glass liquid fingerprint button */}
+            <Link
+              to="/login"
+              className="absolute top-3.5 right-3.5 z-20 w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all active:scale-90"
+              style={{
+                background: 'rgba(255, 255, 255, 0.12)',
+                backdropFilter: 'blur(18px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(18px) saturate(180%)',
+                border: '1px solid rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.25)'
+              }}
+            >
+              <Fingerprint size={18} className="text-white drop-shadow-sm" strokeWidth={1.75} />
+            </Link>
+
+            <div className="relative z-10 pr-12">
+              <div className="mb-5">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 mb-1.5">
                   Developer Toolkit
                 </p>
-                <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
+                <h2 className="text-lg md:text-xl font-bold text-white tracking-tight drop-shadow-sm">
                   4 Tools. Login to unlock.
                 </h2>
               </div>
 
-              <Link
-                to="/login"
-                className="shrink-0 self-start sm:self-auto px-4 py-2 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest hover:bg-mora-500 transition-colors active:scale-95"
-              >
-                Get Started
-              </Link>
-            </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                  <Terminal size={12} className="text-mora-400" />
+                  Live API Runner
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                  <KeyRound size={12} className="text-mora-400" />
+                  JWT Decoder
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                  <ArrowLeftRight size={12} className="text-mora-400" />
+                  cURL Converter
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 bg-black/30 backdrop-blur-md text-[11px] text-white font-medium">
+                  <Waypoints size={12} className="text-mora-400" />
+                  Mock Server
+                </span>
+              </div>
 
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
-                <Terminal size={12} className="text-mora-500" />
-                Live API Runner
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
-                <KeyRound size={12} className="text-mora-500" />
-                JWT Decoder
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
-                <ArrowLeftRight size={12} className="text-mora-500" />
-                cURL Converter
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] text-slate-300 font-medium">
-                <Waypoints size={12} className="text-mora-500" />
-                Mock Server
-              </span>
+              <p className="mt-4 text-[11px] text-white/75 leading-relaxed drop-shadow-sm">
+                Sign in to test endpoints, decode tokens, convert requests and spin up mock APIs — all in one place.
+              </p>
             </div>
-
-            <p className="mt-4 text-[11px] text-slate-500 leading-relaxed">
-              Sign in to test endpoints, decode tokens, convert requests and spin up mock APIs — all in one place.
-            </p>
 
           </div>
         </div>
@@ -604,7 +621,7 @@ export const LandingPage: React.FC = () => {
               )
             )}
 
-            {/* Apives AI — full width, no green effects */}
+            {/* Apives AI — full width, no green glow */}
 
             <div className="apives-ai-static col-span-2">
               <ApivesAIHighlight />
@@ -770,17 +787,20 @@ export const LandingPage: React.FC = () => {
           opacity: 0 !important;
         }
 
-        /* Remove any green glow / background effects from the AI box */
+        /* Fully kill green glow / background effects from the AI box */
         .apives-ai-static,
         .apives-ai-static * {
           box-shadow: none !important;
+          filter: none !important;
         }
 
         .apives-ai-static [class*="mora"],
         .apives-ai-static [class*="green"],
         .apives-ai-static [style*="34,197,94"],
-        .apives-ai-static [style*="rgba(34"] {
+        .apives-ai-static [style*="rgba(34"],
+        .apives-ai-static [style*="rgb(34"] {
           background-image: none !important;
+          box-shadow: none !important;
         }
       `}</style>
 
