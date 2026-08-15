@@ -372,7 +372,7 @@ export const BrowseApis: React.FC = () => {
               } as React.CSSProperties}
             >
               {apis.map((api) => (
-                <ApiCard
+                <LandingApiCard
                   key={api.id}
                   api={api}
                   topIds={topIds}
