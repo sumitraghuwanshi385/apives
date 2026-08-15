@@ -37,10 +37,10 @@ export const Footer: React.FC = () => {
       {/* FOOTER CONTENT */}
       <div className="max-w-7xl mx-auto py-8 md:py-11 px-4 sm:px-6 lg:px-8">
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10">
 
           {/* BRAND */}
-          <div className="md:col-span-3">
+          <div className="md:col-span-4">
 
             <div className="flex items-center mb-4 md:mb-5">
               <img
@@ -50,11 +50,11 @@ export const Footer: React.FC = () => {
               />
             </div>
 
-            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light tracking-[0.01em]">
+            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light tracking-[0.01em] max-w-xs">
               A next-gen API ecosystem where builders easily discover and understand APIs.
             </p>
 
-            {/* SOCIALS */}
+            {/* SOCIAL LINKS */}
             <div className="flex items-center gap-3">
 
               {/* X */}
@@ -129,7 +129,7 @@ export const Footer: React.FC = () => {
                 />
               </a>
 
-              {/* /// */}
+              {/* GLOWING /// */}
               <span
                 className="
                   text-mora-500
@@ -188,6 +188,18 @@ export const Footer: React.FC = () => {
                   Top Rated
                 </Link>
               </li>
+
+            </ul>
+          </div>
+
+          {/* TOOLS */}
+          <div className="md:col-span-2">
+
+            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
+              Tools
+            </h3>
+
+            <ul className="space-y-2.5 md:space-y-3">
 
               <li>
                 <Link
@@ -319,14 +331,14 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* =====================================================
-          COMPACT 3D END EFFECT
+          COMPACT PREMIUM 3D FOOTER EFFECT
          ===================================================== */}
       <div
         className="
           relative
           w-full
-          h-[108px]
-          md:h-[120px]
+          h-[88px]
+          md:h-[96px]
           bg-black
           overflow-hidden
           flex
@@ -335,23 +347,23 @@ export const Footer: React.FC = () => {
         "
       >
 
-        {/* SOFT GREEN ATMOSPHERE */}
+        {/* SOFT ATMOSPHERIC GREEN GLOW */}
         <div
           className="
             absolute
             left-1/2
-            bottom-[-92px]
+            bottom-[-82px]
             -translate-x-1/2
-            w-[72%]
-            md:w-[52%]
-            h-[175px]
+            w-[86%]
+            md:w-[64%]
+            h-[190px]
             rounded-[50%]
             pointer-events-none
-            blur-[34px]
+            blur-[36px]
           "
           style={{
             background:
-              'radial-gradient(ellipse, rgba(34,197,94,0.24) 0%, rgba(34,197,94,0.09) 38%, transparent 72%)',
+              'radial-gradient(ellipse, rgba(34,197,94,0.264) 0%, rgba(34,197,94,0.10) 38%, transparent 72%)',
           }}
         />
 
@@ -360,10 +372,10 @@ export const Footer: React.FC = () => {
           className="
             absolute
             left-1/2
-            bottom-[-70px]
-            w-[82%]
-            md:w-[60%]
-            h-[105px]
+            bottom-[-66px]
+            w-[98%]
+            md:w-[72%]
+            h-[112px]
             rounded-[50%]
             border
             border-mora-500/20
@@ -373,19 +385,19 @@ export const Footer: React.FC = () => {
             transform:
               'translateX(-50%) perspective(500px) rotateX(63deg)',
             boxShadow:
-              '0 -12px 48px rgba(34,197,94,0.14), inset 0 8px 24px rgba(34,197,94,0.06)',
+              '0 -13px 52px rgba(34,197,94,0.154), inset 0 9px 26px rgba(34,197,94,0.066)',
           }}
         />
 
-        {/* INNER PLATFORM */}
+        {/* INNER 3D PLATFORM */}
         <div
           className="
             absolute
             left-1/2
-            bottom-[-47px]
-            w-[55%]
-            md:w-[38%]
-            h-[72px]
+            bottom-[-43px]
+            w-[66%]
+            md:w-[46%]
+            h-[82px]
             rounded-[50%]
             border
             border-mora-500/15
@@ -395,42 +407,22 @@ export const Footer: React.FC = () => {
             transform:
               'translateX(-50%) perspective(500px) rotateX(63deg)',
             boxShadow:
-              '0 -5px 28px rgba(34,197,94,0.09)',
+              '0 -6px 30px rgba(34,197,94,0.099)',
           }}
         />
 
-        {/* CENTER HORIZON LIGHT */}
-        <div
-          className="
-            absolute
-            left-1/2
-            bottom-[22px]
-            -translate-x-1/2
-            w-[170px]
-            md:w-[280px]
-            h-[2px]
-            rounded-full
-            bg-mora-500/25
-            pointer-events-none
-          "
-          style={{
-            boxShadow:
-              '0 0 24px rgba(34,197,94,0.22)',
-          }}
-        />
-
-        {/* FLOOR LIGHT */}
+        {/* SUBTLE FLOOR LIGHT */}
         <div
           className="
             absolute
             inset-x-0
             bottom-0
-            h-[55px]
+            h-[48px]
             pointer-events-none
           "
           style={{
             background:
-              'linear-gradient(to top, rgba(34,197,94,0.075), transparent)',
+              'linear-gradient(to top, rgba(34,197,94,0.082), transparent)',
           }}
         />
 
@@ -438,12 +430,11 @@ export const Footer: React.FC = () => {
         <div
           className="
             absolute
-            inset-0
+            inset-x-0
+            bottom-[8px]
+            md:bottom-[10px]
             flex
-            items-end
             justify-center
-            pb-[12px]
-            md:pb-[14px]
             pointer-events-none
             z-10
           "
@@ -521,10 +512,19 @@ export const Footer: React.FC = () => {
                   required
                   placeholder="Your Name"
                   className="
-                    w-full bg-black border border-white/10
-                    rounded-xl px-4 py-2.5 text-xs text-white
-                    focus:border-mora-500 focus:outline-none
-                    transition-all placeholder:text-slate-700
+                    w-full
+                    bg-black
+                    border
+                    border-white/10
+                    rounded-xl
+                    px-4
+                    py-2.5
+                    text-xs
+                    text-white
+                    focus:border-mora-500
+                    focus:outline-none
+                    transition-all
+                    placeholder:text-slate-700
                   "
                 />
 
@@ -544,10 +544,19 @@ export const Footer: React.FC = () => {
                   name="email"
                   placeholder="Email (optional)"
                   className="
-                    w-full bg-black border border-white/10
-                    rounded-xl px-4 py-2.5 text-xs text-white
-                    focus:border-mora-500 focus:outline-none
-                    transition-all placeholder:text-slate-700
+                    w-full
+                    bg-black
+                    border
+                    border-white/10
+                    rounded-xl
+                    px-4
+                    py-2.5
+                    text-xs
+                    text-white
+                    focus:border-mora-500
+                    focus:outline-none
+                    transition-all
+                    placeholder:text-slate-700
                   "
                 />
 
@@ -565,10 +574,19 @@ export const Footer: React.FC = () => {
                   rows={3}
                   placeholder="What can we improve?"
                   className="
-                    w-full bg-black border border-white/10
-                    rounded-xl px-4 py-2.5 text-xs text-white
-                    focus:border-mora-500 focus:outline-none
-                    transition-all placeholder:text-slate-700
+                    w-full
+                    bg-black
+                    border
+                    border-white/10
+                    rounded-xl
+                    px-4
+                    py-2.5
+                    text-xs
+                    text-white
+                    focus:border-mora-500
+                    focus:outline-none
+                    transition-all
+                    placeholder:text-slate-700
                     resize-none
                   "
                 />
@@ -576,13 +594,21 @@ export const Footer: React.FC = () => {
               </div>
 
               {feedbackSuccess && (
-                <div className="
-                  bg-green-500/10
-                  border border-green-500/20
-                  text-green-400
-                  text-xs rounded-xl px-4 py-3
-                  flex items-center gap-2
-                ">
+                <div
+                  className="
+                    bg-green-500/10
+                    border
+                    border-green-500/20
+                    text-green-400
+                    text-xs
+                    rounded-xl
+                    px-4
+                    py-3
+                    flex
+                    items-center
+                    gap-2
+                  "
+                >
                   <span>✓</span>
                   Thanks! Your feedback really helps 💚
                 </div>
