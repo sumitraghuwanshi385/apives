@@ -1,18 +1,15 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 
+import {
+  ARTICLES,
+  BLOG_IMAGE,
+  type Article,
+} from "./BlogArticles";
+
 /* =========================================================
    TYPES
 ========================================================= */
-
-interface BlogArticle {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  type: "article";
-}
 
 interface BlogPost {
   id: number;
@@ -23,121 +20,28 @@ interface BlogPost {
   type: "post";
 }
 
+type BlogItem =
+  | (Article & { type: "article" })
+  | BlogPost;
+
 /* =========================================================
    CONSTANTS
 ========================================================= */
-
-const BLOG_IMAGE =
-  "https://res.cloudinary.com/dp7avkarg/image/upload/v1786794737/Picsart_26-08-15_17-19-34-167_ozvdlb.png";
 
 const GREEN = "#22c55e";
 
 /* =========================================================
    ARTICLES
-   These open the separate Article page.
+   Article content lives in BlogArticles.tsx.
+   This page only uses the shared article data.
 ========================================================= */
 
-const ARTICLES: BlogArticle[] = [
-  {
-    id: 1,
-    slug: "rest-vs-graphql-vs-grpc",
-    title: "REST vs GraphQL vs gRPC: Which API Should You Use?",
-    excerpt:
-      "REST, GraphQL, and gRPC solve different API architecture problems. This practical guide compares their performance, flexibility, developer experience, scalability, tooling, and ideal use cases.",
-    date: "August 14, 2026",
-    type: "article",
-  },
-  {
-    id: 2,
-    slug: "best-llm-apis-2026",
-    title: "Best LLM APIs in 2026: OpenAI vs Anthropic vs Gemini",
-    excerpt:
-      "Compare the leading LLM APIs for modern AI applications across reasoning, multimodal capabilities, context, latency, structured output, reliability, pricing, and production architecture.",
-    date: "August 12, 2026",
-    type: "article",
-  },
-  {
-    id: 3,
-    slug: "api-security-best-practices",
-    title: "API Security Best Practices: 10 Common API Security Risks",
-    excerpt:
-      "Protect your API from common security failures covering authorization, authentication, rate limiting, input validation, excessive data exposure, secret management, HTTPS, and monitoring.",
-    date: "August 10, 2026",
-    type: "article",
-  },
-  {
-    id: 4,
-    slug: "how-to-build-production-ready-api",
-    title: "How to Build a Production-Ready API: 7 Essential Steps",
-    excerpt:
-      "Build an API that is ready for real users, not just local development. Learn how contracts, authentication, validation, errors, testing, monitoring, and documentation fit together.",
-    date: "August 8, 2026",
-    type: "article",
-  },
-  {
-    id: 5,
-    slug: "openapi-specification-guide",
-    title: "OpenAPI Specification: Why Your API Needs It",
-    excerpt:
-      "Discover how a machine-readable API contract can power SDK generation, mock servers, generated types, validation, testing, documentation, and better developer experiences.",
-    date: "August 6, 2026",
-    type: "article",
-  },
-  {
-    id: 6,
-    slug: "webhook-best-practices",
-    title: "Webhook Best Practices: How to Build Reliable Webhooks",
-    excerpt:
-      "Build webhooks that survive retries, duplicate events, timeouts, failures, and traffic spikes with signatures, idempotency, queues, asynchronous processing, and delivery logs.",
-    date: "August 4, 2026",
-    type: "article",
-  },
-  {
-    id: 7,
-    slug: "oauth-2-pkce-client-credentials",
-    title: "OAuth 2.0 Explained: PKCE vs Client Credentials",
-    excerpt:
-      "Understand the OAuth 2.0 flows modern developers actually use, including PKCE, Client Credentials, access tokens, refresh tokens, scopes, and secure token handling.",
-    date: "August 2, 2026",
-    type: "article",
-  },
-  {
-    id: 8,
-    slug: "graphql-n-plus-one-dataloader",
-    title: "GraphQL at Scale: How to Fix the N+1 Query Problem",
-    excerpt:
-      "Learn how batching, DataLoader, caching, pagination, query limits, and monitoring can solve the GraphQL N+1 problem and improve production performance.",
-    date: "July 30, 2026",
-    type: "article",
-  },
-  {
-    id: 9,
-    slug: "api-load-testing-guide",
-    title: "API Load Testing: How to Test an API Before Launch",
-    excerpt:
-      "Find API bottlenecks before real users do. Learn realistic traffic simulation, P95 and P99 latency, throughput, database bottlenecks, and capacity planning.",
-    date: "July 28, 2026",
-    type: "article",
-  },
-  {
-    id: 10,
-    slug: "best-serverless-platforms-api",
-    title: "Best Serverless Platforms for APIs in 2026",
-    excerpt:
-      "Compare AWS Lambda, Cloudflare Workers, and Vercel Functions for modern API hosting, including edge execution, scalability, cold starts, databases, and deployment.",
-    date: "July 25, 2026",
-    type: "article",
-  },
-  {
-    id: 11,
-    slug: "why-apives-verifies-apis",
-    title: "Why Apives Verifies APIs Before Listing Them",
-    excerpt:
-      "API discovery should be more than a directory of links. Learn why verification, documentation, pricing, authentication, real endpoint information, and developer experience matter.",
-    date: "July 22, 2026",
-    type: "article",
-  },
-];
+const BLOG_ARTICLES: BlogItem[] = ARTICLES.map(
+  (article) => ({
+    ...article,
+    type: "article" as const,
+  })
+);
 
 /* =========================================================
    POSTS
@@ -165,8 +69,8 @@ const POSTS: BlogPost[] = [
    ALL BLOG ITEMS
 ========================================================= */
 
-const BLOG_ITEMS = [
-  ...ARTICLES,
+const BLOG_ITEMS: BlogItem[] = [
+  ...BLOG_ARTICLES,
   ...POSTS,
 ];
 
@@ -218,7 +122,7 @@ const BlogListItem = memo(
     item,
     onClick,
   }: {
-    item: BlogArticle | BlogPost;
+    item: BlogItem;
     onClick: () => void;
   }) {
     return (
@@ -295,12 +199,13 @@ export default function Blogs() {
   ======================================================= */
 
   const openItem = (
-    item: BlogArticle | BlogPost
+    item: BlogItem
   ) => {
     if (item.type === "article") {
       window.location.assign(
         `/articles/${item.slug}`
       );
+
       return;
     }
 
