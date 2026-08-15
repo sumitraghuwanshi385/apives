@@ -361,8 +361,8 @@ export const Footer: React.FC = () => {
         <div
           className="
             relative
-            mt-7 md:mt-8
-            h-[58px] md:h-[62px]
+            mt-6 md:mt-7
+            h-[48px] md:h-[52px]
             overflow-hidden
             flex items-center justify-center
           "
@@ -389,25 +389,35 @@ export const Footer: React.FC = () => {
             }}
           />
 
-          {/* COPYRIGHT */}
-          <span
-            className="
-              relative
-              z-10
-              bg-black
-              px-3
-              text-white/40
-              text-[8px]
-              md:text-[9px]
-              font-mono
-              font-medium
-              tracking-[0.28em]
-              uppercase
-              whitespace-nowrap
-            "
-          >
-            © 2026 Apives Ecosystem
-          </span>
+          {/* COPYRIGHT + SMALL DIVIDER */}
+          <div className="relative z-10 flex flex-col items-center bg-black px-3">
+
+            <span
+              className="
+                text-white/40
+                text-[8px]
+                md:text-[9px]
+                font-mono
+                font-medium
+                tracking-[0.28em]
+                uppercase
+                whitespace-nowrap
+              "
+            >
+              © 2026 Apives Ecosystem
+            </span>
+
+            <span
+              className="
+                mt-1.5
+                w-10
+                h-px
+                bg-white/15
+                rounded-full
+              "
+            />
+
+          </div>
 
           <style>
             {`
