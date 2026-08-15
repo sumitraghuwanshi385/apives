@@ -1,12 +1,12 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
-import {
-  Search,
-  X,
-  Share2,
-  Check,
-  ChevronRight,
-  ArrowLeft,
-} from "lucide-react";
+import React, {
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import { Search, X, Check, ChevronRight, ArrowLeft, Mail } from "lucide-react";
+import { BackButton } from "../components/BackButton";
 
 /* =========================================================
    TYPES
@@ -29,11 +29,14 @@ interface Article {
 }
 
 /* =========================================================
-   BLOG IMAGE
+   CONSTANTS
 ========================================================= */
 
 const BLOG_IMAGE =
   "https://res.cloudinary.com/dp7avkarg/image/upload/v1786794737/Picsart_26-08-15_17-19-34-167_ozvdlb.png";
+
+const GREEN = "#22c55e";
+const GREEN_SOFT = "#4ade80";
 
 /* =========================================================
    ARTICLES
@@ -59,7 +62,7 @@ const ARTICLES: Article[] = [
     content: `
 ## Choosing an API Architecture Is a Product Decision
 
-When developers start a new application, the API architecture is often one of the first technical decisions they make. REST, GraphQL, and gRPC are all mature technologies, but they were designed around different problems.
+When developers start a new application, the API architecture is often one of the first technical decisions they make. REST, GraphQL, and gRPC are all mature technologies, but they were designed around different problems and different communication patterns.
 
 The right choice is therefore not about finding the technology that is technically most advanced. It is about understanding how your clients communicate with your backend, how your data is structured, how much flexibility clients need, and what kind of performance your application actually requires.
 
@@ -67,7 +70,7 @@ For most startups and public developer platforms, REST remains the easiest place
 
 ## REST: The Practical Default
 
-REST APIs are built around resources and standard HTTP semantics. A typical application might expose endpoints such as users, products, orders, invoices, or payments.
+REST APIs are built around resources and standard HTTP semantics. A typical application might expose endpoints such as users, products, orders, invoices, payments, or subscriptions.
 
 This approach is easy for developers to understand because HTTP already provides many of the concepts required by a REST API: methods, status codes, headers, caching, authentication middleware, and content negotiation.
 
@@ -77,7 +80,7 @@ A developer integrating a public REST API can usually make requests with curl, J
 
 REST is particularly suitable for SaaS products, public APIs, ecommerce platforms, mobile backends, dashboards, and CRUD-heavy applications.
 
-The official [HTTP Semantics specification](https://www.rfc-editor.org/rfc/rfc9110) is useful when designing APIs that make proper use of HTTP methods and status codes.
+The official HTTP Semantics specification is also useful when designing APIs that make proper use of HTTP methods and status codes.
 
 ## GraphQL: Flexible Data for Complex Clients
 
@@ -95,8 +98,6 @@ However, flexibility also creates responsibility for the backend team.
 
 Poor resolver design can create excessive database queries, expensive nested requests, and difficult-to-control workloads. Production GraphQL APIs therefore need sensible pagination, query complexity limits, batching, caching, and monitoring.
 
-The [GraphQL specification](https://spec.graphql.org/) provides the formal foundation for the technology.
-
 ## gRPC: Efficient Service-to-Service Communication
 
 gRPC was designed with a different use case in mind.
@@ -107,7 +108,7 @@ This makes it attractive for microservice architectures, internal infrastructure
 
 A company might expose a REST API to external developers while using gRPC internally between its payment service, user service, analytics service, and recommendation system.
 
-The [official gRPC documentation](https://grpc.io/docs/) provides implementation details across supported languages.
+This hybrid architecture can provide a simple public developer experience while keeping internal communication efficient and strongly typed.
 
 ## REST vs GraphQL vs gRPC
 
@@ -132,6 +133,8 @@ It has a huge ecosystem, simple debugging, excellent tooling, straightforward do
 As the application grows, the architecture can evolve.
 
 Good API design is not about choosing the trendiest protocol. It is about creating a stable contract that developers can understand, applications can depend on, and engineering teams can maintain for years.
+
+The best API architecture is therefore the one that matches the actual requirements of the product rather than adding unnecessary complexity for the sake of using a newer technology.
 `,
     faq: [
       {
@@ -187,6 +190,8 @@ That shift has changed the API selection problem.
 
 Choosing an LLM provider is no longer simply about asking which model produces the best answer. Production teams have to think about latency, token costs, context length, structured responses, tool calling, reliability, rate limits, privacy requirements, and how easily the application can move between models.
 
+For startups, these decisions matter even more because early architecture choices can directly affect product margins and the speed at which new AI features can be shipped.
+
 ## OpenAI
 
 OpenAI provides a mature developer platform for building AI-powered applications.
@@ -195,7 +200,7 @@ Its ecosystem is particularly useful for applications that need general-purpose 
 
 For startups, one advantage is the amount of existing documentation, community knowledge, SDK support, and third-party tooling around the platform.
 
-The current [OpenAI API documentation](https://platform.openai.com/docs/) should be used when checking model capabilities and implementation details because model availability and API features change over time.
+The OpenAI API can be used for everything from conversational applications and content generation to structured extraction, agentic workflows, and developer tools.
 
 ## Anthropic
 
@@ -203,7 +208,7 @@ Anthropic's Claude family has become particularly popular for coding, long-form 
 
 Claude can be useful for applications where the model needs to reason over large amounts of context while maintaining a consistent response style.
 
-The [Anthropic API documentation](https://docs.anthropic.com/) provides the latest implementation guidance.
+This makes it interesting for research applications, coding assistants, knowledge systems, and long-form document processing.
 
 ## Google Gemini
 
@@ -212,8 +217,6 @@ Gemini is particularly interesting for multimodal AI applications.
 Depending on the model, applications can work with combinations of text, images, audio, video, and code. This makes Gemini relevant for applications that need to understand more than plain text.
 
 For products involving visual analysis, media processing, or multimodal workflows, this can be a meaningful advantage.
-
-The [Gemini API documentation](https://ai.google.dev/gemini-api/docs) is the appropriate reference for current model and API capabilities.
 
 ## The Best Model Depends on the Job
 
@@ -229,6 +232,8 @@ An image analysis workflow may require a multimodal model.
 
 Model routing can therefore become an important part of AI application architecture.
 
+Instead of thinking about one model as the permanent answer, teams can treat models as infrastructure components and choose them according to the workload.
+
 ## Cost Is an Engineering Problem
 
 LLM costs can become significant when usage increases.
@@ -238,6 +243,8 @@ Teams should monitor token consumption, request volume, model selection, cache u
 A model that is twice as expensive but dramatically reduces failures might still be cheaper at the application level.
 
 Likewise, sending every simple request to a premium model is usually unnecessary.
+
+Good AI architecture balances quality and cost rather than optimizing only for benchmark performance.
 
 ## Reliability Matters
 
@@ -312,8 +319,6 @@ That makes an API a major part of an application's security boundary.
 
 The most dangerous API vulnerabilities are often not complicated cryptographic failures. They are ordinary authorization mistakes, predictable IDs, overly permissive responses, weak authentication, missing rate limits, unsafe input handling, and secrets that were never meant to be public.
 
-The [OWASP API Security project](https://owasp.org/API-Security/) is one of the most useful references for understanding common API risks.
-
 ## Broken Object Level Authorization
 
 One of the most important API security issues is failing to verify whether the authenticated user is allowed to access a particular object.
@@ -340,7 +345,7 @@ Authorization answers what that identity is allowed to access.
 
 A user can be correctly authenticated and still have no permission to read another user's invoice, modify an administrator setting, or access a private file.
 
-Keeping these concepts separate makes API security easier to reason about.
+Keeping these concepts separate makes API security easier to reason about and helps teams avoid treating login as a complete access-control system.
 
 ## Rate Limiting Prevents Abuse
 
@@ -350,6 +355,8 @@ Without limits, attackers can abuse login endpoints, password-reset endpoints, e
 
 Rate limits should be designed around the endpoint and its cost rather than applying the same number everywhere.
 
+For example, an expensive AI generation endpoint may need a much stricter policy than a lightweight health-check endpoint.
+
 ## Validate Untrusted Input
 
 Every API request should be considered untrusted.
@@ -357,6 +364,8 @@ Every API request should be considered untrusted.
 Validate request bodies, query parameters, IDs, uploaded files, headers, and nested JSON structures.
 
 Input validation should happen before the data reaches sensitive business logic or database queries.
+
+Good validation also gives API consumers predictable errors instead of allowing malformed requests to produce confusing backend failures.
 
 ## Avoid Excessive Data Exposure
 
@@ -463,7 +472,7 @@ A public developer API needs clear authentication, documentation, examples, vers
 
 An internal service may prioritize latency, reliability, and strong service-to-service contracts.
 
-The architecture should reflect the actual consumer.
+The architecture should reflect the actual consumer rather than forcing every API into the same design.
 
 ## 2. Define the API Contract
 
@@ -471,7 +480,9 @@ Design endpoints and response structures before implementing every backend detai
 
 An OpenAPI specification can become a shared contract between frontend developers, backend developers, QA teams, and external consumers.
 
-The [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) provides a machine-readable standard for describing HTTP APIs.
+The OpenAPI Specification provides a machine-readable standard for describing HTTP APIs.
+
+A clear contract also reduces the amount of back-and-forth required when different teams build against the same backend.
 
 ## 3. Build Authentication and Authorization Early
 
@@ -490,6 +501,8 @@ API requests come from outside the trusted application boundary.
 Validate required fields, data types, lengths, allowed values, identifiers, nested structures, and uploaded content.
 
 Good validation prevents invalid data from travelling deep into the system and makes errors easier for API consumers to understand.
+
+Validation should also be consistent across endpoints so that developers do not have to learn completely different error behaviors for every part of the API.
 
 ## 5. Create Consistent Errors
 
@@ -514,7 +527,7 @@ Unit tests are valuable, but production APIs also need integration and end-to-en
 
 Test authentication, authorization, invalid requests, database failures, external API failures, rate limits, large payloads, pagination, and realistic user workflows.
 
-Load-testing tools such as [k6](https://k6.io/) can help teams understand how an API behaves under increasing traffic.
+Load-testing tools can also help teams understand how an API behaves under increasing traffic.
 
 ## 7. Monitor Before Users Complain
 
@@ -529,6 +542,8 @@ P95 and P99 latency are often more informative than averages because they expose
 A technically excellent API can still fail to gain adoption if developers cannot figure out how to use it.
 
 Good API documentation should explain authentication, base URLs, endpoints, request examples, response examples, common errors, limits, pagination, and real-world workflows.
+
+Documentation is not something to add at the very end. It is part of the developer experience and often determines how quickly someone can successfully integrate the API.
 
 A production-ready API is ultimately a combination of good engineering and good developer experience.
 `,
@@ -583,7 +598,7 @@ OpenAPI is a standard machine-readable format for describing HTTP APIs.
 
 It can describe endpoints, parameters, request bodies, response structures, authentication mechanisms, schemas, examples, and other parts of an API contract.
 
-The official [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) is the best reference for the standard.
+The official OpenAPI Specification is the best reference for understanding the standard and its current capabilities.
 
 ## OpenAPI Is More Than Documentation
 
@@ -609,7 +624,7 @@ QA can understand expected requests and responses.
 
 External developers can integrate against the documented contract.
 
-This reduces ambiguity before it becomes production bugs.
+This reduces ambiguity before it becomes production bugs and makes API changes easier to review before they reach users.
 
 ## Generate Client SDKs
 
@@ -618,6 +633,8 @@ Maintaining SDKs manually for JavaScript, Python, Go, Java, and other languages 
 OpenAPI-based tooling can generate large portions of these clients automatically.
 
 That does not eliminate the need for thoughtful SDK design, but it can dramatically reduce repetitive implementation work.
+
+Generated SDKs are particularly useful for developer platforms because they allow API consumers to start integrating without manually writing HTTP request wrappers.
 
 ## Generate Types
 
@@ -634,6 +651,8 @@ A frontend team should not always have to wait for the backend to be finished.
 An OpenAPI document can be used to create mock responses.
 
 This makes parallel development possible and allows teams to discover API design problems before implementation is deeply embedded.
+
+It also gives product teams something concrete to review before backend implementation is complete.
 
 ## Spec-First API Development
 
@@ -662,6 +681,8 @@ It is having an outdated one.
 If the specification says the API returns one structure while the production server returns another, developers lose trust in the documentation.
 
 OpenAPI works best when the contract is treated as a real engineering artifact rather than a document created once and forgotten.
+
+For teams building public APIs, keeping this contract accurate can significantly improve developer onboarding and reduce integration friction.
 `,
     faq: [
       {
@@ -744,13 +765,17 @@ Process the event asynchronously.
 
 This approach makes the endpoint faster and reduces timeout-related retries.
 
+It also creates a clean boundary between receiving an event and actually performing business logic.
+
 ## Verify Webhook Signatures
 
 If a provider includes a webhook signature, verify it before processing the event.
 
-For example, [Stripe's webhook documentation](https://docs.stripe.com/webhooks) provides detailed guidance for verifying webhook requests.
+For example, Stripe provides detailed documentation for verifying webhook requests.
 
 The important principle is simple: never trust incoming webhook data just because it reached your endpoint.
+
+Signature verification should happen before sensitive side effects such as updating payment status, activating subscriptions, issuing credits, or changing account state.
 
 ## Expect Duplicate Events
 
@@ -792,6 +817,8 @@ Useful information includes event ID, delivery attempt, timestamp, endpoint, HTT
 
 Without these logs, webhook debugging can become extremely frustrating.
 
+Developers should be able to quickly answer whether an event was sent, whether it reached their server, what response their server returned, and whether the provider is going to retry it.
+
 ## Webhooks Are Developer Experience
 
 A reliable webhook system should make testing easy.
@@ -799,6 +826,8 @@ A reliable webhook system should make testing easy.
 Developers should be able to inspect payloads, resend failed events, understand signature verification, view delivery attempts, and know exactly why a request failed.
 
 The best webhook systems are designed around failure rather than assuming the network will always behave perfectly.
+
+Reliable webhook infrastructure is therefore a combination of secure delivery, predictable retries, idempotent processing, observability, and good developer documentation.
 `,
     faq: [
       {
@@ -853,7 +882,7 @@ This distinction matters because OAuth is often described simply as an authentic
 
 Its primary purpose is delegated authorization.
 
-The official [OAuth 2.0 specification](https://www.rfc-editor.org/rfc/rfc6749) provides the formal protocol definitions, while modern security recommendations are covered by the [OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/rfc/rfc9700).
+The official OAuth 2.0 specification provides the formal protocol definitions, while modern security recommendations provide additional guidance for secure deployments.
 
 ## Authorization Code With PKCE
 
@@ -864,6 +893,8 @@ The client creates a temporary code verifier and sends a related challenge durin
 After the user authorizes the application, the authorization server returns a code. The client then exchanges that code using the verifier.
 
 This makes authorization codes significantly harder to abuse if they are intercepted.
+
+PKCE is now an important part of modern OAuth implementations for applications where a client secret cannot safely be kept private.
 
 ## Client Credentials
 
@@ -885,7 +916,7 @@ When longer sessions are required, refresh tokens can be used to obtain new acce
 
 Applications should protect refresh tokens carefully because they can represent significant access.
 
-Modern OAuth deployments should also follow current security recommendations rather than relying on old tutorials written for earlier versions of the ecosystem.
+Token storage should be treated as a security decision rather than simply a frontend implementation detail.
 
 ## Scopes
 
@@ -918,6 +949,8 @@ Developers should know how to begin authorization, exchange codes, refresh token
 OAuth becomes difficult when implementations mix outdated flows, unclear token handling, inconsistent scopes, and poorly documented behavior.
 
 A good OAuth implementation should make the secure path the easiest path for API consumers.
+
+For public APIs, clear authentication documentation is just as important as the underlying protocol implementation because developers need to understand exactly how to obtain and use credentials.
 `,
     faq: [
       {
@@ -1028,7 +1061,7 @@ A query that asks for every customer, every order, every transaction, and every 
 
 Use sensible limits and pagination.
 
-Cursor-based pagination is often useful for large datasets.
+Cursor-based pagination is often useful for large datasets because it behaves more predictably as data changes.
 
 ## Query Complexity and Depth
 
@@ -1048,7 +1081,7 @@ Track resolver execution time, database query count, cache hit rates, error rate
 
 Once these metrics are visible, performance problems become much easier to identify.
 
-GraphQL scales well when its flexibility is paired with disciplined backend architecture.
+GraphQL scales well when its flexibility is paired with disciplined backend architecture and careful control over expensive queries.
 `,
     faq: [
       {
@@ -1131,7 +1164,7 @@ These metrics are especially useful when evaluating APIs with unpredictable work
 
 ## k6 for Developer-Focused Load Testing
 
-[k6](https://k6.io/) is a popular load-testing tool that allows developers to define virtual users, scenarios, thresholds, and traffic patterns.
+k6 is a popular load-testing tool that allows developers to define virtual users, scenarios, thresholds, and traffic patterns.
 
 The purpose of a load test is not to create the largest possible number.
 
@@ -1170,6 +1203,8 @@ If 20 servers can handle a specific workload while maintaining acceptable latenc
 Load testing is therefore not only a debugging tool.
 
 It can become part of capacity planning and release engineering.
+
+Teams can also repeat the same performance tests after major infrastructure or database changes to identify regressions before they reach production.
 
 The goal is simple: understand how your API behaves before your users are the ones discovering its limits.
 `,
@@ -1238,8 +1273,6 @@ Its biggest advantage is the AWS ecosystem around it.
 
 Teams already using S3, DynamoDB, SQS, EventBridge, IAM, RDS, CloudWatch, and other AWS services can build sophisticated event-driven architectures around Lambda.
 
-The [AWS Lambda documentation](https://docs.aws.amazon.com/lambda/) provides current information about supported runtimes, deployment, limits, and configuration.
-
 Lambda is particularly attractive for enterprise applications and systems that require deep AWS integration.
 
 ## Cloudflare Workers
@@ -1247,8 +1280,6 @@ Lambda is particularly attractive for enterprise applications and systems that r
 Cloudflare Workers take a different approach by running code close to users on Cloudflare's global network.
 
 This can be particularly useful for edge APIs, authentication layers, API gateways, routing, caching, personalization, and globally distributed workloads.
-
-The [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/) explains the platform's current runtime and deployment model.
 
 For applications where geographic latency matters, edge execution can be a significant architectural advantage.
 
@@ -1260,7 +1291,7 @@ They make it straightforward to add server-side API functionality alongside a fr
 
 This developer experience is one of Vercel's biggest strengths.
 
-The [Vercel Functions documentation](https://vercel.com/docs/functions) provides current implementation details and platform limitations.
+For startups building a React or Next.js product, keeping frontend and backend deployment within one workflow can significantly reduce operational overhead.
 
 ## Cold Starts Are Only One Part of Performance
 
@@ -1293,6 +1324,8 @@ Choose Vercel Functions when deployment simplicity and full-stack developer expe
 There is no requirement to use one platform for every service.
 
 The best infrastructure is the infrastructure that matches the application's actual requirements rather than the one that looks most impressive on a benchmark chart.
+
+For an early-stage product, simplicity is often more valuable than adopting a highly distributed architecture before there is a real need for it.
 `,
     faq: [
       {
@@ -1386,6 +1419,8 @@ An API listing should ideally provide meaningful information about availability,
 
 Verification helps reduce the chance that developers spend valuable development time on an API that is unavailable, abandoned, incorrectly documented, or difficult to evaluate.
 
+This becomes even more important when developers are comparing several similar APIs and need trustworthy information before choosing one for a production application.
+
 ## Authentication Should Be Obvious
 
 Authentication is one of the first implementation details developers need.
@@ -1393,6 +1428,8 @@ Authentication is one of the first implementation details developers need.
 An API listing should make it clear whether the service uses an API key, OAuth, JWT, Basic authentication, signed requests, or another mechanism.
 
 If developers have to search through several pages just to understand authentication, the discovery experience is already creating unnecessary friction.
+
+Clear authentication information also helps developers estimate the amount of integration work required before committing to an API.
 
 ## Pricing Is Part of API Research
 
@@ -1402,6 +1439,8 @@ Developers want to know whether an API is free, whether there is a free tier, ho
 
 Clear pricing information makes API comparison significantly easier.
 
+For startups and independent developers, pricing can determine whether an API is suitable for an MVP, while larger teams may care more about predictable usage costs and enterprise limits.
+
 ## Documentation Determines Integration Time
 
 Two APIs can provide the same underlying functionality while creating completely different developer experiences.
@@ -1410,7 +1449,7 @@ A well-documented API provides a clear quickstart, authentication instructions, 
 
 OpenAPI can also make API documentation machine-readable and easier to integrate into developer tooling.
 
-The [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) is an important standard in this ecosystem.
+Good documentation does not just explain the API. It reduces the time between discovering a service and successfully making the first request.
 
 ## API Discovery Should End With Building
 
@@ -1441,6 +1480,8 @@ Understand it.
 Evaluate it.
 
 Build with it.
+
+That is the difference between a basic API directory and a developer-focused API discovery platform.
 `,
     faq: [
       {
@@ -1473,14 +1514,7 @@ Build with it.
 ];
 
 /* =========================================================
-   CONSTANTS
-========================================================= */
-
-const GREEN = "#22c55e";
-const GREEN_SOFT = "#4ade80";
-
-/* =========================================================
-   SEO
+   SEO HELPERS
 ========================================================= */
 
 function setMeta(
@@ -1488,7 +1522,9 @@ function setMeta(
   content: string,
   property = false
 ) {
-  const attribute = property ? "property" : "name";
+  const attribute = property
+    ? "property"
+    : "name";
 
   let element = document.head.querySelector(
     `meta[${attribute}="${name}"]`
@@ -1496,14 +1532,24 @@ function setMeta(
 
   if (!element) {
     element = document.createElement("meta");
-    element.setAttribute(attribute, name);
+
+    element.setAttribute(
+      attribute,
+      name
+    );
+
     document.head.appendChild(element);
   }
 
-  element.setAttribute("content", content);
+  element.setAttribute(
+    "content",
+    content
+  );
 }
 
-function updateSEO(article?: Article | null) {
+function updateSEO(
+  article?: Article | null
+) {
   const title = article
     ? `${article.title} | Apives`
     : "Apives Blog — API Guides, Engineering & Developer Insights";
@@ -1518,232 +1564,293 @@ function updateSEO(article?: Article | null) {
 
   document.title = title;
 
-  setMeta("description", description);
-  setMeta("keywords", keywords);
-
-  setMeta("og:title", title, true);
-  setMeta("og:description", description, true);
   setMeta(
-    "og:type",
-    article ? "article" : "website",
+    "description",
+    description
+  );
+
+  setMeta(
+    "keywords",
+    keywords
+  );
+
+  setMeta(
+    "og:title",
+    title,
     true
   );
 
-  setMeta("twitter:card", "summary");
-  setMeta("twitter:title", title);
-  setMeta("twitter:description", description);
+  setMeta(
+    "og:description",
+    description,
+    true
+  );
+
+  setMeta(
+    "og:type",
+    article
+      ? "article"
+      : "website",
+    true
+  );
+
+  setMeta(
+    "twitter:card",
+    "summary"
+  );
+
+  setMeta(
+    "twitter:title",
+    title
+  );
+
+  setMeta(
+    "twitter:description",
+    description
+  );
 
   const canonicalUrl = article
     ? `${window.location.origin}/blog/${article.slug}`
     : `${window.location.origin}/blog`;
 
-  let canonical = document.head.querySelector(
-    'link[rel="canonical"]'
-  ) as HTMLLinkElement | null;
+  let canonical =
+    document.head.querySelector(
+      'link[rel="canonical"]'
+    ) as HTMLLinkElement | null;
 
   if (!canonical) {
-    canonical = document.createElement("link");
+    canonical =
+      document.createElement("link");
+
     canonical.rel = "canonical";
-    document.head.appendChild(canonical);
+
+    document.head.appendChild(
+      canonical
+    );
   }
 
-  canonical.href = canonicalUrl;
+  canonical.href =
+    canonicalUrl;
 }
-
-/* =========================================================
-   STRUCTURED DATA
-========================================================= */
 
 function updateStructuredData(
   article?: Article | null
 ) {
   document
-    .getElementById("apives-blog-schema")
+    .getElementById(
+      "apives-blog-schema"
+    )
     ?.remove();
 
-  const script = document.createElement("script");
+  const script =
+    document.createElement(
+      "script"
+    );
 
-  script.id = "apives-blog-schema";
-  script.type = "application/ld+json";
+  script.id =
+    "apives-blog-schema";
+
+  script.type =
+    "application/ld+json";
 
   if (article) {
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Article",
-      headline: article.title,
-      description: article.excerpt,
-      datePublished: article.date,
-      author: {
-        "@type": "Person",
-        name: "Priince Gupta",
-        url: "https://x.com/priiinceguta",
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Apives",
-      },
-      mainEntityOfPage: {
-        "@type": "WebPage",
-        "@id": `${window.location.origin}/blog/${article.slug}`,
-      },
-    });
+    script.textContent =
+      JSON.stringify({
+        "@context":
+          "https://schema.org",
+
+        "@type":
+          "Article",
+
+        headline:
+          article.title,
+
+        description:
+          article.excerpt,
+
+        datePublished:
+          article.date,
+
+        author: {
+          "@type":
+            "Person",
+
+          name:
+            "Priince Gupta",
+
+          url:
+            "https://x.com/priiincegupta",
+        },
+
+        publisher: {
+          "@type":
+            "Organization",
+
+          name:
+            "Apives",
+        },
+
+        mainEntityOfPage: {
+          "@type":
+            "WebPage",
+
+          "@id":
+            `${window.location.origin}/blog/${article.slug}`,
+        },
+      });
   } else {
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      name: "Apives Blog",
-      description:
-        "Practical guides for building, securing and scaling APIs.",
-      url: `${window.location.origin}/blog`,
-      publisher: {
-        "@type": "Organization",
-        name: "Apives",
-      },
-    });
+    script.textContent =
+      JSON.stringify({
+        "@context":
+          "https://schema.org",
+
+        "@type":
+          "Blog",
+
+        name:
+          "Apives Blog",
+
+        description:
+          "Practical guides for building, securing and scaling APIs.",
+
+        url:
+          `${window.location.origin}/blog`,
+
+        publisher: {
+          "@type":
+            "Organization",
+
+          name:
+            "Apives",
+        },
+      });
   }
 
-  document.head.appendChild(script);
+  document.head.appendChild(
+    script
+  );
 }
 
 /* =========================================================
-   INLINE MARKDOWN LINKS
+   INLINE MARKDOWN
 ========================================================= */
 
 function renderInlineText(
   text: string,
   keyPrefix: string
 ) {
-  const parts = text.split(
-    /(\[[^\]]+\]\(https?:\/\/[^)]+\))/g
-  );
-
-  return parts.map((part, index) => {
-    const match = part.match(
-      /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+  const parts =
+    text.split(
+      /(\[[^\]]+\]\(https?:\/\/[^)]+\))/g
     );
 
-    if (!match) {
+  return parts.map(
+    (part, index) => {
+      const match =
+        part.match(
+          /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+        );
+
+      if (!match) {
+        return (
+          <React.Fragment
+            key={`${keyPrefix}-${index}`}
+          >
+            {part}
+          </React.Fragment>
+        );
+      }
+
       return (
-        <React.Fragment
+        <a
           key={`${keyPrefix}-${index}`}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-link"
         >
-          {part}
-        </React.Fragment>
+          {match[1]}
+        </a>
       );
     }
-
-    return (
-      <a
-        key={`${keyPrefix}-${index}`}
-        href={match[2]}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="article-link"
-      >
-        {match[1]}
-      </a>
-    );
-  });
+  );
 }
 
 /* =========================================================
    CONTENT RENDERER
 ========================================================= */
 
-function renderContent(text: string) {
-  const lines = text.trim().split("\n");
+function renderContent(
+  text: string
+) {
+  const lines =
+    text.trim().split("\n");
 
-  return lines.map((line, index) => {
-    const clean = line.trim();
+  return lines.map(
+    (line, index) => {
+      const clean =
+        line.trim();
 
-    if (!clean) {
+      if (!clean) {
+        return (
+          <div
+            key={`space-${index}`}
+            className="article-space"
+          />
+        );
+      }
+
+      if (
+        clean.startsWith("## ")
+      ) {
+        return (
+          <h2
+            key={`heading-${index}`}
+            className="article-heading"
+          >
+            {clean.slice(3)}
+          </h2>
+        );
+      }
+
+      if (
+        clean.startsWith("{") ||
+        clean.startsWith('"')
+      ) {
+        return (
+          <pre
+            key={`code-${index}`}
+            className="article-code"
+          >
+            {clean}
+          </pre>
+        );
+      }
+
       return (
-        <div
-          key={`space-${index}`}
-          className="article-space"
-        />
-      );
-    }
-
-    if (clean.startsWith("## ")) {
-      return (
-        <h2
-          key={`heading-${index}`}
-          className="article-heading"
+        <p
+          key={`paragraph-${index}`}
+          className="article-paragraph"
         >
-          {clean.slice(3)}
-        </h2>
+          {renderInlineText(
+            clean,
+            `line-${index}`
+          )}
+        </p>
       );
     }
-
-    if (
-      clean.startsWith("{") ||
-      clean.startsWith('"')
-    ) {
-      return (
-        <pre
-          key={`code-${index}`}
-          className="article-code"
-        >
-          {clean}
-        </pre>
-      );
-    }
-
-    return (
-      <p
-        key={`paragraph-${index}`}
-        className="article-paragraph"
-      >
-        {renderInlineText(
-          clean,
-          `line-${index}`
-        )}
-      </p>
-    );
-  });
+  );
 }
 
 /* =========================================================
    SOCIAL ICONS
 ========================================================= */
 
-function InstagramIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect
-        x="3"
-        y="3"
-        width="18"
-        height="18"
-        rx="5"
-      />
-      <circle cx="12" cy="12" r="4" />
-      <circle
-        cx="17.5"
-        cy="6.5"
-        r="0.8"
-        fill="currentColor"
-        stroke="none"
-      />
-    </svg>
-  );
-}
-
 function FacebookIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
     >
@@ -1755,8 +1862,8 @@ function FacebookIcon() {
 function LinkedinIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
     >
@@ -1768,8 +1875,8 @@ function LinkedinIcon() {
 function RedditIcon() {
   return (
     <svg
-      width="18"
-      height="18"
+      width="16"
+      height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
     >
@@ -1778,11 +1885,24 @@ function RedditIcon() {
   );
 }
 
+function WhatsappIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M20.5 3.5A11.9 11.9 0 0 0 12.05 0C5.48 0 .14 5.34.14 11.91c0 2.1.55 4.15 1.6 5.96L.04 24l6.27-1.65a11.86 11.86 0 0 0 5.74 1.46h.01c6.56 0 11.9-5.34 11.9-11.91 0-3.18-1.23-6.17-3.46-8.4Zm-8.45 18.27h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.72.98.99-3.63-.23-.37a9.88 9.88 0 1 1 8.36 4.61Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z" />
+    </svg>
+  );
+}
+
 function XIcon() {
   return (
     <span
       style={{
-        fontSize: 17,
+        fontSize: 15,
         fontWeight: 700,
         lineHeight: 1,
       }}
@@ -1834,10 +1954,13 @@ function ArticleDetail({
 }: {
   article: Article;
   articles: Article[];
-  onSelect: (article: Article) => void;
+  onSelect: (
+    article: Article
+  ) => void;
   onBack: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] =
+    useState(false);
 
   useEffect(() => {
     updateSEO(article);
@@ -1858,81 +1981,106 @@ function ArticleDetail({
     `${window.location.origin}/blog/${article.slug}`;
 
   const shareTitle =
-    encodeURIComponent(article.title);
+    encodeURIComponent(
+      article.title
+    );
 
   const encodedUrl =
-    encodeURIComponent(shareUrl);
+    encodeURIComponent(
+      shareUrl
+    );
 
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        shareUrl
-      );
-
-      setCopied(true);
-
-      window.setTimeout(
-        () => setCopied(false),
-        1800
-      );
-    } catch {
-      const input =
-        document.createElement("input");
-
-      input.value = shareUrl;
-      document.body.appendChild(input);
-
-      input.select();
-      document.execCommand("copy");
-
-      input.remove();
-
-      setCopied(true);
-
-      window.setTimeout(
-        () => setCopied(false),
-        1800
-      );
-    }
-  };
-
-  const nativeShare = async () => {
-    if (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function"
-    ) {
+  const copyLink =
+    async () => {
       try {
-        await navigator.share({
-          title: article.title,
-          text: article.excerpt,
-          url: shareUrl,
-        });
+        await navigator.clipboard.writeText(
+          shareUrl
+        );
 
-        return;
+        setCopied(true);
+
+        window.setTimeout(
+          () =>
+            setCopied(false),
+          1800
+        );
       } catch {
-        return;
-      }
-    }
+        const input =
+          document.createElement(
+            "input"
+          );
 
-    await copyLink();
-  };
+        input.value =
+          shareUrl;
+
+        document.body.appendChild(
+          input
+        );
+
+        input.select();
+
+        document.execCommand(
+          "copy"
+        );
+
+        input.remove();
+
+        setCopied(true);
+
+        window.setTimeout(
+          () =>
+            setCopied(false),
+          1800
+        );
+      }
+    };
+
+  const nativeShare =
+    async () => {
+      if (
+        typeof navigator !==
+          "undefined" &&
+        typeof navigator.share ===
+          "function"
+      ) {
+        try {
+          await navigator.share({
+            title:
+              article.title,
+            text:
+              article.excerpt,
+            url:
+              shareUrl,
+          });
+
+          return;
+        } catch {
+          return;
+        }
+      }
+
+      await copyLink();
+    };
 
   const share = (
     platform:
-      | "instagram"
+      | "email"
       | "facebook"
       | "reddit"
       | "x"
       | "linkedin"
+      | "whatsapp"
   ) => {
-    if (platform === "instagram") {
-      nativeShare();
-      return;
-    }
-
     let url = "";
 
     switch (platform) {
+      case "email":
+        url =
+          `mailto:?subject=${shareTitle}&body=${encodeURIComponent(
+            `${article.excerpt}\n\nRead more: ${shareUrl}`
+          )}`;
+        break;
+
       case "facebook":
         url =
           `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
@@ -1952,40 +2100,43 @@ function ArticleDetail({
         url =
           `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
         break;
+
+      case "whatsapp":
+        url =
+          `https://wa.me/?text=${encodeURIComponent(
+            `${article.title}\n\n${shareUrl}`
+          )}`;
+        break;
     }
 
     if (url) {
       window.open(
         url,
         "_blank",
-        "noopener,noreferrer,width=720,height=620"
+        "noopener,noreferrer"
       );
     }
   };
 
-  const related = articles
-    .filter(
-      (item) => item.id !== article.id
-    )
-    .slice(0, 3);
+  const related =
+    articles
+      .filter(
+        (item) =>
+          item.id !==
+          article.id
+      )
+      .slice(0, 3);
 
   return (
     <main className="blog-root">
 
+      {/* SAME BACK BUTTON POSITION AS BROWSE APIS */}
+
+      <div className="blog-back-button">
+        <BackButton />
+      </div>
+
       <article className="article-page">
-
-        {/* BACK BUTTON */}
-
-        <div className="article-back-wrap">
-          <button
-            type="button"
-            className="back-button"
-            onClick={onBack}
-          >
-            <ArrowLeft size={16} />
-            <span>Back to blog</span>
-          </button>
-        </div>
 
         {/* HEADER */}
 
@@ -2011,25 +2162,27 @@ function ArticleDetail({
             <span>
               Posted by{" "}
               <a
-                href="https://x.com/priiinceguta"
+                href="https://x.com/priiincegupta"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="author-link"
               >
-                @priiinceguta
+                @priiincegupta
               </a>
             </span>
           </div>
 
+          {/* SOCIAL */}
+
           <div className="share-row">
 
             <ShareButton
-              label="Instagram"
+              label="Email"
               onClick={() =>
-                share("instagram")
+                share("email")
               }
             >
-              <InstagramIcon />
+              <Mail size={16} />
             </ShareButton>
 
             <ShareButton
@@ -2069,28 +2222,50 @@ function ArticleDetail({
             </ShareButton>
 
             <ShareButton
+              label="WhatsApp"
+              onClick={() =>
+                share("whatsapp")
+              }
+            >
+              <WhatsappIcon />
+            </ShareButton>
+
+            <ShareButton
               label={
                 copied
                   ? "Copied"
-                  : "Share"
+                  : "Copy link"
               }
-              onClick={nativeShare}
+              onClick={copyLink}
             >
               {copied ? (
-                <Check size={18} />
+                <Check size={16} />
               ) : (
-                <Share2 size={18} />
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                  }}
+                >
+                  ↗
+                </span>
               )}
             </ShareButton>
 
           </div>
 
+          {/* NORMAL GREY DIVIDER */}
+
+          <div className="article-divider" />
+
         </header>
 
-        {/* CONTENT */}
+        {/* ARTICLE */}
 
         <div className="article-content">
-          {renderContent(article.content)}
+          {renderContent(
+            article.content
+          )}
         </div>
 
         {/* FAQ */}
@@ -2103,20 +2278,25 @@ function ArticleDetail({
 
           <p className="faq-intro">
             Practical answers to common
-            questions developers have about
-            this topic.
+            questions developers have
+            about this topic.
           </p>
 
           <div className="faq-list">
             {article.faq.map(
-              (item, index) => (
+              (
+                item,
+                index
+              ) => (
                 <details
                   key={index}
                   className="faq-item"
                 >
                   <summary>
                     <span>
-                      {item.question}
+                      {
+                        item.question
+                      }
                     </span>
 
                     <ChevronRight
@@ -2144,7 +2324,9 @@ function ArticleDetail({
 
           <div>
             {related.map(
-              (relatedArticle) => (
+              (
+                relatedArticle
+              ) => (
                 <button
                   key={
                     relatedArticle.id
@@ -2158,11 +2340,13 @@ function ArticleDetail({
 
                     window.scrollTo({
                       top: 0,
-                      behavior: "auto",
+                      behavior:
+                        "auto",
                     });
                   }}
                 >
                   <div>
+
                     <span className="related-date">
                       {
                         relatedArticle.date
@@ -2180,6 +2364,7 @@ function ArticleDetail({
                         relatedArticle.excerpt
                       }
                     </p>
+
                   </div>
 
                   <ChevronRight
@@ -2202,35 +2387,36 @@ function ArticleDetail({
    ARTICLE LIST ITEM
 ========================================================= */
 
-const ArticleListItem = memo(
-  function ArticleListItem({
-    article,
-    onClick,
-  }: {
-    article: Article;
-    onClick: () => void;
-  }) {
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        className="article-list-item"
-      >
-        <div className="list-date">
-          {article.date}
-        </div>
+const ArticleListItem =
+  memo(
+    function ArticleListItem({
+      article,
+      onClick,
+    }: {
+      article: Article;
+      onClick: () => void;
+    }) {
+      return (
+        <button
+          type="button"
+          onClick={onClick}
+          className="article-list-item"
+        >
+          <div className="list-date">
+            {article.date}
+          </div>
 
-        <h2>
-          {article.title}
-        </h2>
+          <h2>
+            {article.title}
+          </h2>
 
-        <p>
-          {article.excerpt}
-        </p>
-      </button>
-    );
-  }
-);
+          <p>
+            {article.excerpt}
+          </p>
+        </button>
+      );
+    }
+  );
 
 /* =========================================================
    MAIN BLOG
@@ -2240,12 +2426,16 @@ export default function ApivesBlog() {
   const [
     selectedArticle,
     setSelectedArticle,
-  ] = useState<Article | null>(null);
+  ] =
+    useState<Article | null>(
+      null
+    );
 
   const [
     searchQuery,
     setSearchQuery,
-  ] = useState("");
+  ] =
+    useState("");
 
   useEffect(() => {
     updateSEO(null);
@@ -2297,24 +2487,34 @@ export default function ApivesBlog() {
         <BlogStyles />
 
         <ArticleDetail
-          article={selectedArticle}
-          articles={ARTICLES}
-          onSelect={(article) => {
+          article={
+            selectedArticle
+          }
+          articles={
+            ARTICLES
+          }
+          onSelect={(
+            article
+          ) => {
             setSelectedArticle(
               article
             );
 
             window.scrollTo({
               top: 0,
-              behavior: "auto",
+              behavior:
+                "auto",
             });
           }}
           onBack={() => {
-            setSelectedArticle(null);
+            setSelectedArticle(
+              null
+            );
 
             window.scrollTo({
               top: 0,
-              behavior: "auto",
+              behavior:
+                "auto",
             });
           }}
         />
@@ -2340,8 +2540,8 @@ export default function ApivesBlog() {
           />
 
           <p>
-            Practical ideas for building
-            better APIs.
+            Practical ideas for
+            building better APIs.
           </p>
 
         </section>
@@ -2396,8 +2596,12 @@ export default function ApivesBlog() {
             filteredArticles.map(
               (article) => (
                 <ArticleListItem
-                  key={article.id}
-                  article={article}
+                  key={
+                    article.id
+                  }
+                  article={
+                    article
+                  }
                   onClick={() => {
                     setSelectedArticle(
                       article
@@ -2405,7 +2609,8 @@ export default function ApivesBlog() {
 
                     window.scrollTo({
                       top: 0,
-                      behavior: "auto",
+                      behavior:
+                        "auto",
                     });
                   }}
                 />
@@ -2413,18 +2618,23 @@ export default function ApivesBlog() {
             )
           ) : (
             <div className="empty-state">
+
               <p>
-                No articles found.
+                No articles
+                found.
               </p>
 
               <button
                 type="button"
                 onClick={() =>
-                  setSearchQuery("")
+                  setSearchQuery(
+                    ""
+                  )
                 }
               >
                 Clear search
               </button>
+
             </div>
           )}
 
@@ -2496,6 +2706,26 @@ function BlogStyles() {
           BlinkMacSystemFont,
           "Segoe UI",
           sans-serif;
+      }
+
+      /* ============================================
+         BACK BUTTON
+         SAME POSITION AS BROWSE APIS
+      ============================================ */
+
+      .blog-back-button {
+        position: absolute;
+
+        top: 6rem;
+        left: 1rem;
+
+        z-index: 30;
+      }
+
+      @media (min-width: 1024px) {
+        .blog-back-button {
+          left: 2rem;
+        }
       }
 
       /* ============================================
@@ -2799,50 +3029,8 @@ function BlogStyles() {
         margin: 0 auto;
 
         padding:
-          40px 24px
-          115px;
-      }
-
-      /* ============================================
-         BACK BUTTON
-      ============================================ */
-
-      .article-back-wrap {
-        margin-bottom: 55px;
-      }
-
-      .back-button {
-        display: inline-flex;
-
-        align-items: center;
-
-        gap: 8px;
-
-        padding:
-          8px 0;
-
-        border: 0;
-
-        background: transparent;
-
-        color: #676767;
-
-        font: inherit;
-
-        font-size: 12px;
-
-        cursor: pointer;
-
-        transition:
-          color .18s ease,
-          transform .18s ease;
-      }
-
-      .back-button:hover {
-        color: ${GREEN};
-
-        transform:
-          translateX(-2px);
+          110px 24px
+          105px;
       }
 
       /* ============================================
@@ -2852,7 +3040,7 @@ function BlogStyles() {
       .article-header {
         text-align: center;
 
-        padding-bottom: 64px;
+        padding-bottom: 35px;
       }
 
       .article-title {
@@ -2877,7 +3065,7 @@ function BlogStyles() {
         max-width: 720px;
 
         margin:
-          27px auto 0;
+          24px auto 0;
 
         color: #696969;
 
@@ -2898,7 +3086,7 @@ function BlogStyles() {
 
         gap: 8px;
 
-        margin-top: 24px;
+        margin-top: 21px;
 
         color: #555;
 
@@ -2936,6 +3124,7 @@ function BlogStyles() {
 
       /* ============================================
          SHARE
+         10% SMALLER
       ============================================ */
 
       .share-row {
@@ -2944,16 +3133,16 @@ function BlogStyles() {
         align-items: center;
         justify-content: center;
 
-        gap: 8px;
+        gap: 7px;
 
-        margin-top: 29px;
+        margin-top: 24px;
       }
 
       .share-button {
         position: relative;
 
-        width: 43px;
-        height: 43px;
+        width: 39px;
+        height: 39px;
 
         display: flex;
 
@@ -3053,6 +3242,21 @@ function BlogStyles() {
       }
 
       /* ============================================
+         NORMAL GREY DIVIDER
+      ============================================ */
+
+      .article-divider {
+        width: 100%;
+
+        height: 1px;
+
+        margin-top: 32px;
+
+        background:
+          rgba(255,255,255,.10);
+      }
+
+      /* ============================================
          CONTENT
       ============================================ */
 
@@ -3062,7 +3266,7 @@ function BlogStyles() {
 
       .article-heading {
         margin:
-          58px 0
+          50px 0
           20px;
 
         color: #f5f5f5;
@@ -3161,9 +3365,9 @@ function BlogStyles() {
       ============================================ */
 
       .faq-section {
-        margin-top: 85px;
+        margin-top: 75px;
 
-        padding-top: 48px;
+        padding-top: 45px;
 
         border-top:
           1px solid
@@ -3282,9 +3486,9 @@ function BlogStyles() {
       ============================================ */
 
       .related-section {
-        margin-top: 85px;
+        margin-top: 75px;
 
-        padding-top: 48px;
+        padding-top: 45px;
 
         border-top:
           1px solid
@@ -3406,6 +3610,11 @@ function BlogStyles() {
 
       @media (max-width: 640px) {
 
+        .blog-back-button {
+          top: 6rem;
+          left: 1rem;
+        }
+
         .blog-hero {
           padding:
             78px 20px
@@ -3418,7 +3627,6 @@ function BlogStyles() {
 
         .blog-hero p {
           margin-top: 20px;
-
           font-size: 16px;
         }
 
@@ -3452,12 +3660,8 @@ function BlogStyles() {
 
         .article-page {
           padding:
-            25px 20px
+            105px 20px
             80px;
-        }
-
-        .article-back-wrap {
-          margin-bottom: 45px;
         }
 
         .article-title {
@@ -3473,6 +3677,24 @@ function BlogStyles() {
           line-height: 1.75;
         }
 
+        .article-meta {
+          margin-top: 18px;
+        }
+
+        .share-row {
+          gap: 6px;
+          margin-top: 21px;
+        }
+
+        .share-button {
+          width: 38px;
+          height: 38px;
+        }
+
+        .article-divider {
+          margin-top: 27px;
+        }
+
         .article-paragraph {
           font-size: 15.5px;
           line-height: 1.9;
@@ -3480,22 +3702,13 @@ function BlogStyles() {
         }
 
         .article-heading {
-          margin-top: 46px;
+          margin-top: 43px;
           margin-bottom: 18px;
-        }
-
-        .share-button {
-          width: 40px;
-          height: 40px;
-        }
-
-        .share-row {
-          gap: 7px;
         }
 
         .faq-section,
         .related-section {
-          margin-top: 65px;
+          margin-top: 62px;
           padding-top: 35px;
         }
 
