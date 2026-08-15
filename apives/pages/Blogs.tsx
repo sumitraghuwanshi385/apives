@@ -335,7 +335,7 @@ function BlogStyles() {
       .blog-hero-image {
         display: block;
 
-        width: 210px;
+        width: 195px;
         height: auto;
 
         margin: 0 auto;
@@ -354,7 +354,7 @@ function BlogStyles() {
         color: #737373;
 
         font-size:
-          clamp(17px, 2.2vw, 21px);
+          clamp(16px, 2.2vw, 20px);
 
         line-height: 1.65;
 
@@ -502,8 +502,8 @@ function BlogStyles() {
         display: block;
 
         padding:
-          36px 0
-          39px;
+          33.5px 0
+          36.3px;
 
         text-align: left;
 
@@ -546,7 +546,7 @@ function BlogStyles() {
         color: #f5f5f5;
 
         font-size:
-          clamp(23px, 3vw, 32px);
+          clamp(22px, 3vw, 30.4px);
 
         line-height: 1.25;
 
@@ -571,7 +571,7 @@ function BlogStyles() {
         color: #626262;
 
         font-size:
-          clamp(14px, 1.7vw, 16px);
+          clamp(13.4px, 1.7vw, 15.4px);
 
         line-height: 1.8;
       }
@@ -611,13 +611,13 @@ function BlogStyles() {
         }
 
         .blog-hero-image {
-          width: 185px;
+          width: 172px;
         }
 
         .blog-hero p {
           margin-top: 20px;
 
-          font-size: 16px;
+          font-size: 15.2px;
         }
 
         .search-section {
@@ -634,19 +634,19 @@ function BlogStyles() {
 
         .blog-list-item {
           padding:
-            29px 0
-            32px;
+            27px 0
+            29.8px;
         }
 
         .blog-list-item h2 {
-          font-size: 23px;
+          font-size: 21.85px;
 
           letter-spacing:
             -.55px;
         }
 
         .blog-list-item p {
-          font-size: 14px;
+          font-size: 13.45px;
 
           line-height: 1.75;
         }
