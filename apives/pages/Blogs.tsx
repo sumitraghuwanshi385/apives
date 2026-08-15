@@ -5,17 +5,8 @@ import React, {
   useState,
 } from "react";
 
-import {
-  Search,
-  X,
-  Check,
-  ChevronRight,
-  ArrowLeft,
-  Mail,
-  Copy,
-  Share2,
-  MessageCircle,
-} from "lucide-react";
+import { Search, X, Check, ChevronRight, ArrowLeft, Mail } from "lucide-react";
+import { BackButton } from "../components/BackButton";
 
 /* =========================================================
    TYPES
@@ -1531,7 +1522,9 @@ function setMeta(
   content: string,
   property = false
 ) {
-  const attribute = property ? "property" : "name";
+  const attribute = property
+    ? "property"
+    : "name";
 
   let element = document.head.querySelector(
     `meta[${attribute}="${name}"]`
@@ -1539,14 +1532,24 @@ function setMeta(
 
   if (!element) {
     element = document.createElement("meta");
-    element.setAttribute(attribute, name);
+
+    element.setAttribute(
+      attribute,
+      name
+    );
+
     document.head.appendChild(element);
   }
 
-  element.setAttribute("content", content);
+  element.setAttribute(
+    "content",
+    content
+  );
 }
 
-function updateSEO(article?: Article | null) {
+function updateSEO(
+  article?: Article | null
+) {
   const title = article
     ? `${article.title} | Apives`
     : "Apives Blog — API Guides, Engineering & Developer Insights";
@@ -1561,81 +1564,171 @@ function updateSEO(article?: Article | null) {
 
   document.title = title;
 
-  setMeta("description", description);
-  setMeta("keywords", keywords);
+  setMeta(
+    "description",
+    description
+  );
 
-  setMeta("og:title", title, true);
-  setMeta("og:description", description, true);
-  setMeta("og:type", article ? "article" : "website", true);
+  setMeta(
+    "keywords",
+    keywords
+  );
 
-  setMeta("twitter:card", "summary");
-  setMeta("twitter:title", title);
-  setMeta("twitter:description", description);
+  setMeta(
+    "og:title",
+    title,
+    true
+  );
+
+  setMeta(
+    "og:description",
+    description,
+    true
+  );
+
+  setMeta(
+    "og:type",
+    article
+      ? "article"
+      : "website",
+    true
+  );
+
+  setMeta(
+    "twitter:card",
+    "summary"
+  );
+
+  setMeta(
+    "twitter:title",
+    title
+  );
+
+  setMeta(
+    "twitter:description",
+    description
+  );
 
   const canonicalUrl = article
     ? `${window.location.origin}/blog/${article.slug}`
     : `${window.location.origin}/blog`;
 
-  let canonical = document.head.querySelector(
-    'link[rel="canonical"]'
-  ) as HTMLLinkElement | null;
+  let canonical =
+    document.head.querySelector(
+      'link[rel="canonical"]'
+    ) as HTMLLinkElement | null;
 
   if (!canonical) {
-    canonical = document.createElement("link");
+    canonical =
+      document.createElement("link");
+
     canonical.rel = "canonical";
-    document.head.appendChild(canonical);
+
+    document.head.appendChild(
+      canonical
+    );
   }
 
-  canonical.href = canonicalUrl;
+  canonical.href =
+    canonicalUrl;
 }
 
-function updateStructuredData(article?: Article | null) {
+function updateStructuredData(
+  article?: Article | null
+) {
   document
-    .getElementById("apives-blog-schema")
+    .getElementById(
+      "apives-blog-schema"
+    )
     ?.remove();
 
-  const script = document.createElement("script");
+  const script =
+    document.createElement(
+      "script"
+    );
 
-  script.id = "apives-blog-schema";
-  script.type = "application/ld+json";
+  script.id =
+    "apives-blog-schema";
+
+  script.type =
+    "application/ld+json";
 
   if (article) {
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Article",
-      headline: article.title,
-      description: article.excerpt,
-      datePublished: article.date,
-      author: {
-        "@type": "Person",
-        name: "Priince Gupta",
-        url: "https://x.com/priiincegupta",
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Apives",
-      },
-      mainEntityOfPage: {
-        "@type": "WebPage",
-        "@id": `${window.location.origin}/blog/${article.slug}`,
-      },
-    });
+    script.textContent =
+      JSON.stringify({
+        "@context":
+          "https://schema.org",
+
+        "@type":
+          "Article",
+
+        headline:
+          article.title,
+
+        description:
+          article.excerpt,
+
+        datePublished:
+          article.date,
+
+        author: {
+          "@type":
+            "Person",
+
+          name:
+            "Priince Gupta",
+
+          url:
+            "https://x.com/priiincegupta",
+        },
+
+        publisher: {
+          "@type":
+            "Organization",
+
+          name:
+            "Apives",
+        },
+
+        mainEntityOfPage: {
+          "@type":
+            "WebPage",
+
+          "@id":
+            `${window.location.origin}/blog/${article.slug}`,
+        },
+      });
   } else {
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      name: "Apives Blog",
-      description:
-        "Practical guides for building, securing and scaling APIs.",
-      url: `${window.location.origin}/blog`,
-      publisher: {
-        "@type": "Organization",
-        name: "Apives",
-      },
-    });
+    script.textContent =
+      JSON.stringify({
+        "@context":
+          "https://schema.org",
+
+        "@type":
+          "Blog",
+
+        name:
+          "Apives Blog",
+
+        description:
+          "Practical guides for building, securing and scaling APIs.",
+
+        url:
+          `${window.location.origin}/blog`,
+
+        publisher: {
+          "@type":
+            "Organization",
+
+          name:
+            "Apives",
+        },
+      });
   }
 
-  document.head.appendChild(script);
+  document.head.appendChild(
+    script
+  );
 }
 
 /* =========================================================
@@ -1646,99 +1739,111 @@ function renderInlineText(
   text: string,
   keyPrefix: string
 ) {
-  const parts = text.split(
-    /(\[[^\]]+\]\(https?:\/\/[^)]+\))/g
-  );
-
-  return parts.map((part, index) => {
-    const match = part.match(
-      /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+  const parts =
+    text.split(
+      /(\[[^\]]+\]\(https?:\/\/[^)]+\))/g
     );
 
-    if (!match) {
+  return parts.map(
+    (part, index) => {
+      const match =
+        part.match(
+          /^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/
+        );
+
+      if (!match) {
+        return (
+          <React.Fragment
+            key={`${keyPrefix}-${index}`}
+          >
+            {part}
+          </React.Fragment>
+        );
+      }
+
       return (
-        <React.Fragment
+        <a
           key={`${keyPrefix}-${index}`}
+          href={match[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="article-link"
         >
-          {part}
-        </React.Fragment>
+          {match[1]}
+        </a>
       );
     }
-
-    return (
-      <a
-        key={`${keyPrefix}-${index}`}
-        href={match[2]}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="article-link"
-      >
-        {match[1]}
-      </a>
-    );
-  });
+  );
 }
 
 /* =========================================================
    CONTENT RENDERER
 ========================================================= */
 
-function renderContent(text: string) {
-  const lines = text.trim().split("\n");
+function renderContent(
+  text: string
+) {
+  const lines =
+    text.trim().split("\n");
 
-  return lines.map((line, index) => {
-    const clean = line.trim();
+  return lines.map(
+    (line, index) => {
+      const clean =
+        line.trim();
 
-    if (!clean) {
+      if (!clean) {
+        return (
+          <div
+            key={`space-${index}`}
+            className="article-space"
+          />
+        );
+      }
+
+      if (
+        clean.startsWith("## ")
+      ) {
+        return (
+          <h2
+            key={`heading-${index}`}
+            className="article-heading"
+          >
+            {clean.slice(3)}
+          </h2>
+        );
+      }
+
+      if (
+        clean.startsWith("{") ||
+        clean.startsWith('"')
+      ) {
+        return (
+          <pre
+            key={`code-${index}`}
+            className="article-code"
+          >
+            {clean}
+          </pre>
+        );
+      }
+
       return (
-        <div
-          key={`space-${index}`}
-          className="article-space"
-        />
-      );
-    }
-
-    if (clean.startsWith("## ")) {
-      return (
-        <h2
-          key={`heading-${index}`}
-          className="article-heading"
+        <p
+          key={`paragraph-${index}`}
+          className="article-paragraph"
         >
-          {clean.slice(3)}
-        </h2>
+          {renderInlineText(
+            clean,
+            `line-${index}`
+          )}
+        </p>
       );
     }
-
-    if (
-      clean.startsWith("{") ||
-      clean.startsWith('"')
-    ) {
-      return (
-        <pre
-          key={`code-${index}`}
-          className="article-code"
-        >
-          {clean}
-        </pre>
-      );
-    }
-
-    return (
-      <p
-        key={`paragraph-${index}`}
-        className="article-paragraph"
-      >
-        {renderInlineText(
-          clean,
-          `line-${index}`
-        )}
-      </p>
-    );
-  });
+  );
 }
 
 /* =========================================================
-   SOCIAL BRAND ICONS
+   SOCIAL ICONS
 ========================================================= */
 
 function FacebookIcon() {
@@ -1748,7 +1853,6 @@ function FacebookIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
-      aria-hidden="true"
     >
       <path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.7.3-1 1-1Z" />
     </svg>
@@ -1762,7 +1866,6 @@ function LinkedinIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
-      aria-hidden="true"
     >
       <path d="M5.1 7.2A2.1 2.1 0 1 0 5.1 3a2.1 2.1 0 0 0 0 4.2ZM3.2 9h3.8v11H3.2V9Zm6.1 0h3.6v1.5h.1c.5-.9 1.7-1.9 3.5-1.9 3.8 0 4.5 2.5 4.5 5.7V20h-3.8v-5c0-1.2 0-2.8-1.8-2.8s-2.1 1.3-2.1 2.7V20H9.3V9Z" />
     </svg>
@@ -1776,7 +1879,6 @@ function RedditIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
-      aria-hidden="true"
     >
       <path d="M21 12.1c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.4-.9-3.1-1.5-5-1.6l.8-3.5 2.4.5a1.9 1.9 0 1 0 .4-1.4l-3-.6c-.4-.1-.8.2-.9.6l-1 4.4c-1.9.1-3.7.7-5.1 1.6-.4-.4-1-.6-1.5-.6A2.2 2.2 0 0 0 2 12.1c0 .8.4 1.5 1 1.9v.5c0 3.4 4 6.2 9 6.2s9-2.8 9-6.2V14c.6-.4 1-1.1 1-1.9ZM8.2 14.4a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm7.7 2.8c-1 .9-2.3 1.3-3.9 1.3s-2.9-.4-3.9-1.3a.7.7 0 0 1 1-1c.7.6 1.7.9 2.9.9s2.2-.3 2.9-.9a.7.7 0 0 1 1 1Zm0-2.8a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Z" />
     </svg>
@@ -1790,22 +1892,20 @@ function WhatsappIcon() {
       height="16"
       viewBox="0 0 24 24"
       fill="currentColor"
-      aria-hidden="true"
     >
       <path d="M20.5 3.5A11.9 11.9 0 0 0 12.05 0C5.48 0 .14 5.34.14 11.91c0 2.1.55 4.15 1.6 5.96L.04 24l6.27-1.65a11.86 11.86 0 0 0 5.74 1.46h.01c6.56 0 11.9-5.34 11.9-11.91 0-3.18-1.23-6.17-3.46-8.4Zm-8.45 18.27h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.72.98.99-3.63-.23-.37a9.88 9.88 0 1 1 8.36 4.61Zm5.42-7.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z" />
     </svg>
   );
 }
 
-function XBrandIcon() {
+function XIcon() {
   return (
     <span
       style={{
         fontSize: 15,
-        fontWeight: 800,
+        fontWeight: 700,
         lineHeight: 1,
       }}
-      aria-hidden="true"
     >
       𝕏
     </span>
@@ -1843,36 +1943,6 @@ function ShareButton({
 }
 
 /* =========================================================
-   BLOG RETURN BUTTON
-   ALWAYS RETURNS TO /blog
-========================================================= */
-
-function BlogReturnButton() {
-  const goToBlog = () => {
-    /*
-      Important:
-      This intentionally goes to /blog instead of
-      window.history.back(), because history.back()
-      could send the user to the landing page.
-    */
-
-    window.location.href = "/blog";
-  };
-
-  return (
-    <button
-      type="button"
-      className="blog-return-button"
-      onClick={goToBlog}
-      aria-label="Back to blog"
-    >
-      <ArrowLeft size={15} />
-      <span>Back to blog</span>
-    </button>
-  );
-}
-
-/* =========================================================
    ARTICLE DETAIL
 ========================================================= */
 
@@ -1880,10 +1950,14 @@ function ArticleDetail({
   article,
   articles,
   onSelect,
+  onBack,
 }: {
   article: Article;
   articles: Article[];
-  onSelect: (article: Article) => void;
+  onSelect: (
+    article: Article
+  ) => void;
+  onBack: () => void;
 }) {
   const [copied, setCopied] =
     useState(false);
@@ -1907,66 +1981,86 @@ function ArticleDetail({
     `${window.location.origin}/blog/${article.slug}`;
 
   const shareTitle =
-    encodeURIComponent(article.title);
+    encodeURIComponent(
+      article.title
+    );
 
   const encodedUrl =
-    encodeURIComponent(shareUrl);
+    encodeURIComponent(
+      shareUrl
+    );
 
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        shareUrl
-      );
-
-      setCopied(true);
-
-      window.setTimeout(
-        () => setCopied(false),
-        1800
-      );
-    } catch {
-      const input =
-        document.createElement("input");
-
-      input.value = shareUrl;
-
-      document.body.appendChild(input);
-
-      input.select();
-
-      document.execCommand("copy");
-
-      input.remove();
-
-      setCopied(true);
-
-      window.setTimeout(
-        () => setCopied(false),
-        1800
-      );
-    }
-  };
-
-  const nativeShare = async () => {
-    if (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function"
-    ) {
+  const copyLink =
+    async () => {
       try {
-        await navigator.share({
-          title: article.title,
-          text: article.excerpt,
-          url: shareUrl,
-        });
+        await navigator.clipboard.writeText(
+          shareUrl
+        );
 
-        return;
+        setCopied(true);
+
+        window.setTimeout(
+          () =>
+            setCopied(false),
+          1800
+        );
       } catch {
-        return;
-      }
-    }
+        const input =
+          document.createElement(
+            "input"
+          );
 
-    await copyLink();
-  };
+        input.value =
+          shareUrl;
+
+        document.body.appendChild(
+          input
+        );
+
+        input.select();
+
+        document.execCommand(
+          "copy"
+        );
+
+        input.remove();
+
+        setCopied(true);
+
+        window.setTimeout(
+          () =>
+            setCopied(false),
+          1800
+        );
+      }
+    };
+
+  const nativeShare =
+    async () => {
+      if (
+        typeof navigator !==
+          "undefined" &&
+        typeof navigator.share ===
+          "function"
+      ) {
+        try {
+          await navigator.share({
+            title:
+              article.title,
+            text:
+              article.excerpt,
+            url:
+              shareUrl,
+          });
+
+          return;
+        } catch {
+          return;
+        }
+      }
+
+      await copyLink();
+    };
 
   const share = (
     platform:
@@ -2028,26 +2122,23 @@ function ArticleDetail({
     articles
       .filter(
         (item) =>
-          item.id !== article.id
+          item.id !==
+          article.id
       )
       .slice(0, 3);
 
   return (
     <main className="blog-root">
 
-      {/* =========================================
-          RETURN BUTTON
-      ========================================= */}
+      {/* SAME BACK BUTTON POSITION AS BROWSE APIS */}
 
       <div className="blog-back-button">
-        <BlogReturnButton />
+        <BackButton />
       </div>
 
       <article className="article-page">
 
-        {/* =========================================
-            ARTICLE HEADER
-        ========================================= */}
+        {/* HEADER */}
 
         <header className="article-header">
 
@@ -2060,7 +2151,6 @@ function ArticleDetail({
           </p>
 
           <div className="article-meta">
-
             <span className="article-date">
               {article.date}
             </span>
@@ -2080,12 +2170,9 @@ function ArticleDetail({
                 @priiincegupta
               </a>
             </span>
-
           </div>
 
-          {/* =====================================
-              RESTORED SOCIAL SHARE BUTTONS
-          ===================================== */}
+          {/* SOCIAL */}
 
           <div className="share-row">
 
@@ -2122,7 +2209,7 @@ function ArticleDetail({
                 share("x")
               }
             >
-              <XBrandIcon />
+              <XIcon />
             </ShareButton>
 
             <ShareButton
@@ -2154,19 +2241,26 @@ function ArticleDetail({
               {copied ? (
                 <Check size={16} />
               ) : (
-                <Copy size={15} />
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                  }}
+                >
+                  ↗
+                </span>
               )}
             </ShareButton>
 
           </div>
 
+          {/* NORMAL GREY DIVIDER */}
+
           <div className="article-divider" />
 
         </header>
 
-        {/* =========================================
-            ARTICLE CONTENT
-        ========================================= */}
+        {/* ARTICLE */}
 
         <div className="article-content">
           {renderContent(
@@ -2174,9 +2268,7 @@ function ArticleDetail({
           )}
         </div>
 
-        {/* =========================================
-            FAQ
-        ========================================= */}
+        {/* FAQ */}
 
         <section className="faq-section">
 
@@ -2191,40 +2283,38 @@ function ArticleDetail({
           </p>
 
           <div className="faq-list">
-
             {article.faq.map(
-              (item, index) => (
+              (
+                item,
+                index
+              ) => (
                 <details
                   key={index}
                   className="faq-item"
                 >
                   <summary>
-
                     <span>
-                      {item.question}
+                      {
+                        item.question
+                      }
                     </span>
 
                     <ChevronRight
                       size={17}
                     />
-
                   </summary>
 
                   <p>
                     {item.answer}
                   </p>
-
                 </details>
               )
             )}
-
           </div>
 
         </section>
 
-        {/* =========================================
-            RELATED
-        ========================================= */}
+        {/* RELATED */}
 
         <section className="related-section">
 
@@ -2233,9 +2323,10 @@ function ArticleDetail({
           </h2>
 
           <div>
-
             {related.map(
-              (relatedArticle) => (
+              (
+                relatedArticle
+              ) => (
                 <button
                   key={
                     relatedArticle.id
@@ -2249,11 +2340,11 @@ function ArticleDetail({
 
                     window.scrollTo({
                       top: 0,
-                      behavior: "auto",
+                      behavior:
+                        "auto",
                     });
                   }}
                 >
-
                   <div>
 
                     <span className="related-date">
@@ -2279,11 +2370,9 @@ function ArticleDetail({
                   <ChevronRight
                     size={18}
                   />
-
                 </button>
               )
             )}
-
           </div>
 
         </section>
@@ -2313,7 +2402,6 @@ const ArticleListItem =
           onClick={onClick}
           className="article-list-item"
         >
-
           <div className="list-date">
             {article.date}
           </div>
@@ -2325,7 +2413,6 @@ const ArticleListItem =
           <p>
             {article.excerpt}
           </p>
-
         </button>
       );
     }
@@ -2340,12 +2427,15 @@ export default function ApivesBlog() {
     selectedArticle,
     setSelectedArticle,
   ] =
-    useState<Article | null>(null);
+    useState<Article | null>(
+      null
+    );
 
   const [
     searchQuery,
     setSearchQuery,
-  ] = useState("");
+  ] =
+    useState("");
 
   useEffect(() => {
     updateSEO(null);
@@ -2391,26 +2481,40 @@ export default function ApivesBlog() {
       );
     }, [searchQuery]);
 
-  /* =========================================
-     ARTICLE DETAIL
-  ========================================= */
-
   if (selectedArticle) {
     return (
       <>
         <BlogStyles />
 
         <ArticleDetail
-          article={selectedArticle}
-          articles={ARTICLES}
-          onSelect={(article) => {
+          article={
+            selectedArticle
+          }
+          articles={
+            ARTICLES
+          }
+          onSelect={(
+            article
+          ) => {
             setSelectedArticle(
               article
             );
 
             window.scrollTo({
               top: 0,
-              behavior: "auto",
+              behavior:
+                "auto",
+            });
+          }}
+          onBack={() => {
+            setSelectedArticle(
+              null
+            );
+
+            window.scrollTo({
+              top: 0,
+              behavior:
+                "auto",
             });
           }}
         />
@@ -2418,19 +2522,13 @@ export default function ApivesBlog() {
     );
   }
 
-  /* =========================================
-     BLOG LIST PAGE
-  ========================================= */
-
   return (
     <>
       <BlogStyles />
 
       <main className="blog-root">
 
-        {/* =====================================
-            HERO
-        ===================================== */}
+        {/* HERO */}
 
         <section className="blog-hero">
 
@@ -2448,9 +2546,7 @@ export default function ApivesBlog() {
 
         </section>
 
-        {/* =====================================
-            SEARCH
-        ===================================== */}
+        {/* SEARCH */}
 
         <section className="search-section">
 
@@ -2490,9 +2586,7 @@ export default function ApivesBlog() {
 
         </section>
 
-        {/* =====================================
-            ARTICLES
-        ===================================== */}
+        {/* ARTICLES */}
 
         <section className="articles-section">
 
@@ -2502,8 +2596,12 @@ export default function ApivesBlog() {
             filteredArticles.map(
               (article) => (
                 <ArticleListItem
-                  key={article.id}
-                  article={article}
+                  key={
+                    article.id
+                  }
+                  article={
+                    article
+                  }
                   onClick={() => {
                     setSelectedArticle(
                       article
@@ -2511,7 +2609,8 @@ export default function ApivesBlog() {
 
                     window.scrollTo({
                       top: 0,
-                      behavior: "auto",
+                      behavior:
+                        "auto",
                     });
                   }}
                 />
@@ -2521,13 +2620,16 @@ export default function ApivesBlog() {
             <div className="empty-state">
 
               <p>
-                No articles found.
+                No articles
+                found.
               </p>
 
               <button
                 type="button"
                 onClick={() =>
-                  setSearchQuery("")
+                  setSearchQuery(
+                    ""
+                  )
                 }
               >
                 Clear search
@@ -2590,14 +2692,9 @@ function BlogStyles() {
         background: ${GREEN};
       }
 
-      /* ============================================
-         ROOT
-      ============================================ */
-
       .blog-root {
         min-height: 100vh;
         width: 100%;
-
         background: #000;
         color: #fff;
 
@@ -2612,88 +2709,17 @@ function BlogStyles() {
       }
 
       /* ============================================
-         BACK / RETURN BUTTON
-         ALWAYS BLOG
+         BACK BUTTON
+         SAME POSITION AS BROWSE APIS
       ============================================ */
 
       .blog-back-button {
         position: absolute;
 
-        top: 5.65rem;
+        top: 6rem;
         left: 1rem;
 
         z-index: 30;
-      }
-
-      .blog-return-button {
-        display: inline-flex;
-
-        align-items: center;
-        justify-content: center;
-
-        gap: 7px;
-
-        height: 34px;
-
-        padding: 0 11px;
-
-        border:
-          1px solid
-          rgba(255,255,255,.09);
-
-        border-radius: 9px;
-
-        background:
-          rgba(255,255,255,.035);
-
-        color: #777;
-
-        font-family: inherit;
-
-        font-size: 11px;
-        font-weight: 550;
-
-        cursor: pointer;
-
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-
-        box-shadow:
-          inset 0 1px 0
-          rgba(255,255,255,.045);
-
-        transition:
-          color .18s ease,
-          background .18s ease,
-          border-color .18s ease,
-          transform .18s ease;
-      }
-
-      .blog-return-button svg {
-        color: ${GREEN};
-
-        flex-shrink: 0;
-
-        transition:
-          transform .18s ease;
-      }
-
-      .blog-return-button:hover {
-        color: #fff;
-
-        background:
-          rgba(255,255,255,.065);
-
-        border-color:
-          rgba(34,197,94,.28);
-
-        transform:
-          translateX(-2px);
-      }
-
-      .blog-return-button:hover svg {
-        transform:
-          translateX(-2px);
       }
 
       @media (min-width: 1024px) {
@@ -2708,7 +2734,6 @@ function BlogStyles() {
 
       .blog-hero {
         max-width: 900px;
-
         margin: 0 auto;
 
         padding:
@@ -2753,7 +2778,6 @@ function BlogStyles() {
 
       .search-section {
         max-width: 900px;
-
         margin: 0 auto;
 
         padding:
@@ -2847,12 +2871,10 @@ function BlogStyles() {
         height: 29px;
 
         display: flex;
-
         align-items: center;
         justify-content: center;
 
         border: 0;
-
         border-radius: 50%;
 
         background: transparent;
@@ -2875,7 +2897,6 @@ function BlogStyles() {
 
       .articles-section {
         max-width: 900px;
-
         margin: 0 auto;
 
         padding:
@@ -2998,7 +3019,6 @@ function BlogStyles() {
 
       /* ============================================
          ARTICLE PAGE
-         REDUCED TOP GAP
       ============================================ */
 
       .article-page {
@@ -3008,13 +3028,8 @@ function BlogStyles() {
 
         margin: 0 auto;
 
-        /*
-          Reduced from 110px.
-          This brings the title closer to
-          the return button/header area.
-        */
         padding:
-          88px 24px
+          110px 24px
           105px;
       }
 
@@ -3050,7 +3065,7 @@ function BlogStyles() {
         max-width: 720px;
 
         margin:
-          22px auto 0;
+          24px auto 0;
 
         color: #696969;
 
@@ -3071,7 +3086,7 @@ function BlogStyles() {
 
         gap: 8px;
 
-        margin-top: 19px;
+        margin-top: 21px;
 
         color: #555;
 
@@ -3108,21 +3123,19 @@ function BlogStyles() {
       }
 
       /* ============================================
-         SHARE BUTTONS
-         RESTORED
-         CIRCULAR GLASS BACKGROUND
+         SHARE
+         10% SMALLER
       ============================================ */
 
       .share-row {
         display: flex;
 
         align-items: center;
-
         justify-content: center;
 
         gap: 7px;
 
-        margin-top: 22px;
+        margin-top: 24px;
       }
 
       .share-button {
@@ -3163,15 +3176,7 @@ function BlogStyles() {
         transition:
           transform .18s ease,
           background .18s ease,
-          border-color .18s ease,
-          color .18s ease;
-      }
-
-      .share-button svg {
-        width: 16px;
-        height: 16px;
-
-        color: ${GREEN};
+          border-color .18s ease;
       }
 
       .share-button:hover {
@@ -3181,19 +3186,12 @@ function BlogStyles() {
         border-color:
           rgba(34,197,94,.28);
 
-        color: ${GREEN_SOFT};
-
         transform:
           translateY(-2px);
       }
 
-      .share-button:hover svg {
-        color: ${GREEN_SOFT};
-      }
-
       .share-button:active {
-        transform:
-          scale(.91);
+        transform: scale(.91);
       }
 
       .share-tooltip {
@@ -3244,7 +3242,7 @@ function BlogStyles() {
       }
 
       /* ============================================
-         DIVIDER
+         NORMAL GREY DIVIDER
       ============================================ */
 
       .article-divider {
@@ -3252,7 +3250,7 @@ function BlogStyles() {
 
         height: 1px;
 
-        margin-top: 30px;
+        margin-top: 32px;
 
         background:
           rgba(255,255,255,.10);
@@ -3613,19 +3611,8 @@ function BlogStyles() {
       @media (max-width: 640px) {
 
         .blog-back-button {
-          top: 5.55rem;
+          top: 6rem;
           left: 1rem;
-        }
-
-        .blog-return-button {
-          height: 32px;
-
-          padding:
-            0 10px;
-
-          gap: 6px;
-
-          font-size: 10.5px;
         }
 
         .blog-hero {
@@ -3640,7 +3627,6 @@ function BlogStyles() {
 
         .blog-hero p {
           margin-top: 20px;
-
           font-size: 16px;
         }
 
@@ -3664,29 +3650,17 @@ function BlogStyles() {
 
         .article-list-item h2 {
           font-size: 23px;
-
-          letter-spacing:
-            -.55px;
+          letter-spacing: -.55px;
         }
 
         .article-list-item p {
           font-size: 14px;
-
           line-height: 1.75;
         }
 
-        /* ======================================
-           DETAIL PAGE
-        ====================================== */
-
         .article-page {
-          /*
-            Reduced from 105px so
-            return button and title
-            feel closer together.
-          */
           padding:
-            91px 20px
+            105px 20px
             80px;
         }
 
@@ -3699,21 +3673,17 @@ function BlogStyles() {
         }
 
         .article-excerpt {
-          margin-top: 19px;
-
           font-size: 15px;
-
           line-height: 1.75;
         }
 
         .article-meta {
-          margin-top: 17px;
+          margin-top: 18px;
         }
 
         .share-row {
           gap: 6px;
-
-          margin-top: 20px;
+          margin-top: 21px;
         }
 
         .share-button {
@@ -3722,27 +3692,23 @@ function BlogStyles() {
         }
 
         .article-divider {
-          margin-top: 26px;
+          margin-top: 27px;
         }
 
         .article-paragraph {
           font-size: 15.5px;
-
           line-height: 1.9;
-
           margin-bottom: 24px;
         }
 
         .article-heading {
           margin-top: 43px;
-
           margin-bottom: 18px;
         }
 
         .faq-section,
         .related-section {
           margin-top: 62px;
-
           padding-top: 35px;
         }
 
