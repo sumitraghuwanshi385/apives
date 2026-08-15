@@ -13,7 +13,8 @@ import {
   KeyRound,
   ArrowLeftRight,
   Waypoints,
-  Fingerprint
+  Fingerprint,
+  BrainCircuit
 } from 'lucide-react';
 
 import { ApiListing } from '../types';
@@ -449,7 +450,7 @@ export const LandingPage: React.FC = () => {
           <div
             className="relative rounded-2xl border border-white/10 overflow-hidden px-5 py-6 md:px-8 md:py-8 lg:px-10 lg:py-9"
             style={{
-              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786813303/IMG_20260815_223056_anahew.png)',
+              backgroundImage: 'url(https://res.cloudinary.com/dp7avkarg/image/upload/v1786813792/IMG_20260815_222938_qcmkam.png)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'
@@ -468,7 +469,7 @@ export const LandingPage: React.FC = () => {
                 boxShadow: '0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.25)'
               }}
             >
-              <Fingerprint size={18} className="text-white drop-shadow-sm" strokeWidth={1.75} />
+              <Fingerprint size={18} className="text-mora-500 drop-shadow-sm" strokeWidth={1.75} />
             </Link>
 
             <div className="relative z-10 pr-12">
@@ -621,7 +622,7 @@ export const LandingPage: React.FC = () => {
               )
             )}
 
-            {/* Apives AI — full width, no green glow */}
+            {/* Apives AI — full width, grey border only, no green */}
 
             <div className="apives-ai-static col-span-2">
               <ApivesAIHighlight />
@@ -766,9 +767,8 @@ export const LandingPage: React.FC = () => {
 
       <style>{`
         /*
-          Keep the Apives AI card visually static.
-          This only affects the AI highlight component,
-          not the rest of the landing page.
+          Keep the Apives AI card visually static + force normal grey border.
+          This only affects the AI highlight component.
         */
 
         .apives-ai-static {
@@ -787,7 +787,7 @@ export const LandingPage: React.FC = () => {
           opacity: 0 !important;
         }
 
-        /* Fully kill green glow / background effects from the AI box */
+        /* Kill all green glow / background / border effects */
         .apives-ai-static,
         .apives-ai-static * {
           box-shadow: none !important;
@@ -802,6 +802,14 @@ export const LandingPage: React.FC = () => {
           background-image: none !important;
           box-shadow: none !important;
           background-color: transparent !important;
+        }
+
+        /* Force outer border to normal grey like other cards */
+        .apives-ai-static,
+        .apives-ai-static > *,
+        .apives-ai-static [class*="border"],
+        .apives-ai-static [class*="rounded"] {
+          border-color: rgba(255, 255, 255, 0.1) !important;
         }
       `}</style>
 
