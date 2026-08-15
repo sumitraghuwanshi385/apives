@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Globe,
-  Bookmark,
-} from "lucide-react";
+import { Globe, Bookmark } from "lucide-react";
 import { ApiListing } from "../types";
 
 interface Props {
@@ -39,10 +36,7 @@ const isNew = (dateString?: string) => {
   return Date.now() - publishedDate < 15 * 24 * 60 * 60 * 1000;
 };
 
-const LandingApiCard: React.FC<Props> = ({
-  api,
-  topIds = [],
-}) => {
+const LandingApiCard: React.FC<Props> = ({ api, topIds = [] }) => {
   const [saved, setSaved] = useState(false);
   const [showVerifyInfo, setShowVerifyInfo] = useState(false);
 
@@ -55,9 +49,7 @@ const LandingApiCard: React.FC<Props> = ({
 
   const rankIndex = topIds.indexOf(api.id);
   const rankStyle =
-    rankIndex !== -1
-      ? RANK_BADGE_STYLES[rankIndex]
-      : null;
+    rankIndex !== -1 ? RANK_BADGE_STYLES[rankIndex] : null;
 
   useEffect(() => {
     const savedApis = JSON.parse(
@@ -79,9 +71,7 @@ const LandingApiCard: React.FC<Props> = ({
       localStorage.setItem(
         "mora_saved_apis",
         JSON.stringify(
-          savedApis.filter(
-            (id: string) => id !== api.id
-          )
+          savedApis.filter((id: string) => id !== api.id)
         )
       );
 
@@ -89,10 +79,7 @@ const LandingApiCard: React.FC<Props> = ({
     } else {
       localStorage.setItem(
         "mora_saved_apis",
-        JSON.stringify([
-          ...savedApis,
-          api.id,
-        ])
+        JSON.stringify([...savedApis, api.id])
       );
 
       setSaved(true);
@@ -102,158 +89,93 @@ const LandingApiCard: React.FC<Props> = ({
   return (
     <Link
       to={`/api/${api.id}`}
-      className="
-        group
-        relative
-        bg-dark-900/40
-        hover:bg-dark-900/70
-        rounded-2xl
-        border border-white/10
-        p-3.5 md:p-4
-        transition-all
-        duration-300
-        hover:-translate-y-1
-        flex flex-col
-        min-h-0
-      "
+      className="group relative bg-dark-900/40 hover:bg-dark-900/70 rounded-2xl border border-white/10 p-3.5 transition-all duration-300 hover:-translate-y-1 flex flex-col"
     >
-
       {/* IMAGE */}
       {firstImage && (
-        <div
-          className="
-            w-[85%]
-            mx-auto
-            aspect-[16/8.5]
-            rounded-xl
-            overflow-hidden
-            mb-3.5
-            border border-white/10
-            bg-black
-          "
-        >
+        <div className="relative overflow-hidden rounded-xl mb-3">
           <img
             src={firstImage}
             alt={api.name}
-            loading="lazy"
-            decoding="async"
-            className="
-              w-full
-              h-full
-              object-cover
-              transition-transform
-              duration-500
-              group-hover:scale-[1.03]
-            "
+            className="w-full h-40 md:h-44 object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           />
-        </div>
-      )}
 
-      {/* CATEGORY / STATUS ROW */}
-      <div className="flex items-center justify-between gap-2 mb-2.5">
+          {/* CATEGORY - TOP LEFT */}
+          <div className="absolute top-2.5 left-2.5 z-10">
+            <span className="text-[8px] px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-200 uppercase tracking-wider">
+              {api.category}
+            </span>
+          </div>
 
-        {/* CATEGORY */}
-        <span
-          className="
-            inline-flex
-            items-center
-            max-w-[65%]
-            text-[8px]
-            md:text-[9px]
-            px-2.5
-            py-1
-            rounded-full
-            bg-mora-500/[0.07]
-            border border-mora-500/20
-            text-mora-400
-            uppercase
-            tracking-[0.12em]
-            font-semibold
-            truncate
-          "
-        >
-          {api.category}
-        </span>
-
-        {/* NEW */}
-        {isNew(api.createdAt) && (
-          <span
-            className="
-              shrink-0
-              text-[8px]
-              px-2.5
-              py-1
-              rounded-full
-              bg-white
-              text-black
-              uppercase
-              tracking-wider
-              font-bold
-            "
-          >
-            New
-          </span>
-        )}
-
-        {/* RANK */}
-        {rankStyle && !isNew(api.createdAt) && (
-          <span
-            className={`
-              shrink-0
-              text-[8px]
-              px-2.5
-              py-1
-              rounded-full
-              uppercase
-              tracking-wider
-              font-bold
-              bg-gradient-to-r
-              ${rankStyle.color}
-              ${rankStyle.text}
-            `}
-          >
-            {rankStyle.label}
-          </span>
-        )}
-      </div>
-
-      {/* TITLE */}
-      <h3
-        className="
-          font-display
-          font-bold
-          text-white
-          text-[15px]
-          md:text-base
-          leading-tight
-          group-hover:text-mora-400
-          transition-colors
-        "
-      >
-        <span className="inline-flex items-center flex-wrap gap-0.5">
-
-          {api.name}
-
-          {/* VERIFIED */}
-          {isVerified && (
-            <span className="relative">
-
+          {/* BROWSE + SAVE - TOP RIGHT */}
+          <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
+            {/* BROWSE */}
+            {api.externalUrl && (
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setShowVerifyInfo(
-                    (v) => !v
-                  );
+
+                  window.open(api.externalUrl, "_blank");
                 }}
-                className="
-                  h-5
-                  w-5
-                  flex
-                  items-center
-                  justify-center
-                "
-                aria-label="Verified API"
+                className="h-7 w-7 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-slate-300 flex items-center justify-center hover:bg-green-500 hover:text-black hover:border-green-500 transition"
+                aria-label="Browse API"
+              >
+                <Globe size={12} />
+              </button>
+            )}
+
+            {/* SAVE */}
+            <button
+              onClick={handleSave}
+              className={`h-7 w-7 rounded-full flex items-center justify-center border backdrop-blur-md transition ${
+                saved
+                  ? "bg-green-500 text-black border-green-500"
+                  : "bg-black/60 border-white/10 text-slate-300 hover:bg-green-500 hover:text-black hover:border-green-500"
+              }`}
+              aria-label={saved ? "Unsave API" : "Save API"}
+            >
+              <Bookmark size={12} />
+            </button>
+          </div>
+
+          {/* RANK + NEW */}
+          {(rankStyle || isNew(api.createdAt)) && (
+            <div className="absolute bottom-2.5 left-2.5 z-10 flex items-center gap-1.5">
+              {/* RANK BADGE */}
+              {rankStyle && (
+                <span
+                  className={`text-[8px] px-2.5 py-1 rounded-full uppercase tracking-wider bg-gradient-to-r ${rankStyle.color} ${rankStyle.text}`}
+                >
+                  {rankStyle.label}
+                </span>
+              )}
+
+              {/* NEW BADGE */}
+              {isNew(api.createdAt) && (
+                <span className="text-[8px] px-2.5 py-1 rounded-full bg-white text-black uppercase font-bold">
+                  New
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* API NAME */}
+      <h3 className="font-display font-bold text-white text-base md:text-lg leading-tight group-hover:text-mora-400 transition-colors">
+        <span className="inline-flex items-center flex-wrap gap-0.5">
+          {api.name}
+
+          {isVerified && (
+            <span className="relative">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowVerifyInfo((v) => !v);
+                }}
+                className="h-5 w-5 md:h-6 md:w-6 flex items-center justify-center"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -261,9 +183,8 @@ const LandingApiCard: React.FC<Props> = ({
                 >
                   <path
                     fill="#22C55E"
-                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4.9.5 1.7 1.6 1.7 2.8z"
+                    d="M22 12c0-1.2-.8-2.3-2-2.8.4-1.2.1-2.6-.8-3.4-.9-.9-2.2-1.2-3.4-.8C15.3 3.8 14.2 3 13 3s-2.3.8-2.8 2c-1.2-.4-2.6-.1-3.4.8-.9.9-1.2 2.2-.8 3.4C4.8 9.7 4 10.8 4 12s.8 2.3 2 2.8c-.4 1.2-.1 2.6.8 3.4.9.9 2.2 1.2 3.4.8.5 1.2 1.6 2 2.8 2s2.3-.8 2.8-2c1.2.4 2.6.1 3.4-.8.9-.9 1.2-2.2.8-3.4 1.2-.5 2 1.6 2 2.8z"
                   />
-
                   <path
                     d="M9.2 12.3l2 2.1 4.6-4.8"
                     stroke="#000"
@@ -274,162 +195,27 @@ const LandingApiCard: React.FC<Props> = ({
               </button>
 
               {showVerifyInfo && (
-                <div
-                  className="
-                    absolute
-                    left-1/2
-                    -translate-x-1/2
-                    top-full
-                    mt-2
-                    z-[200]
-                    pointer-events-none
-                  "
-                >
-                  <div
-                    className="
-                      relative
-                      bg-green-600
-                      border border-green-700
-                      rounded-full
-                      px-3
-                      py-1
-                      text-[10px]
-                      text-white
-                      font-medium
-                      shadow-xl
-                      whitespace-nowrap
-                    "
-                  >
-                    <span
-                      className="
-                        absolute
-                        left-1/2
-                        -translate-x-1/2
-                        -top-1
-                        w-2
-                        h-2
-                        bg-green-600
-                        rotate-45
-                        border-l
-                        border-t
-                        border-green-700
-                      "
-                    />
-
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-[200] pointer-events-none">
+                  <div className="relative bg-green-600 border border-green-700 rounded-full px-3 py-1 text-[10px] text-white font-medium shadow-xl whitespace-nowrap">
+                    <span className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 bg-green-600 rotate-45 border-l border-t border-green-700" />
                     Manually verified by Apives
                   </div>
                 </div>
               )}
-
             </span>
           )}
-
         </span>
       </h3>
 
       {/* PROVIDER */}
-      <p
-        className="
-          text-[10px]
-          text-slate-500
-          mt-1
-          truncate
-          pr-16
-        "
-      >
+      <p className="text-[11px] text-slate-500 mt-1">
         {api.provider}
       </p>
 
       {/* DESCRIPTION */}
-      <p
-        className="
-          text-[12px]
-          text-slate-400
-          mt-2.5
-          line-clamp-3
-          leading-relaxed
-          flex-grow
-          pr-10
-        "
-      >
+      <p className="text-sm text-slate-400 mt-3 line-clamp-3 flex-grow">
         {api.description}
       </p>
-
-      {/* BOTTOM ACTIONS */}
-      <div
-        className="
-          mt-3
-          flex
-          items-center
-          justify-end
-          gap-2
-        "
-      >
-
-        {/* SAVE */}
-        <button
-          onClick={handleSave}
-          aria-label={
-            saved
-              ? "Remove from saved"
-              : "Save API"
-          }
-          className={`
-            h-7
-            w-7
-            rounded-full
-            flex
-            items-center
-            justify-center
-            border
-            transition-all
-            duration-200
-            ${
-              saved
-                ? "bg-green-500 text-black border-green-500"
-                : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white"
-            }
-          `}
-        >
-          <Bookmark size={13} />
-        </button>
-
-        {/* EXTERNAL WEBSITE */}
-        {api.externalUrl && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-
-              window.open(
-                api.externalUrl,
-                "_blank",
-                "noopener,noreferrer"
-              );
-            }}
-            aria-label="Open API website"
-            className="
-              h-7
-              w-7
-              rounded-full
-              bg-white/5
-              border border-white/10
-              text-slate-400
-              flex
-              items-center
-              justify-center
-              hover:bg-green-500
-              hover:text-black
-              hover:border-green-500
-              transition-all
-            "
-          >
-            <Globe size={13} />
-          </button>
-        )}
-
-      </div>
-
     </Link>
   );
 };
