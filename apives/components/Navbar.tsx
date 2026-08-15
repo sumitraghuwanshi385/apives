@@ -26,46 +26,17 @@ import {
   Wand2
 } from 'lucide-react';
 
-const NavLink = ({
-  to,
-  children,
-  icon: Icon
-}: React.PropsWithChildren<{
-  to: string;
-  icon?: React.ElementType;
-}>) => (
-  <Link
-    to={to}
-    className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap"
-  >
-    {Icon && (
-      <Icon
-        size={14}
-        className="text-mora-500/70 group-hover:text-mora-500 transition-colors"
-      />
-    )}
+const NavLink = ({ to, children, icon: Icon }: React.PropsWithChildren<{ to: string; icon?: React.ElementType }>) => (
 
+  <Link to={to} className="relative group text-slate-400 hover:text-white transition-colors px-4 py-2 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2 whitespace-nowrap">
+    {Icon && <Icon size={14} className="text-mora-500/70 group-hover:text-mora-500 transition-colors" />}
     {children}
-
     <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-mora-500 transition-all group-hover:w-1/2 duration-300 rounded-full"></span>
   </Link>
 );
 
-const MobileNavLink = ({
-  to,
-  children,
-  onClick,
-  icon: Icon
-}: React.PropsWithChildren<{
-  to: string;
-  onClick: () => void;
-  icon: React.ElementType;
-}>) => (
-  <Link
-    to={to}
-    onClick={onClick}
-    className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-300 hover:text-mora-400 hover:bg-mora-500/5 border border-transparent hover:border-white/10 transition-all uppercase tracking-wide"
-  >
+const MobileNavLink = ({ to, children, onClick, icon: Icon }: React.PropsWithChildren<{ to: string; onClick: () => void; icon: React.ElementType }>) => (
+  <Link to={to} onClick={onClick} className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[11px] font-medium text-slate-300 hover:text-mora-400 hover:bg-mora-500/5 border border-transparent hover:border-white/10 transition-all uppercase tracking-wide">
     <Icon size={13} className="text-mora-500/60" />
     {children}
   </Link>
@@ -121,16 +92,16 @@ export const Navbar: React.FC = () => {
 
   if (isAuthPage || isOnboardingPage) return null;
 
-  const navContainerStyle =
-    isScrolled && !isOpen
-      ? "top-4 md:top-6 w-[92%] max-w-7xl rounded-full border border-white/20 bg-white/[0.03] backdrop-blur-[40px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] py-1.5 md:py-2"
-      : isOpen
-      ? "top-0 w-full bg-black border-b border-white/10 py-2.5 md:py-4"
-      : "top-0 w-full border-b border-white/5 bg-black/50 backdrop-blur-sm py-2 md:py-3";
+  const navContainerStyle = isScrolled && !isOpen
+    ? "top-4 md:top-6 w-[92%] max-w-7xl rounded-full border border-white/20 bg-white/[0.03] backdrop-blur-[40px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] py-1.5 md:py-2"
+    : isOpen
+    ? "top-0 w-full bg-black border-b border-white/10 py-2.5 md:py-4"
+    : "top-0 w-full border-b border-white/5 bg-black/50 backdrop-blur-sm py-2 md:py-3";
 
   return (
     <>
       {isLoggingOut && (
+
         <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center animate-fade-in">
           <div className="w-6 h-6 border-2 border-white/10 border-t-white rounded-full animate-spin mb-4"></div>
 
@@ -140,15 +111,15 @@ export const Navbar: React.FC = () => {
         </div>
       )}
 
-      <nav
-        className={`fixed z-50 left-1/2 -translate-x-1/2 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${navContainerStyle}`}
-      >
-        {/* PILL GREEN GLOW — OUTER GREEN SHADOW REMOVED */}
+      <nav className={`fixed z-50 left-1/2 -translate-x-1/2 transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) ${navContainerStyle}`}>
+
         {isScrolled && !isOpen && (
           <div className="absolute inset-0 rounded-full pointer-events-none">
+
             <div className="absolute top-0 bottom-0 left-0 w-[50%] border-l-[2px] md:border-l-[3.5px] border-mora-500 rounded-l-full opacity-90"></div>
 
             <div className="absolute top-0 bottom-0 right-0 w-[50%] border-r-[2px] md:border-r-[3.5px] border-mora-500 rounded-r-full opacity-90"></div>
+
           </div>
         )}
 
@@ -158,11 +129,7 @@ export const Navbar: React.FC = () => {
 
             <div className="flex items-center">
 
-              <Link
-                to="/"
-                className="flex items-center group"
-                onClick={() => setIsOpen(false)}
-              >
+              <Link to="/" className="flex items-center group" onClick={() => setIsOpen(false)}>
                 <img
                   src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
                   alt="Apives Logo"
@@ -170,7 +137,6 @@ export const Navbar: React.FC = () => {
                 />
               </Link>
 
-              {/* DESKTOP NAV */}
               <div className="hidden md:flex ml-4 lg:ml-8 space-x-1 border-l border-white/10 pl-4 lg:pl-8">
 
                 <NavLink to="/" icon={HomeIcon}>
@@ -181,7 +147,6 @@ export const Navbar: React.FC = () => {
                   Explore APIs
                 </NavLink>
 
-                {/* APIVES AI — DESKTOP HEADER */}
                 <NavLink to="/ask-apives-ai" icon={BrainCircuit}>
                   ApivesAI
                 </NavLink>
@@ -194,6 +159,7 @@ export const Navbar: React.FC = () => {
               <div className="hidden lg:flex items-center space-x-3">
 
                 {isAuthenticated ? (
+
                   <div className="flex items-center gap-2">
 
                     <Link
@@ -228,7 +194,9 @@ export const Navbar: React.FC = () => {
                     </button>
 
                   </div>
+
                 ) : (
+
                   <Link
                     to="/access"
                     className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]"
@@ -236,9 +204,10 @@ export const Navbar: React.FC = () => {
                     <Fingerprint size={14} />
 
                     <span className="text-[10px] font-black uppercase tracking-widest">
-                      Access Console
+                      Sign in
                     </span>
                   </Link>
+
                 )}
 
               </div>
@@ -296,14 +265,14 @@ export const Navbar: React.FC = () => {
                 <Search size={14} className="md:w-5 md:h-5" />
               </button>
 
-              {/* MENU */}
               <div className="relative">
+
                 <button
                   onClick={() => setIsOpen(!isOpen)}
                   className={`w-7 h-7 md:w-10 md:h-10 flex items-center justify-center rounded-full border shadow-lg transition-all duration-300 ${
                     isOpen
-                      ? 'bg-mora-500/20 border-mora-500 text-mora-400'
-                      : 'bg-white/[0.05] backdrop-blur-[20px] border-white/20 text-slate-300 hover:bg-white/[0.1] active:scale-90'
+                    ? 'bg-mora-500/20 border-mora-500 text-mora-400'
+                    : 'bg-white/[0.05] backdrop-blur-[20px] border-white/20 text-slate-300 hover:bg-white/[0.1] active:scale-90'
                   }`}
                 >
                   {isOpen ? (
@@ -312,14 +281,15 @@ export const Navbar: React.FC = () => {
                     <Menu size={14} className="md:w-5 md:h-5" />
                   )}
                 </button>
+
               </div>
 
             </div>
           </div>
         </div>
 
-        {/* MOBILE MENU */}
         {isOpen && (
+
           <div className="border-t border-white/10 animate-fade-in bg-black absolute w-full left-0 top-full shadow-2xl overflow-hidden rounded-b-2xl md:rounded-b-3xl">
 
             <div className="px-4 pt-3 pb-4 space-y-1">
@@ -340,13 +310,7 @@ export const Navbar: React.FC = () => {
                 Explore APIs
               </MobileNavLink>
 
-              <MobileNavLink
-                to="/fresh"
-                icon={Zap}
-                onClick={() => setIsOpen(false)}
-              >
-                New Releases
-              </MobileNavLink>
+              {/* NEW RELEASES REMOVED */}
 
               <MobileNavLink
                 to="/popular"
@@ -356,7 +320,6 @@ export const Navbar: React.FC = () => {
                 Top Rated
               </MobileNavLink>
 
-              {/* APIVES AI — MOBILE MENU */}
               <MobileNavLink
                 to="/ask-apives"
                 icon={BrainCircuit}
@@ -408,14 +371,7 @@ export const Navbar: React.FC = () => {
                 Mock Server
               </MobileNavLink>
 
-              {/* ARCHITECT — ONLY INSIDE MENU */}
-              <MobileNavLink
-                to="/architect"
-                icon={Wand2}
-                onClick={() => setIsOpen(false)}
-              >
-                Architect
-              </MobileNavLink>
+              {/* ARCHITECT REMOVED FROM MENU */}
 
               <MobileNavLink
                 to="/submit"
@@ -462,7 +418,7 @@ export const Navbar: React.FC = () => {
                   icon={Fingerprint}
                   onClick={() => setIsOpen(false)}
                 >
-                  Access Console
+                  Sign in
                 </MobileNavLink>
               )}
 
