@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -18,7 +17,7 @@ import {
   KeyRound,
   ArrowLeftRight,
   Waypoints,
-  Orbit
+  BrainCircuit
 } from 'lucide-react';
 
 
@@ -294,7 +293,7 @@ export const Navbar: React.FC = () => {
 
                 <NavLink
                   to="/ask-apives-ai"
-                  icon={Orbit}
+                  icon={BrainCircuit}
                 >
                   ApivesAI
                 </NavLink>
@@ -367,7 +366,7 @@ export const Navbar: React.FC = () => {
 
                   <Link
                     to="/access"
-                    className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-6 py-2.5 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+                    className="group flex items-center space-x-2 bg-mora-600 hover:bg-mora-500 text-white px-[25px] py-[10.5px] rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.3)]"
                   >
 
                     <Fingerprint
@@ -424,7 +423,7 @@ export const Navbar: React.FC = () => {
                 "
               >
 
-                <Orbit
+                <BrainCircuit
                   size={16}
                   className="md:w-5 md:h-5"
                 />
@@ -547,7 +546,7 @@ export const Navbar: React.FC = () => {
 
               <MobileNavLink
                 to="/ask-apives-ai"
-                icon={Orbit}
+                icon={BrainCircuit}
                 onClick={() => {
                   setIsOpen(false);
                   navigate(
