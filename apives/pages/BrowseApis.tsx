@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { ApiListing } from "../types";
-import LandingApiCard from "../components/ApiCard";
+import LandingApiCard from "../components/LandingApiCard";
 import { Skeleton } from "../components/Skeleton";
 import { BackButton } from "../components/BackButton";
 
