@@ -723,7 +723,9 @@ const addEditFeature = () => {
       )}
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="relative rounded-[1.5rem] md:rounded-[2.5rem] p-5 md:p-8 mb-6 md:mb-8 flex flex-col md:flex-row items-center justify-between border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl">
+        
+        {/* ===== HEADER CARD (Name + Active / Total) ===== */}
+        <div className="relative rounded-[1.5rem] md:rounded-[2.5rem] p-5 md:p-8 mb-4 md:mb-5 flex flex-col md:flex-row items-center justify-between border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden shadow-2xl">
              <div className="flex items-center gap-3 md:gap-5 relative z-10 w-full md:w-auto">
                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-black/80 border border-white/10 flex items-center justify-center shadow-lg"><Terminal size={24} md:size={32} className="text-white" /></div>
                  <div className="overflow-hidden">
@@ -734,61 +736,79 @@ const addEditFeature = () => {
                  </div>
              </div>
 
-             <div className="mt-4 md:mt-0 flex flex-col gap-3 relative z-10 w-full md:w-auto">
-                <div className="flex gap-2 md:gap-3">
-                  <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-mora-500/20 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
-                      <span className="text-[8px] md:text-[10px] font-black text-mora-400 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
-                          <Radio size={8} md:size={10} className="animate-pulse" /> Active
-                      </span>
-                      <div className="text-xl md:text-3xl font-display font-black text-white">
-                          {myNodes.filter(n => n.status === 'active').length}
-                      </div>
-                  </div>
-                  <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-white/10 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
-                      <span className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
-                          <LayoutGrid size={8} md:size={10} /> Total
-                      </span>
-                      <div className="text-xl md:text-3xl font-display font-black text-white">
-                          {myNodes.length}
-                      </div>
-                  </div>
+             <div className="mt-4 md:mt-0 flex gap-2 md:gap-3 relative z-10 w-full md:w-auto">
+                <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-mora-500/20 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
+                    <span className="text-[8px] md:text-[10px] font-black text-mora-400 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
+                        <Radio size={8} md:size={10} className="animate-pulse" /> Active
+                    </span>
+                    <div className="text-xl md:text-3xl font-display font-black text-white">
+                        {myNodes.filter(n => n.status === 'active').length}
+                    </div>
                 </div>
-
-                {/* Developer Toolkit - 4 compact boxes */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
-                  <Link
-                    to="/live-api-runner"
-                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
-                  >
-                    <Terminal size={16} className="text-mora-400 group-hover:text-mora-300" />
-                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">Live API Runner</span>
-                  </Link>
-
-                  <Link
-                    to="/jwt-decoder"
-                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
-                  >
-                    <KeyRound size={16} className="text-mora-400 group-hover:text-mora-300" />
-                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">JWT Decoder</span>
-                  </Link>
-
-                  <Link
-                    to="/curl-converter"
-                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
-                  >
-                    <ArrowLeftRight size={16} className="text-mora-400 group-hover:text-mora-300" />
-                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">cURL Converter</span>
-                  </Link>
-
-                  <Link
-                    to="/mock-server"
-                    className="flex flex-col items-center justify-center gap-1.5 p-2.5 md:p-3 rounded-xl bg-black/50 border border-white/10 hover:border-mora-500/40 hover:bg-black/70 transition-all group"
-                  >
-                    <Waypoints size={16} className="text-mora-400 group-hover:text-mora-300" />
-                    <span className="text-[8px] md:text-[9px] font-bold text-slate-300 uppercase tracking-wider text-center leading-tight">Mock Server</span>
-                  </Link>
+                <div className="flex-1 md:flex-none flex flex-col items-center md:items-end bg-black/50 border border-white/10 p-3 md:p-4 rounded-2xl md:rounded-3xl min-w-[100px] md:min-w-[140px] shadow-lg">
+                    <span className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1 mb-0.5 md:mb-1">
+                        <LayoutGrid size={8} md:size={10} /> Total
+                    </span>
+                    <div className="text-xl md:text-3xl font-display font-black text-white">
+                        {myNodes.length}
+                    </div>
                 </div>
              </div>
+        </div>
+
+        {/* ===== DEVELOPER TOOLKIT (compact boxes below header) ===== */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 md:mb-8">
+          <Link
+            to="/live-api-runner"
+            className="group bg-dark-900/50 hover:bg-dark-900/80 border border-white/10 hover:border-mora-500/40 rounded-2xl p-3.5 md:p-4 transition-all duration-300 hover:-translate-y-0.5 flex flex-col items-start gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-mora-500/10 border border-mora-500/30 text-mora-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+              <Terminal size={18} />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-[12px] md:text-[13px] tracking-tight">Live Runner</h3>
+              <p className="text-slate-500 text-[10px] mt-0.5">Test APIs live</p>
+            </div>
+          </Link>
+
+          <Link
+            to="/jwt-decoder"
+            className="group bg-dark-900/50 hover:bg-dark-900/80 border border-white/10 hover:border-mora-500/40 rounded-2xl p-3.5 md:p-4 transition-all duration-300 hover:-translate-y-0.5 flex flex-col items-start gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-mora-500/10 border border-mora-500/30 text-mora-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+              <KeyRound size={18} />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-[12px] md:text-[13px] tracking-tight">JWT Decoder</h3>
+              <p className="text-slate-500 text-[10px] mt-0.5">Decode tokens</p>
+            </div>
+          </Link>
+
+          <Link
+            to="/curl-converter"
+            className="group bg-dark-900/50 hover:bg-dark-900/80 border border-white/10 hover:border-mora-500/40 rounded-2xl p-3.5 md:p-4 transition-all duration-300 hover:-translate-y-0.5 flex flex-col items-start gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-mora-500/10 border border-mora-500/30 text-mora-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+              <ArrowLeftRight size={18} />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-[12px] md:text-[13px] tracking-tight">cURL Convert</h3>
+              <p className="text-slate-500 text-[10px] mt-0.5">Convert requests</p>
+            </div>
+          </Link>
+
+          <Link
+            to="/mock-server"
+            className="group bg-dark-900/50 hover:bg-dark-900/80 border border-white/10 hover:border-mora-500/40 rounded-2xl p-3.5 md:p-4 transition-all duration-300 hover:-translate-y-0.5 flex flex-col items-start gap-2.5"
+          >
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-mora-500/10 border border-mora-500/30 text-mora-400 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+              <Waypoints size={18} />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-[12px] md:text-[13px] tracking-tight">Mock Server</h3>
+              <p className="text-slate-500 text-[10px] mt-0.5">Fake endpoints</p>
+            </div>
+          </Link>
         </div>
 
         <div className="flex items-center space-x-1 bg-white/5 p-1 rounded-full w-fit mb-6 md:mb-8 border border-white/5 overflow-x-auto no-scrollbar">
