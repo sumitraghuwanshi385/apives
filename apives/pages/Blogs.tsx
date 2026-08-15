@@ -8,13 +8,8 @@ import React, {
 import {
   Search,
   X,
-  Instagram,
-  Facebook,
-  Linkedin,
-  Reddit,
   Share2,
   Check,
-  ExternalLink,
   ChevronRight,
 } from "lucide-react";
 
@@ -39,7 +34,9 @@ interface Article {
 }
 
 /* =========================================================
-   ARTICLES
+   IMPORTANT
+   KEEP YOUR EXISTING ARTICLES ARRAY HERE
+   The 11 articles you already have can remain unchanged.
 ========================================================= */
 
 const ARTICLES: Article[] = [
@@ -262,7 +259,7 @@ It is designed around the fact that external APIs can fail.
 
 ## The Practical Answer
 
-There is no single "best" LLM API.
+There is no single best LLM API.
 
 Choose based on your workload.
 
@@ -314,7 +311,7 @@ API security therefore needs to be part of API design from the beginning.
 
 The [OWASP API Security project](https://owasp.org/API-Security/) is one of the most useful references for developers working on API security.
 
-## 1. Broken Object Level Authorization
+## Broken Object Level Authorization
 
 One of the most common API security problems is failing to verify whether a user is allowed to access a specific object.
 
@@ -330,9 +327,7 @@ Being authenticated does not mean the user owns order 1002.
 
 The server must check ownership or permissions before returning the object.
 
-## 2. Weak Authentication
-
-Authentication determines who the user or application is.
+## Authentication
 
 Use modern authentication patterns and avoid putting secrets into frontend JavaScript.
 
@@ -342,7 +337,7 @@ For browser and mobile applications, OAuth 2.0 with PKCE is often a better appro
 
 The [OAuth 2.0 RFC](https://www.rfc-editor.org/rfc/rfc6749) and [OAuth security best practices](https://www.rfc-editor.org/rfc/rfc9700) are useful references.
 
-## 3. Missing Rate Limits
+## Rate Limiting
 
 Public endpoints should have reasonable limits.
 
@@ -350,7 +345,7 @@ Without rate limiting, attackers can abuse login endpoints, expensive searches, 
 
 Return HTTP 429 when a client exceeds the allowed request rate.
 
-## 4. Unsafe Input
+## Validate Input
 
 Never trust incoming JSON.
 
@@ -358,7 +353,7 @@ Validate request bodies, query parameters, headers, file uploads, IDs, and user-
 
 Use allowlists for fields where possible.
 
-## 5. Excessive Data Exposure
+## Avoid Excessive Data Exposure
 
 Do not return an entire database record when the client only needs three fields.
 
@@ -366,13 +361,13 @@ API responses should expose only the information the caller actually needs.
 
 This reduces both accidental data leaks and the impact of compromised accounts.
 
-## 6. Poor Error Handling
+## Handle Errors Safely
 
 Production APIs should not return database stack traces or internal file paths to users.
 
 Return useful errors without exposing internal implementation details.
 
-## 7. Missing HTTPS
+## Use HTTPS
 
 Sensitive API traffic should use HTTPS.
 
@@ -380,7 +375,7 @@ Never send authentication credentials over plain HTTP.
 
 TLS protects data while it moves between the client and server.
 
-## 8. Unsafe File Uploads
+## Secure File Uploads
 
 File uploads need validation.
 
@@ -388,7 +383,7 @@ Check file size, content type, filename handling, storage permissions, and malwa
 
 Never assume a file extension tells you what a file really contains.
 
-## 9. Poor Secret Management
+## Protect Secrets
 
 Do not put production secrets in GitHub.
 
@@ -396,7 +391,7 @@ Use environment variables and dedicated secret management systems.
 
 Rotate credentials when they are exposed.
 
-## 10. No Monitoring
+## Monitor API Activity
 
 Security problems are much harder to investigate when there are no logs.
 
@@ -440,7 +435,7 @@ It is a collection of controls working together.
       "API best practices",
     ],
     content: `
-## 1. Start With the API Consumer
+## Start With the API Consumer
 
 Before writing endpoints, understand who will use the API.
 
@@ -448,7 +443,7 @@ A public API has different requirements from an internal service.
 
 Think about authentication, documentation, versioning, rate limits, error messages, and backwards compatibility before implementation starts.
 
-## 2. Design the API Contract
+## Design the API Contract
 
 Define endpoints and data structures before writing every backend function.
 
@@ -456,18 +451,9 @@ An OpenAPI document can describe the contract and give frontend and backend team
 
 The [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) is a good starting point.
 
-For example, decide whether an endpoint returns:
-
-{
-  "id": "123",
-  "name": "Example"
-}
-
-or some completely different structure.
-
 Consistency matters more than cleverness.
 
-## 3. Add Authentication Early
+## Add Authentication Early
 
 Authentication should not be added as an afterthought.
 
@@ -475,37 +461,21 @@ Decide how users and services authenticate before building sensitive business lo
 
 Common options include API keys, OAuth, JWT-based systems, sessions, and machine-to-machine credentials.
 
-Authentication answers "who are you?"
+Authentication answers who you are.
 
-Authorization answers "what are you allowed to do?"
+Authorization answers what you are allowed to do.
 
 Both are important.
 
-## 4. Validate Everything Important
+## Validate Everything Important
 
 API input comes from outside your trusted application.
 
-Validate:
-
-Required fields.
-
-Types.
-
-String lengths.
-
-Numbers.
-
-IDs.
-
-Allowed values.
-
-File sizes.
-
-Nested objects.
+Validate required fields, types, string lengths, numbers, IDs, allowed values, file sizes, and nested objects.
 
 Good validation creates a clean boundary between untrusted input and business logic.
 
-## 5. Design Consistent Errors
+## Design Consistent Errors
 
 A developer should not need to guess what a 400 response means.
 
@@ -522,7 +492,7 @@ For example:
 
 Clear errors make APIs much easier to integrate.
 
-## 6. Test Before Production
+## Test Before Production
 
 Unit tests are useful, but they are not enough.
 
@@ -542,7 +512,7 @@ Test realistic traffic.
 
 Load testing tools such as [k6](https://k6.io/) can help identify performance problems before launch.
 
-## 7. Monitor Everything That Matters
+## Monitor Everything That Matters
 
 A production API needs observability.
 
@@ -610,21 +580,7 @@ Many teams think of OpenAPI as a documentation file.
 
 It can do much more.
 
-A good specification can become the source for:
-
-API documentation.
-
-Client SDKs.
-
-Mock servers.
-
-Type generation.
-
-Contract tests.
-
-Validation.
-
-Developer tooling.
+A good specification can become the source for API documentation, client SDKs, mock servers, type generation, contract tests, validation, and developer tooling.
 
 That makes the specification useful throughout the API lifecycle.
 
@@ -780,8 +736,6 @@ Your application can return a failure response and allow the provider to retry, 
 
 Avoid retrying continuously without limits.
 
-A typical system increases the delay between attempts.
-
 ## Handle Out-of-Order Events
 
 Events may arrive in an unexpected order.
@@ -802,23 +756,7 @@ Use event timestamps, versions, or state validation where appropriate.
 
 Developers integrating your webhook system need visibility.
 
-Useful information includes:
-
-Event ID.
-
-Delivery attempt.
-
-Timestamp.
-
-HTTP status.
-
-Response body.
-
-Duration.
-
-Next retry.
-
-Final status.
+Useful information includes event ID, delivery attempt, timestamp, HTTP status, response body, duration, next retry, and final status.
 
 Good webhook logs can turn a difficult debugging problem into a five-minute fix.
 
@@ -870,8 +808,6 @@ OAuth 2.0 is mainly about delegated access.
 
 Instead of giving an application a user's password, the application receives limited authorization to access resources.
 
-That distinction is important.
-
 OAuth is an authorization framework, not simply a login button.
 
 The official [OAuth 2.0 specification](https://www.rfc-editor.org/rfc/rfc6749) explains the protocol.
@@ -894,9 +830,7 @@ Client Credentials is designed for machine-to-machine communication.
 
 There is no user involved.
 
-Imagine:
-
-Your backend needs to call a payment provider.
+Imagine your backend needs to call a payment provider.
 
 Your server authenticates itself.
 
@@ -918,11 +852,11 @@ Applications that use refresh tokens should also consider rotation and secure st
 
 Authentication asks:
 
-"Who are you?"
+Who are you?
 
 Authorization asks:
 
-"What are you allowed to access?"
+What are you allowed to access?
 
 An API can successfully authenticate a user and still reject the request because that user does not have permission to access the requested resource.
 
@@ -936,19 +870,7 @@ For browser and mobile applications, Authorization Code with PKCE is the modern 
 
 Good authentication should not make developers think about security every time they make an API request.
 
-Clear documentation should explain:
-
-How to start authorization.
-
-How to exchange the code.
-
-How to refresh tokens.
-
-What scopes mean.
-
-How tokens expire.
-
-What errors look like.
+Clear documentation should explain how to start authorization, exchange the code, refresh tokens, understand scopes, handle expiration, and handle errors.
 
 A good OAuth implementation is secure, predictable, and easy to integrate.
 `,
@@ -1010,11 +932,7 @@ That flexibility is powerful.
 
 But each resolver may independently query the database.
 
-A request such as:
-
-users → company → employees → projects
-
-can create a large number of queries if the backend is not designed carefully.
+A request such as users → company → employees → projects can create a large number of queries if the backend is not designed carefully.
 
 ## DataLoader
 
@@ -1032,19 +950,7 @@ Caching should not be the first solution to every GraphQL performance issue.
 
 Start by understanding which queries are slow.
 
-Look for:
-
-Missing indexes.
-
-Repeated queries.
-
-Large joins.
-
-Unnecessary fields.
-
-Bad pagination.
-
-Expensive nested resolvers.
+Look for missing indexes, repeated queries, large joins, unnecessary fields, bad pagination, and expensive nested resolvers.
 
 ## Pagination Matters
 
@@ -1118,25 +1024,7 @@ It can reveal database bottlenecks, slow endpoints, connection pool problems, me
 
 A health endpoint proves almost nothing about application performance.
 
-A realistic load test should include actual workflows.
-
-For example:
-
-Login.
-
-Search.
-
-Read data.
-
-Create data.
-
-Update data.
-
-Expensive queries.
-
-Authentication.
-
-Large responses.
+A realistic load test should include actual workflows such as login, search, reading data, creating data, updating data, expensive queries, authentication, and large responses.
 
 The closer the test is to real user behavior, the more useful the result.
 
@@ -1162,43 +1050,9 @@ The goal is to find where the API starts degrading.
 
 The database is often the first bottleneck.
 
-Look for:
-
-Slow queries.
-
-Missing indexes.
-
-Too many connections.
-
-Large result sets.
-
-N+1 queries.
-
-Expensive joins.
-
-Connection pool exhaustion.
+Look for slow queries, missing indexes, too many connections, large result sets, N+1 queries, expensive joins, and connection pool exhaustion.
 
 A load test should be run while watching both the API and the infrastructure underneath it.
-
-## Test Different Traffic Patterns
-
-Real traffic is rarely perfectly flat.
-
-Test:
-
-Normal traffic.
-
-Sudden spikes.
-
-Gradual growth.
-
-Long-running traffic.
-
-Large payloads.
-
-Heavy endpoints.
-
-This helps reveal problems that a short benchmark can miss.
 
 ## Define Performance Targets
 
@@ -1218,7 +1072,7 @@ The exact targets depend on the application.
 
 Load testing is most useful when it answers a business question:
 
-"Can our API handle the traffic we expect?"
+Can our API handle the traffic we expect?
 `,
     faq: [
       {
@@ -1274,7 +1128,7 @@ AWS Lambda is one of the most established serverless platforms.
 
 It works especially well when the application already uses AWS services such as S3, DynamoDB, SQS, EventBridge, RDS, and IAM.
 
-The [AWS Lambda documentation](https://docs.aws.amazon.com/lambda/) provides the current runtime and deployment details.
+The [AWS Lambda documentation](https://docs.aws.amazon.com/lambda/) provides current runtime and deployment details.
 
 Lambda is a strong choice for enterprise workloads and teams that need deep AWS integration.
 
@@ -1284,19 +1138,7 @@ Cloudflare Workers are designed around edge execution.
 
 This can be useful when API requests should be handled close to users around the world.
 
-Workers are particularly interesting for:
-
-API gateways.
-
-Authentication.
-
-Routing.
-
-Caching.
-
-Edge APIs.
-
-Global applications.
+Workers are particularly interesting for API gateways, authentication, routing, caching, edge APIs, and global applications.
 
 The [Cloudflare Workers documentation](https://developers.cloudflare.com/workers/) explains the runtime model.
 
@@ -1314,21 +1156,7 @@ The [Vercel Functions documentation](https://vercel.com/docs/functions) provides
 
 Developers often compare platforms only by cold-start numbers.
 
-Real API performance also depends on:
-
-Database latency.
-
-External API calls.
-
-Region selection.
-
-Payload size.
-
-Caching.
-
-Application code.
-
-Connection reuse.
+Real API performance also depends on database latency, external API calls, region selection, payload size, caching, application code, and connection reuse.
 
 A fast function can still produce a slow API if the database takes 500ms.
 
@@ -1409,7 +1237,7 @@ How do I start?
 
 What endpoints are available?
 
-The goal is to reduce the time between "I need an API" and "I can start building."
+The goal is to reduce the time between I need an API and I can start building.
 
 ## API Availability Matters
 
@@ -1445,21 +1273,7 @@ Clear pricing information can save developers significant research time.
 
 Good API documentation should show developers how to start.
 
-A useful quickstart normally includes:
-
-Authentication.
-
-Base URL.
-
-Example request.
-
-Example response.
-
-Common errors.
-
-Rate limits.
-
-Important parameters.
+A useful quickstart normally includes authentication, base URL, example request, example response, common errors, rate limits, and important parameters.
 
 The [OpenAPI specification](https://spec.openapis.org/oas/latest.html) can also make API information machine-readable.
 
@@ -1504,8 +1318,35 @@ That is the experience we want API discovery to provide.
 ];
 
 /* =========================================================
+   CONSTANTS
+========================================================= */
+
+const GREEN = "#22c55e";
+const GREEN_SOFT = "#4ade80";
+
+/* =========================================================
    SEO
 ========================================================= */
+
+function setMeta(
+  name: string,
+  content: string,
+  property = false
+) {
+  const attribute = property ? "property" : "name";
+
+  let element = document.head.querySelector(
+    `meta[${attribute}="${name}"]`
+  ) as HTMLMetaElement | null;
+
+  if (!element) {
+    element = document.createElement("meta");
+    element.setAttribute(attribute, name);
+    document.head.appendChild(element);
+  }
+
+  element.setAttribute("content", content);
+}
 
 function updateSEO(article?: Article | null) {
   const title = article
@@ -1514,42 +1355,13 @@ function updateSEO(article?: Article | null) {
 
   const description = article
     ? article.excerpt
-    : "Practical API guides, engineering insights, API security, authentication, AI APIs, GraphQL, webhooks, testing, and infrastructure.";
+    : "Practical API guides covering REST APIs, GraphQL, API security, authentication, AI APIs, webhooks, OpenAPI, testing and infrastructure.";
 
   const keywords = article
     ? article.keywords.join(", ")
-    : [
-        "API blog",
-        "API guides",
-        "API development",
-        "API security",
-        "REST API",
-        "GraphQL",
-        "AI APIs",
-        "webhooks",
-      ].join(", ");
+    : "API blog, API guides, REST API, GraphQL, API security, AI APIs, OpenAPI, webhooks, API testing";
 
   document.title = title;
-
-  const setMeta = (
-    name: string,
-    content: string,
-    property = false
-  ) => {
-    const attr = property ? "property" : "name";
-
-    let meta = document.head.querySelector(
-      `meta[${attr}="${name}"]`
-    ) as HTMLMetaElement | null;
-
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute(attr, name);
-      document.head.appendChild(meta);
-    }
-
-    meta.setAttribute("content", content);
-  };
 
   setMeta("description", description);
   setMeta("keywords", keywords);
@@ -1559,8 +1371,8 @@ function updateSEO(article?: Article | null) {
   setMeta("og:type", article ? "article" : "website", true);
 
   setMeta("twitter:card", "summary", false);
-  setMeta("twitter:title", title, false);
-  setMeta("twitter:description", description, false);
+  setMeta("twitter:title", title);
+  setMeta("twitter:description", description);
 
   const canonicalUrl = article
     ? `${window.location.origin}/blog/${article.slug}`
@@ -1580,7 +1392,64 @@ function updateSEO(article?: Article | null) {
 }
 
 /* =========================================================
-   INLINE MARKDOWN LINK RENDERER
+   STRUCTURED DATA
+========================================================= */
+
+function updateStructuredData(
+  article?: Article | null
+) {
+  const existing = document.getElementById(
+    "apives-blog-schema"
+  );
+
+  existing?.remove();
+
+  const script = document.createElement("script");
+
+  script.id = "apives-blog-schema";
+  script.type = "application/ld+json";
+
+  if (article) {
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: article.title,
+      description: article.excerpt,
+      datePublished: article.date,
+      author: {
+        "@type": "Person",
+        name: "Priince Gupta",
+        url: "https://x.com/priiinceguta",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Apives",
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": `${window.location.origin}/blog/${article.slug}`,
+      },
+    });
+  } else {
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      name: "Apives Blog",
+      description:
+        "Practical guides for building, securing and scaling APIs.",
+      url: `${window.location.origin}/blog`,
+      publisher: {
+        "@type": "Organization",
+        name: "Apives",
+      },
+    });
+  }
+
+  document.head.appendChild(script);
+}
+
+/* =========================================================
+   INLINE MARKDOWN LINKS
 ========================================================= */
 
 function renderInlineText(
@@ -1598,7 +1467,9 @@ function renderInlineText(
 
     if (!match) {
       return (
-        <React.Fragment key={`${keyPrefix}-${index}`}>
+        <React.Fragment
+          key={`${keyPrefix}-${index}`}
+        >
           {part}
         </React.Fragment>
       );
@@ -1610,15 +1481,7 @@ function renderInlineText(
         href={match[2]}
         target="_blank"
         rel="noopener noreferrer"
-        className="
-          text-mora-500
-          underline
-          underline-offset-4
-          decoration-mora-500/30
-          hover:decoration-mora-500
-          hover:text-mora-400
-          transition-colors
-        "
+        className="article-link"
       >
         {match[1]}
       </a>
@@ -1639,8 +1502,8 @@ function renderContent(text: string) {
     if (!clean) {
       return (
         <div
-          key={index}
-          className="h-3"
+          key={`space-${index}`}
+          className="article-space"
         />
       );
     }
@@ -1648,24 +1511,10 @@ function renderContent(text: string) {
     if (clean.startsWith("## ")) {
       return (
         <h2
-          key={index}
-          className="
-            mt-12
-            mb-5
-
-            text-[22px]
-            md:text-[25px]
-
-            leading-[1.25]
-
-            tracking-[-0.6px]
-
-            font-bold
-
-            text-white
-          "
+          key={`heading-${index}`}
+          className="article-heading"
         >
-          {clean.replace("## ", "")}
+          {clean.slice(3)}
         </h2>
       );
     }
@@ -1676,26 +1525,8 @@ function renderContent(text: string) {
     ) {
       return (
         <pre
-          key={index}
-          className="
-            my-5
-            overflow-x-auto
-
-            rounded-xl
-
-            border
-            border-white/[0.07]
-
-            bg-white/[0.025]
-
-            px-4
-            py-4
-
-            text-[12px]
-            leading-6
-
-            text-slate-400
-          "
+          key={`code-${index}`}
+          className="article-code"
         >
           {clean}
         </pre>
@@ -1704,17 +1535,8 @@ function renderContent(text: string) {
 
     return (
       <p
-        key={index}
-        className="
-          mb-5
-
-          text-[15px]
-          md:text-[16px]
-
-          leading-[1.9]
-
-          text-slate-400
-        "
+        key={`paragraph-${index}`}
+        className="article-paragraph"
       >
         {renderInlineText(
           clean,
@@ -1726,19 +1548,94 @@ function renderContent(text: string) {
 }
 
 /* =========================================================
-   X BRAND MARK
+   SOCIAL BRAND ICONS
+   Kept local so lucide-react brand export changes
+   cannot break GitHub builds.
 ========================================================= */
 
-function XBrandIcon() {
+function InstagramIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+      />
+      <circle cx="12" cy="12" r="4" />
+      <circle
+        cx="17.5"
+        cy="6.5"
+        r="0.8"
+        fill="currentColor"
+        stroke="none"
+      />
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.7.3-1 1-1Z" />
+    </svg>
+  );
+}
+
+function LinkedinIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M5.1 7.2A2.1 2.1 0 1 0 5.1 3a2.1 2.1 0 0 0 0 4.2ZM3.2 9h3.8v11H3.2V9Zm6.1 0h3.6v1.5h.1c.5-.9 1.7-1.9 3.5-1.9 3.8 0 4.5 2.5 4.5 5.7V20h-3.8v-5c0-1.2 0-2.8-1.8-2.8s-2.1 1.3-2.1 2.7V20H9.3V9Z" />
+    </svg>
+  );
+}
+
+function RedditIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M21 12.1c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.4-.9-3.1-1.5-5-1.6l.8-3.5 2.4.5a1.9 1.9 0 1 0 .4-1.4l-3-0.6c-.4-.1-.8.2-.9.6l-1 4.4c-1.9.1-3.7.7-5.1 1.6-.4-.4-1-.6-1.5-.6A2.2 2.2 0 0 0 2 12.1c0 .8.4 1.5 1 1.9v.5c0 3.4 4 6.2 9 6.2s9-2.8 9-6.2V14c.6-.4 1-1.1 1-1.9ZM8.2 14.4a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm7.7 2.8c-1 .9-2.3 1.3-3.9 1.3s-2.9-.4-3.9-1.3a.7.7 0 0 1 1-1c.7.6 1.7.9 2.9.9s2.2-.3 2.9-.9a.7.7 0 0 1 1 1Zm0-2.8a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Z" />
+    </svg>
+  );
+}
+
+function XIcon() {
   return (
     <span
       aria-hidden="true"
-      className="
-        text-[17px]
-        leading-none
-        font-black
-        tracking-[-0.08em]
-      "
+      style={{
+        fontSize: 17,
+        fontWeight: 700,
+        lineHeight: 1,
+      }}
     >
       𝕏
     </span>
@@ -1761,82 +1658,14 @@ function ShareButton({
   return (
     <button
       type="button"
-      onClick={onClick}
       aria-label={label}
       title={label}
-      className="
-        group
-
-        relative
-
-        flex
-        items-center
-        justify-center
-
-        w-10
-        h-10
-        md:w-11
-        md:h-11
-
-        rounded-full
-
-        bg-white/[0.035]
-
-        border
-        border-white/[0.09]
-
-        backdrop-blur-xl
-
-        text-mora-500
-
-        shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]
-
-        hover:bg-white/[0.07]
-        hover:border-mora-500/30
-        hover:text-mora-400
-
-        active:scale-90
-
-        transition-all
-        duration-200
-      "
+      onClick={onClick}
+      className="share-button"
     >
       {children}
 
-      <span
-        className="
-          pointer-events-none
-
-          absolute
-          top-full
-          mt-2
-
-          left-1/2
-          -translate-x-1/2
-
-          whitespace-nowrap
-
-          rounded-md
-
-          border
-          border-white/10
-
-          bg-black
-
-          px-2
-          py-1
-
-          text-[9px]
-          text-slate-400
-
-          opacity-0
-          group-hover:opacity-100
-
-          transition-opacity
-
-          z-50
-        "
-      >
+      <span className="share-tooltip">
         {label}
       </span>
     </button>
@@ -1850,95 +1679,72 @@ function ShareButton({
 function ArticleDetail({
   article,
   articles,
-  onBack,
   onSelect,
 }: {
   article: Article;
   articles: Article[];
-  onBack: () => void;
   onSelect: (article: Article) => void;
 }) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     updateSEO(article);
+    updateStructuredData(article);
 
-    window.scrollTo({
-      top: 0,
-      behavior: "instant" as ScrollBehavior,
-    });
+    window.scrollTo(0, 0);
 
     return () => {
       updateSEO(null);
+      updateStructuredData(null);
     };
   }, [article]);
 
   const shareUrl =
     `${window.location.origin}/blog/${article.slug}`;
 
-  const shareTitle = encodeURIComponent(
-    article.title
-  );
+  const shareTitle =
+    encodeURIComponent(article.title);
 
   const encodedUrl =
     encodeURIComponent(shareUrl);
 
-  const share = (
-    platform:
-      | "instagram"
-      | "facebook"
-      | "reddit"
-      | "x"
-      | "linkedin"
-  ) => {
-    let url = "";
-
-    if (platform === "facebook") {
-      url =
-        `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-    }
-
-    if (platform === "reddit") {
-      url =
-        `https://www.reddit.com/submit?url=${encodedUrl}&title=${shareTitle}`;
-    }
-
-    if (platform === "x") {
-      url =
-        `https://twitter.com/intent/tweet?text=${shareTitle}&url=${encodedUrl}`;
-    }
-
-    if (platform === "linkedin") {
-      url =
-        `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
-    }
-
-    /*
-      Instagram does not provide a normal web URL-share
-      endpoint like the other platforms.
-
-      On supported devices, use the native share API.
-      Otherwise copy the article link.
-    */
-
-    if (platform === "instagram") {
-      nativeShare();
-      return;
-    }
-
-    if (url) {
-      window.open(
-        url,
-        "_blank",
-        "noopener,noreferrer,width=700,height=600"
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        shareUrl
       );
+
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1800);
+    } catch {
+      const input =
+        document.createElement("input");
+
+      input.value = shareUrl;
+
+      document.body.appendChild(input);
+
+      input.select();
+
+      document.execCommand("copy");
+
+      input.remove();
+
+      setCopied(true);
+
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 1800);
     }
   };
 
   const nativeShare = async () => {
     if (
       typeof navigator !== "undefined" &&
-      navigator.share
+      typeof navigator.share === "function"
     ) {
       try {
         await navigator.share({
@@ -1956,434 +1762,217 @@ function ArticleDetail({
     await copyLink();
   };
 
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        shareUrl
-      );
+  const share = (
+    platform:
+      | "instagram"
+      | "facebook"
+      | "reddit"
+      | "x"
+      | "linkedin"
+  ) => {
+    if (platform === "instagram") {
+      nativeShare();
+      return;
+    }
 
-      setCopied(true);
+    let url = "";
 
-      setTimeout(() => {
-        setCopied(false);
-      }, 1800);
-    } catch {
-      console.error(
-        "Unable to copy article link."
+    switch (platform) {
+      case "facebook":
+        url =
+          `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        break;
+
+      case "reddit":
+        url =
+          `https://www.reddit.com/submit?url=${encodedUrl}&title=${shareTitle}`;
+        break;
+
+      case "x":
+        url =
+          `https://twitter.com/intent/tweet?text=${shareTitle}&url=${encodedUrl}`;
+        break;
+
+      case "linkedin":
+        url =
+          `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        break;
+    }
+
+    if (url) {
+      window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer,width=720,height=620"
       );
     }
   };
 
   const related = articles
     .filter(
-      (item) =>
-        item.id !== article.id
+      (item) => item.id !== article.id
     )
     .slice(0, 3);
 
   return (
-    <main
-      className="
-        min-h-screen
-        bg-black
-        text-white
-      "
-    >
-
-      {/* =================================================
-          ARTICLE
-      ================================================= */}
-
-      <article
-        className="
-          max-w-[780px]
-          mx-auto
-
-          px-5
-          md:px-8
-
-          pt-20
-          md:pt-28
-
-          pb-24
-        "
-      >
-
-        {/* BLOG LABEL */}
-
-        <div
-          className="
-            text-center
-
-            text-[11px]
-            md:text-[12px]
-
-            uppercase
-            tracking-[0.2em]
-
-            font-bold
-
-            text-mora-500
-
-            mb-7
-          "
-        >
-          Blog
-        </div>
+    <main className="blog-root">
+      <article className="article-page">
 
         {/* TITLE */}
 
-        <h1
-          className="
-            text-center
+        <header className="article-header">
+          <div className="article-blog-label">
+            APIVES BLOG
+          </div>
 
-            text-[34px]
-            sm:text-[42px]
-            md:text-[54px]
+          <h1 className="article-title">
+            {article.title}
+          </h1>
 
-            leading-[1.08]
+          <p className="article-excerpt">
+            {article.excerpt}
+          </p>
 
-            tracking-[-2px]
-            md:tracking-[-2.7px]
+          {/* DATE + AUTHOR */}
 
-            font-bold
+          <div className="article-meta">
+            <span className="article-date">
+              {article.date}
+            </span>
 
-            text-white
+            <span className="meta-dot">
+              •
+            </span>
 
-            mb-7
-          "
-        >
-          {article.title}
-        </h1>
+            <span>
+              Posted by{" "}
+              <a
+                href="https://x.com/priiinceguta"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="author-link"
+              >
+                @priiinceguta
+              </a>
+            </span>
+          </div>
 
-        {/* EXCERPT */}
+          {/* SOCIAL */}
 
-        <p
-          className="
-            max-w-[680px]
+          <div className="share-row">
 
-            mx-auto
-
-            text-center
-
-            text-[16px]
-            md:text-[18px]
-
-            leading-[1.7]
-
-            text-slate-500
-
-            mb-7
-          "
-        >
-          {article.excerpt}
-        </p>
-
-        {/* DATE + AUTHOR */}
-
-        <div
-          className="
-            flex
-            flex-wrap
-
-            items-center
-            justify-center
-
-            gap-x-3
-            gap-y-2
-
-            text-[11px]
-            md:text-[12px]
-
-            mb-7
-          "
-        >
-          <span
-            className="
-              text-mora-500
-              font-semibold
-            "
-          >
-            {article.date}
-          </span>
-
-          <span
-            className="
-              text-slate-700
-            "
-          >
-            •
-          </span>
-
-          <span
-            className="
-              text-slate-500
-            "
-          >
-            Posted by{" "}
-            <a
-              href="https://x.com/priiinceguta"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                text-mora-500
-
-                font-semibold
-
-                hover:text-mora-400
-
-                underline
-                underline-offset-4
-                decoration-mora-500/25
-                hover:decoration-mora-500
-
-                transition-colors
-              "
+            <ShareButton
+              label="Instagram"
+              onClick={() =>
+                share("instagram")
+              }
             >
-              @priiinceguta
-            </a>
-          </span>
+              <InstagramIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="Facebook"
+              onClick={() =>
+                share("facebook")
+              }
+            >
+              <FacebookIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="Reddit"
+              onClick={() =>
+                share("reddit")
+              }
+            >
+              <RedditIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="X"
+              onClick={() =>
+                share("x")
+              }
+            >
+              <XIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="LinkedIn"
+              onClick={() =>
+                share("linkedin")
+              }
+            >
+              <LinkedinIcon />
+            </ShareButton>
+
+            <ShareButton
+              label={
+                copied
+                  ? "Copied"
+                  : "Share"
+              }
+              onClick={nativeShare}
+            >
+              {copied ? (
+                <Check size={18} />
+              ) : (
+                <Share2 size={18} />
+              )}
+            </ShareButton>
+
+          </div>
+        </header>
+
+        {/* CONTENT */}
+
+        <div className="article-content">
+          {renderContent(article.content)}
         </div>
 
-        {/* SHARE */}
+        {/* FAQ */}
 
-        <div
-          className="
-            flex
-            items-center
-            justify-center
-
-            gap-2
-
-            mb-14
-          "
-        >
-
-          <ShareButton
-            label="Instagram"
-            onClick={() =>
-              share("instagram")
-            }
-          >
-            <Instagram size={17} />
-          </ShareButton>
-
-          <ShareButton
-            label="Facebook"
-            onClick={() =>
-              share("facebook")
-            }
-          >
-            <Facebook size={17} />
-          </ShareButton>
-
-          <ShareButton
-            label="Reddit"
-            onClick={() =>
-              share("reddit")
-            }
-          >
-            <Reddit size={17} />
-          </ShareButton>
-
-          <ShareButton
-            label="X"
-            onClick={() =>
-              share("x")
-            }
-          >
-            <XBrandIcon />
-          </ShareButton>
-
-          <ShareButton
-            label="LinkedIn"
-            onClick={() =>
-              share("linkedin")
-            }
-          >
-            <Linkedin size={17} />
-          </ShareButton>
-
-          <ShareButton
-            label={
-              copied
-                ? "Copied"
-                : "Share"
-            }
-            onClick={nativeShare}
-          >
-            {copied ? (
-              <Check size={17} />
-            ) : (
-              <Share2 size={17} />
-            )}
-          </ShareButton>
-
-        </div>
-
-        {/* =================================================
-            ARTICLE CONTENT
-        ================================================= */}
-
-        <div>
-          {renderContent(
-            article.content
-          )}
-        </div>
-
-        {/* =================================================
-            FAQ
-        ================================================= */}
-
-        <section
-          className="
-            mt-16
-            pt-10
-
-            border-t
-            border-white/[0.08]
-          "
-        >
-
-          <h2
-            className="
-              text-[24px]
-              md:text-[28px]
-
-              tracking-[-0.7px]
-
-              font-bold
-
-              text-white
-
-              mb-3
-            "
-          >
+        <section className="faq-section">
+          <h2>
             Frequently Asked Questions
           </h2>
 
-          <p
-            className="
-              text-[14px]
-              md:text-[15px]
-
-              leading-7
-
-              text-slate-500
-
-              mb-8
-            "
-          >
+          <p className="faq-intro">
             Common questions developers ask
             about this topic.
           </p>
 
-          <div
-            className="
-              divide-y
-              divide-white/[0.07]
-            "
-          >
+          <div className="faq-list">
             {article.faq.map(
               (item, index) => (
                 <details
                   key={index}
-                  className="
-                    group
-                    py-5
-                  "
+                  className="faq-item"
                 >
-                  <summary
-                    className="
-                      list-none
-                      cursor-pointer
-
-                      flex
-                      items-center
-                      justify-between
-                      gap-5
-
-                      text-[15px]
-                      md:text-[16px]
-
-                      font-semibold
-
-                      text-slate-200
-
-                      group-open:text-white
-                    "
-                  >
+                  <summary>
                     <span>
                       {item.question}
                     </span>
 
                     <ChevronRight
-                      size={16}
-                      className="
-                        shrink-0
-
-                        text-slate-600
-
-                        group-open:rotate-90
-                        group-open:text-mora-500
-
-                        transition-all
-                      "
+                      size={17}
                     />
                   </summary>
 
-                  <p
-                    className="
-                      mt-4
-
-                      pr-6
-
-                      text-[14px]
-                      md:text-[15px]
-
-                      leading-[1.8]
-
-                      text-slate-500
-                    "
-                  >
+                  <p>
                     {item.answer}
                   </p>
                 </details>
               )
             )}
           </div>
-
         </section>
 
-        {/* =================================================
-            CONTINUE READING
-        ================================================= */}
+        {/* RELATED */}
 
-        <section
-          className="
-            mt-16
-            pt-10
-
-            border-t
-            border-white/[0.08]
-          "
-        >
-
-          <h2
-            className="
-              text-[22px]
-              md:text-[25px]
-
-              tracking-[-0.5px]
-
-              font-bold
-
-              text-white
-
-              mb-6
-            "
-          >
-            More from the Apives Blog
+        <section className="related-section">
+          <h2>
+            More from Apives
           </h2>
 
           <div>
@@ -2394,117 +1983,43 @@ function ArticleDetail({
                     relatedArticle.id
                   }
                   type="button"
+                  className="related-item"
                   onClick={() => {
                     onSelect(
                       relatedArticle
                     );
 
-                    window.scrollTo({
-                      top: 0,
-                      behavior:
-                        "instant" as ScrollBehavior,
-                    });
+                    window.scrollTo(
+                      0,
+                      0
+                    );
                   }}
-                  className="
-                    w-full
-
-                    py-5
-
-                    text-left
-
-                    border-b
-                    border-white/[0.07]
-
-                    flex
-                    items-center
-                    justify-between
-                    gap-5
-
-                    group
-                  "
                 >
-
-                  <div
-                    className="
-                      min-w-0
-                    "
-                  >
-
-                    <div
-                      className="
-                        text-[10px]
-
-                        text-mora-500
-
-                        font-semibold
-
-                        mb-2
-                      "
-                    >
+                  <div>
+                    <span className="related-date">
                       {relatedArticle.date}
-                    </div>
+                    </span>
 
-                    <div
-                      className="
-                        text-[15px]
-                        md:text-[17px]
-
-                        leading-[1.4]
-
-                        font-semibold
-
-                        text-slate-300
-
-                        group-hover:text-white
-
-                        transition-colors
-                      "
-                    >
+                    <h3>
                       {
                         relatedArticle.title
                       }
-                    </div>
+                    </h3>
 
-                    <p
-                      className="
-                        mt-2
-
-                        text-[12px]
-                        md:text-[13px]
-
-                        leading-6
-
-                        text-slate-600
-
-                        line-clamp-2
-                      "
-                    >
+                    <p>
                       {
                         relatedArticle.excerpt
                       }
                     </p>
-
                   </div>
 
                   <ChevronRight
-                    size={17}
-                    className="
-                      shrink-0
-
-                      text-slate-700
-
-                      group-hover:text-mora-500
-                      group-hover:translate-x-1
-
-                      transition-all
-                    "
+                    size={18}
                   />
-
                 </button>
               )
             )}
           </div>
-
         </section>
 
       </article>
@@ -2528,83 +2043,19 @@ const ArticleListItem = memo(
       <button
         type="button"
         onClick={onClick}
-        className="
-          w-full
-
-          text-left
-
-          py-8
-          md:py-9
-
-          border-b
-          border-white/[0.08]
-
-          group
-        "
+        className="article-list-item"
       >
-
-        {/* DATE */}
-
-        <div
-          className="
-            text-[11px]
-            md:text-[12px]
-
-            font-semibold
-
-            text-mora-500
-
-            mb-4
-          "
-        >
+        <div className="list-date">
           {article.date}
         </div>
 
-        {/* TITLE */}
-
-        <h2
-          className="
-            max-w-[820px]
-
-            text-[22px]
-            sm:text-[25px]
-            md:text-[29px]
-
-            leading-[1.25]
-
-            tracking-[-0.7px]
-
-            font-semibold
-
-            text-white
-
-            group-hover:text-slate-200
-
-            transition-colors
-
-            mb-3
-          "
-        >
+        <h2>
           {article.title}
         </h2>
 
-        {/* EXCERPT */}
-
-        <p
-          className="
-            max-w-[800px]
-
-            text-[14px]
-            md:text-[15px]
-
-            leading-[1.75]
-
-            text-slate-500
-          "
-        >
+        <p>
           {article.excerpt}
         </p>
-
       </button>
     );
   }
@@ -2627,6 +2078,16 @@ export default function ApivesBlog() {
 
   useEffect(() => {
     updateSEO(null);
+    updateStructuredData(null);
+
+    return () => {
+      const schema =
+        document.getElementById(
+          "apives-blog-schema"
+        );
+
+      schema?.remove();
+    };
   }, []);
 
   const filteredArticles =
@@ -2660,203 +2121,67 @@ export default function ApivesBlog() {
       );
     }, [searchQuery]);
 
-  /* =======================================================
-     DETAIL VIEW
-  ======================================================= */
+  /* DETAIL */
 
   if (selectedArticle) {
     return (
-      <ArticleDetail
-        article={selectedArticle}
-        articles={ARTICLES}
-        onBack={() => {
-          setSelectedArticle(null);
+      <>
+        <BlogStyles />
 
-          updateSEO(null);
+        <ArticleDetail
+          article={selectedArticle}
+          articles={ARTICLES}
+          onSelect={(article) => {
+            setSelectedArticle(
+              article
+            );
 
-          window.scrollTo({
-            top: 0,
-            behavior:
-              "instant" as ScrollBehavior,
-          });
-        }}
-        onSelect={(article) => {
-          setSelectedArticle(
-            article
-          );
-        }}
-      />
+            window.scrollTo(
+              0,
+              0
+            );
+          }}
+        />
+      </>
     );
   }
 
-  /* =======================================================
-     BLOG LIST
-  ======================================================= */
+  /* LIST */
 
   return (
     <>
-      <style>{`
-        html {
-          scroll-behavior: smooth;
-        }
+      <BlogStyles />
 
-        body {
-          background: #000 !important;
-        }
+      <main className="blog-root">
 
-        *,
-        *::before,
-        *::after {
-          box-sizing: border-box;
-        }
+        {/* HERO */}
 
-        ::selection {
-          background: rgba(34,197,94,0.22);
-          color: #fff;
-        }
+        <section className="blog-hero">
 
-        ::-webkit-scrollbar {
-          width: 4px;
-        }
+          <div className="blog-kicker">
+            APIVES
+          </div>
 
-        ::-webkit-scrollbar-track {
-          background: #000;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background: #242424;
-          border-radius: 999px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-          background: #22c55e;
-        }
-
-        .blog-search::placeholder {
-          color: #4b5563;
-        }
-
-        .blog-search:focus {
-          border-color: rgba(34,197,94,0.45) !important;
-          box-shadow: 0 0 0 3px rgba(34,197,94,0.05);
-        }
-      `}</style>
-
-      <main
-        className="
-          min-h-screen
-
-          bg-black
-
-          text-white
-        "
-      >
-
-        {/* =================================================
-            CENTERED BLOG HERO
-        ================================================= */}
-
-        <section
-          className="
-            max-w-[900px]
-            mx-auto
-
-            px-5
-            md:px-8
-
-            pt-24
-            sm:pt-28
-            md:pt-32
-
-            pb-10
-            md:pb-12
-
-            text-center
-          "
-        >
-
-          <h1
-            className="
-              text-[42px]
-              sm:text-[50px]
-              md:text-[62px]
-
-              leading-none
-
-              tracking-[-2.5px]
-              md:tracking-[-3px]
-
-              font-bold
-
-              text-mora-500
-
-              mb-5
-            "
-          >
+          <h1>
             Blog
           </h1>
 
-          <p
-            className="
-              text-[17px]
-              sm:text-[19px]
-              md:text-[21px]
-
-              leading-[1.5]
-
-              text-slate-500
-
-              max-w-[650px]
-
-              mx-auto
-            "
-          >
-            Practical guides for building,
-            securing, and scaling APIs.
+          <p>
+            Practical ideas for building
+            better APIs.
           </p>
 
         </section>
 
-        {/* =================================================
-            SEARCH
-        ================================================= */}
+        {/* SEARCH */}
 
-        <section
-          className="
-            max-w-[900px]
-            mx-auto
+        <section className="search-section">
 
-            px-5
-            md:px-8
-
-            pb-9
-          "
-        >
-
-          <div
-            className="
-              relative
-
-              max-w-[390px]
-
-              mx-auto
-            "
-          >
+          <div className="search-box">
 
             <Search
-              size={15}
-              className="
-                absolute
-
-                left-4
-
-                top-1/2
-                -translate-y-1/2
-
-                text-slate-600
-
-                pointer-events-none
-              "
+              size={16}
+              className="search-icon"
             />
 
             <input
@@ -2869,66 +2194,18 @@ export default function ApivesBlog() {
               }
               placeholder="Search articles..."
               aria-label="Search articles"
-              className="
-                blog-search
-
-                w-full
-
-                h-11
-
-                rounded-full
-
-                bg-white/[0.025]
-
-                border
-                border-white/[0.09]
-
-                pl-11
-                pr-10
-
-                outline-none
-
-                text-[13px]
-
-                text-slate-300
-
-                transition-all
-              "
             />
 
             {searchQuery && (
               <button
                 type="button"
+                className="clear-search"
                 onClick={() =>
                   setSearchQuery("")
                 }
-                className="
-                  absolute
-
-                  right-3
-
-                  top-1/2
-                  -translate-y-1/2
-
-                  flex
-                  items-center
-                  justify-center
-
-                  w-7
-                  h-7
-
-                  rounded-full
-
-                  text-slate-600
-
-                  hover:text-white
-                  hover:bg-white/[0.06]
-
-                  transition-all
-                "
                 aria-label="Clear search"
               >
-                <X size={13} />
+                <X size={14} />
               </button>
             )}
 
@@ -2936,90 +2213,979 @@ export default function ApivesBlog() {
 
         </section>
 
-        {/* =================================================
-            ARTICLE LIST
-        ================================================= */}
+        {/* ARTICLES */}
 
-        <section
-          className="
-            max-w-[900px]
-            mx-auto
+        <section className="articles-section">
 
-            px-5
-            md:px-8
+          <div className="articles-top-line" />
 
-            pb-28
-          "
-        >
+          {filteredArticles.length ? (
+            filteredArticles.map(
+              (article) => (
+                <ArticleListItem
+                  key={article.id}
+                  article={article}
+                  onClick={() => {
+                    setSelectedArticle(
+                      article
+                    );
 
-          <div
-            className="
-              border-t
-              border-white/[0.08]
-            "
-          >
-
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map(
-                (article) => (
-                  <ArticleListItem
-                    key={article.id}
-                    article={article}
-                    onClick={() =>
-                      setSelectedArticle(
-                        article
-                      )
-                    }
-                  />
-                )
+                    window.scrollTo(
+                      0,
+                      0
+                    );
+                  }}
+                />
               )
-            ) : (
-              <div
-                className="
-                  py-24
+            )
+          ) : (
+            <div className="empty-state">
 
-                  text-center
-                "
+              <p>
+                No articles found.
+              </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setSearchQuery("")
+                }
               >
+                Clear search
+              </button>
 
-                <div
-                  className="
-                    text-[14px]
-
-                    text-slate-600
-
-                    mb-4
-                  "
-                >
-                  No articles found.
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setSearchQuery("")
-                  }
-                  className="
-                    text-[11px]
-
-                    text-mora-500
-
-                    hover:text-mora-400
-
-                    transition-colors
-                  "
-                >
-                  Clear search
-                </button>
-
-              </div>
-            )}
-
-          </div>
+            </div>
+          )}
 
         </section>
 
       </main>
     </>
+  );
+}
+
+/* =========================================================
+   STYLES
+   No Tailwind dependency for custom Mora classes.
+========================================================= */
+
+function BlogStyles() {
+  return (
+    <style>{`
+
+      html {
+        scroll-behavior: smooth;
+        background: #000;
+      }
+
+      body {
+        margin: 0;
+        background: #000 !important;
+        color: #fff;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      ::selection {
+        background: rgba(34,197,94,.22);
+        color: #fff;
+      }
+
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #000;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #242424;
+        border-radius: 999px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: ${GREEN};
+      }
+
+      .blog-root {
+        min-height: 100vh;
+        width: 100%;
+        background: #000;
+        color: #fff;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      /* ============================================
+         BLOG HERO
+      ============================================ */
+
+      .blog-hero {
+        max-width: 820px;
+        margin: 0 auto;
+        padding:
+          112px 24px
+          58px;
+        text-align: center;
+      }
+
+      .blog-kicker {
+        margin-bottom: 18px;
+        color: ${GREEN};
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: .22em;
+      }
+
+      .blog-hero h1 {
+        margin: 0;
+        color: ${GREEN};
+        font-size:
+          clamp(44px, 7vw, 68px);
+        line-height: .95;
+        letter-spacing: -3px;
+        font-weight: 800;
+      }
+
+      .blog-hero p {
+        max-width: 580px;
+        margin: 20px auto 0;
+        color: #737373;
+        font-size:
+          clamp(16px, 2vw, 19px);
+        line-height: 1.6;
+      }
+
+      /* ============================================
+         SEARCH
+      ============================================ */
+
+      .search-section {
+        max-width: 900px;
+        margin: 0 auto;
+        padding:
+          0 24px
+          34px;
+      }
+
+      .search-box {
+        position: relative;
+        max-width: 420px;
+        height: 46px;
+        margin: 0 auto;
+      }
+
+      .search-box input {
+        width: 100%;
+        height: 100%;
+        padding:
+          0 44px
+          0 42px;
+
+        border:
+          1px solid
+          rgba(255,255,255,.10);
+
+        border-radius: 999px;
+
+        outline: none;
+
+        background:
+          rgba(255,255,255,.025);
+
+        color: #e5e7eb;
+
+        font: inherit;
+        font-size: 13px;
+
+        transition:
+          border-color .18s ease,
+          background .18s ease,
+          box-shadow .18s ease;
+      }
+
+      .search-box input::placeholder {
+        color: #505050;
+      }
+
+      .search-box input:focus {
+        border-color:
+          rgba(34,197,94,.42);
+
+        background:
+          rgba(255,255,255,.035);
+
+        box-shadow:
+          0 0 0 3px
+          rgba(34,197,94,.045);
+      }
+
+      .search-icon {
+        position: absolute;
+        z-index: 2;
+        left: 16px;
+        top: 50%;
+        transform:
+          translateY(-50%);
+        color: #5c5c5c;
+        pointer-events: none;
+      }
+
+      .clear-search {
+        position: absolute;
+        right: 9px;
+        top: 50%;
+        transform:
+          translateY(-50%);
+
+        width: 28px;
+        height: 28px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        border-radius: 50%;
+
+        background: transparent;
+        color: #555;
+
+        cursor: pointer;
+
+        transition:
+          color .15s ease,
+          background .15s ease;
+      }
+
+      .clear-search:hover {
+        color: #fff;
+        background:
+          rgba(255,255,255,.07);
+      }
+
+      /* ============================================
+         ARTICLE LIST
+      ============================================ */
+
+      .articles-section {
+        max-width: 900px;
+        margin: 0 auto;
+        padding:
+          0 24px
+          110px;
+      }
+
+      .articles-top-line {
+        height: 1px;
+        background:
+          rgba(255,255,255,.085);
+      }
+
+      .article-list-item {
+        width: 100%;
+        padding:
+          34px 0
+          36px;
+
+        display: block;
+
+        text-align: left;
+
+        border: 0;
+        border-bottom:
+          1px solid
+          rgba(255,255,255,.085);
+
+        background: transparent;
+
+        color: inherit;
+
+        cursor: pointer;
+
+        font: inherit;
+
+        outline: none;
+      }
+
+      .list-date {
+        margin-bottom: 12px;
+        color: ${GREEN};
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: .015em;
+      }
+
+      .article-list-item h2 {
+        max-width: 850px;
+        margin: 0 0 10px;
+
+        color: #f5f5f5;
+
+        font-size:
+          clamp(21px, 3vw, 29px);
+
+        line-height: 1.25;
+
+        letter-spacing:
+          -.75px;
+
+        font-weight: 650;
+
+        transition:
+          color .18s ease;
+      }
+
+      .article-list-item:hover h2 {
+        color: #fff;
+      }
+
+      .article-list-item p {
+        max-width: 800px;
+        margin: 0;
+
+        color: #606060;
+
+        font-size:
+          clamp(13px, 1.7vw, 15px);
+
+        line-height: 1.75;
+      }
+
+      .empty-state {
+        padding: 90px 0;
+        text-align: center;
+        color: #555;
+      }
+
+      .empty-state button {
+        margin-top: 12px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: ${GREEN};
+        font: inherit;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      /* ============================================
+         ARTICLE DETAIL
+      ============================================ */
+
+      .article-page {
+        width: 100%;
+        max-width: 790px;
+        margin: 0 auto;
+        padding:
+          105px 24px
+          110px;
+      }
+
+      .article-header {
+        text-align: center;
+        padding-bottom: 58px;
+      }
+
+      .article-blog-label {
+        margin-bottom: 22px;
+        color: ${GREEN};
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .20em;
+      }
+
+      .article-title {
+        max-width: 800px;
+        margin: 0 auto;
+
+        color: #fff;
+
+        font-size:
+          clamp(34px, 6vw, 57px);
+
+        line-height: 1.06;
+
+        letter-spacing:
+          -2.7px;
+
+        font-weight: 800;
+      }
+
+      .article-excerpt {
+        max-width: 690px;
+        margin: 24px auto 0;
+
+        color: #666;
+
+        font-size:
+          clamp(15px, 2vw, 18px);
+
+        line-height: 1.75;
+      }
+
+      .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        margin-top: 23px;
+
+        color: #575757;
+
+        font-size: 11px;
+      }
+
+      .article-date {
+        color: ${GREEN};
+        font-weight: 650;
+      }
+
+      .meta-dot {
+        color: #333;
+      }
+
+      .author-link {
+        color: ${GREEN};
+        font-weight: 650;
+        text-decoration: none;
+        border-bottom:
+          1px solid
+          rgba(34,197,94,.22);
+      }
+
+      .author-link:hover {
+        color: ${GREEN_SOFT};
+        border-color:
+          rgba(34,197,94,.65);
+      }
+
+      /* ============================================
+         SOCIAL
+      ============================================ */
+
+      .share-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 27px;
+      }
+
+      .share-button {
+        position: relative;
+
+        width: 43px;
+        height: 43px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border:
+          1px solid
+          rgba(255,255,255,.09);
+
+        border-radius: 50%;
+
+        background:
+          rgba(255,255,255,.035);
+
+        backdrop-filter:
+          blur(16px);
+
+        -webkit-backdrop-filter:
+          blur(16px);
+
+        color: ${GREEN};
+
+        cursor: pointer;
+
+        box-shadow:
+          inset
+          0 1px 0
+          rgba(255,255,255,.055);
+
+        transition:
+          transform .18s ease,
+          background .18s ease,
+          border-color .18s ease,
+          color .18s ease;
+      }
+
+      .share-button:hover {
+        background:
+          rgba(255,255,255,.065);
+
+        border-color:
+          rgba(34,197,94,.28);
+
+        color: ${GREEN_SOFT};
+
+        transform:
+          translateY(-2px);
+      }
+
+      .share-button:active {
+        transform: scale(.91);
+      }
+
+      .share-tooltip {
+        position: absolute;
+        left: 50%;
+        top: calc(100% + 9px);
+
+        transform:
+          translateX(-50%)
+          translateY(-3px);
+
+        padding:
+          5px 8px;
+
+        border:
+          1px solid
+          rgba(255,255,255,.08);
+
+        border-radius: 6px;
+
+        background: #050505;
+        color: #858585;
+
+        font-size: 9px;
+        line-height: 1;
+
+        white-space: nowrap;
+
+        opacity: 0;
+        pointer-events: none;
+
+        transition:
+          opacity .15s ease,
+          transform .15s ease;
+
+        z-index: 20;
+      }
+
+      .share-button:hover
+      .share-tooltip {
+        opacity: 1;
+        transform:
+          translateX(-50%)
+          translateY(0);
+      }
+
+      /* ============================================
+         ARTICLE CONTENT
+      ============================================ */
+
+      .article-content {
+        width: 100%;
+      }
+
+      .article-heading {
+        margin:
+          52px 0
+          17px;
+
+        color: #f5f5f5;
+
+        font-size:
+          clamp(22px, 3vw, 27px);
+
+        line-height: 1.25;
+
+        letter-spacing:
+          -.7px;
+
+        font-weight: 720;
+      }
+
+      .article-paragraph {
+        margin:
+          0 0
+          19px;
+
+        color: #8a8a8a;
+
+        font-size:
+          clamp(15px, 1.7vw, 16px);
+
+        line-height: 1.9;
+
+        font-weight: 400;
+      }
+
+      .article-link {
+        color: ${GREEN};
+        text-decoration: underline;
+        text-decoration-color:
+          rgba(34,197,94,.30);
+        text-underline-offset: 4px;
+
+        transition:
+          color .15s ease,
+          text-decoration-color .15s ease;
+      }
+
+      .article-link:hover {
+        color: ${GREEN_SOFT};
+        text-decoration-color:
+          rgba(34,197,94,.8);
+      }
+
+      .article-space {
+        height: 3px;
+      }
+
+      .article-code {
+        overflow-x: auto;
+
+        margin:
+          24px 0;
+
+        padding: 17px;
+
+        border:
+          1px solid
+          rgba(255,255,255,.07);
+
+        border-radius: 12px;
+
+        background:
+          rgba(255,255,255,.025);
+
+        color: #929292;
+
+        font-family:
+          ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          monospace;
+
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      /* ============================================
+         FAQ
+      ============================================ */
+
+      .faq-section {
+        margin-top: 76px;
+        padding-top: 43px;
+
+        border-top:
+          1px solid
+          rgba(255,255,255,.085);
+      }
+
+      .faq-section h2,
+      .related-section h2 {
+        margin: 0;
+
+        color: #f5f5f5;
+
+        font-size:
+          clamp(23px, 3vw, 29px);
+
+        line-height: 1.25;
+
+        letter-spacing:
+          -.7px;
+
+        font-weight: 720;
+      }
+
+      .faq-intro {
+        margin:
+          10px 0 23px;
+
+        color: #555;
+
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .faq-list {
+        border-top:
+          1px solid
+          rgba(255,255,255,.07);
+      }
+
+      .faq-item {
+        border-bottom:
+          1px solid
+          rgba(255,255,255,.07);
+      }
+
+      .faq-item summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+
+        padding: 21px 0;
+
+        list-style: none;
+
+        color: #c9c9c9;
+
+        font-size:
+          clamp(14px, 2vw, 16px);
+
+        line-height: 1.5;
+
+        font-weight: 600;
+
+        cursor: pointer;
+      }
+
+      .faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .faq-item summary svg {
+        flex-shrink: 0;
+        color: #444;
+        transition:
+          transform .2s ease,
+          color .2s ease;
+      }
+
+      .faq-item[open]
+      summary svg {
+        transform:
+          rotate(90deg);
+        color: ${GREEN};
+      }
+
+      .faq-item[open]
+      summary {
+        color: #fff;
+      }
+
+      .faq-item p {
+        max-width: 700px;
+
+        margin:
+          -2px 0
+          21px;
+
+        color: #686868;
+
+        font-size: 14px;
+
+        line-height: 1.8;
+      }
+
+      /* ============================================
+         RELATED
+      ============================================ */
+
+      .related-section {
+        margin-top: 76px;
+        padding-top: 43px;
+
+        border-top:
+          1px solid
+          rgba(255,255,255,.085);
+      }
+
+      .related-section h2 {
+        margin-bottom: 15px;
+      }
+
+      .related-item {
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 25px;
+
+        padding:
+          22px 0;
+
+        border: 0;
+        border-bottom:
+          1px solid
+          rgba(255,255,255,.07);
+
+        background: transparent;
+
+        color: inherit;
+
+        text-align: left;
+
+        cursor: pointer;
+
+        font: inherit;
+      }
+
+      .related-item > div {
+        min-width: 0;
+      }
+
+      .related-date {
+        display: block;
+
+        margin-bottom: 7px;
+
+        color: ${GREEN};
+
+        font-size: 10px;
+        font-weight: 650;
+      }
+
+      .related-item h3 {
+        margin: 0;
+
+        color: #c7c7c7;
+
+        font-size:
+          clamp(15px, 2vw, 18px);
+
+        line-height: 1.4;
+
+        letter-spacing: -.25px;
+
+        font-weight: 620;
+
+        transition:
+          color .15s ease;
+      }
+
+      .related-item:hover h3 {
+        color: #fff;
+      }
+
+      .related-item p {
+        margin: 7px 0 0;
+
+        color: #555;
+
+        font-size: 12px;
+
+        line-height: 1.6;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .related-item > svg {
+        flex-shrink: 0;
+        color: #333;
+
+        transition:
+          color .15s ease,
+          transform .15s ease;
+      }
+
+      .related-item:hover > svg {
+        color: ${GREEN};
+        transform:
+          translateX(3px);
+      }
+
+      /* ============================================
+         MOBILE
+      ============================================ */
+
+      @media (max-width: 640px) {
+
+        .blog-hero {
+          padding:
+            82px 20px
+            42px;
+        }
+
+        .blog-hero h1 {
+          letter-spacing: -2.2px;
+        }
+
+        .search-section {
+          padding:
+            0 20px
+            27px;
+        }
+
+        .articles-section {
+          padding:
+            0 20px
+            80px;
+        }
+
+        .article-list-item {
+          padding:
+            27px 0
+            29px;
+        }
+
+        .article-page {
+          padding:
+            78px 20px
+            80px;
+        }
+
+        .article-header {
+          padding-bottom: 45px;
+        }
+
+        .article-title {
+          letter-spacing:
+            -1.8px;
+        }
+
+        .article-excerpt {
+          font-size: 15px;
+        }
+
+        .article-paragraph {
+          font-size: 15px;
+          line-height: 1.85;
+        }
+
+        .article-heading {
+          margin-top: 42px;
+        }
+
+        .share-button {
+          width: 40px;
+          height: 40px;
+        }
+
+        .share-row {
+          gap: 7px;
+        }
+
+        .faq-section,
+        .related-section {
+          margin-top: 58px;
+          padding-top: 34px;
+        }
+
+      }
+
+    `}</style>
   );
 }
