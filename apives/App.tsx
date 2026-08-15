@@ -31,7 +31,6 @@ import { OnboardingPage } from './pages/Onboarding';
 import AskApivesPage from './pages/AskApivesPage';
 import SerpApiOffer from "./pages/SerpApiOffer";
 import Blogs from "./pages/Blogs";
-import BlogPost from "./pages/BlogPost";
 import LiveApiRunnerPage from "./pages/LiveApiRunnerPage";
 
 
@@ -104,7 +103,6 @@ element={<LiveApiRunnerPage />} />
     <Route path="/docs" element={<DocumentationPage />} />    
     <Route path="/status" element={<StatusPage />} />    
 <Route path="/blogs" element={<Blogs />} />
-<Route path="/articles/:slug" element={<BlogPost />} />
     <Route path="/cookies" element={<CookiesPage />} />    
     <Route path="/privacy" element={<PrivacyPage />} />    
     <Route path="/terms" element={<TermsPage />} />    
