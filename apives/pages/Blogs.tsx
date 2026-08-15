@@ -5,7 +5,7 @@ import {
   ARTICLES,
   BLOG_IMAGE,
   type Article,
-} from "./BlogArticles";
+} from "../components/BlogArticles";
 
 /* =========================================================
    TYPES
@@ -110,7 +110,7 @@ function updateSEO() {
   }
 
   canonical.href =
-    `${window.location.origin}/blog`;
+    `${window.location.origin}/blogs`;
 }
 
 /* =========================================================
