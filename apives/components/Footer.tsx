@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Instagram,
-  Twitter,
+  Youtube,
   MessageSquare,
   X,
 } from 'lucide-react';
@@ -32,7 +32,7 @@ export const Footer: React.FC = () => {
   if (location.pathname === '/access') return null;
 
   return (
-    <footer className="bg-dark-900 border-t border-white/5 mt-auto relative overflow-hidden">
+    <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
 
       <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
 
@@ -63,9 +63,9 @@ export const Footer: React.FC = () => {
                 aria-label="Apives on X"
                 className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
               >
-                <Twitter
-                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
-                />
+                <span className="text-[14px] md:text-[16px] font-semibold leading-none group-hover:scale-110 transition-transform">
+                  𝕏
+                </span>
               </a>
 
               {/* Instagram */}
@@ -81,9 +81,18 @@ export const Footer: React.FC = () => {
                 />
               </a>
 
-              <span className="text-mora-500 font-black tracking-widest text-[10px] md:text-[12px] select-none">
-                ///
-              </span>
+              {/* YouTube */}
+              <a
+                href="https://www.youtube.com/@usestartives"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Apives on YouTube"
+                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 text-slate-500 hover:text-white transition-all group"
+              >
+                <Youtube
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform"
+                />
+              </a>
 
               {/* Buy Me a Coffee */}
               <a
@@ -302,42 +311,56 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* BOTTOM */}
-        <div className="mt-8 md:mt-10 border-t border-white/5 pt-6 md:pt-8">
+        {/* BOTTOM VISUAL */}
+        <div className="mt-10 md:mt-14 relative left-1/2 -translate-x-1/2 w-screen h-[150px] md:h-[190px] overflow-hidden">
 
-          <div className="flex flex-col items-center">
+          {/* Green horizon */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `
+                linear-gradient(
+                  to bottom,
+                  #000000 0%,
+                  rgba(0,0,0,0.96) 12%,
+                  rgba(5,45,24,0.75) 38%,
+                  rgba(10,105,52,0.92) 68%,
+                  #22c55e 100%
+                )
+              `,
+            }}
+          />
 
-            <p className="text-[12px] md:text-sm text-slate-500 flex items-center gap-2 mb-5">
-              <span className="text-mora-500 font-black tracking-widest">
-                ///
-              </span>
+          {/* Horizontal glow */}
+          <div
+            className="absolute left-0 right-0 bottom-0 h-[75%]"
+            style={{
+              background:
+                'radial-gradient(ellipse at center bottom, rgba(34,197,94,0.95) 0%, rgba(34,197,94,0.55) 30%, rgba(34,197,94,0.12) 58%, transparent 78%)',
+            }}
+          />
 
-              <span>
-                © 2026 Apives
-              </span>
-            </p>
+          {/* Technical grid */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-[78%] opacity-30"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, rgba(255,255,255,0.22) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.14) 1px, transparent 1px)
+              `,
+              backgroundSize: '110px 100%',
+            }}
+          />
 
-            {/* APIVES SHADOW WORDMARK */}
-            <div className="w-full flex justify-center overflow-hidden select-none pointer-events-none">
-              <span
-                className="
-                  font-display
-                  italic
-                  font-black
-                  text-[82px]
-                  sm:text-[110px]
-                  md:text-[150px]
-                  lg:text-[180px]
-                  leading-[0.7]
-                  tracking-[-0.07em]
-                  text-white/[0.10]
-                  whitespace-nowrap
-                "
-              >
-                apives
-              </span>
-            </div>
-
+          {/* Vertical light columns */}
+          <div className="absolute inset-x-0 bottom-0 h-[72%] flex justify-around opacity-20">
+            <span className="w-px h-full bg-white"></span>
+            <span className="w-px h-full bg-white"></span>
+            <span className="w-px h-full bg-white"></span>
+            <span className="w-px h-full bg-white"></span>
+            <span className="w-px h-full bg-white"></span>
+            <span className="w-px h-full bg-white"></span>
+            <span className="w-px h-full bg-white"></span>
           </div>
 
         </div>
