@@ -1,33 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Instagram,
-  MessageSquare,
-  X,
   Youtube,
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const location = useLocation();
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [feedbackSuccess, setFeedbackSuccess] = useState(false);
-
-  const handleFeedbackSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-
-    const form = e.currentTarget;
-    const data = new FormData(form);
-
-    await fetch('https://formsubmit.co/ajax/apivesecosystem@gmail.com', {
-      method: 'POST',
-      body: data,
-    });
-
-    setFeedbackSuccess(true);
-    form.reset();
-  };
 
   if (location.pathname === '/access') return null;
 
@@ -186,14 +165,6 @@ export const Footer: React.FC = () => {
                   Mock Server
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/architect"
-                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
-                >
-                  API Architect
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -218,14 +189,6 @@ export const Footer: React.FC = () => {
                 >
                   Blogs
                 </Link>
-              </li>
-              <li>
-                <button
-                  onClick={() => setIsFeedbackOpen(true)}
-                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide text-left"
-                >
-                  Feedback
-                </button>
               </li>
             </ul>
           </div>
@@ -281,118 +244,6 @@ export const Footer: React.FC = () => {
           </p>
         </div>
       </div>
-
-      {/* FEEDBACK MODAL — iOS 27 Liquid Glass */}
-      {isFeedbackOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-          <div className="relative w-full max-w-[340px] rounded-3xl overflow-hidden
-            bg-white/[0.07] backdrop-blur-2xl
-            border border-white/15
-            shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)]
-          ">
-            {/* Top glass highlight */}
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
-
-            {/* Soft green accent line */}
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-mora-500/80 to-transparent" />
-
-            <button
-              onClick={() => setIsFeedbackOpen(false)}
-              className="absolute top-3.5 right-3.5 w-7 h-7 flex items-center justify-center rounded-full
-                bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
-            >
-              <X size={14} />
-            </button>
-
-            <div className="px-5 pt-6 pb-5">
-              {/* Header */}
-              <div className="text-center mb-5">
-                <div className="inline-flex items-center justify-center w-11 h-11 rounded-2xl
-                  bg-mora-500/15 border border-mora-500/25 mb-3
-                  shadow-[0_0_20px_rgba(34,197,94,0.15)]">
-                  <MessageSquare className="text-mora-400" size={20} />
-                </div>
-                <h2 className="text-[17px] font-semibold text-white tracking-tight">
-                  Share Feedback
-                </h2>
-                <p className="text-[12px] text-slate-400 mt-1">
-                  Help us refine the ecosystem
-                </p>
-              </div>
-
-              {/* Form */}
-              <form onSubmit={handleFeedbackSubmit} className="space-y-3.5">
-                <input type="hidden" name="_subject" value="User Feedback - Apives" />
-
-                <div>
-                  <label className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1.5 ml-0.5">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    placeholder="Your name"
-                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3.5 py-2.5
-                      text-[13px] text-white placeholder-slate-500
-                      focus:border-mora-500/60 focus:outline-none focus:ring-1 focus:ring-mora-500/30
-                      transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1.5 ml-0.5">
-                    Email <span className="text-slate-600 normal-case">(optional)</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3.5 py-2.5
-                      text-[13px] text-white placeholder-slate-500
-                      focus:border-mora-500/60 focus:outline-none focus:ring-1 focus:ring-mora-500/30
-                      transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1.5 ml-0.5">
-                    Feedback
-                  </label>
-                  <textarea
-                    name="message"
-                    required
-                    rows={3}
-                    placeholder="What can we improve?"
-                    className="w-full bg-black/30 border border-white/10 rounded-xl px-3.5 py-2.5
-                      text-[13px] text-white placeholder-slate-500 resize-none
-                      focus:border-mora-500/60 focus:outline-none focus:ring-1 focus:ring-mora-500/30
-                      transition-all"
-                  />
-                </div>
-
-                {feedbackSuccess && (
-                  <div className="bg-mora-500/10 border border-mora-500/20 text-mora-300 text-[12px]
-                    rounded-xl px-3.5 py-2.5 flex items-center gap-2">
-                    <span>✓</span>
-                    Thanks! Your feedback really helps
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  className="w-full mt-1 bg-mora-600 hover:bg-mora-500 text-white font-semibold
-                    py-2.5 rounded-xl text-[12px] tracking-wide
-                    shadow-[0_4px_20px_rgba(34,197,94,0.25)]
-                    transition-all active:scale-[0.98]"
-                >
-                  Send Feedback
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </footer>
   );
 };
