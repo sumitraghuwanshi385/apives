@@ -223,7 +223,7 @@ const LandingApiCard: React.FC<Props> = ({
             "
           />
 
-          {/* CATEGORY - TOP LEFT (liquid glass) */}
+          {/* CATEGORY - TOP LEFT (liquid glass - more visible) */}
           <div className="absolute top-2.5 left-2.5 z-10">
             <span
               className="
@@ -232,11 +232,11 @@ const LandingApiCard: React.FC<Props> = ({
                 px-[8.5px]
                 py-[3px]
                 rounded-full
-                bg-white/10
+                bg-black/55
                 backdrop-blur-2xl
                 border border-white/20
-                shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]
-                text-slate-200
+                shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]
+                text-slate-300
                 uppercase
                 tracking-wider
               "
@@ -245,7 +245,7 @@ const LandingApiCard: React.FC<Props> = ({
             </span>
           </div>
 
-          {/* LIKE COUNT + SAVE - TOP RIGHT (liquid glass) */}
+          {/* LIKE COUNT + SAVE - TOP RIGHT (liquid glass - more visible) */}
           <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
             {/* LIKE COUNT */}
             <button
@@ -254,10 +254,10 @@ const LandingApiCard: React.FC<Props> = ({
                 h-7
                 px-2
                 rounded-full
-                bg-white/10
+                bg-black/55
                 backdrop-blur-2xl
                 border border-white/20
-                shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]
+                shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]
                 flex items-center gap-1.5
                 transition-all
                 active:scale-95
@@ -276,7 +276,7 @@ const LandingApiCard: React.FC<Props> = ({
                 }
               />
 
-              <span className="text-[9px] font-medium text-slate-200">
+              <span className="text-[9px] font-medium text-slate-300">
                 {likeCount}
               </span>
             </button>
@@ -291,14 +291,14 @@ const LandingApiCard: React.FC<Props> = ({
                 flex items-center justify-center
                 border
                 backdrop-blur-2xl
-                shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]
+                shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]
                 transition-all
                 active:scale-90
 
                 ${
                   saved
-                    ? "bg-mora-500/25 text-mora-500 border-mora-500/40"
-                    : "bg-white/10 border-white/20 text-mora-500 hover:bg-mora-500/20 hover:border-mora-500/40"
+                    ? "bg-mora-500/30 text-mora-400 border-mora-500/50"
+                    : "bg-black/55 border-white/20 text-mora-400 hover:bg-mora-500/25 hover:border-mora-500/40"
                 }
               `}
               aria-label={
@@ -331,26 +331,6 @@ const LandingApiCard: React.FC<Props> = ({
       >
         <span className="inline-flex items-center flex-wrap gap-0.5">
           {api.name}
-
-          {/* RANK BADGE (Apex / Prime / Zenith) — next to name */}
-          {rankStyle && (
-            <span
-              className={`
-                ml-1
-                text-[8px]
-                px-2.5
-                py-1
-                rounded-full
-                uppercase
-                tracking-wider
-                bg-gradient-to-r
-                ${rankStyle.color}
-                ${rankStyle.text}
-              `}
-            >
-              {rankStyle.label}
-            </span>
-          )}
 
           {/* VERIFIED BADGE — EXACT OLD UI */}
           {isVerified && (
@@ -415,6 +395,26 @@ const LandingApiCard: React.FC<Props> = ({
                   </div>
                 </div>
               )}
+            </span>
+          )}
+
+          {/* RANK BADGE (Apex / Prime / Zenith) — after verify, before New */}
+          {rankStyle && (
+            <span
+              className={`
+                ml-1
+                text-[8px]
+                px-2.5
+                py-1
+                rounded-full
+                uppercase
+                tracking-wider
+                bg-gradient-to-r
+                ${rankStyle.color}
+                ${rankStyle.text}
+              `}
+            >
+              {rankStyle.label}
             </span>
           )}
 
