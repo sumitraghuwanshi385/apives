@@ -32,10 +32,10 @@ export const Footer: React.FC = () => {
   if (location.pathname === '/access') return null;
 
   return (
-    <footer className="bg-black mt-auto relative overflow-hidden">
+    <footer className="bg-black mt-auto relative overflow-hidden font-display">
 
-      {/* MAIN FOOTER */}
-      <div className="max-w-7xl mx-auto py-8 md:py-12 px-4 sm:px-6 lg:px-8">
+      {/* FOOTER CONTENT */}
+      <div className="max-w-7xl mx-auto py-8 md:py-11 px-4 sm:px-6 lg:px-8">
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10">
 
@@ -50,11 +50,11 @@ export const Footer: React.FC = () => {
               />
             </div>
 
-            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light">
+            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-4 md:mb-5 font-light tracking-[0.01em]">
               A next-gen API ecosystem where builders easily discover and understand APIs.
             </p>
 
-            {/* SOCIAL LINKS */}
+            {/* SOCIALS */}
             <div className="flex items-center gap-3">
 
               {/* X */}
@@ -70,7 +70,8 @@ export const Footer: React.FC = () => {
                   bg-white/5
                   hover:bg-white/10
                   border border-white/5
-                  text-slate-500 hover:text-white
+                  text-slate-500
+                  hover:text-white
                   transition-all
                   group
                 "
@@ -80,7 +81,7 @@ export const Footer: React.FC = () => {
                 </span>
               </a>
 
-              {/* Instagram */}
+              {/* INSTAGRAM */}
               <a
                 href="https://www.instagram.com/apives.ecosystem?igsh=MTNib2NicGF4Z2Zocg=="
                 target="_blank"
@@ -93,7 +94,8 @@ export const Footer: React.FC = () => {
                   bg-white/5
                   hover:bg-white/10
                   border border-white/5
-                  text-slate-500 hover:text-white
+                  text-slate-500
+                  hover:text-white
                   transition-all
                   group
                 "
@@ -103,7 +105,7 @@ export const Footer: React.FC = () => {
                 />
               </a>
 
-              {/* YouTube */}
+              {/* YOUTUBE */}
               <a
                 href="https://www.youtube.com/@usestartives"
                 target="_blank"
@@ -116,7 +118,8 @@ export const Footer: React.FC = () => {
                   bg-white/5
                   hover:bg-white/10
                   border border-white/5
-                  text-slate-500 hover:text-white
+                  text-slate-500
+                  hover:text-white
                   transition-all
                   group
                 "
@@ -126,7 +129,7 @@ export const Footer: React.FC = () => {
                 />
               </a>
 
-              {/* GLOWING DIVIDER */}
+              {/* /// */}
               <span
                 className="
                   text-mora-500
@@ -135,7 +138,7 @@ export const Footer: React.FC = () => {
                   text-[10px] md:text-[12px]
                   select-none
                   animate-pulse
-                  drop-shadow-[0_0_5px_rgba(34,197,94,0.75)]
+                  drop-shadow-[0_0_6px_rgba(34,197,94,0.8)]
                 "
               >
                 ///
@@ -162,16 +165,16 @@ export const Footer: React.FC = () => {
           {/* PLATFORM */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
+            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
               Platform
             </h3>
 
-            <ul className="space-y-2 md:space-y-3">
+            <ul className="space-y-2.5 md:space-y-3">
 
               <li>
                 <Link
                   to="/browse"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Explore APIs
                 </Link>
@@ -179,17 +182,8 @@ export const Footer: React.FC = () => {
 
               <li>
                 <Link
-                  to="/fresh"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
-                  New Releases
-                </Link>
-              </li>
-
-              <li>
-                <Link
                   to="/popular"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Top Rated
                 </Link>
@@ -198,7 +192,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/live-api-runner"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Live API Runner
                 </Link>
@@ -207,7 +201,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/jwt-decoder"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   JWT Decoder
                 </Link>
@@ -216,7 +210,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/api-response-formatter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   API Formatter
                 </Link>
@@ -225,7 +219,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/curl-converter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   cURL Converter
                 </Link>
@@ -234,7 +228,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/mock-server"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Mock Server
                 </Link>
@@ -243,7 +237,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/architect"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   API Architect
                 </Link>
@@ -252,19 +246,19 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* SUPPORT */}
+          {/* COMMUNITY */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
-              Support
+            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
+              Community
             </h3>
 
-            <ul className="space-y-2 md:space-y-3">
+            <ul className="space-y-2.5 md:space-y-3">
 
               <li>
                 <Link
                   to="/support"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Help & Support
                 </Link>
@@ -272,44 +266,17 @@ export const Footer: React.FC = () => {
 
               <li>
                 <Link
-                  to="/docs"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
-                  Documentation
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/sponsorship"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
-                  For Sponsorship
-                </Link>
-              </li>
-
-              <li>
-                <Link
                   to="/blogs"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Blogs
                 </Link>
               </li>
 
               <li>
-                <Link
-                  to="/offers/serpapi"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
-                  Special Offers
-                </Link>
-              </li>
-
-              <li>
                 <button
                   onClick={() => setIsFeedbackOpen(true)}
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors text-left"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors text-left tracking-[0.01em]"
                 >
                   Feedback
                 </button>
@@ -321,16 +288,16 @@ export const Footer: React.FC = () => {
           {/* LEGAL */}
           <div className="md:col-span-2">
 
-            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-widest uppercase mb-4 md:mb-5">
+            <h3 className="text-[11px] md:text-sm font-semibold text-mora-400 tracking-[0.18em] uppercase mb-4 md:mb-5">
               Legal
             </h3>
 
-            <ul className="space-y-2 md:space-y-3">
+            <ul className="space-y-2.5 md:space-y-3">
 
               <li>
                 <Link
                   to="/privacy"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Privacy Policy
                 </Link>
@@ -338,17 +305,8 @@ export const Footer: React.FC = () => {
 
               <li>
                 <Link
-                  to="/cookies"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
-                >
-                  Cookie Policy
-                </Link>
-              </li>
-
-              <li>
-                <Link
                   to="/terms"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors"
+                  className="text-[13px] md:text-sm text-slate-400 hover:text-white transition-colors tracking-[0.01em]"
                 >
                   Terms of Service
                 </Link>
@@ -361,14 +319,14 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* =====================================================
-          PREMIUM 3D FOOTER END
+          COMPACT 3D END EFFECT
          ===================================================== */}
       <div
         className="
           relative
           w-full
-          h-[125px]
-          md:h-[140px]
+          h-[108px]
+          md:h-[120px]
           bg-black
           overflow-hidden
           flex
@@ -377,36 +335,35 @@ export const Footer: React.FC = () => {
         "
       >
 
-        {/* SOFT ATMOSPHERIC GLOW */}
+        {/* SOFT GREEN ATMOSPHERE */}
         <div
           className="
             absolute
             left-1/2
-            bottom-[-95px]
+            bottom-[-92px]
             -translate-x-1/2
-            w-[75%]
-            md:w-[55%]
-            h-[190px]
+            w-[72%]
+            md:w-[52%]
+            h-[175px]
             rounded-[50%]
             pointer-events-none
-            blur-[35px]
+            blur-[34px]
           "
           style={{
             background:
-              'radial-gradient(ellipse, rgba(34,197,94,0.22) 0%, rgba(34,197,94,0.08) 38%, transparent 72%)',
+              'radial-gradient(ellipse, rgba(34,197,94,0.24) 0%, rgba(34,197,94,0.09) 38%, transparent 72%)',
           }}
         />
 
-        {/* 3D HORIZON */}
+        {/* OUTER 3D PLATFORM */}
         <div
           className="
             absolute
             left-1/2
-            bottom-[-72px]
-            -translate-x-1/2
-            w-[85%]
-            md:w-[62%]
-            h-[115px]
+            bottom-[-70px]
+            w-[82%]
+            md:w-[60%]
+            h-[105px]
             rounded-[50%]
             border
             border-mora-500/20
@@ -414,22 +371,21 @@ export const Footer: React.FC = () => {
           "
           style={{
             transform:
-              'translateX(-50%) perspective(500px) rotateX(62deg)',
+              'translateX(-50%) perspective(500px) rotateX(63deg)',
             boxShadow:
-              '0 -10px 45px rgba(34,197,94,0.12), inset 0 8px 25px rgba(34,197,94,0.05)',
+              '0 -12px 48px rgba(34,197,94,0.14), inset 0 8px 24px rgba(34,197,94,0.06)',
           }}
         />
 
-        {/* INNER 3D RING */}
+        {/* INNER PLATFORM */}
         <div
           className="
             absolute
             left-1/2
-            bottom-[-48px]
-            -translate-x-1/2
-            w-[58%]
-            md:w-[40%]
-            h-[78px]
+            bottom-[-47px]
+            w-[55%]
+            md:w-[38%]
+            h-[72px]
             rounded-[50%]
             border
             border-mora-500/15
@@ -437,45 +393,44 @@ export const Footer: React.FC = () => {
           "
           style={{
             transform:
-              'translateX(-50%) perspective(500px) rotateX(62deg)',
+              'translateX(-50%) perspective(500px) rotateX(63deg)',
             boxShadow:
-              '0 -5px 25px rgba(34,197,94,0.08)',
+              '0 -5px 28px rgba(34,197,94,0.09)',
           }}
         />
 
-        {/* CENTER LIGHT */}
+        {/* CENTER HORIZON LIGHT */}
         <div
           className="
             absolute
             left-1/2
-            bottom-[24px]
+            bottom-[22px]
             -translate-x-1/2
-            w-[180px]
-            md:w-[300px]
+            w-[170px]
+            md:w-[280px]
             h-[2px]
             rounded-full
-            bg-mora-500/20
-            blur-[1px]
+            bg-mora-500/25
             pointer-events-none
           "
           style={{
             boxShadow:
-              '0 0 22px rgba(34,197,94,0.18)',
+              '0 0 24px rgba(34,197,94,0.22)',
           }}
         />
 
-        {/* SOFT FLOOR GRADIENT */}
+        {/* FLOOR LIGHT */}
         <div
           className="
             absolute
             inset-x-0
             bottom-0
-            h-[65px]
+            h-[55px]
             pointer-events-none
           "
           style={{
             background:
-              'linear-gradient(to top, rgba(34,197,94,0.07), transparent)',
+              'linear-gradient(to top, rgba(34,197,94,0.075), transparent)',
           }}
         />
 
@@ -485,21 +440,22 @@ export const Footer: React.FC = () => {
             absolute
             inset-0
             flex
-            items-center
+            items-end
             justify-center
+            pb-[12px]
+            md:pb-[14px]
             pointer-events-none
             z-10
           "
         >
           <span
             className="
-              text-white/55
-              text-[9px]
-              md:text-[10px]
+              text-white/50
+              text-[8px]
+              md:text-[9px]
               font-medium
-              tracking-[0.18em]
+              tracking-[0.22em]
               uppercase
-              translate-y-[2px]
             "
           >
             © 2026 Apives Ecosystem
@@ -526,12 +482,10 @@ export const Footer: React.FC = () => {
             <div className="text-center mb-6">
 
               <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-mora-500/10 mb-3 border border-mora-500/20">
-
                 <MessageSquare
                   className="text-mora-500"
                   size={20}
                 />
-
               </div>
 
               <h2 className="text-xl font-display font-bold text-white mb-1.5">
@@ -567,19 +521,10 @@ export const Footer: React.FC = () => {
                   required
                   placeholder="Your Name"
                   className="
-                    w-full
-                    bg-black
-                    border
-                    border-white/10
-                    rounded-xl
-                    px-4
-                    py-2.5
-                    text-xs
-                    text-white
-                    focus:border-mora-500
-                    focus:outline-none
-                    transition-all
-                    placeholder:text-slate-700
+                    w-full bg-black border border-white/10
+                    rounded-xl px-4 py-2.5 text-xs text-white
+                    focus:border-mora-500 focus:outline-none
+                    transition-all placeholder:text-slate-700
                   "
                 />
 
@@ -599,19 +544,10 @@ export const Footer: React.FC = () => {
                   name="email"
                   placeholder="Email (optional)"
                   className="
-                    w-full
-                    bg-black
-                    border
-                    border-white/10
-                    rounded-xl
-                    px-4
-                    py-2.5
-                    text-xs
-                    text-white
-                    focus:border-mora-500
-                    focus:outline-none
-                    transition-all
-                    placeholder:text-slate-700
+                    w-full bg-black border border-white/10
+                    rounded-xl px-4 py-2.5 text-xs text-white
+                    focus:border-mora-500 focus:outline-none
+                    transition-all placeholder:text-slate-700
                   "
                 />
 
@@ -629,19 +565,10 @@ export const Footer: React.FC = () => {
                   rows={3}
                   placeholder="What can we improve?"
                   className="
-                    w-full
-                    bg-black
-                    border
-                    border-white/10
-                    rounded-xl
-                    px-4
-                    py-2.5
-                    text-xs
-                    text-white
-                    focus:border-mora-500
-                    focus:outline-none
-                    transition-all
-                    placeholder:text-slate-700
+                    w-full bg-black border border-white/10
+                    rounded-xl px-4 py-2.5 text-xs text-white
+                    focus:border-mora-500 focus:outline-none
+                    transition-all placeholder:text-slate-700
                     resize-none
                   "
                 />
@@ -651,16 +578,10 @@ export const Footer: React.FC = () => {
               {feedbackSuccess && (
                 <div className="
                   bg-green-500/10
-                  border
-                  border-green-500/20
+                  border border-green-500/20
                   text-green-400
-                  text-xs
-                  rounded-xl
-                  px-4
-                  py-3
-                  flex
-                  items-center
-                  gap-2
+                  text-xs rounded-xl px-4 py-3
+                  flex items-center gap-2
                 ">
                   <span>✓</span>
                   Thanks! Your feedback really helps 💚
