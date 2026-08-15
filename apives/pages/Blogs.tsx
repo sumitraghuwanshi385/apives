@@ -10,7 +10,6 @@ import {
   X,
   Check,
   ChevronRight,
-  ArrowLeft,
   Mail,
   Share2,
 } from "lucide-react";
@@ -81,6 +80,8 @@ The right choice is not necessarily the technology that looks the most modern. I
 
 For most startups and public developer platforms, [REST APIs](https://developer.mozilla.org/en-US/docs/Glossary/REST) remain one of the easiest places to start. GraphQL becomes attractive when clients need highly flexible data fetching, while [gRPC](https://grpc.io/) is particularly useful for efficient service-to-service communication.
 
+When designing HTTP APIs, the [HTTP Semantics specification](https://www.rfc-editor.org/rfc/rfc9110) is a useful reference for understanding methods, status codes, caching behavior, and other protocol semantics.
+
 ## REST: The Practical Default
 
 REST APIs are built around resources and standard HTTP semantics. A typical application might expose endpoints for users, products, orders, invoices, payments, subscriptions, or projects.
@@ -92,8 +93,6 @@ That ecosystem is one of REST's biggest advantages.
 A developer integrating a public REST API can usually make requests with curl, JavaScript, Python, Go, Java, or almost any modern programming language without requiring a specialized client runtime.
 
 REST is particularly suitable for SaaS products, public APIs, ecommerce platforms, mobile backends, dashboards, and CRUD-heavy applications.
-
-When designing HTTP APIs, the [HTTP Semantics specification](https://www.rfc-editor.org/rfc/rfc9110) is a useful reference for understanding methods, status codes, caching behavior, and other protocol semantics.
 
 ## GraphQL: Flexible Data for Complex Clients
 
@@ -454,7 +453,7 @@ API security is not one middleware package or one authentication library. It is 
         question:
           "Should every public API have rate limiting?",
         answer:
-          "Most public APIs should have rate limits, particularly for authentication, search, AI, file processing, and other resource-intensive endpoints.",
+          "Most public APIs should have rate limits, particularly for authentication, search, AI, file processing, and other resource-intensive operations.",
       },
       {
         question:
@@ -1651,7 +1650,9 @@ function setMeta(
       name
     );
 
-    document.head.appendChild(element);
+    document.head.appendChild(
+      element
+    );
   }
 
   element.setAttribute(
@@ -1744,7 +1745,8 @@ function updateSEO(
         "link"
       );
 
-    canonical.rel = "canonical";
+    canonical.rel =
+      "canonical";
 
     document.head.appendChild(
       canonical
@@ -2057,19 +2059,23 @@ function ShareButton({
 }
 
 /* =========================================================
-   BLOG RETURN
-   IMPORTANT:
-   ALWAYS GOES TO /blog
+   BLOG RETURN BUTTON
+   ALWAYS GOES TO MAIN BLOG PAGE
 ========================================================= */
 
 function BlogReturnButton() {
   const goToBlog = () => {
     /*
-      Do NOT use history.back() here.
-      That could send the user to the landing page.
+      Important:
+      history.back() intentionally NOT used.
 
-      This always opens the external Blog listing route.
+      Detail page -> /blog
+      This guarantees the user lands on the
+      main Blog page containing the search bar
+      instead of accidentally returning to the
+      landing page.
     */
+
     window.location.assign(
       "/blog"
     );
@@ -2156,10 +2162,7 @@ function ArticleDetail({
               shareUrl,
           });
         } catch {
-          /*
-            User cancelling the native
-            share sheet is normal.
-          */
+          // Native share cancelled.
         } finally {
           setSharing(false);
         }
@@ -2168,8 +2171,8 @@ function ArticleDetail({
       }
 
       /*
-        Desktop browsers without Web Share API:
-        gracefully copy the URL.
+        Fallback for browsers without
+        Web Share API.
       */
 
       try {
@@ -2263,6 +2266,7 @@ function ArticleDetail({
 
       {/* =========================================
           RETURN BUTTON
+          DESKTOP: LOWER THAN HEADER
           SEPARATE FROM TITLE
       ========================================= */}
 
@@ -2312,11 +2316,77 @@ function ArticleDetail({
 
           {/* =====================================
               SOCIAL SHARE ROW
+
+              ORDER:
+              Email
+              Facebook
+              Reddit
+              X
+              LinkedIn
+              WhatsApp
+              Share  <-- RIGHT OF WHATSAPP
           ===================================== */}
 
           <div className="share-row">
 
-            {/* NATIVE SHARE */}
+            <ShareButton
+              label="Email"
+              onClick={() =>
+                share("email")
+              }
+            >
+              <Mail size={16} />
+            </ShareButton>
+
+            <ShareButton
+              label="Facebook"
+              onClick={() =>
+                share("facebook")
+              }
+            >
+              <FacebookIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="Reddit"
+              onClick={() =>
+                share("reddit")
+              }
+            >
+              <RedditIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="X"
+              onClick={() =>
+                share("x")
+              }
+            >
+              <XBrandIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="LinkedIn"
+              onClick={() =>
+                share("linkedin")
+              }
+            >
+              <LinkedinIcon />
+            </ShareButton>
+
+            <ShareButton
+              label="WhatsApp"
+              onClick={() =>
+                share("whatsapp")
+              }
+            >
+              <WhatsappIcon />
+            </ShareButton>
+
+            {/* =================================
+                SHARE IS NOW RIGHT OF WHATSAPP
+            ================================= */}
+
             <ShareButton
               label={
                 sharing
@@ -2332,66 +2402,6 @@ function ArticleDetail({
               ) : (
                 <Share2 size={16} />
               )}
-            </ShareButton>
-
-            {/* EMAIL */}
-            <ShareButton
-              label="Email"
-              onClick={() =>
-                share("email")
-              }
-            >
-              <Mail size={16} />
-            </ShareButton>
-
-            {/* FACEBOOK */}
-            <ShareButton
-              label="Facebook"
-              onClick={() =>
-                share("facebook")
-              }
-            >
-              <FacebookIcon />
-            </ShareButton>
-
-            {/* REDDIT */}
-            <ShareButton
-              label="Reddit"
-              onClick={() =>
-                share("reddit")
-              }
-            >
-              <RedditIcon />
-            </ShareButton>
-
-            {/* X */}
-            <ShareButton
-              label="X"
-              onClick={() =>
-                share("x")
-              }
-            >
-              <XBrandIcon />
-            </ShareButton>
-
-            {/* LINKEDIN */}
-            <ShareButton
-              label="LinkedIn"
-              onClick={() =>
-                share("linkedin")
-              }
-            >
-              <LinkedinIcon />
-            </ShareButton>
-
-            {/* WHATSAPP */}
-            <ShareButton
-              label="WhatsApp"
-              onClick={() =>
-                share("whatsapp")
-              }
-            >
-              <WhatsappIcon />
             </ShareButton>
 
           </div>
@@ -2683,6 +2693,7 @@ export default function ApivesBlog() {
 
         {/* =====================================
             HERO
+            LOGO MOVED LOWER ON DESKTOP
         ===================================== */}
 
         <section className="blog-hero">
@@ -2882,9 +2893,8 @@ function BlogStyles() {
       /* ============================================
          DETAIL RETURN AREA
 
-         IMPORTANT:
-         Separate area so the BackButton does NOT
-         collapse into the article title.
+         MOVED DOWN ON DESKTOP SO IT DOES NOT
+         COLLIDE WITH THE SITE HEADER.
       ============================================ */
 
       .article-return-area {
@@ -2896,8 +2906,16 @@ function BlogStyles() {
 
         margin: 0 auto;
 
+        /*
+          CHANGED:
+          78px -> 110px
+
+          Only the return/back button is moved
+          down. Title positioning is not changed.
+        */
+
         padding:
-          78px 24px 0;
+          110px 24px 0;
 
         z-index: 20;
       }
@@ -2914,6 +2932,8 @@ function BlogStyles() {
 
       /* ============================================
          BLOG HERO
+
+         LOGO MOVED LOWER ON DESKTOP.
       ============================================ */
 
       .blog-hero {
@@ -2921,8 +2941,16 @@ function BlogStyles() {
 
         margin: 0 auto;
 
+        /*
+          CHANGED:
+          top padding 55px -> 82px
+
+          Only this top spacing moves the blog
+          logo down from the header.
+        */
+
         padding:
-          55px 24px
+          82px 24px
           55px;
 
         text-align: center;
@@ -3208,9 +3236,6 @@ function BlogStyles() {
 
       /* ============================================
          ARTICLE PAGE
-
-         Return button has its OWN AREA above.
-         Title does not collapse into it.
       ============================================ */
 
       .article-page {
@@ -3232,7 +3257,7 @@ function BlogStyles() {
       .article-header {
         text-align: center;
 
-        padding-bottom: 35px;
+        padding-bottom: 25px;
       }
 
       .article-title {
@@ -3458,7 +3483,12 @@ function BlogStyles() {
 
         height: 1px;
 
-        margin-top: 30px;
+        /*
+          Reduced slightly so the first article
+          text starts closer to social links.
+        */
+
+        margin-top: 22px;
 
         background:
           rgba(255,255,255,.10);
@@ -3488,6 +3518,18 @@ function BlogStyles() {
           -.8px;
 
         font-weight: 730;
+      }
+
+      /*
+        IMPORTANT:
+        First heading is the beginning of the blog
+        content, so reduce its top gap specifically.
+        Other headings remain exactly the same.
+      */
+
+      .article-content
+      .article-heading:first-child {
+        margin-top: 23px;
       }
 
       .article-paragraph {
@@ -3821,14 +3863,24 @@ function BlogStyles() {
 
       @media (max-width: 640px) {
 
+        /*
+          On mobile keep the button comfortable,
+          but don't push the entire page excessively.
+        */
+
         .article-return-area {
           padding:
-            70px 20px 0;
+            76px 20px 0;
         }
+
+        /*
+          Mobile logo remains compact.
+          Desktop-only extra top space is reduced here.
+        */
 
         .blog-hero {
           padding:
-            55px 20px
+            58px 20px
             43px;
         }
 
@@ -3915,7 +3967,7 @@ function BlogStyles() {
         }
 
         .article-divider {
-          margin-top: 26px;
+          margin-top: 18px;
         }
 
         .article-paragraph {
@@ -3930,6 +3982,16 @@ function BlogStyles() {
           margin-top: 43px;
 
           margin-bottom: 18px;
+        }
+
+        /*
+          First heading stays closer to social row
+          on mobile too.
+        */
+
+        .article-content
+        .article-heading:first-child {
+          margin-top: 22px;
         }
 
         .faq-section,
