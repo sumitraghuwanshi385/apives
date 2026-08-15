@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -35,20 +34,20 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-10 md:py-14 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
+      <div className="max-w-7xl mx-auto py-9 md:py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-9 md:gap-7">
 
           {/* BRAND */}
           <div className="md:col-span-3">
-            <div className="flex items-center mb-5">
+            <div className="flex items-center mb-4">
               <img
                 src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/apives-logo_kgcnxp.png"
                 alt="Apives Logo"
-                className="w-11 h-11 md:w-12 md:h-12 object-contain"
+                className="w-10 h-10 md:w-11 md:h-11 object-contain"
               />
             </div>
 
-            <p className="text-[13px] md:text-sm text-slate-400 leading-relaxed mb-6 font-light tracking-wide">
+            <p className="text-[12px] md:text-[13px] text-slate-400 leading-relaxed mb-5 font-light tracking-wide">
               A next-gen API ecosystem where builders easily discover and understand APIs.
             </p>
 
@@ -59,11 +58,11 @@ export const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Apives on X"
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
+                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
               >
                 <svg
                   viewBox="0 0 24 24"
-                  className="w-4 h-4 group-hover:scale-110 transition-transform fill-current"
+                  className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform fill-current"
                 >
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
@@ -75,9 +74,9 @@ export const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Apives on Instagram"
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
+                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
               >
-                <Instagram className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Instagram className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
 
               {/* YouTube */}
@@ -86,12 +85,12 @@ export const Footer: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Apives on YouTube"
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
+                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
               >
-                <Youtube className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Youtube className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
 
-              <span className="text-mora-500 font-black tracking-[0.3em] text-[11px] select-none">
+              <span className="text-mora-500 font-black tracking-[0.3em] text-[10px] select-none">
                 ///
               </span>
 
@@ -105,7 +104,7 @@ export const Footer: React.FC = () => {
                 <img
                   src="https://res.cloudinary.com/dp7avkarg/image/upload/f_auto,q_auto/Picsart_26-02-08_16-44-16-359_lpylta"
                   alt="Buy me a coffee"
-                  className="h-8 md:h-9 object-contain"
+                  className="h-7 md:h-8 object-contain"
                 />
               </a>
             </div>
@@ -113,14 +112,14 @@ export const Footer: React.FC = () => {
 
           {/* PLATFORM */}
           <div className="md:col-span-2">
-            <h3 className="text-[10px] md:text-[11px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-5">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
               Platform
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   to="/browse"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Explore APIs
                 </Link>
@@ -128,7 +127,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/popular"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Top Rated
                 </Link>
@@ -138,14 +137,14 @@ export const Footer: React.FC = () => {
 
           {/* TOOLS */}
           <div className="md:col-span-2">
-            <h3 className="text-[10px] md:text-[11px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-5">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
               Tools
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   to="/live-api-runner"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Live API Runner
                 </Link>
@@ -153,7 +152,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/jwt-decoder"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   JWT Decoder
                 </Link>
@@ -161,7 +160,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/api-response-formatter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   API Formatter
                 </Link>
@@ -169,7 +168,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/curl-converter"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   cURL Converter
                 </Link>
@@ -177,7 +176,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/mock-server"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Mock Server
                 </Link>
@@ -185,7 +184,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/architect"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   API Architect
                 </Link>
@@ -193,16 +192,16 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* RESOURCES (renamed from Support) */}
+          {/* RESOURCES */}
           <div className="md:col-span-2">
-            <h3 className="text-[10px] md:text-[11px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-5">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
               Resources
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   to="/support"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Help & Support
                 </Link>
@@ -210,7 +209,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/blogs"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Blogs
                 </Link>
@@ -218,7 +217,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => setIsFeedbackOpen(true)}
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide text-left"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide text-left"
                 >
                   Feedback
                 </button>
@@ -228,14 +227,14 @@ export const Footer: React.FC = () => {
 
           {/* LEGAL */}
           <div className="md:col-span-2">
-            <h3 className="text-[10px] md:text-[11px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-5">
+            <h3 className="text-[9px] md:text-[10px] font-mono font-bold text-mora-400 tracking-[0.25em] uppercase mb-4">
               Legal
             </h3>
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               <li>
                 <Link
                   to="/privacy"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Privacy Policy
                 </Link>
@@ -243,7 +242,7 @@ export const Footer: React.FC = () => {
               <li>
                 <Link
                   to="/terms"
-                  className="text-[13px] md:text-sm text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
                 >
                   Terms of Service
                 </Link>
@@ -251,28 +250,17 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-
-        {/* COPYRIGHT */}
-        <div className="mt-12 md:mt-14 pt-7 border-t border-white/5">
-          <p className="text-[12px] md:text-sm text-slate-500 flex items-center justify-center gap-2.5 font-mono tracking-wide">
-            <span
-              className="text-mora-500 font-black tracking-[0.35em]
-              drop-shadow-[0_0_8px_rgba(34,197,94,0.9)]
-              animate-pulse"
-            >
-              ///
-            </span>
-            <span>© 2026 Apives</span>
-          </p>
-        </div>
       </div>
 
-      {/* BOTTOM GRADIENT — exact same design as image, mora green */}
-      <div className="relative h-28 md:h-36 w-full overflow-hidden pointer-events-none">
+      {/* Thin divider */}
+      <div className="border-t border-white/5 mx-4 sm:mx-6 lg:mx-8" />
+
+      {/* BOTTOM EFFECT + COPYRIGHT in the middle */}
+      <div className="relative h-24 md:h-28 w-full overflow-hidden">
         {/* Base black to green fade */}
         <div className="absolute inset-0 bg-gradient-to-t from-mora-600/25 via-mora-900/15 to-transparent" />
 
-        {/* Vertical scan lines (same style as image) */}
+        {/* Vertical scan lines */}
         <div
           className="absolute inset-0 opacity-40"
           style={{
@@ -287,10 +275,24 @@ export const Footer: React.FC = () => {
         />
 
         {/* Soft bottom glow */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-mora-500/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-mora-500/20 to-transparent" />
 
-        {/* Extra depth layer */}
+        {/* Extra depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-mora-950/40" />
+
+        {/* Copyright centered in the middle of the effect */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <p className="text-[11px] md:text-xs text-slate-400 flex items-center gap-2 font-mono tracking-wide">
+            <span
+              className="text-mora-500 font-black tracking-[0.35em]
+              drop-shadow-[0_0_8px_rgba(34,197,94,0.9)]
+              animate-pulse"
+            >
+              ///
+            </span>
+            <span>© 2026 Apives Ecosystem</span>
+          </p>
+        </div>
       </div>
 
       {/* FEEDBACK MODAL */}
