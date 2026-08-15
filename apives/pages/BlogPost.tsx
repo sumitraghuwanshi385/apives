@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Mail,
   Share2,
-  ArrowLeft,
 } from "lucide-react";
 
 import {
@@ -20,6 +19,8 @@ import {
   ARTICLES,
   type Article,
 } from "../components/BlogArticles";
+
+import { BackButton } from "../components/BackButton";
 
 interface BlogPostProps {
   article?: Article | null;
@@ -83,7 +84,9 @@ function updateArticleSEO(
   }
 
   if (!article) {
-    document.title = "Apives Blog";
+    document.title =
+      "Apives Blog";
+
     return;
   }
 
@@ -159,7 +162,8 @@ function updateArticleSEO(
     canonical =
       document.createElement("link");
 
-    canonical.rel = "canonical";
+    canonical.rel =
+      "canonical";
 
     document.head.appendChild(
       canonical
@@ -393,7 +397,7 @@ function RedditMark() {
       fill="currentColor"
       aria-hidden="true"
     >
-      <path d="M21 12.1c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.4-.9-3.1-1.5-5-1.6l.8-3.5 2.4.5a1.9 1.9 0 1 0 .4-1.4l-3-.6c-.4-.1-.8.2-.9.6l-1 4.4c-1.9.1-3.7.7-5.1 1.6-.4-.4-1-.6-1.5-.6A2.2 2.2 0 0 0 2 12.1c0 .8.4 1.5 1 1.9v.5c0 3.4 4 6.2 9 6.2s9-2.8 9-6.2V14c.6-.4 1-1.1 1-1.9ZM8.2 14.4a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm7.7 2.8c-1 .9-2.3 1.3-3.9 1.3s-2.9-.4-3.9-1.3a.7.7 0 0 1 1-1c.7.6 1.7.9 2.9.9s2.2-.3 2.9-.9a.7.7 0 0 1 1 1Zm0-2.8a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Z" />
+      <path d="M21 12.1c0-1.2-1-2.2-2.2-2.2-.6 0-1.1.2-1.5.6-1.4-.9-3.1-1.5-5-1.6l.8-3.5 2.4.5a1.9 1.9 0 1 0 .4-1.4l-3-.6c-.4-.1-.8.2-.9.6l-1 4.4c-1.9.1-3.7.7-5.1 1.6-.4-.4-1-.6-1.5-.6A2.2 2.2 0 0 0 2 12.1c0 .8.4 1.5 1 1.9v.5c0 3.4 4 6.2 9 6.2s9-2.8 9-6.2V14c.6-.4 1-1.1 1-1.9ZM8.2 14.4a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0 2.4Zm7.7 2.8c-1 .9-2.3 1.3-3.9 1.3s-2.9-.4-3.9-1.3a.7.7 0 0 1 1-1c.7.6 1.7.9 2.9.9s2.2-.3 2.9-.9a.7.7 0 0 1 1 1Zm0-2.8a1.2 1.2 0 1 1 0-2.4 1.2 1.2 0 0 1 0-2.4Z" />
     </svg>
   );
 }
@@ -648,18 +652,6 @@ export default function BlogPost({
       ).slice(0, 3);
     }, [article]);
 
-  const handleBack =
-    () => {
-      if (onBack) {
-        onBack();
-        return;
-      }
-
-      window.location.assign(
-        "/blogs"
-      );
-    };
-
   if (!article) {
     return (
       <>
@@ -667,19 +659,9 @@ export default function BlogPost({
 
         <main className="post-root">
           <div className="post-not-found">
-            <button
-              type="button"
-              className="post-back-button"
-              onClick={handleBack}
-            >
-              <ArrowLeft
-                size={16}
-              />
-
-              <span>
-                Back to Blog
-              </span>
-            </button>
+            <BackButton
+              to="/blogs"
+            />
 
             <h1>
               Article not found
@@ -703,19 +685,9 @@ export default function BlogPost({
 
       <main className="post-root">
         <div className="post-return-area">
-          <button
-            type="button"
-            className="post-back-button"
-            onClick={handleBack}
-          >
-            <ArrowLeft
-              size={16}
-            />
-
-            <span>
-              Back to Blog
-            </span>
-          </button>
+          <BackButton
+            to="/blogs"
+          />
         </div>
 
         <article className="post-page">
@@ -983,13 +955,17 @@ function BlogPostStyles() {
       ::selection {
         background:
           rgba(34,197,94,.22);
+
         color: #fff;
       }
 
       .post-root {
         min-height: 100vh;
+
         width: 100%;
+
         background: #000;
+
         color: #fff;
 
         font-family:
@@ -1004,69 +980,21 @@ function BlogPostStyles() {
 
       .post-return-area {
         width: 100%;
+
         max-width: 900px;
+
         margin: 0 auto;
+
         padding:
           110px 24px
           0;
       }
 
-      .post-back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-
-        padding:
-          8px 11px;
-
-        border:
-          1px solid
-          rgba(255,255,255,.08);
-
-        border-radius: 8px;
-
-        background:
-          rgba(255,255,255,.025);
-
-        color: #777;
-
-        font: inherit;
-        font-size: 11px;
-        font-weight: 600;
-
-        cursor: pointer;
-
-        transition:
-          color .18s ease,
-          border-color .18s ease,
-          background .18s ease;
-      }
-
-      .post-back-button:hover {
-        color: #fff;
-
-        border-color:
-          rgba(34,197,94,.28);
-
-        background:
-          rgba(255,255,255,.045);
-      }
-
-      .post-back-button svg {
-        color: ${GREEN};
-
-        transition:
-          transform .18s ease;
-      }
-
-      .post-back-button:hover svg {
-        transform:
-          translateX(-2px);
-      }
-
       .post-page {
         width: 100%;
+
         max-width: 820px;
+
         margin: 0 auto;
 
         padding:
@@ -1076,6 +1004,7 @@ function BlogPostStyles() {
 
       .post-header {
         text-align: center;
+
         padding-bottom: 25px;
       }
 
@@ -1085,14 +1014,17 @@ function BlogPostStyles() {
         color: ${GREEN};
 
         font-size: 10px;
+
         font-weight: 700;
 
         letter-spacing: .08em;
+
         text-transform: uppercase;
       }
 
       .post-title {
         max-width: 820px;
+
         margin: 0 auto;
 
         color: #fff;
@@ -1124,8 +1056,11 @@ function BlogPostStyles() {
 
       .post-meta {
         display: flex;
+
         flex-wrap: wrap;
+
         align-items: center;
+
         justify-content: center;
 
         gap: 8px;
@@ -1139,6 +1074,7 @@ function BlogPostStyles() {
 
       .post-date {
         color: ${GREEN};
+
         font-weight: 650;
       }
 
@@ -1148,7 +1084,9 @@ function BlogPostStyles() {
 
       .post-author {
         color: ${GREEN};
+
         font-weight: 650;
+
         text-decoration: none;
 
         border-bottom:
@@ -1165,7 +1103,9 @@ function BlogPostStyles() {
 
       .post-share-row {
         display: flex;
+
         align-items: center;
+
         justify-content: center;
 
         gap: 7px;
@@ -1180,6 +1120,7 @@ function BlogPostStyles() {
         height: 39px;
 
         display: flex;
+
         align-items: center;
         justify-content: center;
 
@@ -1217,6 +1158,7 @@ function BlogPostStyles() {
       .post-share-button svg {
         width: 16px;
         height: 16px;
+
         color: ${GREEN};
       }
 
@@ -1293,6 +1235,7 @@ function BlogPostStyles() {
 
       .post-divider {
         width: 100%;
+
         height: 1px;
 
         margin-top: 22px;
@@ -1410,6 +1353,7 @@ function BlogPostStyles() {
 
       .post-faq {
         margin-top: 75px;
+
         padding-top: 45px;
 
         border-top:
@@ -1459,7 +1403,9 @@ function BlogPostStyles() {
 
       .post-faq-item summary {
         display: flex;
+
         align-items: center;
+
         justify-content: space-between;
 
         gap: 20px;
@@ -1526,6 +1472,7 @@ function BlogPostStyles() {
 
       .post-related {
         margin-top: 75px;
+
         padding-top: 45px;
 
         border-top:
@@ -1547,6 +1494,7 @@ function BlogPostStyles() {
         display: flex;
 
         align-items: center;
+
         justify-content: space-between;
 
         gap: 25px;
@@ -1648,6 +1596,7 @@ function BlogPostStyles() {
 
       .post-not-found {
         width: 100%;
+
         max-width: 700px;
 
         margin: 0 auto;
@@ -1657,11 +1606,6 @@ function BlogPostStyles() {
           120px;
 
         text-align: center;
-      }
-
-      .post-not-found
-      .post-back-button {
-        margin-bottom: 45px;
       }
 
       .post-not-found h1 {
@@ -1701,6 +1645,7 @@ function BlogPostStyles() {
 
         .post-category {
           margin-bottom: 16px;
+
           font-size: 9px;
         }
 
@@ -1726,6 +1671,7 @@ function BlogPostStyles() {
 
         .post-share-row {
           gap: 6px;
+
           margin-top: 20px;
         }
 
@@ -1748,6 +1694,7 @@ function BlogPostStyles() {
 
         .post-content-heading {
           margin-top: 43px;
+
           margin-bottom: 18px;
         }
 
@@ -1759,6 +1706,7 @@ function BlogPostStyles() {
         .post-faq,
         .post-related {
           margin-top: 62px;
+
           padding-top: 35px;
         }
 
@@ -1768,6 +1716,7 @@ function BlogPostStyles() {
             80px;
         }
       }
+
     `}</style>
   );
 }
