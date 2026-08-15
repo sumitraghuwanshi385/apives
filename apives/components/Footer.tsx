@@ -34,7 +34,7 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-white/5 mt-auto relative overflow-hidden">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-8 md:py-10 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto pt-8 md:pt-10 pb-5 md:pb-6 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-6">
 
           {/* BRAND */}
@@ -257,7 +257,7 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* BOTTOM EFFECT + COPYRIGHT (no divider, reduced padding) */}
+      {/* BOTTOM EFFECT + COPYRIGHT (slightly lower) */}
       <div className="relative h-20 md:h-24 w-full overflow-hidden">
         {/* Base black to green fade */}
         <div className="absolute inset-0 bg-gradient-to-t from-mora-600/25 via-mora-900/15 to-transparent" />
@@ -282,8 +282,8 @@ export const Footer: React.FC = () => {
         {/* Extra depth */}
         <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-mora-950/40" />
 
-        {/* Copyright centered in the middle of the effect */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+        {/* Copyright – slightly lower than center */}
+        <div className="absolute inset-0 flex items-end justify-center pb-5 md:pb-6 z-10">
           <p className="text-[11px] md:text-xs text-slate-400 font-mono tracking-wide">
             © 2026 Apives Ecosystem
           </p>
