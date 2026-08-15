@@ -420,18 +420,18 @@ export const LandingPage: React.FC = () => {
               : 'Apives curates APIs with clear pricing, stability, access types, and real endpoint examples. This helps developers avoid guesswork caused by incomplete docs or outdated GitHub repositories.'}
           </p>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6 md:mt-8">
+          <div className="flex flex-row justify-center gap-2.5 sm:gap-4 mt-6 md:mt-8">
 
             <Link
               to="/browse"
-              className="px-6 py-3 md:px-8 md:py-3.5 text-[11px] md:text-xs font-black text-black bg-mora-500 rounded-full transition-all hover:scale-105 hover:bg-white shadow-[0_0_25px_rgba(34,197,94,0.25)] active:scale-95 uppercase tracking-widest"
+              className="px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-3.5 text-[10px] sm:text-[11px] md:text-xs font-black text-black bg-mora-500 rounded-full transition-all hover:scale-105 hover:bg-white shadow-[0_0_25px_rgba(34,197,94,0.25)] active:scale-95 uppercase tracking-widest whitespace-nowrap"
             >
               Explore APIs
             </Link>
 
             <Link
               to="/submit"
-              className="px-6 py-3 md:px-8 md:py-3.5 text-[11px] md:text-xs font-black text-white bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all active:scale-95 uppercase tracking-widest"
+              className="px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-3.5 text-[10px] sm:text-[11px] md:text-xs font-black text-white bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-all active:scale-95 uppercase tracking-widest whitespace-nowrap"
             >
               Submit API
             </Link>
@@ -446,17 +446,17 @@ export const LandingPage: React.FC = () => {
 
         <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 md:mb-10">
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.03] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[10px] font-black uppercase tracking-[0.18em] shadow-[0_0_20px_rgba(34,197,94,0.10)]">
-              ✦ 5 Tools Available Now
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-mora-500/20 bg-gradient-to-r from-mora-500/10 via-white/[0.03] to-mora-500/10 backdrop-blur-xl text-mora-400 text-[9px] font-black uppercase tracking-[0.18em] shadow-[0_0_20px_rgba(34,197,94,0.10)]">
+              ✦ 4 Tools Available Now
             </div>
 
-            <h2 className="mt-5 text-2xl md:text-4xl font-bold text-white tracking-tight">
+            <h2 className="mt-4 text-xl md:text-3xl font-bold text-white tracking-tight">
               Apives Developer Tools
             </h2>
 
-            <p className="mt-3 text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
+            <p className="mt-2.5 text-slate-400 text-xs md:text-sm max-w-2xl mx-auto">
               Built for developers who work with APIs every day.
             </p>
 
@@ -470,29 +470,29 @@ export const LandingPage: React.FC = () => {
             }}
           >
 
-            <div className="flex gap-4 md:grid md:grid-cols-3">
+            <div className="flex gap-3 md:grid md:grid-cols-3">
 
               <Link
                 to="/live-api-runner"
-                className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
+                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
               >
 
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
                   <Terminal
                     className="text-mora-500"
-                    size={26}
+                    size={21}
                   />
                 </div>
 
-                <h3 className="text-white text-base md:text-lg font-bold mb-2">
+                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
                   Live API Runner
                 </h3>
 
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-400 text-xs leading-relaxed">
                   Test APIs, send requests and inspect live responses in real time.
                 </p>
 
-                <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
                   Open Tool →
                 </div>
 
@@ -500,25 +500,25 @@ export const LandingPage: React.FC = () => {
 
               <Link
                 to="/jwt-decoder"
-                className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
+                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
               >
 
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
                   <KeyRound
                     className="text-mora-500"
-                    size={26}
+                    size={21}
                   />
                 </div>
 
-                <h3 className="text-white text-base md:text-lg font-bold mb-2">
+                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
                   JWT Decoder
                 </h3>
 
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-400 text-xs leading-relaxed">
                   Decode JWT tokens, inspect payloads and verify claims instantly.
                 </p>
 
-                <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
                   Open Tool →
                 </div>
 
@@ -526,25 +526,25 @@ export const LandingPage: React.FC = () => {
 
               <Link
                 to="/curl-converter"
-                className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
+                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
               >
 
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
                   <ArrowLeftRight
                     className="text-mora-500"
-                    size={26}
+                    size={21}
                   />
                 </div>
 
-                <h3 className="text-white text-base md:text-lg font-bold mb-2">
+                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
                   cURL Converter
                 </h3>
 
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-400 text-xs leading-relaxed">
                   Convert cURL, Fetch and Axios requests instantly with request intelligence.
                 </p>
 
-                <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
                   Open Tool →
                 </div>
 
@@ -552,25 +552,25 @@ export const LandingPage: React.FC = () => {
 
               <Link
                 to="/mock-server"
-                className="group min-w-[260px] md:min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 md:p-6 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
+                className="group min-w-[260px] md:min-w-0 rounded-[24px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-4 md:p-5 transition-all duration-500 hover:border-mora-500/50 hover:bg-white/[0.05]"
               >
 
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-4 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
+                <div className="w-10 h-10 md:w-11 h-11 rounded-2xl bg-gradient-to-br from-mora-500/20 to-mora-500/5 border border-mora-500/20 flex items-center justify-center mb-3 shadow-[0_0_25px_rgba(34,197,94,0.18)]">
                   <Waypoints
                     className="text-mora-500"
-                    size={26}
+                    size={21}
                   />
                 </div>
 
-                <h3 className="text-white text-base md:text-lg font-bold mb-2">
+                <h3 className="text-white text-sm md:text-base font-bold mb-1.5">
                   Mock Server
                 </h3>
 
-                <p className="text-slate-400 text-sm leading-relaxed">
+                <p className="text-slate-400 text-xs leading-relaxed">
                   Create mock APIs with custom endpoints, delays, status codes and realistic JSON responses.
                 </p>
 
-                <div className="mt-5 text-mora-500 text-xs font-bold uppercase tracking-wider">
+                <div className="mt-4 text-mora-500 text-[10px] font-bold uppercase tracking-wider">
                   Open Tool →
                 </div>
 
@@ -693,7 +693,11 @@ export const LandingPage: React.FC = () => {
               )
             )}
 
-            <ApivesAIHighlight />
+            {/* Apives AI — static, no green animation/effect */}
+
+            <div className="apives-ai-static">
+              <ApivesAIHighlight />
+            </div>
 
           </div>
         </div>
@@ -831,6 +835,30 @@ export const LandingPage: React.FC = () => {
           handleSponsorClick
         }
       />
+
+      <style>{`
+        /*
+          Keep the Apives AI card visually static.
+          This only affects the AI highlight component,
+          not the rest of the landing page.
+        */
+
+        .apives-ai-static {
+          animation: none !important;
+        }
+
+        .apives-ai-static *,
+        .apives-ai-static *::before,
+        .apives-ai-static *::after {
+          animation: none !important;
+        }
+
+        .apives-ai-static::before,
+        .apives-ai-static::after {
+          animation: none !important;
+          opacity: 0 !important;
+        }
+      `}</style>
 
     </div>
   );
