@@ -70,11 +70,97 @@ const createFAQ = (): FAQItem => ({
 });
 
 /* =========================================================
-   JWT HELPERS
+   JWT / AUTH HELPERS
 ========================================================= */
 
-const getToken = () => {
-  return localStorage.getItem("token");
+/*
+  AccessPage stores auth like:
+
+  localStorage.setItem(
+    "mora_user",
+    JSON.stringify({
+      ...data.user,
+      token: data.token
+    })
+  );
+
+  This helper supports that structure as well as
+  older/direct token storage.
+*/
+
+const getToken = (): string => {
+  try {
+    /* ---------------------------------------------
+       DIRECT TOKEN STORAGE
+    --------------------------------------------- */
+
+    const directKeys = [
+      "token",
+      "accessToken",
+      "authToken",
+      "jwt",
+    ];
+
+    for (const key of directKeys) {
+      const value =
+        localStorage.getItem(key);
+
+      if (
+        value &&
+        value.trim()
+      ) {
+        return value.trim();
+      }
+    }
+
+    /* ---------------------------------------------
+       USER OBJECT STORAGE
+    --------------------------------------------- */
+
+    const userKeys = [
+      "mora_user",
+      "user",
+      "currentUser",
+      "loggedInUser",
+      "authUser",
+    ];
+
+    for (const key of userKeys) {
+      const raw =
+        localStorage.getItem(key);
+
+      if (!raw) {
+        continue;
+      }
+
+      try {
+        const parsed =
+          JSON.parse(raw);
+
+        const token =
+          parsed?.token ||
+          parsed?.accessToken ||
+          parsed?.authToken ||
+          parsed?.jwt ||
+          parsed?.user?.token ||
+          parsed?.data?.token;
+
+        if (
+          typeof token ===
+            "string" &&
+          token.trim()
+        ) {
+          return token.trim();
+        }
+      } catch {
+        continue;
+      }
+    }
+
+    return "";
+  } catch {
+    return "";
+  }
 };
 
 const getUserEmailFromToken = (
@@ -83,13 +169,15 @@ const getUserEmailFromToken = (
   if (!token) return "";
 
   try {
-    const parts = token.split(".");
+    const parts =
+      token.split(".");
 
     if (parts.length !== 3) {
       return "";
     }
 
-    const payload = parts[1];
+    const payload =
+      parts[1];
 
     const normalized =
       payload
@@ -99,7 +187,9 @@ const getUserEmailFromToken = (
     const padded =
       normalized +
       "=".repeat(
-        (4 - (normalized.length % 4)) % 4
+        (4 -
+          (normalized.length % 4)) %
+          4
       );
 
     const decoded =
@@ -110,6 +200,8 @@ const getUserEmailFromToken = (
     return (
       decoded?.email ||
       decoded?.user?.email ||
+      decoded?.data?.email ||
+      decoded?.data?.user?.email ||
       ""
     )
       .toString()
@@ -120,49 +212,171 @@ const getUserEmailFromToken = (
   }
 };
 
+const getStoredUserEmail =
+  (): string => {
+    try {
+      const userKeys = [
+        "mora_user",
+        "user",
+        "currentUser",
+        "loggedInUser",
+        "authUser",
+      ];
+
+      for (const key of userKeys) {
+        const raw =
+          localStorage.getItem(key);
+
+        if (!raw) {
+          continue;
+        }
+
+        try {
+          const parsed =
+            JSON.parse(raw);
+
+          const email =
+            parsed?.email ||
+            parsed?.user?.email ||
+            parsed?.data?.email ||
+            parsed?.data?.user?.email;
+
+          if (
+            typeof email ===
+              "string" &&
+            email.trim()
+          ) {
+            return email
+              .trim()
+              .toLowerCase();
+          }
+        } catch {
+          continue;
+        }
+      }
+
+      return "";
+    } catch {
+      return "";
+    }
+  };
+
+const getUserEmail =
+  (): string => {
+    const token =
+      getToken();
+
+    const jwtEmail =
+      getUserEmailFromToken(
+        token
+      );
+
+    if (jwtEmail) {
+      return jwtEmail;
+    }
+
+    return getStoredUserEmail();
+  };
+
 /* =========================================================
    COMPONENT
 ========================================================= */
 
 export default function PublishBlog() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   /* ================= ADMIN ACCESS ================= */
 
-  const token = getToken();
+  const token =
+    getToken();
 
   const currentEmail =
-    getUserEmailFromToken(token);
+    getUserEmail();
 
   const isAdmin =
     currentEmail ===
-    ADMIN_EMAIL.toLowerCase();
+    ADMIN_EMAIL
+      .trim()
+      .toLowerCase();
 
-  const [checkingAccess, setCheckingAccess] =
-    useState(true);
+  const [
+    checkingAccess,
+    setCheckingAccess,
+  ] = useState(true);
 
   useEffect(() => {
-    const currentToken =
-      getToken();
+    const checkAccess =
+      () => {
+        const currentToken =
+          getToken();
 
-    const email =
-      getUserEmailFromToken(
-        currentToken
+        const email =
+          getUserEmail();
+
+        const adminEmail =
+          ADMIN_EMAIL
+            .trim()
+            .toLowerCase();
+
+        console.log(
+          "[Apives] Publish access:",
+          {
+            hasToken:
+              !!currentToken,
+
+            email,
+
+            adminEmail,
+
+            isAdmin:
+              email ===
+              adminEmail,
+          }
+        );
+
+        if (
+          !currentToken ||
+          email !== adminEmail
+        ) {
+          navigate(
+            "/access",
+            {
+              replace: true,
+            }
+          );
+
+          return;
+        }
+
+        setCheckingAccess(
+          false
+        );
+      };
+
+    checkAccess();
+
+    window.addEventListener(
+      "auth-change",
+      checkAccess
+    );
+
+    window.addEventListener(
+      "storage",
+      checkAccess
+    );
+
+    return () => {
+      window.removeEventListener(
+        "auth-change",
+        checkAccess
       );
 
-    if (
-      !currentToken ||
-      email !==
-        ADMIN_EMAIL.toLowerCase()
-    ) {
-      navigate("/access", {
-        replace: true,
-      });
-
-      return;
-    }
-
-    setCheckingAccess(false);
+      window.removeEventListener(
+        "storage",
+        checkAccess
+      );
+    };
   }, [navigate]);
 
   /* ================= BASIC ================= */
@@ -221,11 +435,15 @@ export default function PublishBlog() {
   const [preview, setPreview] =
     useState(false);
 
-  const [publishing, setPublishing] =
-    useState(false);
+  const [
+    publishing,
+    setPublishing,
+  ] = useState(false);
 
-  const [published, setPublished] =
-    useState(false);
+  const [
+    published,
+    setPublished,
+  ] = useState(false);
 
   const [error, setError] =
     useState("");
@@ -282,7 +500,9 @@ export default function PublishBlog() {
 
   const updateBlock = (
     id: string,
-    field: "text" | "url",
+    field:
+      | "text"
+      | "url",
     value: string
   ) => {
     setContent((prev) =>
@@ -290,7 +510,8 @@ export default function PublishBlog() {
         block.id === id
           ? {
               ...block,
-              [field]: value,
+              [field]:
+                value,
             }
           : block
       )
@@ -310,7 +531,9 @@ export default function PublishBlog() {
     id: string
   ) => {
     setContent((prev) => {
-      if (prev.length === 1) {
+      if (
+        prev.length === 1
+      ) {
         return [
           createBlock(
             "paragraph"
@@ -335,12 +558,15 @@ export default function PublishBlog() {
 
       if (
         nextIndex < 0 ||
-        nextIndex >= prev.length
+        nextIndex >=
+          prev.length
       ) {
         return prev;
       }
 
-      const copy = [...prev];
+      const copy = [
+        ...prev,
+      ];
 
       [
         copy[index],
@@ -377,7 +603,8 @@ export default function PublishBlog() {
         item.id === id
           ? {
               ...item,
-              [field]: value,
+              [field]:
+                value,
             }
           : item
       )
@@ -498,6 +725,7 @@ export default function PublishBlog() {
         setError(
           validationError
         );
+
         return;
       }
 
@@ -505,21 +733,28 @@ export default function PublishBlog() {
         getToken();
 
       if (!authToken) {
-        navigate("/access", {
-          replace: true,
-        });
+        setError(
+          "Authentication session not found. Please sign in again."
+        );
+
+        navigate(
+          "/access",
+          {
+            replace: true,
+          }
+        );
 
         return;
       }
 
       const email =
-        getUserEmailFromToken(
-          authToken
-        );
+        getUserEmail();
 
       if (
         email !==
-        ADMIN_EMAIL.toLowerCase()
+        ADMIN_EMAIL
+          .trim()
+          .toLowerCase()
       ) {
         setError(
           "Only the authorized admin can publish blogs."
@@ -609,7 +844,8 @@ export default function PublishBlog() {
           await fetch(
             `${API_BASE}/api/blogs`,
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers: {
                 "Content-Type":
@@ -626,7 +862,8 @@ export default function PublishBlog() {
             }
           );
 
-        let data: any = {};
+        let data: any =
+          {};
 
         try {
           data =
@@ -636,28 +873,57 @@ export default function PublishBlog() {
         }
 
         if (
-          response.status === 401
+          response.status ===
+          401
         ) {
           localStorage.removeItem(
             "token"
           );
 
-          navigate("/access", {
-            replace: true,
-          });
+          localStorage.removeItem(
+            "accessToken"
+          );
+
+          localStorage.removeItem(
+            "authToken"
+          );
+
+          localStorage.removeItem(
+            "jwt"
+          );
+
+          localStorage.removeItem(
+            "mora_user"
+          );
+
+          window.dispatchEvent(
+            new CustomEvent(
+              "auth-change"
+            )
+          );
+
+          navigate(
+            "/access",
+            {
+              replace: true,
+            }
+          );
 
           return;
         }
 
         if (
-          response.status === 403
+          response.status ===
+          403
         ) {
           throw new Error(
             "You are not authorized to publish blogs."
           );
         }
 
-        if (!response.ok) {
+        if (
+          !response.ok
+        ) {
           throw new Error(
             data?.message ||
               "Failed to publish blog."
@@ -669,14 +935,21 @@ export default function PublishBlog() {
           data?.slug ||
           payload.slug;
 
-        setPublished(true);
+        setPublished(
+          true
+        );
 
-        window.setTimeout(() => {
-          navigate(
-            `/blogs/${publishedSlug}`
-          );
-        }, 900);
-      } catch (err: any) {
+        window.setTimeout(
+          () => {
+            navigate(
+              `/blogs/${publishedSlug}`
+            );
+          },
+          900
+        );
+      } catch (
+        err: any
+      ) {
         console.error(
           "Publish blog error:",
           err
@@ -687,7 +960,9 @@ export default function PublishBlog() {
             "Something went wrong while publishing."
         );
       } finally {
-        setPublishing(false);
+        setPublishing(
+          false
+        );
       }
     };
 
@@ -730,7 +1005,9 @@ export default function PublishBlog() {
             <button
               type="button"
               onClick={() =>
-                setPreview(false)
+                setPreview(
+                  false
+                )
               }
               className="editor-back-button"
             >
@@ -1013,7 +1290,9 @@ export default function PublishBlog() {
             <button
               type="button"
               onClick={() =>
-                setPreview(true)
+                setPreview(
+                  true
+                )
               }
               className="preview-button"
             >
