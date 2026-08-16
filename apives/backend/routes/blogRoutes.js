@@ -10,6 +10,88 @@ const blogAdmin = require("../middleware/blogAdmin");
 
 
 // =====================================================
+// HELPERS
+// =====================================================
+
+const cleanString = (value) => {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value.trim();
+};
+
+
+const createSlug = (value) => {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
+
+const cleanKeywords = (keywords) => {
+  if (!Array.isArray(keywords)) {
+    return [];
+  }
+
+  return keywords
+    .map((keyword) =>
+      String(keyword || "").trim()
+    )
+    .filter(Boolean);
+};
+
+
+const cleanFaq = (faq) => {
+  if (!Array.isArray(faq)) {
+    return [];
+  }
+
+  return faq
+    .filter(
+      (item) =>
+        item &&
+        typeof item.question === "string" &&
+        typeof item.answer === "string" &&
+        item.question.trim() &&
+        item.answer.trim()
+    )
+    .map((item) => ({
+      question: item.question.trim(),
+      answer: item.answer.trim(),
+    }));
+};
+
+
+const cleanAuthor = (author) => {
+  return {
+    name:
+      cleanString(author?.name) ||
+      "Priince Gupta",
+
+    x:
+      cleanString(author?.x) ||
+      "@priiincegupta",
+  };
+};
+
+
+const cleanSEO = (seo) => {
+  return {
+    title:
+      cleanString(seo?.title),
+
+    description:
+      cleanString(seo?.description),
+  };
+};
+
+
+// =====================================================
 // CREATE / PUBLISH BLOG
 // ADMIN ONLY
 // =====================================================
@@ -31,48 +113,74 @@ router.post(
         keywords,
         faq,
         published,
+        seo,
       } = req.body;
 
 
-      // ================= VALIDATION =================
+      // =================================================
+      // VALIDATION
+      // =================================================
 
-      if (!title?.trim()) {
+      const cleanTitle =
+        cleanString(title);
+
+      const cleanExcerpt =
+        cleanString(excerpt);
+
+      const cleanContent =
+        cleanString(content);
+
+
+      if (!cleanTitle) {
         return res.status(400).json({
-          message: "Blog title is required",
+          message:
+            "Blog title is required",
         });
       }
 
-      if (!excerpt?.trim()) {
-        return res.status(400).json({
-          message: "Blog excerpt is required",
-        });
-      }
 
-      if (!content?.trim()) {
+      if (!cleanExcerpt) {
         return res.status(400).json({
-          message: "Blog content is required",
+          message:
+            "Blog excerpt is required",
         });
       }
 
 
-      // ================= SLUG =================
+      if (!cleanContent) {
+        return res.status(400).json({
+          message:
+            "Blog content is required",
+        });
+      }
+
+
+      // =================================================
+      // SLUG
+      // =================================================
 
       const cleanSlug =
-        slug?.trim() ||
-        title
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9\s-]/g, "")
-          .replace(/\s+/g, "-")
-          .replace(/-+/g, "-");
+        createSlug(slug) ||
+        createSlug(cleanTitle);
 
 
-      // ================= CHECK SLUG =================
+      if (!cleanSlug) {
+        return res.status(400).json({
+          message:
+            "A valid blog slug could not be generated",
+        });
+      }
+
+
+      // =================================================
+      // CHECK DUPLICATE SLUG
+      // =================================================
 
       const existingBlog =
         await Blog.findOne({
           slug: cleanSlug,
-        });
+        }).lean();
+
 
       if (existingBlog) {
         return res.status(409).json({
@@ -82,88 +190,90 @@ router.post(
       }
 
 
-      // ================= AUTHOR =================
+      // =================================================
+      // AUTHOR
+      // =================================================
 
-      const blogAuthor = {
-        name:
-          author?.name?.trim() ||
-          "Priince Gupta",
-
-        x:
-          author?.x?.trim() ||
-          "@priiincegupta",
-      };
+      const blogAuthor =
+        cleanAuthor(author);
 
 
-      // ================= KEYWORDS =================
+      // =================================================
+      // KEYWORDS
+      // =================================================
 
-      const cleanKeywords =
-        Array.isArray(keywords)
-          ? keywords
-              .map((keyword) =>
-                String(keyword).trim()
-              )
-              .filter(Boolean)
-          : [];
+      const finalKeywords =
+        cleanKeywords(keywords);
 
 
-      // ================= FAQ =================
+      // =================================================
+      // FAQ
+      // =================================================
 
-      const cleanFaq =
-        Array.isArray(faq)
-          ? faq
-              .filter(
-                (item) =>
-                  item?.question?.trim() &&
-                  item?.answer?.trim()
-              )
-              .map((item) => ({
-                question:
-                  item.question.trim(),
-
-                answer:
-                  item.answer.trim(),
-              }))
-          : [];
+      const finalFaq =
+        cleanFaq(faq);
 
 
-      // ================= CREATE =================
+      // =================================================
+      // SEO
+      // =================================================
+
+      const finalSEO =
+        cleanSEO(seo);
+
+
+      // =================================================
+      // DATE
+      // =================================================
+
+      const finalDate =
+        cleanString(date) ||
+        new Date().toLocaleDateString(
+          "en-US",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }
+        );
+
+
+      // =================================================
+      // CREATE BLOG
+      // =================================================
 
       const blog =
         new Blog({
-          slug: cleanSlug,
+          slug:
+            cleanSlug,
 
           category:
-            category?.trim() ||
+            cleanString(category) ||
             "Developer Insights",
 
           title:
-            title.trim(),
+            cleanTitle,
 
           excerpt:
-            excerpt.trim(),
+            cleanExcerpt,
 
           date:
-            date?.trim() ||
-            new Date().toLocaleDateString(
-              "en-US",
-              {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              }
-            ),
+            finalDate,
 
-          author: blogAuthor,
+          author:
+            blogAuthor,
 
           content:
-            content.trim(),
+            cleanContent,
+
+          seo:
+            finalSEO,
 
           keywords:
-            cleanKeywords,
+            finalKeywords,
 
           faq:
-            cleanFaq,
+            finalFaq,
 
           published:
             published !== false,
@@ -174,13 +284,18 @@ router.post(
         await blog.save();
 
 
+      // =================================================
+      // RESPONSE
+      // =================================================
+
       return res.status(201).json({
         success: true,
 
         message:
           "Blog published successfully",
 
-        blog: savedBlog,
+        blog:
+          savedBlog,
       });
 
     } catch (err) {
@@ -191,7 +306,9 @@ router.post(
       );
 
 
-      // Duplicate slug safety
+      // =================================================
+      // DUPLICATE SLUG SAFETY
+      // =================================================
 
       if (err.code === 11000) {
         return res.status(409).json({
@@ -232,8 +349,12 @@ router.get(
 
 
       return res.json({
+        success: true,
+
         blogs,
-        total: blogs.length,
+
+        total:
+          blogs.length,
       });
 
     } catch (err) {
@@ -242,6 +363,7 @@ router.get(
         "❌ GET BLOGS Error:",
         err
       );
+
 
       return res.status(500).json({
         message:
@@ -253,7 +375,7 @@ router.get(
 
 
 // =====================================================
-// GET SINGLE BLOG BY SLUG
+// GET SINGLE PUBLISHED BLOG BY SLUG
 // PUBLIC
 // =====================================================
 
@@ -262,9 +384,18 @@ router.get(
   async (req, res) => {
     try {
 
-      const {
-        slug,
-      } = req.params;
+      const slug =
+        createSlug(
+          req.params.slug
+        );
+
+
+      if (!slug) {
+        return res.status(400).json({
+          message:
+            "Invalid blog slug",
+        });
+      }
 
 
       const blog =
@@ -287,9 +418,10 @@ router.get(
     } catch (err) {
 
       console.error(
-        "❌ GET BLOG Error:",
+        "❌ GET BLOG BY SLUG Error:",
         err
       );
+
 
       return res.status(500).json({
         message:
@@ -301,7 +433,7 @@ router.get(
 
 
 // =====================================================
-// GET MY / ADMIN BLOGS
+// GET ALL BLOGS
 // ADMIN ONLY
 // =====================================================
 
@@ -321,8 +453,12 @@ router.get(
 
 
       return res.json({
+        success: true,
+
         blogs,
-        total: blogs.length,
+
+        total:
+          blogs.length,
       });
 
     } catch (err) {
@@ -331,6 +467,7 @@ router.get(
         "❌ GET ADMIN BLOGS Error:",
         err
       );
+
 
       return res.status(500).json({
         message:
@@ -393,6 +530,7 @@ router.get(
         err
       );
 
+
       return res.status(500).json({
         message:
           "Failed to fetch blog",
@@ -419,6 +557,10 @@ router.put(
       } = req.params;
 
 
+      // =================================================
+      // VALIDATE ID
+      // =================================================
+
       if (
         !mongoose.Types.ObjectId.isValid(
           id
@@ -430,6 +572,10 @@ router.put(
         });
       }
 
+
+      // =================================================
+      // FIND BLOG
+      // =================================================
 
       const blog =
         await Blog.findById(
@@ -445,32 +591,229 @@ router.put(
       }
 
 
-      const allowedFields = [
-        "slug",
-        "category",
-        "title",
-        "excerpt",
-        "date",
-        "author",
-        "content",
-        "keywords",
-        "faq",
-        "published",
-      ];
+      // =================================================
+      // SLUG
+      // =================================================
+
+      if (
+        req.body.slug !==
+        undefined
+      ) {
+
+        const newSlug =
+          createSlug(
+            req.body.slug
+          );
 
 
-      allowedFields.forEach(
-        (field) => {
-          if (
-            req.body[field] !==
-            undefined
-          ) {
-            blog[field] =
-              req.body[field];
-          }
+        if (!newSlug) {
+          return res.status(400).json({
+            message:
+              "Invalid blog slug",
+          });
         }
-      );
 
+
+        // Check whether another blog
+        // already uses this slug.
+
+        const duplicateSlug =
+          await Blog.findOne({
+            slug: newSlug,
+
+            _id: {
+              $ne: id,
+            },
+          }).lean();
+
+
+        if (duplicateSlug) {
+          return res.status(409).json({
+            message:
+              "A blog with this slug already exists",
+          });
+        }
+
+
+        blog.slug =
+          newSlug;
+      }
+
+
+      // =================================================
+      // BASIC FIELDS
+      // =================================================
+
+      if (
+        req.body.category !==
+        undefined
+      ) {
+        blog.category =
+          cleanString(
+            req.body.category
+          ) ||
+          "Developer Insights";
+      }
+
+
+      if (
+        req.body.title !==
+        undefined
+      ) {
+        const newTitle =
+          cleanString(
+            req.body.title
+          );
+
+
+        if (!newTitle) {
+          return res.status(400).json({
+            message:
+              "Blog title cannot be empty",
+          });
+        }
+
+
+        blog.title =
+          newTitle;
+      }
+
+
+      if (
+        req.body.excerpt !==
+        undefined
+      ) {
+        const newExcerpt =
+          cleanString(
+            req.body.excerpt
+          );
+
+
+        if (!newExcerpt) {
+          return res.status(400).json({
+            message:
+              "Blog excerpt cannot be empty",
+          });
+        }
+
+
+        blog.excerpt =
+          newExcerpt;
+      }
+
+
+      if (
+        req.body.date !==
+        undefined
+      ) {
+        blog.date =
+          cleanString(
+            req.body.date
+          );
+      }
+
+
+      if (
+        req.body.content !==
+        undefined
+      ) {
+        const newContent =
+          cleanString(
+            req.body.content
+          );
+
+
+        if (!newContent) {
+          return res.status(400).json({
+            message:
+              "Blog content cannot be empty",
+          });
+        }
+
+
+        blog.content =
+          newContent;
+      }
+
+
+      // =================================================
+      // AUTHOR
+      // =================================================
+
+      if (
+        req.body.author !==
+        undefined
+      ) {
+        blog.author =
+          cleanAuthor(
+            req.body.author
+          );
+      }
+
+
+      // =================================================
+      // SEO
+      // =================================================
+
+      if (
+        req.body.seo !==
+        undefined
+      ) {
+        blog.seo =
+          cleanSEO(
+            req.body.seo
+          );
+      }
+
+
+      // =================================================
+      // KEYWORDS
+      // =================================================
+
+      if (
+        req.body.keywords !==
+        undefined
+      ) {
+        blog.keywords =
+          cleanKeywords(
+            req.body.keywords
+          );
+      }
+
+
+      // =================================================
+      // FAQ
+      // =================================================
+
+      if (
+        req.body.faq !==
+        undefined
+      ) {
+        blog.faq =
+          cleanFaq(
+            req.body.faq
+          );
+      }
+
+
+      // =================================================
+      // PUBLISHED
+      // =================================================
+
+      if (
+        req.body.published !==
+        undefined
+      ) {
+        blog.published =
+          Boolean(
+            req.body.published
+          );
+      }
+
+
+      // =================================================
+      // SAVE
+      // =================================================
 
       await blog.save();
 
@@ -490,6 +833,15 @@ router.put(
         "❌ UPDATE BLOG Error:",
         err
       );
+
+
+      if (err.code === 11000) {
+        return res.status(409).json({
+          message:
+            "A blog with this slug already exists",
+        });
+      }
+
 
       return res.status(500).json({
         message:
@@ -518,6 +870,10 @@ router.delete(
       } = req.params;
 
 
+      // =================================================
+      // VALIDATE ID
+      // =================================================
+
       if (
         !mongoose.Types.ObjectId.isValid(
           id
@@ -529,6 +885,10 @@ router.delete(
         });
       }
 
+
+      // =================================================
+      // FIND BLOG
+      // =================================================
 
       const blog =
         await Blog.findById(
@@ -543,6 +903,10 @@ router.delete(
         });
       }
 
+
+      // =================================================
+      // DELETE
+      // =================================================
 
       await Blog.findByIdAndDelete(
         id
@@ -563,6 +927,7 @@ router.delete(
         err
       );
 
+
       return res.status(500).json({
         message:
           "Failed to delete blog",
@@ -571,5 +936,9 @@ router.delete(
   }
 );
 
+
+// =====================================================
+// EXPORT
+// =====================================================
 
 module.exports = router;
