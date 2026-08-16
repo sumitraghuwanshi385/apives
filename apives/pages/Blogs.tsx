@@ -23,18 +23,53 @@ import {
    TYPES
 ========================================================= */
 
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
 interface BlogPost {
-  id: number;
+  id: string | number;
+  _id?: string;
+
   slug: string;
+  category?: string;
+
   title: string;
   excerpt: string;
   date: string;
+
+  content?: string;
+
+  keywords?: string[];
+  faq?: FAQ[];
+
+  author?: {
+    name?: string;
+    x?: string;
+  };
+
+  seo?: {
+    title?: string;
+    description?: string;
+  };
+
+  published?: boolean;
+
+  createdAt?: string;
+  updatedAt?: string;
+
   type: "post";
 }
 
+type StaticBlogItem = Article & {
+  type: "article";
+};
+
 type BlogItem =
-  | (Article & { type: "article" })
+  | StaticBlogItem
   | BlogPost;
+
 
 /* =========================================================
    CONSTANTS
@@ -48,22 +83,48 @@ const ADMIN_EMAIL =
 const PUBLISH_ROUTE =
   "/admin/blogs/publish";
 
+
+/*
+ * IMPORTANT:
+ *
+ * If your backend is hosted separately, set:
+ *
+ * VITE_API_URL=https://your-api-domain.com
+ *
+ * If frontend and backend are on the same domain,
+ * this automatically uses /api/blogs.
+ */
+
+const API_BASE_URL =
+  (
+    import.meta.env.VITE_API_URL ||
+    ""
+  ).replace(/\/+$/, "");
+
+const BLOGS_API_URL =
+  `${API_BASE_URL}/api/blogs`;
+
+
 /* =========================================================
-   BLOG DATA
+   STATIC BLOG DATA
 ========================================================= */
 
-const BLOG_ARTICLES: BlogItem[] =
+const BLOG_ARTICLES: StaticBlogItem[] =
   ARTICLES.map((article) => ({
     ...article,
     type: "article" as const,
   }));
 
+
+/*
+ * Legacy posts.
+ *
+ * Keeping this so the existing UI/data structure
+ * does not break if you add posts later.
+ */
+
 const POSTS: BlogPost[] = [];
 
-const BLOG_ITEMS: BlogItem[] = [
-  ...BLOG_ARTICLES,
-  ...POSTS,
-];
 
 /* =========================================================
    AUTH HELPERS
@@ -77,30 +138,18 @@ const normalizeEmail = (
     .toLowerCase();
 };
 
+
 /* ---------------------------------------------------------
    Get JWT token
 --------------------------------------------------------- */
 
-/*
- * IMPORTANT:
- *
- * AuthPages.tsx saves authentication like:
- *
- * localStorage.setItem("mora_user", JSON.stringify({
- *   ...data.user,
- *   token: data.token
- * }));
- *
- * Therefore token is normally INSIDE mora_user.
- *
- * We check that first.
- */
-
 function getToken(): string {
   try {
-    /* =====================================================
-       PRIMARY: mora_user.token
-    ===================================================== */
+
+    /*
+     * PRIMARY:
+     * mora_user.token
+     */
 
     const moraUserRaw =
       localStorage.getItem(
@@ -108,7 +157,9 @@ function getToken(): string {
       );
 
     if (moraUserRaw) {
+
       try {
+
         const moraUser =
           JSON.parse(
             moraUserRaw
@@ -122,20 +173,25 @@ function getToken(): string {
 
         if (
           nestedToken &&
-          String(nestedToken).trim()
+          String(
+            nestedToken
+          ).trim()
         ) {
           return String(
             nestedToken
           ).trim();
         }
+
       } catch {
-        // Continue to other keys
+        // Continue.
       }
     }
 
-    /* =====================================================
-       FALLBACK: standalone token keys
-    ===================================================== */
+
+    /*
+     * FALLBACK:
+     * standalone token keys
+     */
 
     const possibleKeys = [
       "token",
@@ -144,9 +200,15 @@ function getToken(): string {
       "jwt",
     ];
 
-    for (const key of possibleKeys) {
+
+    for (
+      const key of possibleKeys
+    ) {
+
       const value =
-        localStorage.getItem(key);
+        localStorage.getItem(
+          key
+        );
 
       if (
         value &&
@@ -156,11 +218,14 @@ function getToken(): string {
       }
     }
 
+
     return "";
+
   } catch {
     return "";
   }
 }
+
 
 /* ---------------------------------------------------------
    Decode JWT
@@ -169,22 +234,30 @@ function getToken(): string {
 function getEmailFromJWT(
   token: string
 ): string {
+
   if (!token) {
     return "";
   }
 
+
   try {
+
     const parts =
       token.split(".");
 
-    if (parts.length !== 3) {
+
+    if (
+      parts.length !== 3
+    ) {
       return "";
     }
+
 
     let base64 =
       parts[1]
         .replace(/-/g, "+")
         .replace(/_/g, "/");
+
 
     while (
       base64.length % 4 !== 0
@@ -192,11 +265,18 @@ function getEmailFromJWT(
       base64 += "=";
     }
 
+
     const payload =
-      window.atob(base64);
+      window.atob(
+        base64
+      );
+
 
     const decoded =
-      JSON.parse(payload);
+      JSON.parse(
+        payload
+      );
+
 
     const email =
       decoded?.email ||
@@ -204,24 +284,24 @@ function getEmailFromJWT(
       decoded?.data?.email ||
       decoded?.data?.user?.email;
 
+
     return normalizeEmail(
       email
     );
+
   } catch {
     return "";
   }
 }
+
 
 /* ---------------------------------------------------------
    Get email from stored user
 --------------------------------------------------------- */
 
 function getEmailFromStoredUser(): string {
+
   try {
-    /*
-     * mora_user is checked first because
-     * this is the storage key used by AuthPages.tsx.
-     */
 
     const userKeys = [
       "mora_user",
@@ -231,17 +311,29 @@ function getEmailFromStoredUser(): string {
       "authUser",
     ];
 
-    for (const key of userKeys) {
+
+    for (
+      const key of userKeys
+    ) {
+
       const raw =
-        localStorage.getItem(key);
+        localStorage.getItem(
+          key
+        );
+
 
       if (!raw) {
         continue;
       }
 
+
       try {
+
         const parsed =
-          JSON.parse(raw);
+          JSON.parse(
+            raw
+          );
+
 
         const email =
           parsed?.email ||
@@ -249,72 +341,74 @@ function getEmailFromStoredUser(): string {
           parsed?.data?.email ||
           parsed?.data?.user?.email;
 
+
         const normalized =
-          normalizeEmail(email);
+          normalizeEmail(
+            email
+          );
+
 
         if (normalized) {
           return normalized;
         }
+
       } catch {
         continue;
       }
     }
 
+
     return "";
+
   } catch {
     return "";
   }
 }
+
 
 /* ---------------------------------------------------------
    Main email resolver
 --------------------------------------------------------- */
 
 function getLoggedInEmail(): string {
-  /*
-   * First use the stored user email.
-   *
-   * AuthPages.tsx directly saves:
-   *
-   * {
-   *   ...data.user,
-   *   token: data.token
-   * }
-   *
-   * so email should normally be here.
-   */
 
   const storedEmail =
     getEmailFromStoredUser();
+
 
   if (storedEmail) {
     return storedEmail;
   }
 
-  /*
-   * Fallback to JWT email.
-   */
 
   const token =
     getToken();
 
+
   const jwtEmail =
-    getEmailFromJWT(token);
+    getEmailFromJWT(
+      token
+    );
+
 
   if (jwtEmail) {
     return jwtEmail;
   }
 
+
   return "";
 }
+
 
 /* ---------------------------------------------------------
    Admin check
 --------------------------------------------------------- */
 
 function isAdminUser(): boolean {
+
   const email =
     getLoggedInEmail();
+
 
   return (
     email ===
@@ -324,61 +418,209 @@ function isAdminUser(): boolean {
   );
 }
 
+
+/* =========================================================
+   BLOG API HELPERS
+========================================================= */
+
+/*
+ * Backend response:
+ *
+ * {
+ *   blogs: [...],
+ *   total: 10
+ * }
+ */
+
+async function fetchPublishedBlogs(
+  signal?: AbortSignal
+): Promise<BlogPost[]> {
+
+  const response =
+    await fetch(
+      BLOGS_API_URL,
+      {
+        method: "GET",
+
+        headers: {
+          Accept:
+            "application/json",
+        },
+
+        signal,
+      }
+    );
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      `Failed to fetch blogs (${response.status})`
+    );
+  }
+
+
+  const data =
+    await response.json();
+
+
+  const blogs =
+    Array.isArray(
+      data?.blogs
+    )
+      ? data.blogs
+      : [];
+
+
+  return blogs
+    .filter(
+      (blog: any) =>
+        blog &&
+        blog.slug &&
+        blog.title
+    )
+    .map(
+      (blog: any) => ({
+        ...blog,
+
+        id:
+          blog._id ||
+          blog.id ||
+          blog.slug,
+
+        type:
+          "post" as const,
+      })
+    );
+}
+
+
+/* =========================================================
+   BLOG NORMALIZATION
+========================================================= */
+
+function getBlogId(
+  item: BlogItem
+): string {
+
+  if (
+    typeof item.id ===
+    "string"
+  ) {
+    return item.id;
+  }
+
+
+  return String(
+    item.id
+  );
+}
+
+
+/* ---------------------------------------------------------
+   Search text
+--------------------------------------------------------- */
+
+function getSearchText(
+  item: BlogItem
+): string {
+
+  const keywordText =
+    Array.isArray(
+      item.keywords
+    )
+      ? item.keywords.join(" ")
+      : "";
+
+
+  const categoryText =
+    "category" in item
+      ? item.category || ""
+      : "";
+
+
+  return [
+    item.title,
+    item.excerpt,
+    item.date,
+    categoryText,
+    keywordText,
+  ]
+    .join(" ")
+    .toLowerCase();
+}
+
+
 /* =========================================================
    SEO
 ========================================================= */
 
 function updateSEO() {
+
   document.title =
     "Apives Blog — API Guides, Engineering & Developer Insights";
 
+
   const description =
     "Explore practical API engineering guides covering REST APIs, GraphQL, API security, authentication, AI APIs, webhooks, OpenAPI, API testing, serverless infrastructure and developer tools.";
+
 
   let meta =
     document.head.querySelector(
       'meta[name="description"]'
     ) as HTMLMetaElement | null;
 
+
   if (!meta) {
+
     meta =
       document.createElement(
         "meta"
       );
 
+
     meta.name =
       "description";
+
 
     document.head.appendChild(
       meta
     );
   }
 
+
   meta.content =
     description;
+
 
   let canonical =
     document.head.querySelector(
       'link[rel="canonical"]'
     ) as HTMLLinkElement | null;
 
+
   if (!canonical) {
+
     canonical =
       document.createElement(
         "link"
       );
 
+
     canonical.rel =
       "canonical";
+
 
     document.head.appendChild(
       canonical
     );
   }
 
+
   canonical.href =
     `${window.location.origin}/blogs`;
 }
+
 
 /* =========================================================
    BLOG ITEM
@@ -392,145 +634,375 @@ const BlogListItem = memo(
     item: BlogItem;
     onClick: () => void;
   }) {
+
     return (
       <button
         type="button"
         onClick={onClick}
         className="blog-list-item"
       >
+
         <div className="list-date">
           {item.date}
         </div>
+
 
         <h2>
           {item.title}
         </h2>
 
+
         <p>
           {item.excerpt}
         </p>
+
       </button>
     );
   }
 );
+
 
 /* =========================================================
    BLOGS
 ========================================================= */
 
 export default function Blogs() {
+
   const navigate =
     useNavigate();
+
 
   const [
     searchQuery,
     setSearchQuery,
   ] = useState("");
 
+
   const [
     isAdmin,
     setIsAdmin,
   ] = useState(false);
 
+
+  /*
+   * Database blogs.
+   */
+
+  const [
+    serverBlogs,
+    setServerBlogs,
+  ] = useState<BlogPost[]>(
+    []
+  );
+
+
+  /*
+   * Loading only affects the small
+   * loading message.
+   *
+   * Existing static articles remain
+   * visible.
+   */
+
+  const [
+    isLoadingBlogs,
+    setIsLoadingBlogs,
+  ] = useState(true);
+
+
+  /*
+   * API error is intentionally not
+   * displayed as a big error page.
+   *
+   * Static articles remain available.
+   */
+
+  const [
+    blogFetchError,
+    setBlogFetchError,
+  ] = useState(false);
+
+
   /* =======================================================
-     ADMIN CHECK
+     SEO + ADMIN CHECK
   ======================================================= */
 
   useEffect(() => {
+
     updateSEO();
+
 
     window.scrollTo({
       top: 0,
       behavior: "auto",
     });
 
+
     const checkAdmin =
       () => {
+
         const email =
           getLoggedInEmail();
+
 
         const adminEmail =
           ADMIN_EMAIL
             .trim()
             .toLowerCase();
 
+
         const admin =
           email ===
           adminEmail;
+
 
         console.log(
           "[Apives] Admin check:",
           {
             loggedInEmail:
               email,
+
             adminEmail,
-            isAdmin: admin,
+
+            isAdmin:
+              admin,
+
             hasToken:
               !!getToken(),
           }
         );
 
-        setIsAdmin(admin);
+
+        setIsAdmin(
+          admin
+        );
       };
+
 
     checkAdmin();
 
-    /*
-     * Re-check if authentication
-     * changes.
-     */
 
     window.addEventListener(
       "storage",
       checkAdmin
     );
 
+
     window.addEventListener(
       "auth-change",
       checkAdmin
     );
 
+
     return () => {
+
       window.removeEventListener(
         "storage",
         checkAdmin
       );
 
+
       window.removeEventListener(
         "auth-change",
         checkAdmin
       );
+
     };
+
   }, []);
+
+
+  /* =======================================================
+     FETCH MONGODB BLOGS
+  ======================================================= */
+
+  useEffect(() => {
+
+    const controller =
+      new AbortController();
+
+
+    const loadBlogs =
+      async () => {
+
+        setIsLoadingBlogs(
+          true
+        );
+
+
+        setBlogFetchError(
+          false
+        );
+
+
+        try {
+
+          const blogs =
+            await fetchPublishedBlogs(
+              controller.signal
+            );
+
+
+          if (
+            !controller.signal.aborted
+          ) {
+
+            setServerBlogs(
+              blogs
+            );
+
+          }
+
+        } catch (error: any) {
+
+          if (
+            error?.name ===
+            "AbortError"
+          ) {
+            return;
+          }
+
+
+          console.error(
+            "[Apives] Failed to load MongoDB blogs:",
+            error
+          );
+
+
+          if (
+            !controller.signal.aborted
+          ) {
+
+            setBlogFetchError(
+              true
+            );
+
+          }
+
+        } finally {
+
+          if (
+            !controller.signal.aborted
+          ) {
+
+            setIsLoadingBlogs(
+              false
+            );
+
+          }
+        }
+      };
+
+
+    loadBlogs();
+
+
+    return () => {
+
+      controller.abort();
+
+    };
+
+  }, []);
+
+
+  /* =======================================================
+     COMBINE STATIC + DATABASE BLOGS
+  ======================================================= */
+
+  const blogItems =
+    useMemo<BlogItem[]>(
+      () => {
+
+        /*
+         * DB blogs are the source of truth
+         * for dynamically published blogs.
+         *
+         * If a DB blog has the same slug as
+         * a static article, the DB version wins.
+         */
+
+        const databaseSlugs =
+          new Set(
+            serverBlogs.map(
+              (blog) =>
+                String(
+                  blog.slug
+                )
+                  .trim()
+                  .toLowerCase()
+            )
+          );
+
+
+        const staticItems =
+          BLOG_ARTICLES.filter(
+            (article) =>
+              !databaseSlugs.has(
+                String(
+                  article.slug
+                )
+                  .trim()
+                  .toLowerCase()
+              )
+          );
+
+
+        /*
+         * Keep newest MongoDB blogs first,
+         * followed by existing static articles.
+         */
+
+        return [
+          ...serverBlogs,
+          ...staticItems,
+          ...POSTS,
+        ];
+
+      },
+      [
+        serverBlogs,
+      ]
+    );
+
 
   /* =======================================================
      SEARCH
   ======================================================= */
 
   const filteredItems =
-    useMemo(() => {
-      const query =
-        searchQuery
-          .trim()
-          .toLowerCase();
+    useMemo(
+      () => {
 
-      if (!query) {
-        return BLOG_ITEMS;
-      }
+        const query =
+          searchQuery
+            .trim()
+            .toLowerCase();
 
-      return BLOG_ITEMS.filter(
-        (item) =>
-          item.title
-            .toLowerCase()
-            .includes(query) ||
-          item.excerpt
-            .toLowerCase()
-            .includes(query) ||
-          item.date
-            .toLowerCase()
-            .includes(query)
-      );
-    }, [searchQuery]);
+
+        if (!query) {
+
+          return blogItems;
+
+        }
+
+
+        return blogItems.filter(
+          (item) =>
+            getSearchText(
+              item
+            ).includes(
+              query
+            )
+        );
+
+      },
+      [
+        searchQuery,
+        blogItems,
+      ]
+    );
+
 
   /* =======================================================
      OPEN BLOG
@@ -539,21 +1011,42 @@ export default function Blogs() {
   const openItem = (
     item: BlogItem
   ) => {
+
+    /*
+     * Both MongoDB blogs and
+     * existing articles use the same
+     * detail route.
+     *
+     * This is important for:
+     *
+     * /blogs/rest-vs-graphql-vs-grpc
+     *
+     * and:
+     *
+     * /blogs/new-mongo-blog-slug
+     */
+
     if (
-      item.type ===
-      "article"
+      item.slug
     ) {
+
       navigate(
-        `/blogs/${item.slug}`
+        `/blogs/${encodeURIComponent(
+          item.slug
+        )}`
       );
 
       return;
     }
 
-    navigate(
-      `/posts/${item.slug}`
+
+    console.error(
+      "[Apives] Blog has no slug:",
+      item
     );
+
   };
+
 
   /* =======================================================
      OPEN PUBLISH
@@ -561,57 +1054,47 @@ export default function Blogs() {
 
   const openPublishPage =
     () => {
-      /*
-       * Double-check admin before
-       * opening the admin editor.
-       */
 
       const email =
         getLoggedInEmail();
+
 
       const adminEmail =
         ADMIN_EMAIL
           .trim()
           .toLowerCase();
 
+
       if (
         email !==
         adminEmail
       ) {
+
         console.error(
           "Publish access denied:",
           {
             loggedInEmail:
               email,
+
             expected:
               ADMIN_EMAIL,
+
             hasToken:
               !!getToken(),
           }
         );
 
-        /*
-         * Do NOT redirect to /access.
-         * Simply don't open the admin page.
-         */
+
         return;
       }
 
-      /*
-       * IMPORTANT:
-       *
-       * App.tsx:
-       *
-       * <Route
-       *   path="/admin/blogs/publish"
-       *   element={<PublishBlog />}
-       * />
-       */
 
       navigate(
         PUBLISH_ROUTE
       );
+
     };
+
 
   /* =======================================================
      RENDER
@@ -619,7 +1102,9 @@ export default function Blogs() {
 
   return (
     <>
+
       <BlogStyles />
+
 
       <main className="blog-root">
 
@@ -636,6 +1121,7 @@ export default function Blogs() {
             loading="eager"
           />
 
+
           <p>
             Practical ideas for
             building better APIs,
@@ -644,6 +1130,7 @@ export default function Blogs() {
           </p>
 
         </section>
+
 
         {/* =================================================
             SEARCH
@@ -657,6 +1144,7 @@ export default function Blogs() {
               size={16}
               className="search-icon"
             />
+
 
             <input
               type="text"
@@ -672,28 +1160,37 @@ export default function Blogs() {
               aria-label="Search articles"
             />
 
+
             {searchQuery && (
+
               <button
                 type="button"
                 className="clear-search"
                 onClick={() =>
-                  setSearchQuery("")
+                  setSearchQuery(
+                    ""
+                  )
                 }
                 aria-label="Clear search"
               >
-                <X size={14} />
+
+                <X
+                  size={14}
+                />
+
               </button>
+
             )}
 
           </div>
 
+
           {/* =================================================
               ADMIN PUBLISH BUTTON
-
-              BELOW SEARCH BOX
           ================================================= */}
 
           {isAdmin && (
+
             <button
               type="button"
               className="admin-publish-button"
@@ -702,18 +1199,23 @@ export default function Blogs() {
               }
               aria-label="Publish a new blog"
             >
+
               <Plus
                 size={15}
                 strokeWidth={2.3}
               />
 
+
               <span>
                 Publish Blog
               </span>
+
             </button>
+
           )}
 
         </section>
+
 
         {/* =================================================
             ARTICLES
@@ -723,50 +1225,109 @@ export default function Blogs() {
 
           <div className="articles-top-line" />
 
+
+          {/* -------------------------------------------------
+              SMALL LOADING INDICATOR
+          ------------------------------------------------- */}
+
+          {isLoadingBlogs && (
+
+            <div className="blogs-loading">
+
+              <span className="loading-dot" />
+
+              <span>
+                Loading latest articles...
+              </span>
+
+            </div>
+
+          )}
+
+
+          {/* -------------------------------------------------
+              SILENT API FALLBACK
+          ------------------------------------------------- */}
+
+          {!isLoadingBlogs &&
+            blogFetchError &&
+            serverBlogs.length === 0 && (
+
+              <div className="blogs-api-status">
+
+                <span>
+                  Showing available articles
+                </span>
+
+              </div>
+
+            )}
+
+
+          {/* -------------------------------------------------
+              BLOG LIST
+          ------------------------------------------------- */}
+
           {filteredItems.length >
           0 ? (
+
             filteredItems.map(
               (item) => (
+
                 <BlogListItem
-                  key={`${item.type}-${item.id}`}
+                  key={`${item.type}-${getBlogId(
+                    item
+                  )}-${item.slug}`}
                   item={item}
                   onClick={() =>
-                    openItem(item)
+                    openItem(
+                      item
+                    )
                   }
                 />
+
               )
             )
+
           ) : (
+
             <div className="empty-state">
 
               <p>
                 No articles found.
               </p>
 
+
               <button
                 type="button"
                 onClick={() =>
-                  setSearchQuery("")
+                  setSearchQuery(
+                    ""
+                  )
                 }
               >
                 Clear search
               </button>
 
             </div>
+
           )}
 
         </section>
 
       </main>
+
     </>
   );
 }
+
 
 /* =========================================================
    STYLES
 ========================================================= */
 
 function BlogStyles() {
+
   return (
     <style>{`
 
@@ -775,17 +1336,20 @@ function BlogStyles() {
         background: #000;
       }
 
+
       body {
         margin: 0;
         background: #000 !important;
         color: #fff;
       }
 
+
       *,
       *::before,
       *::after {
         box-sizing: border-box;
       }
+
 
       ::selection {
         background:
@@ -794,22 +1358,27 @@ function BlogStyles() {
         color: #fff;
       }
 
+
       ::-webkit-scrollbar {
         width: 4px;
       }
 
+
       ::-webkit-scrollbar-track {
         background: #000;
       }
+
 
       ::-webkit-scrollbar-thumb {
         background: #242424;
         border-radius: 999px;
       }
 
+
       ::-webkit-scrollbar-thumb:hover {
         background: ${GREEN};
       }
+
 
       /* =====================================================
          ROOT
@@ -832,6 +1401,7 @@ function BlogStyles() {
           sans-serif;
       }
 
+
       /* =====================================================
          HERO
       ===================================================== */
@@ -848,6 +1418,7 @@ function BlogStyles() {
         text-align: center;
       }
 
+
       .blog-hero-image {
         display: block;
 
@@ -860,6 +1431,7 @@ function BlogStyles() {
 
         border-radius: 12px;
       }
+
 
       .blog-hero p {
         max-width: 650px;
@@ -881,6 +1453,7 @@ function BlogStyles() {
         letter-spacing: -.15px;
       }
 
+
       /* =====================================================
          SEARCH
       ===================================================== */
@@ -901,6 +1474,7 @@ function BlogStyles() {
         align-items: center;
       }
 
+
       .search-box {
         position: relative;
 
@@ -912,6 +1486,7 @@ function BlogStyles() {
 
         margin: 0 auto;
       }
+
 
       .search-box input {
         width: 100%;
@@ -944,9 +1519,11 @@ function BlogStyles() {
           box-shadow .18s ease;
       }
 
+
       .search-box input::placeholder {
         color: #505050;
       }
+
 
       .search-box input:focus {
         border-color:
@@ -959,6 +1536,7 @@ function BlogStyles() {
           0 0 0 3px
           rgba(34,197,94,.045);
       }
+
 
       .search-icon {
         position: absolute;
@@ -975,6 +1553,7 @@ function BlogStyles() {
 
         pointer-events: none;
       }
+
 
       .clear-search {
         position: absolute;
@@ -1004,6 +1583,7 @@ function BlogStyles() {
         cursor: pointer;
       }
 
+
       .clear-search:hover {
         color: #fff;
 
@@ -1011,9 +1591,9 @@ function BlogStyles() {
           rgba(255,255,255,.07);
       }
 
+
       /* =====================================================
          ADMIN PUBLISH BUTTON
-         BELOW SEARCH
       ===================================================== */
 
       .admin-publish-button {
@@ -1063,6 +1643,7 @@ function BlogStyles() {
           box-shadow .18s ease;
       }
 
+
       .admin-publish-button:hover {
         background:
           rgba(34,197,94,.11);
@@ -1080,10 +1661,89 @@ function BlogStyles() {
           rgba(34,197,94,.08);
       }
 
+
       .admin-publish-button:active {
         transform:
           translateY(0);
       }
+
+
+      /* =====================================================
+         LOADING
+      ===================================================== */
+
+      .blogs-loading {
+        min-height: 34px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 8px;
+
+        color: #4c4c4c;
+
+        font-size: 10px;
+
+        letter-spacing: .02em;
+      }
+
+
+      .loading-dot {
+        width: 5px;
+        height: 5px;
+
+        border-radius: 50%;
+
+        background:
+          ${GREEN};
+
+        box-shadow:
+          0 0 12px
+          rgba(34,197,94,.4);
+
+        animation:
+          blogPulse
+          1.1s ease-in-out
+          infinite;
+      }
+
+
+      @keyframes blogPulse {
+
+        0%,
+        100% {
+          opacity: .35;
+          transform: scale(.8);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+      }
+
+
+      /* =====================================================
+         API FALLBACK STATUS
+      ===================================================== */
+
+      .blogs-api-status {
+        padding:
+          10px 0 0;
+
+        text-align: center;
+
+        color: #3e3e3e;
+
+        font-size: 9px;
+
+        letter-spacing: .02em;
+      }
+
 
       /* =====================================================
          ARTICLES
@@ -1099,12 +1759,14 @@ function BlogStyles() {
           110px;
       }
 
+
       .articles-top-line {
         height: 1px;
 
         background:
           rgba(255,255,255,.085);
       }
+
 
       .blog-list-item {
         width: 100%;
@@ -1132,7 +1794,20 @@ function BlogStyles() {
         font: inherit;
 
         outline: none;
+
+        -webkit-tap-highlight-color:
+          transparent;
+
+        transition:
+          border-color .18s ease;
       }
+
+
+      .blog-list-item:hover {
+        border-bottom-color:
+          rgba(255,255,255,.14);
+      }
+
 
       .list-date {
         margin-bottom: 13px;
@@ -1145,6 +1820,7 @@ function BlogStyles() {
 
         letter-spacing: .015em;
       }
+
 
       .blog-list-item h2 {
         max-width: 850px;
@@ -1173,9 +1849,11 @@ function BlogStyles() {
           color .18s ease;
       }
 
+
       .blog-list-item:hover h2 {
         color: #fff;
       }
+
 
       .blog-list-item p {
         max-width: 820px;
@@ -1194,6 +1872,7 @@ function BlogStyles() {
         line-height: 1.8;
       }
 
+
       /* =====================================================
          EMPTY
       ===================================================== */
@@ -1205,6 +1884,12 @@ function BlogStyles() {
 
         color: #555;
       }
+
+
+      .empty-state p {
+        margin: 0;
+      }
+
 
       .empty-state button {
         margin-top: 12px;
@@ -1224,6 +1909,7 @@ function BlogStyles() {
         cursor: pointer;
       }
 
+
       /* =====================================================
          MOBILE
       ===================================================== */
@@ -1236,9 +1922,11 @@ function BlogStyles() {
             35px;
         }
 
+
         .blog-hero-image {
           width: 172px;
         }
+
 
         .blog-hero p {
           margin-top: 20px;
@@ -1246,15 +1934,18 @@ function BlogStyles() {
           font-size: 15.2px;
         }
 
+
         .search-section {
           padding:
             0 20px
             28px;
         }
 
+
         .search-box {
           max-width: 100%;
         }
+
 
         .admin-publish-button {
           max-width: 100%;
@@ -1266,11 +1957,13 @@ function BlogStyles() {
           font-size: 9px;
         }
 
+
         .articles-section {
           padding:
             0 20px
             80px;
         }
+
 
         .blog-list-item {
           padding:
@@ -1278,9 +1971,11 @@ function BlogStyles() {
             29.8px;
         }
 
+
         .list-date {
           font-size: 8.9px;
         }
+
 
         .blog-list-item h2 {
           font-size: 19.7px;
@@ -1289,11 +1984,18 @@ function BlogStyles() {
             -.55px;
         }
 
+
         .blog-list-item p {
           font-size: 12.1px;
 
           line-height: 1.75;
         }
+
+
+        .blogs-loading {
+          min-height: 30px;
+        }
+
       }
 
     `}</style>
