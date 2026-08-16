@@ -32,6 +32,7 @@ import SerpApiOffer from "./pages/SerpApiOffer";
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
 import LiveApiRunnerPage from "./pages/LiveApiRunnerPage";
+import PublishBlog from "./pages/PublishBlog";
 
 import {
   EnterprisePage,
@@ -302,6 +303,10 @@ function App() {
               path="/sponsorship"
               element={<SponsorshipPage />}
             />
+<Route
+  path="/admin/blogs/publish"
+  element={<PublishBlog />}
+/>
 
             {/* =================================================
                 ADMIN
