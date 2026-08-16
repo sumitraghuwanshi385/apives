@@ -20,7 +20,10 @@ import {
   X,
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 const GREEN = "#22c55e";
 
@@ -74,11 +77,14 @@ const createFAQ = (): FAQItem => ({
 ========================================================= */
 
 /*
-  Do not use:
-    new Date().toISOString().slice(0, 10)
+  Internal date format:
+    YYYY-MM-DD
 
-  because toISOString() converts the date to UTC and can
-  produce the wrong calendar date for users in some timezones.
+  Example:
+    2026-08-16
+
+  Display format:
+    August 16, 2026
 */
 
 const getLocalDateString = (): string => {
@@ -98,6 +104,134 @@ const getLocalDateString = (): string => {
     ).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+};
+
+const normalizeDateInput = (
+  value: any
+): string => {
+  if (!value) {
+    return "";
+  }
+
+  if (
+    typeof value === "string"
+  ) {
+    const trimmed =
+      value.trim();
+
+    /*
+      Already YYYY-MM-DD
+    */
+    const directMatch =
+      trimmed.match(
+        /^(\d{4})-(\d{2})-(\d{2})/
+      );
+
+    if (directMatch) {
+      return `${directMatch[1]}-${directMatch[2]}-${directMatch[3]}`;
+    }
+
+    /*
+      Handle ISO dates such as:
+      2026-08-16T00:00:00.000Z
+    */
+    const parsed =
+      new Date(trimmed);
+
+    if (
+      !Number.isNaN(
+        parsed.getTime()
+      )
+    ) {
+      /*
+        When Mongo returns an ISO date, use the
+        calendar portion directly when available.
+      */
+      const iso =
+        parsed.toISOString();
+
+      return iso.slice(
+        0,
+        10
+      );
+    }
+  }
+
+  if (
+    value instanceof Date &&
+    !Number.isNaN(
+      value.getTime()
+    )
+  ) {
+    return value
+      .toISOString()
+      .slice(0, 10);
+  }
+
+  return "";
+};
+
+const formatDisplayDate = (
+  value: string
+): string => {
+  const normalized =
+    normalizeDateInput(
+      value
+    );
+
+  if (!normalized) {
+    return "";
+  }
+
+  const parts =
+    normalized.split("-");
+
+  if (
+    parts.length !== 3
+  ) {
+    return value;
+  }
+
+  const year =
+    Number(parts[0]);
+
+  const month =
+    Number(parts[1]);
+
+  const day =
+    Number(parts[2]);
+
+  if (
+    !year ||
+    !month ||
+    !day
+  ) {
+    return value;
+  }
+
+  const dateObject =
+    new Date(
+      year,
+      month - 1,
+      day
+    );
+
+  if (
+    Number.isNaN(
+      dateObject.getTime()
+    )
+  ) {
+    return value;
+  }
+
+  return dateObject.toLocaleDateString(
+    "en-US",
+    {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    }
+  );
 };
 
 /* =========================================================
@@ -152,12 +286,6 @@ const normalizeExternalUrl = (
     return "";
   }
 
-  /*
-    Allow normal absolute URLs.
-    If the user enters a URL without a protocol,
-    keep the editor behavior friendly by adding https://.
-  */
-
   if (
     /^https?:\/\//i.test(
       trimmed
@@ -181,27 +309,8 @@ const normalizeExternalUrl = (
    JWT / AUTH HELPERS
 ========================================================= */
 
-/*
-  AccessPage stores auth like:
-
-  localStorage.setItem(
-    "mora_user",
-    JSON.stringify({
-      ...data.user,
-      token: data.token
-    })
-  );
-
-  This helper supports that structure as well as
-  older/direct token storage.
-*/
-
 const getToken = (): string => {
   try {
-    /* ---------------------------------------------
-       DIRECT TOKEN STORAGE
-    --------------------------------------------- */
-
     const directKeys = [
       "token",
       "accessToken",
@@ -209,9 +318,13 @@ const getToken = (): string => {
       "jwt",
     ];
 
-    for (const key of directKeys) {
+    for (
+      const key of directKeys
+    ) {
       const value =
-        localStorage.getItem(key);
+        localStorage.getItem(
+          key
+        );
 
       if (
         value &&
@@ -221,10 +334,6 @@ const getToken = (): string => {
       }
     }
 
-    /* ---------------------------------------------
-       USER OBJECT STORAGE
-    --------------------------------------------- */
-
     const userKeys = [
       "mora_user",
       "user",
@@ -233,9 +342,13 @@ const getToken = (): string => {
       "authUser",
     ];
 
-    for (const key of userKeys) {
+    for (
+      const key of userKeys
+    ) {
       const raw =
-        localStorage.getItem(key);
+        localStorage.getItem(
+          key
+        );
 
       if (!raw) {
         continue;
@@ -350,9 +463,13 @@ const getStoredUserEmail =
         "authUser",
       ];
 
-      for (const key of userKeys) {
+      for (
+        const key of userKeys
+      ) {
         const raw =
-          localStorage.getItem(key);
+          localStorage.getItem(
+            key
+          );
 
         if (!raw) {
           continue;
@@ -419,7 +536,9 @@ const clearAuthStorage =
       "authUser",
     ];
 
-    for (const key of keys) {
+    for (
+      const key of keys
+    ) {
       try {
         localStorage.removeItem(
           key
@@ -441,28 +560,145 @@ const clearAuthStorage =
   };
 
 /* =========================================================
-   CONTENT SERIALIZATION
+   BLOG RESPONSE HELPERS
 ========================================================= */
 
-/*
-  The editor uses structured blocks.
+const extractBlogFromResponse = (
+  data: any
+): any => {
+  if (!data) {
+    return null;
+  }
 
-  The API receives Markdown.
+  if (
+    data.blog &&
+    typeof data.blog ===
+      "object"
+  ) {
+    return data.blog;
+  }
 
-  This is important because the published BlogPost can
-  distinguish:
+  if (
+    data.data?.blog &&
+    typeof data.data.blog ===
+      "object"
+  ) {
+    return data.data.blog;
+  }
 
-  paragraph
-  heading
-  bold
-  link
-  code
+  if (
+    data.data &&
+    typeof data.data ===
+      "object" &&
+    (
+      data.data.title ||
+      data.data.slug ||
+      data.data.content
+    )
+  ) {
+    return data.data;
+  }
 
-  especially multiline code.
+  if (
+    data.title ||
+    data.slug ||
+    data.content
+  ) {
+    return data;
+  }
 
-  Code is wrapped in fenced Markdown instead of being
-  inserted as raw text.
-*/
+  return null;
+};
+
+const getBlogId = (
+  blog: any
+): string => {
+  return String(
+    blog?._id ||
+      blog?.id ||
+      blog?.blogId ||
+      ""
+  );
+};
+
+const getBlogAuthorX = (
+  blog: any
+): string => {
+  const authorX =
+    blog?.author?.x ||
+    blog?.author?.twitter ||
+    blog?.author?.twitterHandle ||
+    blog?.authorX ||
+    blog?.x ||
+    "";
+
+  if (
+    typeof authorX !==
+    "string"
+  ) {
+    return "@priiincegupta";
+  }
+
+  const clean =
+    cleanXHandle(
+      authorX
+    );
+
+  return clean
+    ? `@${clean}`
+    : "@priiincegupta";
+};
+
+const getBlogKeywords = (
+  blog: any
+): string => {
+  if (
+    Array.isArray(
+      blog?.keywords
+    )
+  ) {
+    return blog.keywords
+      .map(
+        (item: any) =>
+          String(item).trim()
+      )
+      .filter(Boolean)
+      .join(", ");
+  }
+
+  if (
+    typeof blog?.keywords ===
+    "string"
+  ) {
+    return blog.keywords;
+  }
+
+  return "";
+};
+
+const getBlogSeoTitle = (
+  blog: any
+): string => {
+  return (
+    blog?.seo?.title ||
+    blog?.seoTitle ||
+    ""
+  );
+};
+
+const getBlogSeoDescription = (
+  blog: any
+): string => {
+  return (
+    blog?.seo?.description ||
+    blog?.seoDescription ||
+    ""
+  );
+};
+
+/* =========================================================
+   CONTENT SERIALIZATION
+========================================================= */
 
 const serializeContent =
   (
@@ -488,11 +724,6 @@ const serializeContent =
           block.type ===
           "code"
         ) {
-          /*
-            Escape accidental triple backticks so that
-            user content cannot prematurely close the
-            generated code fence.
-          */
           const safeCode =
             block.text
               .replace(
@@ -524,9 +755,6 @@ const serializeContent =
             return text;
           }
 
-          /*
-            Basic Markdown link safety.
-          */
           const safeText =
             text.replace(
               /\]/g,
@@ -536,12 +764,302 @@ const serializeContent =
           return `[${safeText}](${url})`;
         }
 
-        /*
-          Paragraph
-        */
         return block.text.trim();
       })
       .join("\n\n");
+};
+
+/* =========================================================
+   MARKDOWN PARSER
+========================================================= */
+
+/*
+  Converts the existing Markdown stored in MongoDB
+  back into editor blocks.
+
+  Supported:
+    ## Heading
+    ### Heading
+    **Bold**
+    [Text](URL)
+    ```code```
+    normal paragraphs
+
+  It intentionally keeps unknown Markdown as a paragraph
+  rather than deleting content.
+*/
+
+const parseMarkdownToBlocks = (
+  markdown: any
+): ContentBlock[] => {
+  if (
+    typeof markdown !==
+      "string" ||
+    !markdown.trim()
+  ) {
+    return [
+      createBlock(
+        "paragraph"
+      ),
+    ];
+  }
+
+  const source =
+    markdown
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n");
+
+  const lines =
+    source.split("\n");
+
+  const blocks: ContentBlock[] =
+    [];
+
+  let paragraphLines: string[] =
+    [];
+
+  let codeLines: string[] =
+    [];
+
+  let inCode = false;
+
+  const flushParagraph =
+    () => {
+      if (
+        paragraphLines.length ===
+        0
+      ) {
+        return;
+      }
+
+      const text =
+        paragraphLines
+          .join("\n")
+          .trim();
+
+      paragraphLines = [];
+
+      if (!text) {
+        return;
+      }
+
+      /*
+        Whole-block bold:
+          **Important text**
+      */
+      const boldMatch =
+        text.match(
+          /^\*\*(.+)\*\*$/s
+        );
+
+      if (boldMatch) {
+        blocks.push({
+          id: createId(),
+          type: "bold",
+          text:
+            boldMatch[1].trim(),
+        });
+
+        return;
+      }
+
+      /*
+        Whole-block link:
+          [Example](https://example.com)
+      */
+      const linkMatch =
+        text.match(
+          /^\[([^\]]+)\]\((https?:\/\/[^)]+|mailto:[^)]+)\)$/i
+        );
+
+      if (linkMatch) {
+        blocks.push({
+          id: createId(),
+          type: "link",
+          text:
+            linkMatch[1].trim(),
+          url:
+            linkMatch[2].trim(),
+        });
+
+        return;
+      }
+
+      /*
+        Heading accidentally passed here.
+      */
+      const headingMatch =
+        text.match(
+          /^#{1,6}\s+(.+)$/
+        );
+
+      if (headingMatch) {
+        blocks.push({
+          id: createId(),
+          type: "heading",
+          text:
+            headingMatch[1].trim(),
+        });
+
+        return;
+      }
+
+      blocks.push({
+        id: createId(),
+        type: "paragraph",
+        text,
+      });
+    };
+
+  const flushCode =
+    () => {
+      const code =
+        codeLines.join("\n");
+
+      codeLines = [];
+
+      blocks.push({
+        id: createId(),
+        type: "code",
+        text: code,
+      });
+    };
+
+  for (
+    let index = 0;
+    index < lines.length;
+    index += 1
+  ) {
+    const line =
+      lines[index];
+
+    /*
+      Code fence.
+    */
+    if (
+      line.trim().startsWith(
+        "```"
+      )
+    ) {
+      if (inCode) {
+        flushCode();
+        inCode = false;
+      } else {
+        flushParagraph();
+        inCode = true;
+      }
+
+      continue;
+    }
+
+    if (inCode) {
+      codeLines.push(line);
+      continue;
+    }
+
+    /*
+      Blank line ends a paragraph.
+    */
+    if (!line.trim()) {
+      flushParagraph();
+      continue;
+    }
+
+    /*
+      Headings.
+
+      Supports:
+        # Heading
+        ## Heading
+        ### Heading
+        etc.
+
+      Existing serializer creates ## headings.
+    */
+    const headingMatch =
+      line.match(
+        /^#{1,6}\s+(.+)$/
+      );
+
+    if (headingMatch) {
+      flushParagraph();
+
+      blocks.push({
+        id: createId(),
+        type: "heading",
+        text:
+          headingMatch[1].trim(),
+      });
+
+      continue;
+    }
+
+    /*
+      Whole line bold.
+    */
+    const boldMatch =
+      line.match(
+        /^\*\*(.+)\*\*$/
+      );
+
+    if (boldMatch) {
+      flushParagraph();
+
+      blocks.push({
+        id: createId(),
+        type: "bold",
+        text:
+          boldMatch[1].trim(),
+      });
+
+      continue;
+    }
+
+    /*
+      Whole line Markdown link.
+    */
+    const linkMatch =
+      line.match(
+        /^([^]+)\](https?:\/\/[^)]+|mailto:[^)]+)$/i
+      );
+
+    if (linkMatch) {
+      flushParagraph();
+
+      blocks.push({
+        id: createId(),
+        type: "link",
+        text:
+          linkMatch[1].trim(),
+        url:
+          linkMatch[2].trim(),
+      });
+
+      continue;
+    }
+
+    paragraphLines.push(
+      line
+    );
+  }
+
+  if (inCode) {
+    flushCode();
+  }
+
+  flushParagraph();
+
+  if (
+    blocks.length === 0
+  ) {
+    return [
+      createBlock(
+        "paragraph"
+      ),
+    ];
+  }
+
+  return blocks;
 };
 
 /* =========================================================
@@ -551,6 +1069,23 @@ const serializeContent =
 export default function PublishBlog() {
   const navigate =
     useNavigate();
+
+  const params =
+    useParams<{
+      id?: string;
+    }>();
+
+  /*
+    Route:
+      /admin/blogs/publish
+      /admin/blogs/edit/:id
+  */
+
+  const editId =
+    params.id || "";
+
+  const isEditMode =
+    !!editId;
 
   /* ================= ADMIN ACCESS ================= */
 
@@ -585,7 +1120,7 @@ export default function PublishBlog() {
           email === adminEmail;
 
         console.log(
-          "[Apives] Publish access:",
+          "[Apives] Blog access:",
           {
             hasToken:
               !!currentToken,
@@ -596,6 +1131,11 @@ export default function PublishBlog() {
 
             isAdmin:
               authorized,
+
+            editMode:
+              isEditMode,
+
+            editId,
           }
         );
 
@@ -646,15 +1186,14 @@ export default function PublishBlog() {
         checkAccess
       );
     };
-  }, [navigate]);
+  }, [
+    navigate,
+    editId,
+    isEditMode,
+  ]);
 
   /* =====================================================
      PREVIEW GLOBAL HEADER CONTROL
-
-     Only hides the main Apives header while the
-     publish preview is active.
-
-     The preview's own .preview-topbar remains visible.
   ===================================================== */
 
   const [preview, setPreview] =
@@ -745,6 +1284,389 @@ export default function PublishBlog() {
   const [error, setError] =
     useState("");
 
+  const [
+    loadingBlog,
+    setLoadingBlog,
+  ] = useState(
+    isEditMode
+  );
+
+  const [
+    loadedBlogId,
+    setLoadedBlogId,
+  ] = useState("");
+
+  /* =====================================================
+     LOAD EXISTING BLOG
+  ===================================================== */
+
+  useEffect(() => {
+    let mounted = true;
+
+    /*
+      Publish page does not need a GET.
+    */
+    if (!isEditMode) {
+      setLoadingBlog(false);
+      setLoadedBlogId("");
+      return;
+    }
+
+    if (!editId) {
+      setLoadingBlog(false);
+      return;
+    }
+
+    const loadBlog =
+      async () => {
+        setLoadingBlog(true);
+        setError("");
+
+        const authToken =
+          getToken();
+
+        const email =
+          getUserEmail();
+
+        const adminEmail =
+          ADMIN_EMAIL
+            .trim()
+            .toLowerCase();
+
+        if (
+          !authToken ||
+          email !== adminEmail
+        ) {
+          if (mounted) {
+            setError(
+              "Authentication session is invalid or you are not authorized to edit blogs."
+            );
+
+            setLoadingBlog(false);
+          }
+
+          clearAuthStorage();
+
+          navigate(
+            "/access",
+            {
+              replace: true,
+            }
+          );
+
+          return;
+        }
+
+        try {
+          console.log(
+            "[Apives] Loading blog:",
+            editId
+          );
+
+          const response =
+            await fetch(
+              `${API_BASE}/api/blogs/${encodeURIComponent(
+                editId
+              )}`,
+              {
+                method:
+                  "GET",
+
+                headers: {
+                  Accept:
+                    "application/json",
+
+                  Authorization:
+                    `Bearer ${authToken}`,
+                },
+              }
+            );
+
+          const responseText =
+            await response.text();
+
+          let data: any =
+            {};
+
+          if (
+            responseText
+          ) {
+            try {
+              data =
+                JSON.parse(
+                  responseText
+                );
+            } catch {
+              data = {
+                raw:
+                  responseText,
+              };
+            }
+          }
+
+          if (
+            response.status ===
+            401
+          ) {
+            clearAuthStorage();
+
+            if (mounted) {
+              setError(
+                "Your authentication session has expired. Please sign in again."
+              );
+
+              setLoadingBlog(false);
+            }
+
+            navigate(
+              "/access",
+              {
+                replace: true,
+              }
+            );
+
+            return;
+          }
+
+          if (
+            response.status ===
+            403
+          ) {
+            throw new Error(
+              data?.message ||
+                "You are not authorized to edit blogs."
+            );
+          }
+
+          if (
+            response.status ===
+            404
+          ) {
+            throw new Error(
+              data?.message ||
+                "Blog not found."
+            );
+          }
+
+          if (
+            !response.ok
+          ) {
+            throw new Error(
+              data?.message ||
+                data?.error ||
+                data?.raw ||
+                `Failed to load blog. Server returned ${response.status}.`
+            );
+          }
+
+          const blog =
+            extractBlogFromResponse(
+              data
+            );
+
+          if (!blog) {
+            throw new Error(
+              "The server did not return a valid blog."
+            );
+          }
+
+          if (
+            !mounted
+          ) {
+            return;
+          }
+
+          console.log(
+            "[Apives] Loaded blog:",
+            blog
+          );
+
+          /*
+            HERO
+          */
+
+          setCategory(
+            String(
+              blog?.category ||
+                blog?.eyebrow ||
+                ""
+            )
+          );
+
+          setTitle(
+            String(
+              blog?.title ||
+                ""
+            )
+          );
+
+          setExcerpt(
+            String(
+              blog?.excerpt ||
+                blog?.description ||
+                ""
+            )
+          );
+
+          /*
+            SLUG
+          */
+
+          setSlug(
+            String(
+              blog?.slug ||
+                ""
+            )
+          );
+
+          /*
+            DATE
+
+            Internal state remains:
+              YYYY-MM-DD
+          */
+
+          setDate(
+            normalizeDateInput(
+              blog?.date ||
+                blog?.publishedAt ||
+                blog?.createdAt
+            ) ||
+              getLocalDateString()
+          );
+
+          /*
+            AUTHOR
+          */
+
+          setAuthorX(
+            getBlogAuthorX(
+              blog
+            )
+          );
+
+          /*
+            KEYWORDS
+          */
+
+          setKeywords(
+            getBlogKeywords(
+              blog
+            )
+          );
+
+          /*
+            CONTENT
+
+            Existing MongoDB content is Markdown.
+            Parse it back to blocks.
+          */
+
+          const parsedBlocks =
+            parseMarkdownToBlocks(
+              blog?.content ||
+                blog?.body ||
+                ""
+            );
+
+          setContent(
+            parsedBlocks
+          );
+
+          /*
+            FAQ
+          */
+
+          const rawFAQ =
+            Array.isArray(
+              blog?.faq
+            )
+              ? blog.faq
+              : Array.isArray(
+                    blog?.faqs
+                  )
+                ? blog.faqs
+                : [];
+
+          const loadedFAQ =
+            rawFAQ
+              .map(
+                (
+                  item: any
+                ) => ({
+                  id: createId(),
+
+                  question:
+                    String(
+                      item?.question ||
+                        ""
+                    ),
+
+                  answer:
+                    String(
+                      item?.answer ||
+                        ""
+                    ),
+                })
+              );
+
+          setFaq(
+            loadedFAQ
+          );
+
+          /*
+            SEO
+          */
+
+          setSeoTitle(
+            getBlogSeoTitle(
+              blog
+            )
+          );
+
+          setSeoDescription(
+            getBlogSeoDescription(
+              blog
+            )
+          );
+
+          setLoadedBlogId(
+            getBlogId(
+              blog
+            ) || editId
+          );
+
+          setLoadingBlog(false);
+        } catch (
+          err: any
+        ) {
+          console.error(
+            "[Apives] Load blog error:",
+            err
+          );
+
+          if (mounted) {
+            setError(
+              err?.message ||
+                "Something went wrong while loading the blog."
+            );
+
+            setLoadingBlog(false);
+          }
+        }
+      };
+
+    loadBlog();
+
+    return () => {
+      mounted = false;
+    };
+  }, [
+    editId,
+    isEditMode,
+    navigate,
+  ]);
+
   /* =====================================================
      AUTO SLUG
   ===================================================== */
@@ -757,10 +1679,6 @@ export default function PublishBlog() {
 
     setTitle(value);
 
-    /*
-      Only keep auto-updating the slug while the user
-      has not manually customized it.
-    */
     if (
       !slug ||
       slug === oldGeneratedSlug
@@ -770,10 +1688,6 @@ export default function PublishBlog() {
       );
     }
 
-    /*
-      SEO title automatically follows the title until
-      the user explicitly changes it.
-    */
     if (!seoTitle) {
       setSeoTitle(value);
     }
@@ -971,7 +1885,79 @@ export default function PublishBlog() {
   };
 
   /* =====================================================
-     PUBLISH
+     DISPATCH BLOG UPDATED EVENT
+  ===================================================== */
+
+  const dispatchBlogUpdated =
+    (
+      blogId: string,
+      blogSlug: string,
+      action:
+        | "published"
+        | "updated"
+    ) => {
+      try {
+        window.dispatchEvent(
+          new CustomEvent(
+            "blog-updated",
+            {
+              detail: {
+                id:
+                  blogId ||
+                  editId ||
+                  "",
+
+                blogId:
+                  blogId ||
+                  editId ||
+                  "",
+
+                slug:
+                  blogSlug ||
+                  slug ||
+                  "",
+
+                action,
+              },
+            }
+          )
+        );
+
+        /*
+          Also keep a generic storage signal so other
+          tabs/pages can react to the update.
+        */
+
+        try {
+          localStorage.setItem(
+            "apives_blog_updated",
+            JSON.stringify({
+              id:
+                blogId ||
+                editId ||
+                "",
+
+              slug:
+                blogSlug ||
+                slug ||
+                "",
+
+              action,
+
+              timestamp:
+                Date.now(),
+            })
+          );
+        } catch {
+          // Ignore localStorage event errors.
+        }
+      } catch {
+        // Ignore event errors.
+      }
+    };
+
+  /* =====================================================
+     SAVE / PUBLISH
   ===================================================== */
 
   const handlePublish =
@@ -984,8 +1970,9 @@ export default function PublishBlog() {
       setPublished(false);
 
       /*
-        Always re-check current auth at publish time.
+        Always re-check current auth.
       */
+
       const authToken =
         getToken();
 
@@ -1023,6 +2010,21 @@ export default function PublishBlog() {
       if (validationError) {
         setError(
           validationError
+        );
+
+        return;
+      }
+
+      /*
+        In edit mode the actual MongoDB ID is required.
+      */
+
+      if (
+        isEditMode &&
+        !editId
+      ) {
+        setError(
+          "Blog ID is missing. Please open the editor from the blog edit page."
         );
 
         return;
@@ -1119,7 +2121,15 @@ export default function PublishBlog() {
           slug:
             cleanSlug,
 
-          date,
+          /*
+            IMPORTANT:
+            Always send YYYY-MM-DD internally.
+          */
+
+          date:
+            normalizeDateInput(
+              date
+            ),
 
           author: {
             x: `@${cleanAuthorX}`,
@@ -1146,8 +2156,15 @@ export default function PublishBlog() {
         };
 
         console.log(
-          "[Apives] Publishing blog:",
+          `[Apives] ${
+            isEditMode
+              ? "Updating"
+              : "Publishing"
+          } blog:`,
           {
+            id:
+              editId,
+
             slug:
               payload.slug,
 
@@ -1159,6 +2176,9 @@ export default function PublishBlog() {
 
             keywordCount:
               payload.keywords.length,
+
+            date:
+              payload.date,
           }
         );
 
@@ -1166,12 +2186,23 @@ export default function PublishBlog() {
            API REQUEST
         --------------------------------------------- */
 
+        const endpoint =
+          isEditMode
+            ? `${API_BASE}/api/blogs/${encodeURIComponent(
+                editId
+              )}`
+            : `${API_BASE}/api/blogs`;
+
+        const method =
+          isEditMode
+            ? "PUT"
+            : "POST";
+
         const response =
           await fetch(
-            `${API_BASE}/api/blogs`,
+            endpoint,
             {
-              method:
-                "POST",
+              method,
 
               headers: {
                 "Content-Type":
@@ -1251,7 +2282,21 @@ export default function PublishBlog() {
         ) {
           throw new Error(
             data?.message ||
-              "You are not authorized to publish blogs."
+              "You are not authorized to modify blogs."
+          );
+        }
+
+        /* ---------------------------------------------
+           NOT FOUND
+        --------------------------------------------- */
+
+        if (
+          response.status ===
+          404
+        ) {
+          throw new Error(
+            data?.message ||
+              "Blog not found."
           );
         }
 
@@ -1280,36 +2325,78 @@ export default function PublishBlog() {
             data?.message ||
               data?.error ||
               data?.raw ||
-              `Failed to publish blog. Server returned ${response.status}.`
+              `Failed to ${
+                isEditMode
+                  ? "update"
+                  : "publish"
+              } blog. Server returned ${response.status}.`
           );
         }
 
         /* ---------------------------------------------
-           SUCCESS
+           SUCCESS BLOG
         --------------------------------------------- */
 
+        const returnedBlog =
+          extractBlogFromResponse(
+            data
+          );
+
         const publishedSlug =
+          returnedBlog?.slug ||
           data?.blog?.slug ||
           data?.data?.blog?.slug ||
           data?.data?.slug ||
           data?.slug ||
           cleanSlug;
 
+        const returnedBlogId =
+          getBlogId(
+            returnedBlog
+          ) ||
+          data?.blog?._id ||
+          data?.blog?.id ||
+          data?.data?.blog?._id ||
+          data?.data?.blog?.id ||
+          editId;
+
         if (
           !publishedSlug
         ) {
           throw new Error(
-            "Blog was published, but the server did not return a valid slug."
+            `${
+              isEditMode
+                ? "Blog was updated"
+                : "Blog was published"
+            }, but the server did not return a valid slug.`
           );
         }
+
+        /*
+          Event fires AFTER successful DB operation.
+        */
+
+        dispatchBlogUpdated(
+          String(
+            returnedBlogId ||
+              ""
+          ),
+          String(
+            publishedSlug
+          ),
+          isEditMode
+            ? "updated"
+            : "published"
+        );
 
         setPublished(true);
 
         /*
-          Keep the existing behavior:
-          show Published briefly and then open the
-          actual published article.
+          Keep existing behavior:
+          show success briefly and then open
+          the actual published article.
         */
+
         window.setTimeout(
           () => {
             navigate(
@@ -1324,13 +2411,21 @@ export default function PublishBlog() {
         err: any
       ) {
         console.error(
-          "Publish blog error:",
+          `${
+            isEditMode
+              ? "Update"
+              : "Publish"
+          } blog error:`,
           err
         );
 
         setError(
           err?.message ||
-            "Something went wrong while publishing."
+            `Something went wrong while ${
+              isEditMode
+                ? "updating"
+                : "publishing"
+            } the blog.`
         );
       } finally {
         setPublishing(
@@ -1357,6 +2452,31 @@ export default function PublishBlog() {
 
             <span>
               Checking access...
+            </span>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  /* =====================================================
+     EDIT BLOG LOADING
+  ===================================================== */
+
+  if (
+    isEditMode &&
+    loadingBlog
+  ) {
+    return (
+      <>
+        <PublishStyles />
+
+        <main className="access-loading">
+          <div className="access-loading-box">
+            <div className="access-loader" />
+
+            <span>
+              Loading blog...
             </span>
           </div>
         </main>
@@ -1406,14 +2526,18 @@ export default function PublishBlog() {
               className="publish-button small"
             >
               {publishing ? (
-                "Publishing..."
+                isEditMode
+                  ? "Saving..."
+                  : "Publishing..."
               ) : (
                 <>
                   <Save
                     size={14}
                   />
 
-                  Publish
+                  {isEditMode
+                    ? "Save Changes"
+                    : "Publish"}
                 </>
               )}
             </button>
@@ -1437,7 +2561,10 @@ export default function PublishBlog() {
 
             <div className="preview-meta">
               <span>
-                {date}
+                {formatDisplayDate(
+                  date
+                ) ||
+                  date}
               </span>
 
               <span>
@@ -1672,12 +2799,15 @@ export default function PublishBlog() {
               </span>
 
               <h1>
-                Publish Blog
+                {isEditMode
+                  ? "Edit Blog"
+                  : "Publish Blog"}
               </h1>
 
               <p>
-                Create a new Apives
-                article.
+                {isEditMode
+                  ? "Update your existing Apives article."
+                  : "Create a new Apives article."}
               </p>
             </div>
           </div>
@@ -1710,14 +2840,18 @@ export default function PublishBlog() {
               className="publish-button"
             >
               {publishing ? (
-                "Publishing..."
+                isEditMode
+                  ? "Saving..."
+                  : "Publishing..."
               ) : published ? (
                 <>
                   <Check
                     size={15}
                   />
 
-                  Published
+                  {isEditMode
+                    ? "Updated"
+                    : "Published"}
                 </>
               ) : (
                 <>
@@ -1725,7 +2859,9 @@ export default function PublishBlog() {
                     size={15}
                   />
 
-                  Publish
+                  {isEditMode
+                    ? "Save Changes"
+                    : "Publish"}
                 </>
               )}
             </button>
@@ -1748,7 +2884,9 @@ export default function PublishBlog() {
               size={15}
             />
 
-            Blog published successfully.
+            {isEditMode
+              ? "Blog updated successfully."
+              : "Blog published successfully."}
           </div>
         )}
 
@@ -1859,6 +2997,14 @@ export default function PublishBlog() {
                       )
                     }
                   />
+
+                  <small>
+                    {date
+                      ? formatDisplayDate(
+                          date
+                        )
+                      : "Select publication date."}
+                  </small>
                 </div>
               </div>
 
@@ -2361,7 +3507,10 @@ export default function PublishBlog() {
 
               <div className="side-meta">
                 <span>
-                  {date}
+                  {formatDisplayDate(
+                    date
+                  ) ||
+                    date}
                 </span>
 
                 <span>
@@ -2440,14 +3589,18 @@ export default function PublishBlog() {
                 className="publish-button full"
               >
                 {publishing ? (
-                  "Publishing..."
+                  isEditMode
+                    ? "Saving..."
+                    : "Publishing..."
                 ) : (
                   <>
                     <Save
                       size={14}
                     />
 
-                    Publish Blog
+                    {isEditMode
+                      ? "Save Changes"
+                      : "Publish Blog"}
                   </>
                 )}
               </button>
