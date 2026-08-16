@@ -2166,14 +2166,14 @@ function PublishStyles() {
       /* =====================================================
          PREVIEW MODE
 
-         Hide the main Apives site header while the
+         Hide ONLY the main Apives navbar while the
          PublishBlog preview is active.
 
-         The preview's own topbar is explicitly preserved.
+         The preview's own .preview-topbar is a DIV,
+         so it remains visible.
       ===================================================== */
 
-      body.publish-preview-active > header,
-      body.publish-preview-active header:not(.preview-topbar) {
+      body.publish-preview-active nav {
         display: none !important;
       }
 
