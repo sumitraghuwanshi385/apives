@@ -83,22 +83,31 @@ const ADMIN_EMAIL =
 const PUBLISH_ROUTE =
   "/admin/blogs/publish";
 
-
 /*
- * IMPORTANT:
+ * IMPORTANT
  *
- * If your backend is hosted separately, set:
+ * The API is hosted separately from the frontend.
  *
- * VITE_API_URL=https://your-api-domain.com
+ * Do NOT fall back to:
  *
- * If frontend and backend are on the same domain,
- * this automatically uses /api/blogs.
+ *     /api/blogs
+ *
+ * because that would request the frontend domain.
+ *
+ * Published blogs live here:
+ *
+ *     https://apives-3xrc.onrender.com/api/blogs
+ *
+ * VITE_API_URL can still override this if needed later.
  */
+
+const DEFAULT_API_BASE_URL =
+  "https://apives-3xrc.onrender.com";
 
 const API_BASE_URL =
   (
     import.meta.env.VITE_API_URL ||
-    ""
+    DEFAULT_API_BASE_URL
   ).replace(/\/+$/, "");
 
 const BLOGS_API_URL =
@@ -424,28 +433,62 @@ function isAdminUser(): boolean {
 ========================================================= */
 
 /*
- * Backend response:
+ * Backend response currently expected:
  *
  * {
  *   blogs: [...],
  *   total: 10
  * }
+ *
+ * This helper also supports:
+ *
+ * [...]
+ *
+ * {
+ *   data: {
+ *     blogs: [...]
+ *   }
+ * }
+ *
+ * so a small backend response-shape change
+ * does not break the blog page.
  */
 
 async function fetchPublishedBlogs(
   signal?: AbortSignal
 ): Promise<BlogPost[]> {
 
+  /*
+   * Cache busting is intentional.
+   *
+   * After publishing a new article, browser/CDN
+   * should not keep returning an older GET response.
+   */
+
+  const separator =
+    BLOGS_API_URL.includes("?")
+      ? "&"
+      : "?";
+
+  const requestUrl =
+    `${BLOGS_API_URL}${separator}_=${Date.now()}`;
+
+
   const response =
     await fetch(
-      BLOGS_API_URL,
+      requestUrl,
       {
         method: "GET",
 
         headers: {
           Accept:
             "application/json",
+
+          "Cache-Control":
+            "no-cache",
         },
+
+        cache: "no-store",
 
         signal,
       }
@@ -464,12 +507,47 @@ async function fetchPublishedBlogs(
     await response.json();
 
 
-  const blogs =
+  /*
+   * Support all common backend response shapes.
+   */
+
+  let blogs: any[] = [];
+
+
+  if (
+    Array.isArray(data)
+  ) {
+
+    blogs = data;
+
+  } else if (
     Array.isArray(
       data?.blogs
     )
-      ? data.blogs
-      : [];
+  ) {
+
+    blogs =
+      data.blogs;
+
+  } else if (
+    Array.isArray(
+      data?.data?.blogs
+    )
+  ) {
+
+    blogs =
+      data.data.blogs;
+
+  } else if (
+    Array.isArray(
+      data?.data
+    )
+  ) {
+
+    blogs =
+      data.data;
+
+  }
 
 
   return blogs
@@ -478,6 +556,22 @@ async function fetchPublishedBlogs(
         blog &&
         blog.slug &&
         blog.title
+    )
+    /*
+     * Only hide explicitly unpublished blogs.
+     *
+     * This means:
+     *
+     * published: true  -> SHOW
+     * published: false -> HIDE
+     * undefined         -> SHOW
+     *
+     * This is safer for compatibility with older
+     * database documents.
+     */
+    .filter(
+      (blog: any) =>
+        blog.published !== false
     )
     .map(
       (blog: any) => ({
@@ -491,6 +585,38 @@ async function fetchPublishedBlogs(
         type:
           "post" as const,
       })
+    )
+    /*
+     * Newest database articles first.
+     *
+     * Prefer createdAt when available.
+     * Otherwise fall back to date.
+     */
+    .sort(
+      (
+        a: BlogPost,
+        b: BlogPost
+      ) => {
+
+        const aTime =
+          new Date(
+            a.createdAt ||
+            a.date ||
+            0
+          ).getTime();
+
+        const bTime =
+          new Date(
+            b.createdAt ||
+            b.date ||
+            0
+          ).getTime();
+
+        return (
+          bTime -
+          aTime
+        );
+      }
     );
 }
 
@@ -724,6 +850,111 @@ export default function Blogs() {
 
 
   /* =======================================================
+     LOAD BLOGS
+  ======================================================= */
+
+  const loadBlogs =
+    async (
+      signal?: AbortSignal
+    ) => {
+
+      setIsLoadingBlogs(
+        true
+      );
+
+
+      setBlogFetchError(
+        false
+      );
+
+
+      try {
+
+        const blogs =
+          await fetchPublishedBlogs(
+            signal
+          );
+
+
+        if (
+          !signal?.aborted
+        ) {
+
+          setServerBlogs(
+            blogs
+          );
+
+          console.log(
+            "[Apives] Published blogs loaded:",
+            {
+              api:
+                BLOGS_API_URL,
+
+              count:
+                blogs.length,
+
+              blogs:
+                blogs.map(
+                  (blog) => ({
+                    id:
+                      blog.id,
+
+                    slug:
+                      blog.slug,
+
+                    title:
+                      blog.title,
+
+                    published:
+                      blog.published,
+                  })
+                ),
+            }
+          );
+        }
+
+      } catch (error: any) {
+
+        if (
+          error?.name ===
+          "AbortError"
+        ) {
+          return;
+        }
+
+
+        console.error(
+          "[Apives] Failed to load MongoDB blogs:",
+          error
+        );
+
+
+        if (
+          !signal?.aborted
+        ) {
+
+          setBlogFetchError(
+            true
+          );
+
+        }
+
+      } finally {
+
+        if (
+          !signal?.aborted
+        ) {
+
+          setIsLoadingBlogs(
+            false
+          );
+
+        }
+      }
+    };
+
+
+  /* =======================================================
      SEO + ADMIN CHECK
   ======================================================= */
 
@@ -822,84 +1053,95 @@ export default function Blogs() {
       new AbortController();
 
 
-    const loadBlogs =
-      async () => {
+    loadBlogs(
+      controller.signal
+    );
 
-        setIsLoadingBlogs(
-          true
+
+    /*
+     * If another part of the app publishes
+     * or updates a blog, the list can refresh
+     * without changing the UI.
+     */
+
+    const handleBlogUpdated =
+      () => {
+
+        if (
+          controller.signal.aborted
+        ) {
+          return;
+        }
+
+
+        loadBlogs(
+          controller.signal
         );
+      };
 
 
-        setBlogFetchError(
-          false
-        );
+    /*
+     * Refresh when returning to the tab.
+     *
+     * This is useful after publishing in
+     * another tab/window.
+     */
 
+    const handleVisibility =
+      () => {
 
-        try {
+        if (
+          document.visibilityState ===
+          "visible"
+        ) {
 
-          const blogs =
-            await fetchPublishedBlogs(
-              controller.signal
-            );
-
-
-          if (
-            !controller.signal.aborted
-          ) {
-
-            setServerBlogs(
-              blogs
-            );
-
-          }
-
-        } catch (error: any) {
-
-          if (
-            error?.name ===
-            "AbortError"
-          ) {
-            return;
-          }
-
-
-          console.error(
-            "[Apives] Failed to load MongoDB blogs:",
-            error
+          loadBlogs(
+            controller.signal
           );
 
-
-          if (
-            !controller.signal.aborted
-          ) {
-
-            setBlogFetchError(
-              true
-            );
-
-          }
-
-        } finally {
-
-          if (
-            !controller.signal.aborted
-          ) {
-
-            setIsLoadingBlogs(
-              false
-            );
-
-          }
         }
       };
 
 
-    loadBlogs();
+    window.addEventListener(
+      "blog-updated",
+      handleBlogUpdated
+    );
+
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility
+    );
+
+
+    window.addEventListener(
+      "focus",
+      handleVisibility
+    );
 
 
     return () => {
 
       controller.abort();
+
+
+      window.removeEventListener(
+        "blog-updated",
+        handleBlogUpdated
+      );
+
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+
+
+      window.removeEventListener(
+        "focus",
+        handleVisibility
+      );
 
     };
 
