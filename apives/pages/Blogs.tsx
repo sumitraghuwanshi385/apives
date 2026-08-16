@@ -19,6 +19,10 @@ import {
   type Article,
 } from "../components/BlogArticles";
 
+/* =========================================================
+   TYPES
+========================================================= */
+
 interface BlogPost {
   id: number;
   slug: string;
@@ -32,13 +36,28 @@ type BlogItem =
   | (Article & { type: "article" })
   | BlogPost;
 
+/* =========================================================
+   CONSTANTS
+========================================================= */
+
 const GREEN = "#22c55e";
 
 const ADMIN_EMAIL =
   "beatslevelone@gmail.com";
 
+/*
+ * IMPORTANT:
+ * This MUST match App.tsx.
+ *
+ * App.tsx currently has:
+ *
+ * /admin/blogs/publish
+ */
+const PUBLISH_ROUTE =
+  "/admin/blogs/publish";
+
 /* =========================================================
-   STATIC ARTICLES
+   BLOG DATA
 ========================================================= */
 
 const BLOG_ARTICLES: BlogItem[] =
@@ -55,7 +74,7 @@ const BLOG_ITEMS: BlogItem[] = [
 ];
 
 /* =========================================================
-   AUTH / ADMIN CHECK
+   AUTH HELPERS
 ========================================================= */
 
 const normalizeEmail = (
@@ -67,23 +86,26 @@ const normalizeEmail = (
 };
 
 /* ---------------------------------------------------------
-   Get token from all common storage keys
+   Get JWT token
 --------------------------------------------------------- */
 
 function getToken(): string {
   try {
-    const tokenKeys = [
+    const possibleKeys = [
       "token",
       "accessToken",
       "authToken",
       "jwt",
     ];
 
-    for (const key of tokenKeys) {
+    for (const key of possibleKeys) {
       const value =
         localStorage.getItem(key);
 
-      if (value?.trim()) {
+      if (
+        value &&
+        value.trim()
+      ) {
         return value.trim();
       }
     }
@@ -95,7 +117,7 @@ function getToken(): string {
 }
 
 /* ---------------------------------------------------------
-   Decode JWT email
+   Decode JWT
 --------------------------------------------------------- */
 
 function getEmailFromJWT(
@@ -124,34 +146,31 @@ function getEmailFromJWT(
       base64 += "=";
     }
 
+    const payload =
+      window.atob(base64);
+
     const decoded =
-      JSON.parse(
-        window.atob(base64)
-      );
+      JSON.parse(payload);
 
     const email =
       decoded?.email ||
       decoded?.user?.email ||
-      decoded?.data?.email;
+      decoded?.data?.email ||
+      decoded?.data?.user?.email;
 
     return normalizeEmail(
       email
     );
-  } catch (error) {
-    console.error(
-      "JWT email decode failed:",
-      error
-    );
-
+  } catch {
     return "";
   }
 }
 
 /* ---------------------------------------------------------
-   Check stored user objects
+   Get email from stored user
 --------------------------------------------------------- */
 
-function getEmailFromStoredUsers(): string {
+function getEmailFromStoredUser(): string {
   try {
     const userKeys = [
       "user",
@@ -162,16 +181,16 @@ function getEmailFromStoredUsers(): string {
     ];
 
     for (const key of userKeys) {
-      const stored =
+      const raw =
         localStorage.getItem(key);
 
-      if (!stored) {
+      if (!raw) {
         continue;
       }
 
       try {
         const parsed =
-          JSON.parse(stored);
+          JSON.parse(raw);
 
         const email =
           parsed?.email ||
@@ -186,7 +205,7 @@ function getEmailFromStoredUsers(): string {
           return normalized;
         }
       } catch {
-        // Continue checking other keys
+        continue;
       }
     }
 
@@ -197,52 +216,37 @@ function getEmailFromStoredUsers(): string {
 }
 
 /* ---------------------------------------------------------
-   Main logged-in email resolver
+   Main email resolver
 --------------------------------------------------------- */
 
 function getLoggedInEmail(): string {
-  try {
-    /*
-     * 1. JWT FIRST
-     *
-     * Your backend JWT is:
-     *
-     * {
-     *   id: user._id,
-     *   email: user.email
-     * }
-     */
+  /*
+   * JWT is preferred because this is what
+   * the backend generates.
+   */
 
-    const token =
-      getToken();
+  const token =
+    getToken();
 
-    const jwtEmail =
-      getEmailFromJWT(token);
+  const jwtEmail =
+    getEmailFromJWT(token);
 
-    if (jwtEmail) {
-      return jwtEmail;
-    }
-
-    /*
-     * 2. Stored user fallback
-     */
-
-    const storedEmail =
-      getEmailFromStoredUsers();
-
-    if (storedEmail) {
-      return storedEmail;
-    }
-
-    return "";
-  } catch (error) {
-    console.error(
-      "Logged-in email check failed:",
-      error
-    );
-
-    return "";
+  if (jwtEmail) {
+    return jwtEmail;
   }
+
+  /*
+   * Fallback to stored user.
+   */
+
+  const storedEmail =
+    getEmailFromStoredUser();
+
+  if (storedEmail) {
+    return storedEmail;
+  }
+
+  return "";
 }
 
 /* ---------------------------------------------------------
@@ -253,13 +257,11 @@ function isAdminUser(): boolean {
   const email =
     getLoggedInEmail();
 
-  const adminEmail =
+  return (
+    email ===
     ADMIN_EMAIL
       .trim()
-      .toLowerCase();
-
-  return (
-    email === adminEmail
+      .toLowerCase()
   );
 }
 
@@ -371,9 +373,9 @@ export default function Blogs() {
     setIsAdmin,
   ] = useState(false);
 
-  /* -------------------------------------------------------
+  /* =======================================================
      ADMIN CHECK
-  ------------------------------------------------------- */
+  ======================================================= */
 
   useEffect(() => {
     updateSEO();
@@ -398,12 +400,14 @@ export default function Blogs() {
           adminEmail;
 
         console.log(
-          "[Apives Admin]",
+          "[Apives] Admin check:",
           {
             loggedInEmail:
               email,
             adminEmail,
             isAdmin: admin,
+            hasToken:
+              !!getToken(),
           }
         );
 
@@ -413,19 +417,13 @@ export default function Blogs() {
     checkAdmin();
 
     /*
-     * If another tab changes auth state,
-     * refresh admin visibility.
+     * Re-check if auth state changes.
      */
 
     window.addEventListener(
       "storage",
       checkAdmin
     );
-
-    /*
-     * Some auth implementations dispatch
-     * a custom auth event after login.
-     */
 
     window.addEventListener(
       "auth-change",
@@ -485,17 +483,62 @@ export default function Blogs() {
       item.type ===
       "article"
     ) {
-      window.location.assign(
+      navigate(
         `/blogs/${item.slug}`
       );
 
       return;
     }
 
-    window.location.assign(
+    navigate(
       `/posts/${item.slug}`
     );
   };
+
+  /* =======================================================
+     OPEN PUBLISH
+  ======================================================= */
+
+  const openPublishPage =
+    () => {
+      /*
+       * Double-check admin before
+       * opening the admin editor.
+       */
+
+      const email =
+        getLoggedInEmail();
+
+      if (
+        email !==
+        ADMIN_EMAIL
+          .trim()
+          .toLowerCase()
+      ) {
+        console.error(
+          "Publish access denied:",
+          {
+            loggedInEmail:
+              email,
+            expected:
+              ADMIN_EMAIL,
+          }
+        );
+
+        return;
+      }
+
+      /*
+       * IMPORTANT:
+       * This matches App.tsx:
+       *
+       * /admin/blogs/publish
+       */
+
+      navigate(
+        PUBLISH_ROUTE
+      );
+    };
 
   /* =======================================================
      RENDER
@@ -507,36 +550,11 @@ export default function Blogs() {
 
       <main className="blog-root">
 
+        {/* =================================================
+            HERO
+        ================================================= */}
+
         <section className="blog-hero">
-
-          {/* =================================================
-              ADMIN PUBLISH BUTTON
-
-              ONLY:
-              beatslevelone@gmail.com
-          ================================================= */}
-
-          {isAdmin && (
-            <button
-              type="button"
-              className="admin-publish-button"
-              onClick={() =>
-                navigate(
-                  "/blogs/publish"
-                )
-              }
-              aria-label="Publish a new blog"
-            >
-              <Plus
-                size={15}
-                strokeWidth={2.2}
-              />
-
-              <span>
-                Publish
-              </span>
-            </button>
-          )}
 
           <img
             src={BLOG_IMAGE}
@@ -595,6 +613,32 @@ export default function Blogs() {
             )}
 
           </div>
+
+          {/* =================================================
+              ADMIN PUBLISH BUTTON
+
+              BELOW SEARCH BOX
+          ================================================= */}
+
+          {isAdmin && (
+            <button
+              type="button"
+              className="admin-publish-button"
+              onClick={
+                openPublishPage
+              }
+              aria-label="Publish a new blog"
+            >
+              <Plus
+                size={15}
+                strokeWidth={2.3}
+              />
+
+              <span>
+                Publish
+              </span>
+            </button>
+          )}
 
         </section>
 
@@ -671,7 +715,9 @@ function BlogStyles() {
       }
 
       ::selection {
-        background: rgba(34,197,94,.22);
+        background:
+          rgba(34,197,94,.22);
+
         color: #fff;
       }
 
@@ -718,8 +764,6 @@ function BlogStyles() {
       ===================================================== */
 
       .blog-hero {
-        position: relative;
-
         max-width: 900px;
 
         margin: 0 auto;
@@ -729,78 +773,6 @@ function BlogStyles() {
           45px;
 
         text-align: center;
-      }
-
-      /* =====================================================
-         ADMIN PUBLISH BUTTON
-      ===================================================== */
-
-      .admin-publish-button {
-        position: absolute;
-
-        top: 30px;
-        right: 24px;
-
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        gap: 6px;
-
-        min-height: 34px;
-
-        padding:
-          0 12px;
-
-        border:
-          1px solid
-          rgba(34,197,94,.28);
-
-        border-radius: 999px;
-
-        background:
-          rgba(34,197,94,.06);
-
-        color: ${GREEN};
-
-        font-family: inherit;
-
-        font-size: 10px;
-
-        font-weight: 750;
-
-        letter-spacing: .04em;
-
-        cursor: pointer;
-
-        transition:
-          background .18s ease,
-          border-color .18s ease,
-          color .18s ease,
-          transform .18s ease,
-          box-shadow .18s ease;
-      }
-
-      .admin-publish-button:hover {
-        background:
-          rgba(34,197,94,.12);
-
-        border-color:
-          rgba(34,197,94,.48);
-
-        color: #fff;
-
-        transform:
-          translateY(-1px);
-
-        box-shadow:
-          0 8px 30px
-          rgba(34,197,94,.08);
-      }
-
-      .admin-publish-button:active {
-        transform:
-          translateY(0);
       }
 
       .blog-hero-image {
@@ -825,7 +797,11 @@ function BlogStyles() {
         color: #737373;
 
         font-size:
-          clamp(16px, 2.2vw, 20px);
+          clamp(
+            16px,
+            2.2vw,
+            20px
+          );
 
         line-height: 1.65;
 
@@ -844,10 +820,18 @@ function BlogStyles() {
         padding:
           0 24px
           34px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
       }
 
       .search-box {
         position: relative;
+
+        width: 100%;
 
         max-width: 440px;
 
@@ -955,6 +939,80 @@ function BlogStyles() {
       }
 
       /* =====================================================
+         ADMIN PUBLISH BUTTON
+         BELOW SEARCH
+      ===================================================== */
+
+      .admin-publish-button {
+        width: 100%;
+
+        max-width: 440px;
+
+        height: 42px;
+
+        margin-top: 10px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 7px;
+
+        border:
+          1px solid
+          rgba(34,197,94,.28);
+
+        border-radius: 999px;
+
+        background:
+          rgba(34,197,94,.055);
+
+        color: ${GREEN};
+
+        font-family: inherit;
+
+        font-size: 10px;
+
+        font-weight: 800;
+
+        letter-spacing: .1em;
+
+        text-transform: uppercase;
+
+        cursor: pointer;
+
+        transition:
+          background .18s ease,
+          border-color .18s ease,
+          color .18s ease,
+          transform .18s ease,
+          box-shadow .18s ease;
+      }
+
+      .admin-publish-button:hover {
+        background:
+          rgba(34,197,94,.11);
+
+        border-color:
+          rgba(34,197,94,.48);
+
+        color: #fff;
+
+        transform:
+          translateY(-1px);
+
+        box-shadow:
+          0 8px 30px
+          rgba(34,197,94,.08);
+      }
+
+      .admin-publish-button:active {
+        transform:
+          translateY(0);
+      }
+
+      /* =====================================================
          ARTICLES
       ===================================================== */
 
@@ -1025,7 +1083,11 @@ function BlogStyles() {
         color: #f5f5f5;
 
         font-size:
-          clamp(19.8px, 3vw, 27.4px);
+          clamp(
+            19.8px,
+            3vw,
+            27.4px
+          );
 
         line-height: 1.25;
 
@@ -1050,7 +1112,11 @@ function BlogStyles() {
         color: #626262;
 
         font-size:
-          clamp(12.1px, 1.7vw, 13.9px);
+          clamp(
+            12.1px,
+            1.7vw,
+            13.9px
+          );
 
         line-height: 1.8;
       }
@@ -1097,18 +1163,6 @@ function BlogStyles() {
             35px;
         }
 
-        .admin-publish-button {
-          top: 18px;
-          right: 20px;
-
-          min-height: 32px;
-
-          padding:
-            0 10px;
-
-          font-size: 9px;
-        }
-
         .blog-hero-image {
           width: 172px;
         }
@@ -1123,6 +1177,20 @@ function BlogStyles() {
           padding:
             0 20px
             28px;
+        }
+
+        .search-box {
+          max-width: 100%;
+        }
+
+        .admin-publish-button {
+          max-width: 100%;
+
+          height: 40px;
+
+          margin-top: 9px;
+
+          font-size: 9px;
         }
 
         .articles-section {
