@@ -215,6 +215,14 @@ export const Footer: React.FC = () => {
                   Terms of Service
                 </Link>
               </li>
+ <li>
+                <Link
+                  to="/cookies"
+                  className="text-[12px] md:text-[13px] text-slate-400 hover:text-mora-300 transition-colors duration-300 tracking-wide"
+                >
+                  Cookies Policy
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
