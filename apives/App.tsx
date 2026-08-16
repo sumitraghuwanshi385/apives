@@ -304,7 +304,7 @@ function App() {
               element={<SponsorshipPage />}
             />
 <Route
-  path="/admin/blogs/publish"
+  path="/blogs/publish"
   element={<PublishBlog />}
 />
 
