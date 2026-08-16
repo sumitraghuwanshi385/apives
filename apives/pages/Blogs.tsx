@@ -1,5 +1,10 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import {
+  Plus,
+  Search,
+  X,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import {
   ARTICLES,
@@ -21,6 +26,9 @@ type BlogItem =
   | BlogPost;
 
 const GREEN = "#22c55e";
+
+const ADMIN_EMAIL =
+  "beatslevelone@gmail.com";
 
 const BLOG_ARTICLES: BlogItem[] = ARTICLES.map(
   (article) => ({
@@ -71,6 +79,73 @@ function updateSEO() {
     `${window.location.origin}/blogs`;
 }
 
+/* =========================================================
+   ADMIN EMAIL CHECK
+========================================================= */
+
+function getLoggedInEmail(): string {
+  try {
+    const storedUser =
+      localStorage.getItem("user");
+
+    if (storedUser) {
+      const user =
+        JSON.parse(storedUser);
+
+      const email =
+        user?.email ||
+        user?.user?.email;
+
+      if (email) {
+        return String(email)
+          .toLowerCase()
+          .trim();
+      }
+    }
+  } catch {
+    // Ignore invalid localStorage user data
+  }
+
+  try {
+    const token =
+      localStorage.getItem("token");
+
+    if (!token) {
+      return "";
+    }
+
+    const parts =
+      token.split(".");
+
+    if (parts.length !== 3) {
+      return "";
+    }
+
+    const payload =
+      JSON.parse(
+        atob(
+          parts[1]
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+        )
+      );
+
+    const email =
+      payload?.email ||
+      payload?.user?.email;
+
+    if (!email) {
+      return "";
+    }
+
+    return String(email)
+      .toLowerCase()
+      .trim();
+  } catch {
+    return "";
+  }
+}
+
 const BlogListItem = memo(
   function BlogListItem({
     item,
@@ -102,10 +177,18 @@ const BlogListItem = memo(
 );
 
 export default function Blogs() {
+  const navigate =
+    useNavigate();
+
   const [
     searchQuery,
     setSearchQuery,
   ] = useState("");
+
+  const [
+    isAdmin,
+    setIsAdmin,
+  ] = useState(false);
 
   useEffect(() => {
     updateSEO();
@@ -114,6 +197,14 @@ export default function Blogs() {
       top: 0,
       behavior: "auto",
     });
+
+    const email =
+      getLoggedInEmail();
+
+    setIsAdmin(
+      email ===
+        ADMIN_EMAIL
+    );
   }, []);
 
   const filteredItems = useMemo(() => {
@@ -164,12 +255,33 @@ export default function Blogs() {
 
         <section className="blog-hero">
 
-          <img
-            src={BLOG_IMAGE}
-            alt="Apives Blog"
-            className="blog-hero-image"
-            loading="eager"
-          />
+          <div className="blog-hero-admin-row">
+
+            <img
+              src={BLOG_IMAGE}
+              alt="Apives Blog"
+              className="blog-hero-image"
+              loading="eager"
+            />
+
+            {isAdmin && (
+              <button
+                type="button"
+                className="publish-blog-button"
+                onClick={() =>
+                  navigate(
+                    "/publish-blog"
+                  )
+                }
+              >
+                <Plus size={15} />
+                <span>
+                  Publish Blog
+                </span>
+              </button>
+            )}
+
+          </div>
 
           <p>
             Practical ideas for
@@ -332,6 +444,18 @@ function BlogStyles() {
         text-align: center;
       }
 
+      .blog-hero-admin-row {
+        position: relative;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        width: 100%;
+      }
+
       .blog-hero-image {
         display: block;
 
@@ -343,6 +467,81 @@ function BlogStyles() {
         object-fit: contain;
 
         border-radius: 12px;
+      }
+
+      .publish-blog-button {
+        position: absolute;
+
+        right: 0;
+
+        top: 50%;
+
+        transform:
+          translateY(-50%);
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 7px;
+
+        min-height: 36px;
+
+        padding:
+          0 13px;
+
+        border:
+          1px solid
+          rgba(34,197,94,.28);
+
+        border-radius: 999px;
+
+        background:
+          rgba(34,197,94,.08);
+
+        color: ${GREEN};
+
+        font: inherit;
+
+        font-size: 10px;
+
+        font-weight: 750;
+
+        letter-spacing: .02em;
+
+        cursor: pointer;
+
+        box-shadow:
+          0 0 22px
+          rgba(34,197,94,.06);
+
+        transition:
+          transform .18s ease,
+          background .18s ease,
+          border-color .18s ease,
+          color .18s ease;
+      }
+
+      .publish-blog-button:hover {
+        transform:
+          translateY(
+            calc(-50% - 2px)
+          );
+
+        background:
+          rgba(34,197,94,.14);
+
+        border-color:
+          rgba(34,197,94,.48);
+
+        color: #fff;
+      }
+
+      .publish-blog-button:active {
+        transform:
+          translateY(-50%)
+          scale(.96);
       }
 
       .blog-hero p {
@@ -602,6 +801,29 @@ function BlogStyles() {
         cursor: pointer;
       }
 
+      @media (max-width: 700px) {
+
+        .publish-blog-button {
+          position: static;
+
+          transform: none;
+
+          margin-left: 12px;
+
+          flex-shrink: 0;
+        }
+
+        .publish-blog-button:hover {
+          transform:
+            translateY(-2px);
+        }
+
+        .blog-hero-admin-row {
+          justify-content: center;
+        }
+
+      }
+
       @media (max-width: 640px) {
 
         .blog-hero {
@@ -612,6 +834,20 @@ function BlogStyles() {
 
         .blog-hero-image {
           width: 172px;
+        }
+
+        .publish-blog-button {
+          min-height: 34px;
+
+          padding:
+            0 10px;
+
+          font-size: 9px;
+        }
+
+        .publish-blog-button svg {
+          width: 14px;
+          height: 14px;
         }
 
         .blog-hero p {
