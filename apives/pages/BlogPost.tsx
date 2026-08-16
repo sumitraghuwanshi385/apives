@@ -22,6 +22,14 @@ import {
 
 import { BackButton } from "../components/BackButton";
 
+/*
+=========================================================
+  APIVES BLOG API
+=========================================================
+*/
+const API_BASE =
+  "https://apives-3xrc.onrender.com";
+
 interface BlogPostProps {
   article?: Article | null;
   slug?: string;
@@ -474,34 +482,325 @@ export default function BlogPost({
     setSharing,
   ] = useState(false);
 
-  const article =
+  /*
+  =======================================================
+    CURRENT SLUG
+  =======================================================
+  */
+
+  const currentSlug =
+    slug || routeSlug || "";
+
+  /*
+  =======================================================
+    FIRST: CHECK EXISTING STATIC ARTICLES
+
+    This keeps all existing Apives articles working
+    exactly as they worked before.
+  =======================================================
+  */
+
+  const staticArticle =
     useMemo(() => {
-      if (suppliedArticle) {
-        return suppliedArticle;
+      if (!currentSlug) {
+        return null;
       }
 
-      const currentSlug =
-        slug || routeSlug;
+      return (
+        ARTICLES.find(
+          (item) =>
+            item.slug === currentSlug
+        ) || null
+      );
+    }, [currentSlug]);
 
-      if (currentSlug) {
-        return (
-          ARTICLES.find(
-            (item) =>
-              item.slug === currentSlug
-          ) || null
-        );
-      }
+  /*
+  =======================================================
+    BACKEND ARTICLE STATE
+  =======================================================
+  */
 
-      return null;
-    }, [
-      suppliedArticle,
-      slug,
-      routeSlug,
-    ]);
+  const [
+    fetchedArticle,
+    setFetchedArticle,
+  ] = useState<Article | null>(
+    null
+  );
+
+  const [
+    articleLoading,
+    setArticleLoading,
+  ] = useState(
+    !suppliedArticle &&
+      !staticArticle &&
+      !!currentSlug
+  );
+
+  /*
+  =======================================================
+    FETCH PUBLISHED ARTICLE
+
+    Static article -> no API request.
+
+    New/published article -> fetch from backend
+    using the slug.
+  =======================================================
+  */
 
   useEffect(() => {
-    updateArticleSEO(article);
-    updateArticleSchema(article);
+    let cancelled = false;
+
+    const loadArticle =
+      async () => {
+        /*
+        Supplied article already exists.
+        */
+        if (suppliedArticle) {
+          if (!cancelled) {
+            setFetchedArticle(
+              null
+            );
+
+            setArticleLoading(
+              false
+            );
+          }
+
+          return;
+        }
+
+        /*
+        Existing local/static article.
+        */
+        if (staticArticle) {
+          if (!cancelled) {
+            setFetchedArticle(
+              null
+            );
+
+            setArticleLoading(
+              false
+            );
+          }
+
+          return;
+        }
+
+        /*
+        No slug.
+        */
+        if (!currentSlug) {
+          if (!cancelled) {
+            setFetchedArticle(
+              null
+            );
+
+            setArticleLoading(
+              false
+            );
+          }
+
+          return;
+        }
+
+        if (!cancelled) {
+          setArticleLoading(
+            true
+          );
+
+          setFetchedArticle(
+            null
+          );
+        }
+
+        try {
+          const response =
+            await fetch(
+              `${API_BASE}/api/blogs/${encodeURIComponent(
+                currentSlug
+              )}`,
+              {
+                method: "GET",
+
+                headers: {
+                  Accept:
+                    "application/json",
+                },
+
+                cache: "no-store",
+              }
+            );
+
+          if (!response.ok) {
+            throw new Error(
+              `Blog request failed: ${response.status}`
+            );
+          }
+
+          const data =
+            await response.json();
+
+          /*
+          Backend may return:
+
+          {
+            blog: {...}
+          }
+
+          OR:
+
+          {
+            data: {...}
+          }
+
+          OR directly:
+
+          {...}
+          */
+
+          const rawArticle =
+            data?.blog ||
+            data?.data ||
+            data;
+
+          if (
+            !rawArticle ||
+            typeof rawArticle !==
+              "object"
+          ) {
+            throw new Error(
+              "Invalid blog response"
+            );
+          }
+
+          /*
+          Normalize backend article into the same
+          Article shape used by the existing UI.
+
+          We spread rawArticle first so any additional
+          backend fields remain available.
+          */
+
+          const normalizedArticle =
+            {
+              ...rawArticle,
+
+              id:
+                rawArticle.id ||
+                rawArticle._id ||
+                currentSlug,
+
+              slug:
+                rawArticle.slug ||
+                currentSlug,
+
+              title:
+                rawArticle.title ||
+                "",
+
+              excerpt:
+                rawArticle.excerpt ||
+                "",
+
+              date:
+                rawArticle.date ||
+                rawArticle.publishedAt ||
+                "",
+
+              keywords:
+                Array.isArray(
+                  rawArticle.keywords
+                )
+                  ? rawArticle.keywords
+                  : Array.isArray(
+                      rawArticle.tags
+                    )
+                  ? rawArticle.tags
+                  : [],
+
+              content:
+                typeof rawArticle.content ===
+                "string"
+                  ? rawArticle.content
+                  : "",
+
+              faq:
+                Array.isArray(
+                  rawArticle.faq
+                )
+                  ? rawArticle.faq
+                  : [],
+            } as Article;
+
+          if (!cancelled) {
+            setFetchedArticle(
+              normalizedArticle
+            );
+          }
+        } catch (error) {
+          console.error(
+            "[Apives Blog] Failed to load article:",
+            error
+          );
+
+          if (!cancelled) {
+            setFetchedArticle(
+              null
+            );
+          }
+        } finally {
+          if (!cancelled) {
+            setArticleLoading(
+              false
+            );
+          }
+        }
+      };
+
+    loadArticle();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    currentSlug,
+    suppliedArticle,
+    staticArticle,
+  ]);
+
+  /*
+  =======================================================
+    FINAL ARTICLE
+
+    Priority:
+
+    suppliedArticle
+    ↓
+    staticArticle
+    ↓
+    fetchedArticle
+  =======================================================
+  */
+
+  const article =
+    suppliedArticle ||
+    staticArticle ||
+    fetchedArticle;
+
+  /*
+  =======================================================
+    SEO
+  =======================================================
+  */
+
+  useEffect(() => {
+    updateArticleSEO(
+      article
+    );
+
+    updateArticleSchema(
+      article
+    );
 
     window.scrollTo({
       top: 0,
@@ -509,9 +808,17 @@ export default function BlogPost({
     });
 
     return () => {
-      updateArticleSchema(null);
+      updateArticleSchema(
+        null
+      );
     };
   }, [article]);
+
+  /*
+  =======================================================
+    SHARE
+  =======================================================
+  */
 
   const shareUrl =
     article
@@ -640,6 +947,12 @@ export default function BlogPost({
       }
     };
 
+  /*
+  =======================================================
+    RELATED ARTICLES
+  =======================================================
+  */
+
   const relatedArticles =
     useMemo(() => {
       if (!article) {
@@ -652,7 +965,18 @@ export default function BlogPost({
       ).slice(0, 3);
     }, [article]);
 
-  if (!article) {
+  /*
+  =======================================================
+    NOT FOUND
+
+    Existing UI kept exactly the same.
+  =======================================================
+  */
+
+  if (
+    !articleLoading &&
+    !article
+  ) {
     return (
       <>
         <BlogPostStyles />
@@ -677,6 +1001,19 @@ export default function BlogPost({
         </main>
       </>
     );
+  }
+
+  /*
+  =======================================================
+    KEEP SAME PAGE STRUCTURE
+
+    During API loading we don't show the old
+    "Article not found" screen prematurely.
+  =======================================================
+  */
+
+  if (!article) {
+    return null;
   }
 
   return (
