@@ -8,6 +8,7 @@ const compareAI = require("./routes/compare");
 const geminiAI = require("./routes/gemini");
 
 
+
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const app = express(); // ✅ ALWAYS create app first
@@ -144,6 +145,7 @@ const apiRoutes = require("./routes/apis");
 const sponsorRoutes = require("./routes/sponsor");
 const usecaseRoutes = require("./routes/usecase");
 const runnerRoutes = require("./routes/runner");
+const blogRoutes = require("./routes/blogRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/apis", apiRoutes);
@@ -153,6 +155,7 @@ app.use("/api/runner", runnerRoutes);
 app.use("/api/ask-ai", askAiRoute);
 app.use("/api/ai/compare", compareAI);
 app.use("/api/gemini", geminiAI);
+app.use("/api/blogs", blogRoutes);
 
 // ================= DATABASE =================
 const DB_URI = process.env.MONGO_URI;
