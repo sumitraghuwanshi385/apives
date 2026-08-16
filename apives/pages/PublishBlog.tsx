@@ -379,6 +379,39 @@ export default function PublishBlog() {
     };
   }, [navigate]);
 
+  /* =====================================================
+     PREVIEW GLOBAL HEADER CONTROL
+     
+     Only hides the main Apives header while the
+     publish preview is active.
+
+     The preview's own .preview-topbar remains visible.
+  ===================================================== */
+
+  const [preview, setPreview] =
+    useState(false);
+
+  useEffect(() => {
+    const body =
+      document.body;
+
+    if (preview) {
+      body.classList.add(
+        "publish-preview-active"
+      );
+    } else {
+      body.classList.remove(
+        "publish-preview-active"
+      );
+    }
+
+    return () => {
+      body.classList.remove(
+        "publish-preview-active"
+      );
+    };
+  }, [preview]);
+
   /* ================= BASIC ================= */
 
   const [category, setCategory] =
@@ -431,9 +464,6 @@ export default function PublishBlog() {
   ] = useState("");
 
   /* ================= UI ================= */
-
-  const [preview, setPreview] =
-    useState(false);
 
   const [
     publishing,
@@ -2131,6 +2161,24 @@ function PublishStyles() {
       ::selection {
         background: rgba(34,197,94,.22);
         color: #fff;
+      }
+
+      /* =====================================================
+         PREVIEW MODE
+
+         Hide the main Apives site header while the
+         PublishBlog preview is active.
+
+         The preview's own topbar is explicitly preserved.
+      ===================================================== */
+
+      body.publish-preview-active > header,
+      body.publish-preview-active header:not(.preview-topbar) {
+        display: none !important;
+      }
+
+      .publish-preview-active .preview-topbar {
+        display: flex !important;
       }
 
       .access-loading {
