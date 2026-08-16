@@ -1,3 +1,4 @@
+
 import React, {
   useEffect,
   useMemo,
@@ -779,7 +780,6 @@ export default function BlogPost({
     setArticleLoading,
   ] = useState(
     !suppliedArticle &&
-      !staticArticle &&
       !!currentSlug
   );
 
@@ -799,6 +799,14 @@ export default function BlogPost({
     actual endpoint becomes:
 
     /api/blogs/slug/:slug
+
+    IMPORTANT:
+
+    Backend is ALWAYS checked first.
+
+    This ensures that if a blog exists both in
+    ARTICLES and MongoDB, the latest MongoDB
+    version is displayed on the details page.
   =======================================================
   */
 
@@ -808,8 +816,11 @@ export default function BlogPost({
     const loadArticle =
       async () => {
         /*
-        Supplied article already exists.
+        ===================================================
+          SUPPLIED ARTICLE
+        ===================================================
         */
+
         if (suppliedArticle) {
           if (!cancelled) {
             setFetchedArticle(
@@ -825,25 +836,11 @@ export default function BlogPost({
         }
 
         /*
-        Existing local/static article.
+        ===================================================
+          NO SLUG
+        ===================================================
         */
-        if (staticArticle) {
-          if (!cancelled) {
-            setFetchedArticle(
-              null
-            );
 
-            setArticleLoading(
-              false
-            );
-          }
-
-          return;
-        }
-
-        /*
-        No slug.
-        */
         if (!currentSlug) {
           if (!cancelled) {
             setFetchedArticle(
@@ -858,6 +855,12 @@ export default function BlogPost({
           return;
         }
 
+        /*
+        ===================================================
+          ALWAYS TRY BACKEND FIRST
+        ===================================================
+        */
+
         if (!cancelled) {
           setArticleLoading(
             true
@@ -870,9 +873,7 @@ export default function BlogPost({
 
         try {
           /*
-          IMPORTANT:
-
-          Correct backend route is:
+          Correct backend route:
 
           /api/blogs/slug/:slug
 
@@ -887,19 +888,28 @@ export default function BlogPost({
             )}`;
 
           console.log(
-            "[Apives Blog] Loading:",
+            "[Apives Blog] Loading latest article:",
             endpoint
           );
 
+          /*
+          Cache-busting query parameter makes sure
+          a recently edited blog does not keep showing
+          an old browser/CDN response.
+          */
+
           const response =
             await fetch(
-              endpoint,
+              `${endpoint}?_=${Date.now()}`,
               {
                 method: "GET",
 
                 headers: {
                   Accept:
                     "application/json",
+
+                  "Cache-Control":
+                    "no-cache",
                 },
 
                 cache: "no-store",
@@ -907,98 +917,135 @@ export default function BlogPost({
             );
 
           /*
-          404 means the backend could not
-          find this published blog.
+          =================================================
+            BACKEND ARTICLE FOUND
+          =================================================
           */
 
-          if (!response.ok) {
-            let errorMessage =
-              `Blog request failed: ${response.status}`;
+          if (response.ok) {
+            const data =
+              await response.json();
 
-            try {
-              const errorData =
-                await response.json();
+            /*
+            Backend currently returns:
 
-              if (
-                errorData?.message
-              ) {
-                errorMessage =
-                  errorData.message;
-              }
-            } catch {
-              // Ignore invalid error response
+            {
+              blog: {...}
             }
 
-            throw new Error(
-              errorMessage
-            );
-          }
+            Also supports:
 
-          const data =
-            await response.json();
+            {
+              data: {...}
+            }
+
+            OR directly:
+
+            {...}
+            */
+
+            const rawArticle =
+              data?.blog ||
+              data?.data ||
+              data;
+
+            if (
+              rawArticle &&
+              typeof rawArticle ===
+                "object"
+            ) {
+              const normalizedArticle =
+                normalizeBackendArticle(
+                  rawArticle as BackendBlog,
+                  currentSlug
+                );
+
+              if (!cancelled) {
+                console.log(
+                  "[Apives Blog] Using latest MongoDB article:",
+                  {
+                    slug:
+                      normalizedArticle.slug,
+
+                    title:
+                      normalizedArticle.title,
+
+                    updatedAt:
+                      (
+                        rawArticle as BackendBlog
+                      ).updatedAt,
+                  }
+                );
+
+                setFetchedArticle(
+                  normalizedArticle
+                );
+
+                setArticleLoading(
+                  false
+                );
+              }
+
+              return;
+            }
+          }
 
           /*
-          Backend currently returns:
+          =================================================
+            BACKEND ARTICLE NOT FOUND
 
-          {
-            blog: {...}
-          }
-
-          But this also safely supports:
-
-          {
-            data: {...}
-          }
-
-          OR directly:
-
-          {...}
+            Fall back to existing static ARTICLES.
+          =================================================
           */
-
-          const rawArticle =
-            data?.blog ||
-            data?.data ||
-            data;
-
-          if (
-            !rawArticle ||
-            typeof rawArticle !==
-              "object"
-          ) {
-            throw new Error(
-              "Invalid blog response"
-            );
-          }
-
-          /*
-          Normalize MongoDB document
-          into the existing Article shape.
-          */
-
-          const normalizedArticle =
-            normalizeBackendArticle(
-              rawArticle as BackendBlog,
-              currentSlug
-            );
 
           if (!cancelled) {
+            if (staticArticle) {
+              console.log(
+                "[Apives Blog] MongoDB article not found. Using static article:",
+                currentSlug
+              );
+            } else {
+              console.log(
+                "[Apives Blog] Article not found:",
+                currentSlug
+              );
+            }
+
             setFetchedArticle(
-              normalizedArticle
+              null
+            );
+
+            setArticleLoading(
+              false
             );
           }
         } catch (error) {
+          /*
+          =================================================
+            API ERROR
+
+            Fall back to static article without changing
+            the existing UI or behavior.
+          =================================================
+          */
+
           console.error(
-            "[Apives Blog] Failed to load article:",
+            "[Apives Blog] Failed to load MongoDB article:",
             error
           );
 
           if (!cancelled) {
+            if (staticArticle) {
+              console.log(
+                "[Apives Blog] API unavailable. Falling back to static article:",
+                currentSlug
+              );
+            }
+
             setFetchedArticle(
               null
             );
-          }
-        } finally {
-          if (!cancelled) {
+
             setArticleLoading(
               false
             );
@@ -1025,16 +1072,16 @@ export default function BlogPost({
 
     suppliedArticle
     ↓
-    staticArticle
+    fetchedArticle (MongoDB / API)
     ↓
-    fetchedArticle
+    staticArticle (fallback)
   =======================================================
   */
 
   const article =
     suppliedArticle ||
-    staticArticle ||
-    fetchedArticle;
+    fetchedArticle ||
+    staticArticle;
 
   /*
   =======================================================
