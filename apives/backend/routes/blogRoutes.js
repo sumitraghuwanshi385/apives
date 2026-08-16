@@ -481,6 +481,13 @@ router.get(
 // =====================================================
 // GET SINGLE BLOG FOR ADMIN
 // ADMIN ONLY
+//
+// Existing admin endpoint:
+//
+// GET /api/blogs/admin/:id
+//
+// Kept intact so any existing frontend using it
+// continues to work.
 // =====================================================
 
 router.get(
@@ -510,7 +517,7 @@ router.get(
       const blog =
         await Blog.findById(
           id
-        );
+        ).lean();
 
 
       if (!blog) {
@@ -521,7 +528,11 @@ router.get(
       }
 
 
-      return res.json(blog);
+      return res.json({
+        success: true,
+
+        blog,
+      });
 
     } catch (err) {
 
@@ -541,8 +552,105 @@ router.get(
 
 
 // =====================================================
+// GET SINGLE BLOG BY ID
+// ADMIN ONLY
+//
+// IMPORTANT:
+//
+// PublishBlog.tsx currently requests:
+//
+// GET /api/blogs/:id
+//
+// This route is the missing piece required for
+// /admin/blogs/edit/:id.
+//
+// It is intentionally placed AFTER:
+//   /
+//   /slug/:slug
+//   /admin/all
+//   /admin/:id
+//
+// so those routes continue to work correctly.
+// =====================================================
+
+router.get(
+  "/:id",
+  verify,
+  blogAdmin,
+  async (req, res) => {
+    try {
+
+      const {
+        id,
+      } = req.params;
+
+
+      // =================================================
+      // VALIDATE MONGODB OBJECT ID
+      // =================================================
+
+      if (
+        !mongoose.Types.ObjectId.isValid(
+          id
+        )
+      ) {
+        return res.status(400).json({
+          message:
+            "Invalid blog id",
+        });
+      }
+
+
+      // =================================================
+      // FIND BLOG
+      // =================================================
+
+      const blog =
+        await Blog.findById(
+          id
+        ).lean();
+
+
+      if (!blog) {
+        return res.status(404).json({
+          message:
+            "Blog not found",
+        });
+      }
+
+
+      // =================================================
+      // RESPONSE
+      // =================================================
+
+      return res.json({
+        success: true,
+
+        blog,
+      });
+
+    } catch (err) {
+
+      console.error(
+        "❌ GET BLOG BY ID Error:",
+        err
+      );
+
+
+      return res.status(500).json({
+        message:
+          "Failed to fetch blog",
+      });
+    }
+  }
+);
+
+
+// =====================================================
 // UPDATE BLOG
 // ADMIN ONLY
+//
+// PUT /api/blogs/:id
 // =====================================================
 
 router.put(
@@ -642,7 +750,7 @@ router.put(
 
       // =================================================
       // BASIC FIELDS
-      // =================================================
+      // =====================================================
 
       if (
         req.body.category !==
@@ -702,16 +810,36 @@ router.put(
       }
 
 
+      // =================================================
+      // DATE
+      // =================================================
+
       if (
         req.body.date !==
         undefined
       ) {
-        blog.date =
+        const newDate =
           cleanString(
             req.body.date
           );
+
+
+        if (!newDate) {
+          return res.status(400).json({
+            message:
+              "Blog date cannot be empty",
+          });
+        }
+
+
+        blog.date =
+          newDate;
       }
 
+
+      // =================================================
+      // CONTENT
+      // =================================================
 
       if (
         req.body.content !==
@@ -815,8 +943,13 @@ router.put(
       // SAVE
       // =================================================
 
-      await blog.save();
+      const updatedBlog =
+        await blog.save();
 
+
+      // =================================================
+      // RESPONSE
+      // =================================================
 
       return res.json({
         success: true,
@@ -824,7 +957,8 @@ router.put(
         message:
           "Blog updated successfully",
 
-        blog,
+        blog:
+          updatedBlog,
       });
 
     } catch (err) {
@@ -834,6 +968,10 @@ router.put(
         err
       );
 
+
+      // =================================================
+      // DUPLICATE SLUG SAFETY
+      // =================================================
 
       if (err.code === 11000) {
         return res.status(409).json({
@@ -856,6 +994,8 @@ router.put(
 // =====================================================
 // DELETE BLOG
 // ADMIN ONLY
+//
+// Existing delete functionality preserved.
 // =====================================================
 
 router.delete(
@@ -912,6 +1052,10 @@ router.delete(
         id
       );
 
+
+      // =================================================
+      // RESPONSE
+      // =================================================
 
       return res.json({
         success: true,
