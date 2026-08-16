@@ -1,4 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
 import {
   ArrowDown,
   ArrowLeft,
@@ -6,7 +11,6 @@ import {
   Bold,
   Check,
   Code2,
-  ExternalLink,
   Eye,
   Heading2,
   Link as LinkIcon,
@@ -15,9 +19,16 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 
 const GREEN = "#22c55e";
+
+const API_BASE =
+  "https://apives-3xrc.onrender.com";
+
+const ADMIN_EMAIL =
+  "beatslevelone@gmail.com";
 
 type ContentBlockType =
   | "paragraph"
@@ -58,48 +69,152 @@ const createFAQ = (): FAQItem => ({
   answer: "",
 });
 
+/* =========================================================
+   JWT HELPERS
+========================================================= */
+
+const getToken = () => {
+  return localStorage.getItem("token");
+};
+
+const getUserEmailFromToken = (
+  token: string | null
+) => {
+  if (!token) return "";
+
+  try {
+    const parts = token.split(".");
+
+    if (parts.length !== 3) {
+      return "";
+    }
+
+    const payload = parts[1];
+
+    const normalized =
+      payload
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    const padded =
+      normalized +
+      "=".repeat(
+        (4 - (normalized.length % 4)) % 4
+      );
+
+    const decoded =
+      JSON.parse(
+        window.atob(padded)
+      );
+
+    return (
+      decoded?.email ||
+      decoded?.user?.email ||
+      ""
+    )
+      .toString()
+      .toLowerCase()
+      .trim();
+  } catch {
+    return "";
+  }
+};
+
+/* =========================================================
+   COMPONENT
+========================================================= */
+
 export default function PublishBlog() {
   const navigate = useNavigate();
 
+  /* ================= ADMIN ACCESS ================= */
+
+  const token = getToken();
+
+  const currentEmail =
+    getUserEmailFromToken(token);
+
+  const isAdmin =
+    currentEmail ===
+    ADMIN_EMAIL.toLowerCase();
+
+  const [checkingAccess, setCheckingAccess] =
+    useState(true);
+
+  useEffect(() => {
+    const currentToken =
+      getToken();
+
+    const email =
+      getUserEmailFromToken(
+        currentToken
+      );
+
+    if (
+      !currentToken ||
+      email !==
+        ADMIN_EMAIL.toLowerCase()
+    ) {
+      navigate("/access", {
+        replace: true,
+      });
+
+      return;
+    }
+
+    setCheckingAccess(false);
+  }, [navigate]);
+
   /* ================= BASIC ================= */
 
-  const [category, setCategory] = useState("");
+  const [category, setCategory] =
+    useState("");
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] =
+    useState("");
 
-  const [excerpt, setExcerpt] = useState("");
+  const [excerpt, setExcerpt] =
+    useState("");
 
-  const [slug, setSlug] = useState("");
+  const [slug, setSlug] =
+    useState("");
 
-  const [date, setDate] = useState(
-    new Date().toISOString().slice(0, 10)
-  );
+  const [date, setDate] =
+    useState(
+      new Date()
+        .toISOString()
+        .slice(0, 10)
+    );
 
   const [authorX, setAuthorX] =
-    useState("@priiincegupta");
+    useState(
+      "@priiincegupta"
+    );
 
   const [keywords, setKeywords] =
     useState("");
 
   /* ================= CONTENT ================= */
 
-  const [content, setContent] = useState<
-    ContentBlock[]
-  >([createBlock("paragraph")]);
+  const [content, setContent] =
+    useState<ContentBlock[]>([
+      createBlock("paragraph"),
+    ]);
 
   /* ================= FAQ ================= */
 
-  const [faq, setFaq] = useState<FAQItem[]>(
-    []
-  );
+  const [faq, setFaq] =
+    useState<FAQItem[]>([]);
 
   /* ================= SEO ================= */
 
   const [seoTitle, setSeoTitle] =
     useState("");
 
-  const [seoDescription, setSeoDescription] =
-    useState("");
+  const [
+    seoDescription,
+    setSeoDescription,
+  ] = useState("");
 
   /* ================= UI ================= */
 
@@ -115,7 +230,9 @@ export default function PublishBlog() {
   const [error, setError] =
     useState("");
 
-  /* ================= AUTO SLUG ================= */
+  /* =====================================================
+     AUTO SLUG
+  ===================================================== */
 
   const generateSlug = (
     value: string
@@ -127,18 +244,27 @@ export default function PublishBlog() {
         /[^a-z0-9\s-]/g,
         ""
       )
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-");
+      .replace(
+        /\s+/g,
+        "-"
+      )
+      .replace(
+        /-+/g,
+        "-"
+      );
   };
 
   const handleTitleChange = (
     value: string
   ) => {
+    const oldGeneratedSlug =
+      generateSlug(title);
+
     setTitle(value);
 
     if (
       !slug ||
-      slug === generateSlug(title)
+      slug === oldGeneratedSlug
     ) {
       setSlug(
         generateSlug(value)
@@ -150,15 +276,17 @@ export default function PublishBlog() {
     }
   };
 
-  /* ================= CONTENT ================= */
+  /* =====================================================
+     CONTENT
+  ===================================================== */
 
   const updateBlock = (
     id: string,
     field: "text" | "url",
     value: string
   ) => {
-    setContent(prev =>
-      prev.map(block =>
+    setContent((prev) =>
+      prev.map((block) =>
         block.id === id
           ? {
               ...block,
@@ -172,7 +300,7 @@ export default function PublishBlog() {
   const addBlock = (
     type: ContentBlockType
   ) => {
-    setContent(prev => [
+    setContent((prev) => [
       ...prev,
       createBlock(type),
     ]);
@@ -181,13 +309,18 @@ export default function PublishBlog() {
   const removeBlock = (
     id: string
   ) => {
-    setContent(prev => {
+    setContent((prev) => {
       if (prev.length === 1) {
-        return [createBlock("paragraph")];
+        return [
+          createBlock(
+            "paragraph"
+          ),
+        ];
       }
 
       return prev.filter(
-        block => block.id !== id
+        (block) =>
+          block.id !== id
       );
     });
   };
@@ -196,7 +329,7 @@ export default function PublishBlog() {
     index: number,
     direction: -1 | 1
   ) => {
-    setContent(prev => {
+    setContent((prev) => {
       const nextIndex =
         index + direction;
 
@@ -221,10 +354,12 @@ export default function PublishBlog() {
     });
   };
 
-  /* ================= FAQ ================= */
+  /* =====================================================
+     FAQ
+  ===================================================== */
 
   const addFAQ = () => {
-    setFaq(prev => [
+    setFaq((prev) => [
       ...prev,
       createFAQ(),
     ]);
@@ -232,11 +367,13 @@ export default function PublishBlog() {
 
   const updateFAQ = (
     id: string,
-    field: "question" | "answer",
+    field:
+      | "question"
+      | "answer",
     value: string
   ) => {
-    setFaq(prev =>
-      prev.map(item =>
+    setFaq((prev) =>
+      prev.map((item) =>
         item.id === id
           ? {
               ...item,
@@ -250,46 +387,74 @@ export default function PublishBlog() {
   const removeFAQ = (
     id: string
   ) => {
-    setFaq(prev =>
+    setFaq((prev) =>
       prev.filter(
-        item => item.id !== id
+        (item) =>
+          item.id !== id
       )
     );
   };
 
-  /* ================= FINAL CONTENT ================= */
+  /* =====================================================
+     FINAL CONTENT
+  ===================================================== */
 
-  const finalContent = useMemo(() => {
-    return content
-      .map(block => {
-        if (block.type === "heading") {
-          return `## ${block.text}`;
-        }
+  const finalContent =
+    useMemo(() => {
+      return content
+        .filter(
+          (block) =>
+            block.text.trim()
+        )
+        .map((block) => {
+          if (
+            block.type ===
+            "heading"
+          ) {
+            return `## ${block.text.trim()}`;
+          }
 
-        if (block.type === "code") {
-          return block.text;
-        }
-
-        if (block.type === "bold") {
-          return `**${block.text}**`;
-        }
-
-        if (block.type === "link") {
-          if (!block.url) {
+          if (
+            block.type ===
+            "code"
+          ) {
             return block.text;
           }
 
-          return `[${block.text}](${block.url})`;
-        }
+          if (
+            block.type ===
+            "bold"
+          ) {
+            return `**${block.text.trim()}**`;
+          }
 
-        return block.text;
-      })
-      .join("\n\n");
-  }, [content]);
+          if (
+            block.type ===
+            "link"
+          ) {
+            if (
+              !block.url?.trim()
+            ) {
+              return block.text.trim();
+            }
 
-  /* ================= VALIDATION ================= */
+            return `[${block.text.trim()}](${block.url.trim()})`;
+          }
+
+          return block.text.trim();
+        })
+        .join("\n\n");
+    }, [content]);
+
+  /* =====================================================
+     VALIDATION
+  ===================================================== */
 
   const validate = () => {
+    if (!isAdmin) {
+      return "You are not authorized to publish blogs.";
+    }
+
     if (!category.trim()) {
       return "Please enter the green eyebrow text.";
     }
@@ -310,161 +475,250 @@ export default function PublishBlog() {
       return "Please enter the author's X handle.";
     }
 
-    const hasContent = content.some(
-      block => block.text.trim()
-    );
-
-    if (!hasContent) {
+    if (!finalContent.trim()) {
       return "Please add some article content.";
     }
 
     return "";
   };
 
-  /* ================= PUBLISH ================= */
+  /* =====================================================
+     PUBLISH
+  ===================================================== */
 
-  const handlePublish = async () => {
-    setError("");
-    setPublished(false);
+  const handlePublish =
+    async () => {
+      setError("");
+      setPublished(false);
 
-    const validationError =
-      validate();
+      const validationError =
+        validate();
 
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    setPublishing(true);
-
-    try {
-      const cleanedKeywords =
-        keywords
-          .split(",")
-          .map(item =>
-            item.trim()
-          )
-          .filter(Boolean);
-
-      const cleanedFAQ =
-        faq
-          .filter(
-            item =>
-              item.question.trim() &&
-              item.answer.trim()
-          )
-          .map(item => ({
-            question:
-              item.question.trim(),
-            answer:
-              item.answer.trim(),
-          }));
-
-      const payload = {
-        category:
-          category.trim(),
-
-        title:
-          title.trim(),
-
-        excerpt:
-          excerpt.trim(),
-
-        slug:
-          slug.trim(),
-
-        date,
-
-        author: {
-          x:
-            authorX.trim(),
-        },
-
-        keywords:
-          cleanedKeywords,
-
-        content:
-          finalContent,
-
-        faq:
-          cleanedFAQ,
-
-        seo: {
-          title:
-            seoTitle.trim() ||
-            title.trim(),
-
-          description:
-            seoDescription.trim() ||
-            excerpt.trim(),
-        },
-
-        status: "published",
-      };
-
-      const token =
-        localStorage.getItem(
-          "token"
+      if (validationError) {
+        setError(
+          validationError
         );
-
-      const response =
-        await fetch(
-          "https://apives-3xrc.onrender.com/api/blogs",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-
-              ...(token
-                ? {
-                    Authorization:
-                      `Bearer ${token}`,
-                  }
-                : {}),
-            },
-
-            body:
-              JSON.stringify(
-                payload
-              ),
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message ||
-            "Failed to publish blog."
-        );
+        return;
       }
 
-      setPublished(true);
+      const authToken =
+        getToken();
 
-      window.setTimeout(() => {
-        navigate(
-          `/blogs/${data.slug || slug}`
+      if (!authToken) {
+        navigate("/access", {
+          replace: true,
+        });
+
+        return;
+      }
+
+      const email =
+        getUserEmailFromToken(
+          authToken
         );
-      }, 900);
-    } catch (err: any) {
-      console.error(
-        "Publish blog error:",
-        err
-      );
 
-      setError(
-        err?.message ||
-          "Something went wrong while publishing."
-      );
-    } finally {
-      setPublishing(false);
-    }
-  };
+      if (
+        email !==
+        ADMIN_EMAIL.toLowerCase()
+      ) {
+        setError(
+          "Only the authorized admin can publish blogs."
+        );
 
-  /* ================= PREVIEW ================= */
+        return;
+      }
+
+      setPublishing(true);
+
+      try {
+        const cleanedKeywords =
+          keywords
+            .split(",")
+            .map((item) =>
+              item.trim()
+            )
+            .filter(Boolean);
+
+        const cleanedFAQ =
+          faq
+            .filter(
+              (item) =>
+                item.question.trim() &&
+                item.answer.trim()
+            )
+            .map((item) => ({
+              question:
+                item.question.trim(),
+
+              answer:
+                item.answer.trim(),
+            }));
+
+        const cleanAuthorX =
+          authorX
+            .trim()
+            .replace(
+              /^@+/,
+              ""
+            );
+
+        const payload = {
+          category:
+            category.trim(),
+
+          title:
+            title.trim(),
+
+          excerpt:
+            excerpt.trim(),
+
+          slug:
+            generateSlug(
+              slug.trim()
+            ),
+
+          date,
+
+          author: {
+            x: `@${cleanAuthorX}`,
+          },
+
+          keywords:
+            cleanedKeywords,
+
+          content:
+            finalContent,
+
+          faq:
+            cleanedFAQ,
+
+          seo: {
+            title:
+              seoTitle.trim() ||
+              title.trim(),
+
+            description:
+              seoDescription.trim() ||
+              excerpt.trim(),
+          },
+
+          published: true,
+        };
+
+        const response =
+          await fetch(
+            `${API_BASE}/api/blogs`,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                Authorization:
+                  `Bearer ${authToken}`,
+              },
+
+              body:
+                JSON.stringify(
+                  payload
+                ),
+            }
+          );
+
+        let data: any = {};
+
+        try {
+          data =
+            await response.json();
+        } catch {
+          data = {};
+        }
+
+        if (
+          response.status === 401
+        ) {
+          localStorage.removeItem(
+            "token"
+          );
+
+          navigate("/access", {
+            replace: true,
+          });
+
+          return;
+        }
+
+        if (
+          response.status === 403
+        ) {
+          throw new Error(
+            "You are not authorized to publish blogs."
+          );
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message ||
+              "Failed to publish blog."
+          );
+        }
+
+        const publishedSlug =
+          data?.blog?.slug ||
+          data?.slug ||
+          payload.slug;
+
+        setPublished(true);
+
+        window.setTimeout(() => {
+          navigate(
+            `/blogs/${publishedSlug}`
+          );
+        }, 900);
+      } catch (err: any) {
+        console.error(
+          "Publish blog error:",
+          err
+        );
+
+        setError(
+          err?.message ||
+            "Something went wrong while publishing."
+        );
+      } finally {
+        setPublishing(false);
+      }
+    };
+
+  /* =====================================================
+     ACCESS CHECK
+  ===================================================== */
+
+  if (
+    checkingAccess ||
+    !isAdmin
+  ) {
+    return (
+      <>
+        <PublishStyles />
+
+        <main className="access-loading">
+          <div className="access-loading-box">
+            <div className="access-loader" />
+
+            <span>
+              Checking access...
+            </span>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  /* =====================================================
+     PREVIEW
+  ===================================================== */
 
   if (preview) {
     return (
@@ -472,7 +726,6 @@ export default function PublishBlog() {
         <PublishStyles />
 
         <main className="publish-preview-root">
-
           <div className="preview-topbar">
             <button
               type="button"
@@ -484,6 +737,7 @@ export default function PublishBlog() {
               <ArrowLeft
                 size={15}
               />
+
               Back to editor
             </button>
 
@@ -496,7 +750,9 @@ export default function PublishBlog() {
               onClick={
                 handlePublish
               }
-              disabled={publishing}
+              disabled={
+                publishing
+              }
               className="publish-button small"
             >
               {publishing ? (
@@ -506,6 +762,7 @@ export default function PublishBlog() {
                   <Save
                     size={14}
                   />
+
                   Publish
                 </>
               )}
@@ -513,7 +770,6 @@ export default function PublishBlog() {
           </div>
 
           <article className="preview-article">
-
             <div className="preview-category">
               {category ||
                 "BLOG CATEGORY"}
@@ -534,21 +790,18 @@ export default function PublishBlog() {
                 {date}
               </span>
 
-              <span>•</span>
+              <span>
+                •
+              </span>
 
               <span>
                 Posted by{" "}
+
                 <a
-                  href={
-                    authorX.startsWith(
-                      "http"
-                    )
-                      ? authorX
-                      : `https://x.com/${authorX.replace(
-                          /^@/,
-                          ""
-                        )}`
-                  }
+                  href={`https://x.com/${authorX.replace(
+                    /^@/,
+                    ""
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -561,9 +814,8 @@ export default function PublishBlog() {
             <div className="preview-divider" />
 
             <div className="preview-content">
-
               {content.map(
-                block => {
+                (block) => {
                   if (
                     !block.text.trim()
                   ) {
@@ -661,7 +913,6 @@ export default function PublishBlog() {
                   );
                 }
               )}
-
             </div>
 
             {faq.length >
@@ -682,48 +933,49 @@ export default function PublishBlog() {
 
                 {faq
                   .filter(
-                    item =>
-                      item.question &&
-                      item.answer
+                    (item) =>
+                      item.question.trim() &&
+                      item.answer.trim()
                   )
-                  .map(item => (
-                    <details
-                      key={
-                        item.id
-                      }
-                    >
-                      <summary>
-                        {
-                          item.question
+                  .map(
+                    (item) => (
+                      <details
+                        key={
+                          item.id
                         }
-                      </summary>
+                      >
+                        <summary>
+                          {
+                            item.question
+                          }
+                        </summary>
 
-                      <p>
-                        {
-                          item.answer
-                        }
-                      </p>
-                    </details>
-                  ))}
+                        <p>
+                          {
+                            item.answer
+                          }
+                        </p>
+                      </details>
+                    )
+                  )}
               </section>
             )}
-
           </article>
         </main>
       </>
     );
   }
 
-  /* ================= EDITOR ================= */
+  /* =====================================================
+     EDITOR
+  ===================================================== */
 
   return (
     <>
       <PublishStyles />
 
       <main className="publish-root">
-
         <header className="publish-header">
-
           <div>
             <button
               type="button"
@@ -737,6 +989,7 @@ export default function PublishBlog() {
               <ArrowLeft
                 size={15}
               />
+
               Blogs
             </button>
 
@@ -757,7 +1010,6 @@ export default function PublishBlog() {
           </div>
 
           <div className="header-actions">
-
             <button
               type="button"
               onClick={() =>
@@ -768,6 +1020,7 @@ export default function PublishBlog() {
               <Eye
                 size={15}
               />
+
               Preview
             </button>
 
@@ -776,7 +1029,9 @@ export default function PublishBlog() {
               onClick={
                 handlePublish
               }
-              disabled={publishing}
+              disabled={
+                publishing
+              }
               className="publish-button"
             >
               {publishing ? (
@@ -786,6 +1041,7 @@ export default function PublishBlog() {
                   <Check
                     size={15}
                   />
+
                   Published
                 </>
               ) : (
@@ -793,43 +1049,44 @@ export default function PublishBlog() {
                   <Save
                     size={15}
                   />
+
                   Publish
                 </>
               )}
             </button>
-
           </div>
-
         </header>
 
         {error && (
           <div className="error-banner">
-            <X size={15} />
+            <X
+              size={15}
+            />
+
             {error}
           </div>
         )}
 
         {published && (
           <div className="success-banner">
-            <Check size={15} />
+            <Check
+              size={15}
+            />
+
             Blog published successfully.
           </div>
         )}
 
         <div className="publish-layout">
-
-          {/* ================= LEFT EDITOR ================= */}
-
           <section className="editor-column">
 
-            {/* HERO DETAILS */}
+            {/* HERO */}
 
             <EditorCard
               number="01"
               title="Hero"
               description="Everything shown at the top of the article."
             >
-
               <div className="field">
                 <label>
                   Green eyebrow text
@@ -839,7 +1096,7 @@ export default function PublishBlog() {
                   value={
                     category
                   }
-                  onChange={e =>
+                  onChange={(e) =>
                     setCategory(
                       e.target.value
                     )
@@ -861,7 +1118,7 @@ export default function PublishBlog() {
                 <textarea
                   className="title-input"
                   value={title}
-                  onChange={e =>
+                  onChange={(e) =>
                     handleTitleChange(
                       e.target.value
                     )
@@ -880,7 +1137,7 @@ export default function PublishBlog() {
                   value={
                     excerpt
                   }
-                  onChange={e =>
+                  onChange={(e) =>
                     setExcerpt(
                       e.target.value
                     )
@@ -891,7 +1148,6 @@ export default function PublishBlog() {
               </div>
 
               <div className="two-fields">
-
                 <div className="field">
                   <label>
                     Slug
@@ -901,7 +1157,7 @@ export default function PublishBlog() {
                     value={
                       slug
                     }
-                    onChange={e =>
+                    onChange={(e) =>
                       setSlug(
                         generateSlug(
                           e.target.value
@@ -922,14 +1178,13 @@ export default function PublishBlog() {
                     value={
                       date
                     }
-                    onChange={e =>
+                    onChange={(e) =>
                       setDate(
                         e.target.value
                       )
                     }
                   />
                 </div>
-
               </div>
 
               <div className="field">
@@ -943,13 +1198,11 @@ export default function PublishBlog() {
                   </span>
 
                   <input
-                    value={
-                      authorX.replace(
-                        /^@/,
-                        ""
-                      )
-                    }
-                    onChange={e =>
+                    value={authorX.replace(
+                      /^@/,
+                      ""
+                    )}
+                    onChange={(e) =>
                       setAuthorX(
                         `@${e.target.value.replace(
                           /^@/,
@@ -976,7 +1229,7 @@ export default function PublishBlog() {
                   value={
                     keywords
                   }
-                  onChange={e =>
+                  onChange={(e) =>
                     setKeywords(
                       e.target.value
                     )
@@ -988,19 +1241,16 @@ export default function PublishBlog() {
                   Separate keywords with commas.
                 </small>
               </div>
-
             </EditorCard>
 
-            {/* ARTICLE CONTENT */}
+            {/* ARTICLE */}
 
             <EditorCard
               number="02"
               title="Article"
               description="Build the article exactly like the current BlogPost layout."
             >
-
               <div className="content-toolbar">
-
                 <button
                   type="button"
                   onClick={() =>
@@ -1009,9 +1259,10 @@ export default function PublishBlog() {
                     )
                   }
                 >
-                  <span>
-                    <Plus size={13} />
-                  </span>
+                  <Plus
+                    size={13}
+                  />
+
                   Paragraph
                 </button>
 
@@ -1026,6 +1277,7 @@ export default function PublishBlog() {
                   <Heading2
                     size={14}
                   />
+
                   Heading
                 </button>
 
@@ -1040,6 +1292,7 @@ export default function PublishBlog() {
                   <Bold
                     size={14}
                   />
+
                   Bold
                 </button>
 
@@ -1054,6 +1307,7 @@ export default function PublishBlog() {
                   <LinkIcon
                     size={14}
                   />
+
                   Link
                 </button>
 
@@ -1068,13 +1322,12 @@ export default function PublishBlog() {
                   <Code2
                     size={14}
                   />
+
                   Code
                 </button>
-
               </div>
 
               <div className="blocks">
-
                 {content.map(
                   (
                     block,
@@ -1086,9 +1339,7 @@ export default function PublishBlog() {
                       }
                       className="content-block"
                     >
-
                       <div className="block-top">
-
                         <div className="block-type">
                           {block.type ===
                             "paragraph" &&
@@ -1112,7 +1363,6 @@ export default function PublishBlog() {
                         </div>
 
                         <div className="block-actions">
-
                           <button
                             type="button"
                             disabled={
@@ -1166,20 +1416,17 @@ export default function PublishBlog() {
                               size={13}
                             />
                           </button>
-
                         </div>
-
                       </div>
 
                       {block.type ===
-                        "link" ? (
+                      "link" ? (
                         <div className="link-fields">
-
                           <input
                             value={
                               block.text
                             }
-                            onChange={e =>
+                            onChange={(e) =>
                               updateBlock(
                                 block.id,
                                 "text",
@@ -1195,7 +1442,7 @@ export default function PublishBlog() {
                               block.url ||
                               ""
                             }
-                            onChange={e =>
+                            onChange={(e) =>
                               updateBlock(
                                 block.id,
                                 "url",
@@ -1205,7 +1452,6 @@ export default function PublishBlog() {
                             }
                             placeholder="https://example.com"
                           />
-
                         </div>
                       ) : (
                         <textarea
@@ -1224,7 +1470,7 @@ export default function PublishBlog() {
                           value={
                             block.text
                           }
-                          onChange={e =>
+                          onChange={(e) =>
                             updateBlock(
                               block.id,
                               "text",
@@ -1255,11 +1501,9 @@ export default function PublishBlog() {
                           }
                         />
                       )}
-
                     </div>
                   )
                 )}
-
               </div>
 
               <button
@@ -1271,10 +1515,12 @@ export default function PublishBlog() {
                   )
                 }
               >
-                <Plus size={14} />
+                <Plus
+                  size={14}
+                />
+
                 Add new paragraph
               </button>
-
             </EditorCard>
 
             {/* FAQ */}
@@ -1284,7 +1530,6 @@ export default function PublishBlog() {
               title="Frequently Asked Questions"
               description="Optional FAQ section shown at the end of the article."
             >
-
               {faq.length ===
                 0 && (
                 <div className="empty-editor">
@@ -1293,7 +1538,6 @@ export default function PublishBlog() {
               )}
 
               <div className="faq-editor-list">
-
                 {faq.map(
                   (
                     item,
@@ -1305,10 +1549,11 @@ export default function PublishBlog() {
                       }
                       className="faq-editor-item"
                     >
-
                       <div className="faq-editor-top">
                         <span>
-                          FAQ {index + 1}
+                          FAQ{" "}
+                          {index +
+                            1}
                         </span>
 
                         <button
@@ -1329,7 +1574,7 @@ export default function PublishBlog() {
                         value={
                           item.question
                         }
-                        onChange={e =>
+                        onChange={(e) =>
                           updateFAQ(
                             item.id,
                             "question",
@@ -1344,7 +1589,7 @@ export default function PublishBlog() {
                         value={
                           item.answer
                         }
-                        onChange={e =>
+                        onChange={(e) =>
                           updateFAQ(
                             item.id,
                             "answer",
@@ -1355,11 +1600,9 @@ export default function PublishBlog() {
                         placeholder="Write the practical answer..."
                         rows={4}
                       />
-
                     </div>
                   )
                 )}
-
               </div>
 
               <button
@@ -1369,10 +1612,12 @@ export default function PublishBlog() {
                   addFAQ
                 }
               >
-                <Plus size={14} />
+                <Plus
+                  size={14}
+                />
+
                 Add FAQ
               </button>
-
             </EditorCard>
 
             {/* SEO */}
@@ -1382,7 +1627,6 @@ export default function PublishBlog() {
               title="SEO"
               description="Search metadata for the published article."
             >
-
               <div className="field">
                 <label>
                   SEO title
@@ -1392,7 +1636,7 @@ export default function PublishBlog() {
                   value={
                     seoTitle
                   }
-                  onChange={e =>
+                  onChange={(e) =>
                     setSeoTitle(
                       e.target.value
                     )
@@ -1413,7 +1657,7 @@ export default function PublishBlog() {
                   value={
                     seoDescription
                   }
-                  onChange={e =>
+                  onChange={(e) =>
                     setSeoDescription(
                       e.target.value
                     )
@@ -1425,17 +1669,13 @@ export default function PublishBlog() {
                   rows={4}
                 />
               </div>
-
             </EditorCard>
-
           </section>
 
-          {/* ================= RIGHT SUMMARY ================= */}
+          {/* SIDEBAR */}
 
           <aside className="editor-sidebar">
-
             <div className="side-card">
-
               <div className="side-card-label">
                 ARTICLE
               </div>
@@ -1466,7 +1706,7 @@ export default function PublishBlog() {
                 <strong>
                   {
                     content.filter(
-                      block =>
+                      (block) =>
                         block.text.trim()
                     ).length
                   }
@@ -1479,7 +1719,9 @@ export default function PublishBlog() {
                 </span>
 
                 <strong>
-                  {faq.length}
+                  {
+                    faq.length
+                  }
                 </strong>
               </div>
 
@@ -1493,17 +1735,15 @@ export default function PublishBlog() {
                     keywords
                       .split(",")
                       .filter(
-                        item =>
+                        (item) =>
                           item.trim()
                       ).length
                   }
                 </strong>
               </div>
-
             </div>
 
             <div className="side-card publish-side">
-
               <div className="side-card-label">
                 PUBLISH
               </div>
@@ -1532,17 +1772,14 @@ export default function PublishBlog() {
                     <Save
                       size={14}
                     />
+
                     Publish Blog
                   </>
                 )}
               </button>
-
             </div>
-
           </aside>
-
         </div>
-
       </main>
     </>
   );
@@ -1565,9 +1802,7 @@ function EditorCard({
 }) {
   return (
     <section className="editor-card">
-
       <div className="editor-card-header">
-
         <div className="editor-number">
           {number}
         </div>
@@ -1581,13 +1816,11 @@ function EditorCard({
             {description}
           </p>
         </div>
-
       </div>
 
       <div className="editor-card-body">
         {children}
       </div>
-
     </section>
   );
 }
@@ -1619,6 +1852,48 @@ function PublishStyles() {
       ::selection {
         background: rgba(34,197,94,.22);
         color: #fff;
+      }
+
+      .access-loading {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        color: #fff;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          sans-serif;
+      }
+
+      .access-loading-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #555;
+        font-size: 11px;
+      }
+
+      .access-loader {
+        width: 14px;
+        height: 14px;
+        border:
+          1px solid
+          rgba(255,255,255,.1);
+        border-top-color:
+          ${GREEN};
+        border-radius: 50%;
+        animation:
+          publish-spin .7s
+          linear infinite;
+      }
+
+      @keyframes publish-spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .publish-root {
@@ -2472,7 +2747,6 @@ function PublishStyles() {
         .editor-sidebar {
           position: static;
         }
-
       }
 
       @media (max-width: 600px) {
@@ -2520,7 +2794,6 @@ function PublishStyles() {
           font-size: 15.5px;
           line-height: 1.9;
         }
-
       }
 
     `}</style>
