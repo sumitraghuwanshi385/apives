@@ -70,6 +70,114 @@ const createFAQ = (): FAQItem => ({
 });
 
 /* =========================================================
+   DATE HELPERS
+========================================================= */
+
+/*
+  Do not use:
+    new Date().toISOString().slice(0, 10)
+
+  because toISOString() converts the date to UTC and can
+  produce the wrong calendar date for users in some timezones.
+*/
+
+const getLocalDateString = (): string => {
+  const now = new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(
+      now.getMonth() + 1
+    ).padStart(2, "0");
+
+  const day =
+    String(
+      now.getDate()
+    ).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+/* =========================================================
+   STRING HELPERS
+========================================================= */
+
+const generateSlug = (
+  value: string
+): string => {
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .trim()
+    .replace(
+      /[^a-z0-9\s-]/g,
+      ""
+    )
+    .replace(
+      /\s+/g,
+      "-"
+    )
+    .replace(
+      /-+/g,
+      "-"
+    )
+    .replace(
+      /^-+|-+$/g,
+      ""
+    );
+};
+
+const cleanXHandle = (
+  value: string
+): string => {
+  return value
+    .trim()
+    .replace(/^@+/, "")
+    .replace(/\s+/g, "");
+};
+
+const normalizeExternalUrl = (
+  value: string
+): string => {
+  const trimmed =
+    value.trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  /*
+    Allow normal absolute URLs.
+    If the user enters a URL without a protocol,
+    keep the editor behavior friendly by adding https://.
+  */
+
+  if (
+    /^https?:\/\//i.test(
+      trimmed
+    )
+  ) {
+    return trimmed;
+  }
+
+  if (
+    /^mailto:/i.test(
+      trimmed
+    )
+  ) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
+};
+
+/* =========================================================
    JWT / AUTH HELPERS
 ========================================================= */
 
@@ -143,7 +251,11 @@ const getToken = (): string => {
           parsed?.authToken ||
           parsed?.jwt ||
           parsed?.user?.token ||
-          parsed?.data?.token;
+          parsed?.user?.accessToken ||
+          parsed?.user?.authToken ||
+          parsed?.data?.token ||
+          parsed?.data?.accessToken ||
+          parsed?.data?.authToken;
 
         if (
           typeof token ===
@@ -165,19 +277,27 @@ const getToken = (): string => {
 
 const getUserEmailFromToken = (
   token: string | null
-) => {
-  if (!token) return "";
+): string => {
+  if (!token) {
+    return "";
+  }
 
   try {
     const parts =
       token.split(".");
 
-    if (parts.length !== 3) {
+    if (
+      parts.length !== 3
+    ) {
       return "";
     }
 
     const payload =
       parts[1];
+
+    if (!payload) {
+      return "";
+    }
 
     const normalized =
       payload
@@ -197,16 +317,23 @@ const getUserEmailFromToken = (
         window.atob(padded)
       );
 
-    return (
+    const email =
       decoded?.email ||
       decoded?.user?.email ||
       decoded?.data?.email ||
       decoded?.data?.user?.email ||
-      ""
-    )
-      .toString()
-      .toLowerCase()
-      .trim();
+      "";
+
+    if (
+      typeof email !==
+      "string"
+    ) {
+      return "";
+    }
+
+    return email
+      .trim()
+      .toLowerCase();
   } catch {
     return "";
   }
@@ -278,6 +405,145 @@ const getUserEmail =
     return getStoredUserEmail();
   };
 
+const clearAuthStorage =
+  () => {
+    const keys = [
+      "token",
+      "accessToken",
+      "authToken",
+      "jwt",
+      "mora_user",
+      "user",
+      "currentUser",
+      "loggedInUser",
+      "authUser",
+    ];
+
+    for (const key of keys) {
+      try {
+        localStorage.removeItem(
+          key
+        );
+      } catch {
+        // Ignore storage cleanup errors.
+      }
+    }
+
+    try {
+      window.dispatchEvent(
+        new CustomEvent(
+          "auth-change"
+        )
+      );
+    } catch {
+      // Ignore event errors.
+    }
+  };
+
+/* =========================================================
+   CONTENT SERIALIZATION
+========================================================= */
+
+/*
+  The editor uses structured blocks.
+
+  The API receives Markdown.
+
+  This is important because the published BlogPost can
+  distinguish:
+
+  paragraph
+  heading
+  bold
+  link
+  code
+
+  especially multiline code.
+
+  Code is wrapped in fenced Markdown instead of being
+  inserted as raw text.
+*/
+
+const serializeContent =
+  (
+    blocks: ContentBlock[]
+  ): string => {
+    return blocks
+      .filter(
+        (block) =>
+          block.text.trim()
+      )
+      .map((block) => {
+        const text =
+          block.text.trim();
+
+        if (
+          block.type ===
+          "heading"
+        ) {
+          return `## ${text}`;
+        }
+
+        if (
+          block.type ===
+          "code"
+        ) {
+          /*
+            Escape accidental triple backticks so that
+            user content cannot prematurely close the
+            generated code fence.
+          */
+          const safeCode =
+            block.text
+              .replace(
+                /```/g,
+                "``\\`"
+              )
+              .trim();
+
+          return `\`\`\`\n${safeCode}\n\`\`\``;
+        }
+
+        if (
+          block.type ===
+          "bold"
+        ) {
+          return `**${text}**`;
+        }
+
+        if (
+          block.type ===
+          "link"
+        ) {
+          const url =
+            normalizeExternalUrl(
+              block.url || ""
+            );
+
+          if (!url) {
+            return text;
+          }
+
+          /*
+            Basic Markdown link safety.
+          */
+          const safeText =
+            text.replace(
+              /\]/g,
+              "\\]"
+            );
+
+          return `[${safeText}](${url})`;
+        }
+
+        /*
+          Paragraph
+        */
+        return block.text.trim();
+      })
+      .join("\n\n");
+};
+
 /* =========================================================
    COMPONENT
 ========================================================= */
@@ -288,24 +554,19 @@ export default function PublishBlog() {
 
   /* ================= ADMIN ACCESS ================= */
 
-  const token =
-    getToken();
-
-  const currentEmail =
-    getUserEmail();
-
-  const isAdmin =
-    currentEmail ===
-    ADMIN_EMAIL
-      .trim()
-      .toLowerCase();
-
   const [
     checkingAccess,
     setCheckingAccess,
   ] = useState(true);
 
+  const [
+    isAdmin,
+    setIsAdmin,
+  ] = useState(false);
+
   useEffect(() => {
+    let mounted = true;
+
     const checkAccess =
       () => {
         const currentToken =
@@ -319,6 +580,10 @@ export default function PublishBlog() {
             .trim()
             .toLowerCase();
 
+        const authorized =
+          !!currentToken &&
+          email === adminEmail;
+
         console.log(
           "[Apives] Publish access:",
           {
@@ -330,15 +595,16 @@ export default function PublishBlog() {
             adminEmail,
 
             isAdmin:
-              email ===
-              adminEmail,
+              authorized,
           }
         );
 
-        if (
-          !currentToken ||
-          email !== adminEmail
-        ) {
+        if (!authorized) {
+          if (mounted) {
+            setIsAdmin(false);
+            setCheckingAccess(false);
+          }
+
           navigate(
             "/access",
             {
@@ -349,9 +615,10 @@ export default function PublishBlog() {
           return;
         }
 
-        setCheckingAccess(
-          false
-        );
+        if (mounted) {
+          setIsAdmin(true);
+          setCheckingAccess(false);
+        }
       };
 
     checkAccess();
@@ -367,6 +634,8 @@ export default function PublishBlog() {
     );
 
     return () => {
+      mounted = false;
+
       window.removeEventListener(
         "auth-change",
         checkAccess
@@ -381,7 +650,7 @@ export default function PublishBlog() {
 
   /* =====================================================
      PREVIEW GLOBAL HEADER CONTROL
-     
+
      Only hides the main Apives header while the
      publish preview is active.
 
@@ -428,9 +697,7 @@ export default function PublishBlog() {
 
   const [date, setDate] =
     useState(
-      new Date()
-        .toISOString()
-        .slice(0, 10)
+      getLocalDateString()
     );
 
   const [authorX, setAuthorX] =
@@ -482,26 +749,6 @@ export default function PublishBlog() {
      AUTO SLUG
   ===================================================== */
 
-  const generateSlug = (
-    value: string
-  ) => {
-    return value
-      .toLowerCase()
-      .trim()
-      .replace(
-        /[^a-z0-9\s-]/g,
-        ""
-      )
-      .replace(
-        /\s+/g,
-        "-"
-      )
-      .replace(
-        /-+/g,
-        "-"
-      );
-  };
-
   const handleTitleChange = (
     value: string
   ) => {
@@ -510,6 +757,10 @@ export default function PublishBlog() {
 
     setTitle(value);
 
+    /*
+      Only keep auto-updating the slug while the user
+      has not manually customized it.
+    */
     if (
       !slug ||
       slug === oldGeneratedSlug
@@ -519,6 +770,10 @@ export default function PublishBlog() {
       );
     }
 
+    /*
+      SEO title automatically follows the title until
+      the user explicitly changes it.
+    */
     if (!seoTitle) {
       setSeoTitle(value);
     }
@@ -658,49 +913,9 @@ export default function PublishBlog() {
 
   const finalContent =
     useMemo(() => {
-      return content
-        .filter(
-          (block) =>
-            block.text.trim()
-        )
-        .map((block) => {
-          if (
-            block.type ===
-            "heading"
-          ) {
-            return `## ${block.text.trim()}`;
-          }
-
-          if (
-            block.type ===
-            "code"
-          ) {
-            return block.text;
-          }
-
-          if (
-            block.type ===
-            "bold"
-          ) {
-            return `**${block.text.trim()}**`;
-          }
-
-          if (
-            block.type ===
-            "link"
-          ) {
-            if (
-              !block.url?.trim()
-            ) {
-              return block.text.trim();
-            }
-
-            return `[${block.text.trim()}](${block.url.trim()})`;
-          }
-
-          return block.text.trim();
-        })
-        .join("\n\n");
+      return serializeContent(
+        content
+      );
     }, [content]);
 
   /* =====================================================
@@ -728,12 +943,28 @@ export default function PublishBlog() {
       return "Please enter a slug.";
     }
 
+    if (!generateSlug(slug)) {
+      return "Please enter a valid slug.";
+    }
+
     if (!authorX.trim()) {
       return "Please enter the author's X handle.";
     }
 
+    if (
+      !cleanXHandle(
+        authorX
+      )
+    ) {
+      return "Please enter a valid X handle.";
+    }
+
     if (!finalContent.trim()) {
       return "Please add some article content.";
+    }
+
+    if (!date) {
+      return "Please select a publication date.";
     }
 
     return "";
@@ -745,8 +976,46 @@ export default function PublishBlog() {
 
   const handlePublish =
     async () => {
+      if (publishing) {
+        return;
+      }
+
       setError("");
       setPublished(false);
+
+      /*
+        Always re-check current auth at publish time.
+      */
+      const authToken =
+        getToken();
+
+      const email =
+        getUserEmail();
+
+      const adminEmail =
+        ADMIN_EMAIL
+          .trim()
+          .toLowerCase();
+
+      if (
+        !authToken ||
+        email !== adminEmail
+      ) {
+        setError(
+          "Authentication session is invalid or you are not authorized to publish blogs."
+        );
+
+        clearAuthStorage();
+
+        navigate(
+          "/access",
+          {
+            replace: true,
+          }
+        );
+
+        return;
+      }
 
       const validationError =
         validate();
@@ -759,50 +1028,34 @@ export default function PublishBlog() {
         return;
       }
 
-      const authToken =
-        getToken();
-
-      if (!authToken) {
-        setError(
-          "Authentication session not found. Please sign in again."
-        );
-
-        navigate(
-          "/access",
-          {
-            replace: true,
-          }
-        );
-
-        return;
-      }
-
-      const email =
-        getUserEmail();
-
-      if (
-        email !==
-        ADMIN_EMAIL
-          .trim()
-          .toLowerCase()
-      ) {
-        setError(
-          "Only the authorized admin can publish blogs."
-        );
-
-        return;
-      }
-
       setPublishing(true);
 
       try {
+        /* ---------------------------------------------
+           KEYWORDS
+        --------------------------------------------- */
+
         const cleanedKeywords =
           keywords
             .split(",")
             .map((item) =>
               item.trim()
             )
-            .filter(Boolean);
+            .filter(Boolean)
+            .filter(
+              (
+                item,
+                index,
+                array
+              ) =>
+                array.indexOf(
+                  item
+                ) === index
+            );
+
+        /* ---------------------------------------------
+           FAQ
+        --------------------------------------------- */
 
         const cleanedFAQ =
           faq
@@ -819,13 +1072,39 @@ export default function PublishBlog() {
                 item.answer.trim(),
             }));
 
+        /* ---------------------------------------------
+           AUTHOR
+        --------------------------------------------- */
+
         const cleanAuthorX =
-          authorX
-            .trim()
-            .replace(
-              /^@+/,
-              ""
-            );
+          cleanXHandle(
+            authorX
+          );
+
+        /* ---------------------------------------------
+           SLUG
+        --------------------------------------------- */
+
+        const cleanSlug =
+          generateSlug(
+            slug
+          );
+
+        /* ---------------------------------------------
+           SEO
+        --------------------------------------------- */
+
+        const cleanSeoTitle =
+          seoTitle.trim() ||
+          title.trim();
+
+        const cleanSeoDescription =
+          seoDescription.trim() ||
+          excerpt.trim();
+
+        /* ---------------------------------------------
+           PAYLOAD
+        --------------------------------------------- */
 
         const payload = {
           category:
@@ -838,9 +1117,7 @@ export default function PublishBlog() {
             excerpt.trim(),
 
           slug:
-            generateSlug(
-              slug.trim()
-            ),
+            cleanSlug,
 
           date,
 
@@ -859,16 +1136,35 @@ export default function PublishBlog() {
 
           seo: {
             title:
-              seoTitle.trim() ||
-              title.trim(),
+              cleanSeoTitle,
 
             description:
-              seoDescription.trim() ||
-              excerpt.trim(),
+              cleanSeoDescription,
           },
 
           published: true,
         };
+
+        console.log(
+          "[Apives] Publishing blog:",
+          {
+            slug:
+              payload.slug,
+
+            contentLength:
+              payload.content.length,
+
+            faqCount:
+              payload.faq.length,
+
+            keywordCount:
+              payload.keywords.length,
+          }
+        );
+
+        /* ---------------------------------------------
+           API REQUEST
+        --------------------------------------------- */
 
         const response =
           await fetch(
@@ -883,6 +1179,9 @@ export default function PublishBlog() {
 
                 Authorization:
                   `Bearer ${authToken}`,
+
+                Accept:
+                  "application/json",
               },
 
               body:
@@ -892,44 +1191,44 @@ export default function PublishBlog() {
             }
           );
 
+        /* ---------------------------------------------
+           RESPONSE
+        --------------------------------------------- */
+
         let data: any =
           {};
 
-        try {
-          data =
-            await response.json();
-        } catch {
-          data = {};
+        const responseText =
+          await response.text();
+
+        if (
+          responseText
+        ) {
+          try {
+            data =
+              JSON.parse(
+                responseText
+              );
+          } catch {
+            data = {
+              raw:
+                responseText,
+            };
+          }
         }
+
+        /* ---------------------------------------------
+           AUTH EXPIRED
+        --------------------------------------------- */
 
         if (
           response.status ===
           401
         ) {
-          localStorage.removeItem(
-            "token"
-          );
+          clearAuthStorage();
 
-          localStorage.removeItem(
-            "accessToken"
-          );
-
-          localStorage.removeItem(
-            "authToken"
-          );
-
-          localStorage.removeItem(
-            "jwt"
-          );
-
-          localStorage.removeItem(
-            "mora_user"
-          );
-
-          window.dispatchEvent(
-            new CustomEvent(
-              "auth-change"
-            )
+          setError(
+            "Your authentication session has expired. Please sign in again."
           );
 
           navigate(
@@ -942,37 +1241,81 @@ export default function PublishBlog() {
           return;
         }
 
+        /* ---------------------------------------------
+           FORBIDDEN
+        --------------------------------------------- */
+
         if (
           response.status ===
           403
         ) {
           throw new Error(
-            "You are not authorized to publish blogs."
+            data?.message ||
+              "You are not authorized to publish blogs."
           );
         }
+
+        /* ---------------------------------------------
+           DUPLICATE / CONFLICT
+        --------------------------------------------- */
+
+        if (
+          response.status ===
+          409
+        ) {
+          throw new Error(
+            data?.message ||
+              "A blog with this slug already exists. Please choose another slug."
+          );
+        }
+
+        /* ---------------------------------------------
+           OTHER API ERRORS
+        --------------------------------------------- */
 
         if (
           !response.ok
         ) {
           throw new Error(
             data?.message ||
-              "Failed to publish blog."
+              data?.error ||
+              data?.raw ||
+              `Failed to publish blog. Server returned ${response.status}.`
           );
         }
 
+        /* ---------------------------------------------
+           SUCCESS
+        --------------------------------------------- */
+
         const publishedSlug =
           data?.blog?.slug ||
+          data?.data?.blog?.slug ||
+          data?.data?.slug ||
           data?.slug ||
-          payload.slug;
+          cleanSlug;
 
-        setPublished(
-          true
-        );
+        if (
+          !publishedSlug
+        ) {
+          throw new Error(
+            "Blog was published, but the server did not return a valid slug."
+          );
+        }
 
+        setPublished(true);
+
+        /*
+          Keep the existing behavior:
+          show Published briefly and then open the
+          actual published article.
+        */
         window.setTimeout(
           () => {
             navigate(
-              `/blogs/${publishedSlug}`
+              `/blogs/${encodeURIComponent(
+                publishedSlug
+              )}`
             );
           },
           900
@@ -1105,9 +1448,8 @@ export default function PublishBlog() {
                 Posted by{" "}
 
                 <a
-                  href={`https://x.com/${authorX.replace(
-                    /^@/,
-                    ""
+                  href={`https://x.com/${cleanXHandle(
+                    authorX
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1156,9 +1498,11 @@ export default function PublishBlog() {
                           block.id
                         }
                       >
-                        {
-                          block.text
-                        }
+                        <code>
+                          {
+                            block.text
+                          }
+                        </code>
                       </pre>
                     );
                   }
@@ -1186,6 +1530,28 @@ export default function PublishBlog() {
                     block.type ===
                     "link"
                   ) {
+                    const previewUrl =
+                      normalizeExternalUrl(
+                        block.url ||
+                          ""
+                      );
+
+                    if (
+                      !previewUrl
+                    ) {
+                      return (
+                        <p
+                          key={
+                            block.id
+                          }
+                        >
+                          {
+                            block.text
+                          }
+                        </p>
+                      );
+                    }
+
                     return (
                       <p
                         key={
@@ -1194,7 +1560,7 @@ export default function PublishBlog() {
                       >
                         <a
                           href={
-                            block.url
+                            previewUrl
                           }
                           target="_blank"
                           rel="noopener noreferrer"
@@ -1513,9 +1879,8 @@ export default function PublishBlog() {
                     )}
                     onChange={(e) =>
                       setAuthorX(
-                        `@${e.target.value.replace(
-                          /^@/,
-                          ""
+                        `@${cleanXHandle(
+                          e.target.value
                         )}`
                       )
                     }
@@ -2997,6 +3362,12 @@ function PublishStyles() {
         font-size: 12px;
         line-height: 1.7;
         text-align: left;
+        white-space: pre;
+      }
+
+      .preview-content pre code {
+        font: inherit;
+        color: inherit;
       }
 
       .preview-faq {
