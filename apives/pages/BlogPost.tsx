@@ -1,4 +1,3 @@
-
 import React, {
   useEffect,
   useMemo,
@@ -96,6 +95,71 @@ interface BlogPostProps {
 
 const GREEN = "#22c55e";
 const GREEN_SOFT = "#4ade80";
+
+/*
+=========================================================
+  DATE FORMATTER
+=========================================================
+*/
+
+function formatBlogDate(
+  value: unknown
+): string {
+  if (!value) {
+    return "";
+  }
+
+  const raw =
+    String(value).trim();
+
+  if (!raw) {
+    return "";
+  }
+
+  try {
+    const dateOnlyMatch =
+      raw.match(
+        /^(\d{4})-(\d{2})-(\d{2})$/
+      );
+
+    const date =
+      dateOnlyMatch
+        ? new Date(
+            Date.UTC(
+              Number(
+                dateOnlyMatch[1]
+              ),
+              Number(
+                dateOnlyMatch[2]
+              ) - 1,
+              Number(
+                dateOnlyMatch[3]
+              )
+            )
+          )
+        : new Date(raw);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+      return raw;
+    }
+
+    return new Intl.DateTimeFormat(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }
+    ).format(date);
+  } catch {
+    return raw;
+  }
+}
 
 /*
 =========================================================
@@ -1355,7 +1419,9 @@ export default function BlogPost({
 
             <div className="post-meta">
               <span className="post-date">
-                {article.date}
+                {formatBlogDate(
+                  article.date
+                )}
               </span>
 
               <span className="post-meta-dot">
