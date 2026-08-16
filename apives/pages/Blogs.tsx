@@ -1,8 +1,13 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, {
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
-  Plus,
   Search,
   X,
+  Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -30,12 +35,11 @@ const GREEN = "#22c55e";
 const ADMIN_EMAIL =
   "beatslevelone@gmail.com";
 
-const BLOG_ARTICLES: BlogItem[] = ARTICLES.map(
-  (article) => ({
+const BLOG_ARTICLES: BlogItem[] =
+  ARTICLES.map((article) => ({
     ...article,
     type: "article" as const,
-  })
-);
+  }));
 
 const POSTS: BlogPost[] = [];
 
@@ -43,6 +47,121 @@ const BLOG_ITEMS: BlogItem[] = [
   ...BLOG_ARTICLES,
   ...POSTS,
 ];
+
+/* =========================================================
+   ADMIN CHECK
+========================================================= */
+
+function getLoggedInEmail(): string {
+  try {
+    /*
+     * First try the user object.
+     * Your login response contains:
+     *
+     * {
+     *   token,
+     *   user: {
+     *     id,
+     *     name,
+     *     email
+     *   }
+     * }
+     */
+
+    const storedUser =
+      localStorage.getItem("user");
+
+    if (storedUser) {
+      try {
+        const parsedUser =
+          JSON.parse(storedUser);
+
+        if (
+          parsedUser?.email
+        ) {
+          return String(
+            parsedUser.email
+          )
+            .trim()
+            .toLowerCase();
+        }
+      } catch {
+        // Continue to JWT check
+      }
+    }
+
+    /*
+     * Your JWT contains:
+     *
+     * {
+     *   id: "...",
+     *   email: "..."
+     * }
+     *
+     * We only decode it here for UI visibility.
+     * This is NOT the security layer.
+     * Backend still verifies the token.
+     */
+
+    const token =
+      localStorage.getItem(
+        "token"
+      );
+
+    if (!token) {
+      return "";
+    }
+
+    const parts =
+      token.split(".");
+
+    if (parts.length !== 3) {
+      return "";
+    }
+
+    const payload =
+      parts[1]
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    const decoded = JSON.parse(
+      decodeURIComponent(
+        atob(payload)
+          .split("")
+          .map(
+            (char) =>
+              "%" +
+              (
+                "00" +
+                char
+                  .charCodeAt(0)
+                  .toString(16)
+              ).slice(-2)
+          )
+          .join("")
+      )
+    );
+
+    return decoded?.email
+      ? String(
+          decoded.email
+        )
+          .trim()
+          .toLowerCase()
+      : "";
+  } catch (error) {
+    console.error(
+      "Admin check failed:",
+      error
+    );
+
+    return "";
+  }
+}
+
+/* =========================================================
+   SEO
+========================================================= */
 
 function updateSEO() {
   document.title =
@@ -57,12 +176,21 @@ function updateSEO() {
     ) as HTMLMetaElement | null;
 
   if (!meta) {
-    meta = document.createElement("meta");
-    meta.name = "description";
-    document.head.appendChild(meta);
+    meta =
+      document.createElement(
+        "meta"
+      );
+
+    meta.name =
+      "description";
+
+    document.head.appendChild(
+      meta
+    );
   }
 
-  meta.content = description;
+  meta.content =
+    description;
 
   let canonical =
     document.head.querySelector(
@@ -70,9 +198,17 @@ function updateSEO() {
     ) as HTMLLinkElement | null;
 
   if (!canonical) {
-    canonical = document.createElement("link");
-    canonical.rel = "canonical";
-    document.head.appendChild(canonical);
+    canonical =
+      document.createElement(
+        "link"
+      );
+
+    canonical.rel =
+      "canonical";
+
+    document.head.appendChild(
+      canonical
+    );
   }
 
   canonical.href =
@@ -80,71 +216,8 @@ function updateSEO() {
 }
 
 /* =========================================================
-   ADMIN EMAIL CHECK
+   BLOG ITEM
 ========================================================= */
-
-function getLoggedInEmail(): string {
-  try {
-    const storedUser =
-      localStorage.getItem("user");
-
-    if (storedUser) {
-      const user =
-        JSON.parse(storedUser);
-
-      const email =
-        user?.email ||
-        user?.user?.email;
-
-      if (email) {
-        return String(email)
-          .toLowerCase()
-          .trim();
-      }
-    }
-  } catch {
-    // Ignore invalid localStorage user data
-  }
-
-  try {
-    const token =
-      localStorage.getItem("token");
-
-    if (!token) {
-      return "";
-    }
-
-    const parts =
-      token.split(".");
-
-    if (parts.length !== 3) {
-      return "";
-    }
-
-    const payload =
-      JSON.parse(
-        atob(
-          parts[1]
-            .replace(/-/g, "+")
-            .replace(/_/g, "/")
-        )
-      );
-
-    const email =
-      payload?.email ||
-      payload?.user?.email;
-
-    if (!email) {
-      return "";
-    }
-
-    return String(email)
-      .toLowerCase()
-      .trim();
-  } catch {
-    return "";
-  }
-}
 
 const BlogListItem = memo(
   function BlogListItem({
@@ -176,6 +249,10 @@ const BlogListItem = memo(
   }
 );
 
+/* =========================================================
+   BLOGS
+========================================================= */
+
 export default function Blogs() {
   const navigate =
     useNavigate();
@@ -198,6 +275,12 @@ export default function Blogs() {
       behavior: "auto",
     });
 
+    /*
+     * Show Publish button ONLY for:
+     *
+     * beatslevelone@gmail.com
+     */
+
     const email =
       getLoggedInEmail();
 
@@ -207,34 +290,38 @@ export default function Blogs() {
     );
   }, []);
 
-  const filteredItems = useMemo(() => {
-    const query =
-      searchQuery
-        .trim()
-        .toLowerCase();
+  const filteredItems =
+    useMemo(() => {
+      const query =
+        searchQuery
+          .trim()
+          .toLowerCase();
 
-    if (!query) {
-      return BLOG_ITEMS;
-    }
+      if (!query) {
+        return BLOG_ITEMS;
+      }
 
-    return BLOG_ITEMS.filter(
-      (item) =>
-        item.title
-          .toLowerCase()
-          .includes(query) ||
-        item.excerpt
-          .toLowerCase()
-          .includes(query) ||
-        item.date
-          .toLowerCase()
-          .includes(query)
-    );
-  }, [searchQuery]);
+      return BLOG_ITEMS.filter(
+        (item) =>
+          item.title
+            .toLowerCase()
+            .includes(query) ||
+          item.excerpt
+            .toLowerCase()
+            .includes(query) ||
+          item.date
+            .toLowerCase()
+            .includes(query)
+      );
+    }, [searchQuery]);
 
   const openItem = (
     item: BlogItem
   ) => {
-    if (item.type === "article") {
+    if (
+      item.type ===
+      "article"
+    ) {
       window.location.assign(
         `/blogs/${item.slug}`
       );
@@ -255,33 +342,38 @@ export default function Blogs() {
 
         <section className="blog-hero">
 
-          <div className="blog-hero-admin-row">
+          {/* =================================================
+              ADMIN PUBLISH BUTTON
+              ONLY beatslevelone@gmail.com
+          ================================================= */}
 
-            <img
-              src={BLOG_IMAGE}
-              alt="Apives Blog"
-              className="blog-hero-image"
-              loading="eager"
-            />
+          {isAdmin && (
+            <button
+              type="button"
+              className="admin-publish-button"
+              onClick={() =>
+                navigate(
+                  "/blogs/publish"
+                )
+              }
+            >
+              <Plus
+                size={15}
+                strokeWidth={2.2}
+              />
 
-            {isAdmin && (
-              <button
-                type="button"
-                className="publish-blog-button"
-                onClick={() =>
-                  navigate(
-                    "/publish-blog"
-                  )
-                }
-              >
-                <Plus size={15} />
-                <span>
-                  Publish Blog
-                </span>
-              </button>
-            )}
+              <span>
+                Publish
+              </span>
+            </button>
+          )}
 
-          </div>
+          <img
+            src={BLOG_IMAGE}
+            alt="Apives Blog"
+            className="blog-hero-image"
+            loading="eager"
+          />
 
           <p>
             Practical ideas for
@@ -303,7 +395,9 @@ export default function Blogs() {
 
             <input
               type="text"
-              value={searchQuery}
+              value={
+                searchQuery
+              }
               onChange={(event) =>
                 setSearchQuery(
                   event.target.value
@@ -334,7 +428,8 @@ export default function Blogs() {
 
           <div className="articles-top-line" />
 
-          {filteredItems.length > 0 ? (
+          {filteredItems.length >
+          0 ? (
             filteredItems.map(
               (item) => (
                 <BlogListItem
@@ -371,6 +466,10 @@ export default function Blogs() {
     </>
   );
 }
+
+/* =========================================================
+   STYLES
+========================================================= */
 
 function BlogStyles() {
   return (
@@ -433,6 +532,8 @@ function BlogStyles() {
       }
 
       .blog-hero {
+        position: relative;
+
         max-width: 900px;
 
         margin: 0 auto;
@@ -444,16 +545,75 @@ function BlogStyles() {
         text-align: center;
       }
 
-      .blog-hero-admin-row {
-        position: relative;
+      /* =====================================================
+         ADMIN PUBLISH BUTTON
+      ===================================================== */
 
-        display: flex;
+      .admin-publish-button {
+        position: absolute;
 
+        top: 30px;
+        right: 24px;
+
+        display: inline-flex;
         align-items: center;
-
         justify-content: center;
+        gap: 6px;
 
-        width: 100%;
+        min-height: 34px;
+
+        padding:
+          0 12px;
+
+        border:
+          1px solid
+          rgba(34,197,94,.28);
+
+        border-radius: 999px;
+
+        background:
+          rgba(34,197,94,.06);
+
+        color: ${GREEN};
+
+        font-family: inherit;
+
+        font-size: 10px;
+
+        font-weight: 750;
+
+        letter-spacing: .04em;
+
+        cursor: pointer;
+
+        transition:
+          background .18s ease,
+          border-color .18s ease,
+          color .18s ease,
+          transform .18s ease,
+          box-shadow .18s ease;
+      }
+
+      .admin-publish-button:hover {
+        background:
+          rgba(34,197,94,.12);
+
+        border-color:
+          rgba(34,197,94,.48);
+
+        color: #fff;
+
+        transform:
+          translateY(-1px);
+
+        box-shadow:
+          0 8px 30px
+          rgba(34,197,94,.08);
+      }
+
+      .admin-publish-button:active {
+        transform:
+          translateY(0);
       }
 
       .blog-hero-image {
@@ -467,81 +627,6 @@ function BlogStyles() {
         object-fit: contain;
 
         border-radius: 12px;
-      }
-
-      .publish-blog-button {
-        position: absolute;
-
-        right: 0;
-
-        top: 50%;
-
-        transform:
-          translateY(-50%);
-
-        display: inline-flex;
-
-        align-items: center;
-        justify-content: center;
-
-        gap: 7px;
-
-        min-height: 36px;
-
-        padding:
-          0 13px;
-
-        border:
-          1px solid
-          rgba(34,197,94,.28);
-
-        border-radius: 999px;
-
-        background:
-          rgba(34,197,94,.08);
-
-        color: ${GREEN};
-
-        font: inherit;
-
-        font-size: 10px;
-
-        font-weight: 750;
-
-        letter-spacing: .02em;
-
-        cursor: pointer;
-
-        box-shadow:
-          0 0 22px
-          rgba(34,197,94,.06);
-
-        transition:
-          transform .18s ease,
-          background .18s ease,
-          border-color .18s ease,
-          color .18s ease;
-      }
-
-      .publish-blog-button:hover {
-        transform:
-          translateY(
-            calc(-50% - 2px)
-          );
-
-        background:
-          rgba(34,197,94,.14);
-
-        border-color:
-          rgba(34,197,94,.48);
-
-        color: #fff;
-      }
-
-      .publish-blog-button:active {
-        transform:
-          translateY(-50%)
-          scale(.96);
       }
 
       .blog-hero p {
@@ -801,29 +886,6 @@ function BlogStyles() {
         cursor: pointer;
       }
 
-      @media (max-width: 700px) {
-
-        .publish-blog-button {
-          position: static;
-
-          transform: none;
-
-          margin-left: 12px;
-
-          flex-shrink: 0;
-        }
-
-        .publish-blog-button:hover {
-          transform:
-            translateY(-2px);
-        }
-
-        .blog-hero-admin-row {
-          justify-content: center;
-        }
-
-      }
-
       @media (max-width: 640px) {
 
         .blog-hero {
@@ -832,12 +894,11 @@ function BlogStyles() {
             35px;
         }
 
-        .blog-hero-image {
-          width: 172px;
-        }
+        .admin-publish-button {
+          top: 18px;
+          right: 20px;
 
-        .publish-blog-button {
-          min-height: 34px;
+          min-height: 32px;
 
           padding:
             0 10px;
@@ -845,9 +906,8 @@ function BlogStyles() {
           font-size: 9px;
         }
 
-        .publish-blog-button svg {
-          width: 14px;
-          height: 14px;
+        .blog-hero-image {
+          width: 172px;
         }
 
         .blog-hero p {
