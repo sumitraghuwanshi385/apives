@@ -27,8 +27,62 @@ import { BackButton } from "../components/BackButton";
   APIVES BLOG API
 =========================================================
 */
-const API_BASE =
-  "https://apives-3xrc.onrender.com";
+
+const API_BASE = (
+  import.meta.env.VITE_API_URL ||
+  "https://apives-3xrc.onrender.com"
+).replace(/\/+$/, "");
+
+/*
+=========================================================
+  TYPES
+=========================================================
+*/
+
+interface BlogAuthor {
+  name?: string;
+  x?: string;
+}
+
+interface BlogFaqItem {
+  question: string;
+  answer: string;
+}
+
+interface BackendBlog {
+  _id?: string;
+  id?: string | number;
+
+  slug?: string;
+
+  category?: string;
+
+  title?: string;
+
+  excerpt?: string;
+
+  date?: string;
+
+  publishedAt?: string;
+
+  author?: BlogAuthor;
+
+  content?: string;
+
+  keywords?: string[];
+
+  tags?: string[];
+
+  faq?: BlogFaqItem[];
+
+  published?: boolean;
+
+  createdAt?: string;
+
+  updatedAt?: string;
+
+  [key: string]: unknown;
+}
 
 interface BlogPostProps {
   article?: Article | null;
@@ -41,6 +95,12 @@ interface BlogPostProps {
 
 const GREEN = "#22c55e";
 const GREEN_SOFT = "#4ade80";
+
+/*
+=========================================================
+  META HELPERS
+=========================================================
+*/
 
 function setMeta(
   name: string,
@@ -78,9 +138,15 @@ function setMeta(
 
   element.setAttribute(
     "content",
-    content
+    content || ""
   );
 }
+
+/*
+=========================================================
+  SEO
+=========================================================
+*/
 
 function updateArticleSEO(
   article: Article | null
@@ -99,13 +165,17 @@ function updateArticleSEO(
   }
 
   const title =
-    `${article.title} | Apives`;
+    `${article.title || "Apives Blog"} | Apives`;
 
   const description =
-    article.excerpt;
+    article.excerpt || "";
 
   const keywords =
-    article.keywords.join(", ");
+    Array.isArray(
+      article.keywords
+    )
+      ? article.keywords.join(", ")
+      : "";
 
   document.title = title;
 
@@ -168,7 +238,9 @@ function updateArticleSEO(
 
   if (!canonical) {
     canonical =
-      document.createElement("link");
+      document.createElement(
+        "link"
+      );
 
     canonical.rel =
       "canonical";
@@ -181,6 +253,12 @@ function updateArticleSEO(
   canonical.href =
     canonicalUrl;
 }
+
+/*
+=========================================================
+  ARTICLE JSON-LD
+=========================================================
+*/
 
 function updateArticleSchema(
   article: Article | null
@@ -202,7 +280,9 @@ function updateArticleSchema(
   }
 
   const script =
-    document.createElement("script");
+    document.createElement(
+      "script"
+    );
 
   script.id =
     "apives-blog-post-schema";
@@ -260,6 +340,12 @@ function updateArticleSchema(
   );
 }
 
+/*
+=========================================================
+  INLINE MARKDOWN LINKS
+=========================================================
+*/
+
 function renderInlineText(
   text: string,
   keyPrefix: string
@@ -301,11 +387,22 @@ function renderInlineText(
   );
 }
 
+/*
+=========================================================
+  ARTICLE CONTENT
+=========================================================
+*/
+
 function renderArticleContent(
   text: string
 ) {
+  const safeText =
+    typeof text === "string"
+      ? text
+      : "";
+
   const lines =
-    text
+    safeText
       .trim()
       .split("\n");
 
@@ -367,6 +464,12 @@ function renderArticleContent(
     }
   );
 }
+
+/*
+=========================================================
+  SOCIAL ICONS
+=========================================================
+*/
 
 function FacebookMark() {
   return (
@@ -439,6 +542,12 @@ function XMark() {
   );
 }
 
+/*
+=========================================================
+  SHARE BUTTON
+=========================================================
+*/
+
 function PostShareButton({
   label,
   children,
@@ -464,6 +573,144 @@ function PostShareButton({
     </button>
   );
 }
+
+/*
+=========================================================
+  NORMALIZE BACKEND BLOG
+=========================================================
+*/
+
+function normalizeBackendArticle(
+  rawArticle: BackendBlog,
+  fallbackSlug: string
+): Article {
+  const rawKeywords =
+    Array.isArray(
+      rawArticle.keywords
+    )
+      ? rawArticle.keywords
+      : Array.isArray(
+          rawArticle.tags
+        )
+      ? rawArticle.tags
+      : [];
+
+  const cleanKeywords =
+    rawKeywords
+      .map((keyword) =>
+        String(keyword).trim()
+      )
+      .filter(Boolean);
+
+  const rawFaq =
+    Array.isArray(
+      rawArticle.faq
+    )
+      ? rawArticle.faq
+      : [];
+
+  const cleanFaq =
+    rawFaq
+      .filter(
+        (item) =>
+          item &&
+          typeof item ===
+            "object" &&
+          typeof item.question ===
+            "string" &&
+          typeof item.answer ===
+            "string"
+      )
+      .map((item) => ({
+        question:
+          item.question.trim(),
+
+        answer:
+          item.answer.trim(),
+      }));
+
+  const normalizedAuthor =
+    rawArticle.author &&
+    typeof rawArticle.author ===
+      "object"
+      ? rawArticle.author
+      : {};
+
+  return {
+    ...rawArticle,
+
+    id:
+      rawArticle.id ||
+      rawArticle._id ||
+      fallbackSlug,
+
+    slug:
+      rawArticle.slug ||
+      fallbackSlug,
+
+    title:
+      typeof rawArticle.title ===
+      "string"
+        ? rawArticle.title
+        : "",
+
+    excerpt:
+      typeof rawArticle.excerpt ===
+      "string"
+        ? rawArticle.excerpt
+        : "",
+
+    date:
+      typeof rawArticle.date ===
+      "string"
+        ? rawArticle.date
+        : typeof rawArticle.publishedAt ===
+          "string"
+        ? rawArticle.publishedAt
+        : typeof rawArticle.createdAt ===
+          "string"
+        ? rawArticle.createdAt
+        : "",
+
+    keywords:
+      cleanKeywords,
+
+    content:
+      typeof rawArticle.content ===
+      "string"
+        ? rawArticle.content
+        : "",
+
+    faq:
+      cleanFaq,
+
+    category:
+      typeof rawArticle.category ===
+      "string"
+        ? rawArticle.category
+        : "",
+
+    author: {
+      name:
+        typeof normalizedAuthor.name ===
+        "string"
+          ? normalizedAuthor.name
+          : "Priince Gupta",
+
+      x:
+        typeof normalizedAuthor.x ===
+        "string"
+          ? normalizedAuthor.x
+          : "@priiincegupta",
+    },
+  } as Article;
+}
+
+/*
+=========================================================
+  BLOG POST
+=========================================================
+*/
 
 export default function BlogPost({
   article: suppliedArticle,
@@ -495,8 +742,8 @@ export default function BlogPost({
   =======================================================
     FIRST: CHECK EXISTING STATIC ARTICLES
 
-    This keeps all existing Apives articles working
-    exactly as they worked before.
+    Existing Apives articles continue to work
+    exactly as before.
   =======================================================
   */
 
@@ -539,11 +786,19 @@ export default function BlogPost({
   /*
   =======================================================
     FETCH PUBLISHED ARTICLE
+  =======================================================
 
-    Static article -> no API request.
+    Backend route:
 
-    New/published article -> fetch from backend
-    using the slug.
+    GET /api/blogs/slug/:slug
+
+    Because backend router is mounted at:
+
+    /api/blogs
+
+    actual endpoint becomes:
+
+    /api/blogs/slug/:slug
   =======================================================
   */
 
@@ -614,11 +869,31 @@ export default function BlogPost({
         }
 
         try {
+          /*
+          IMPORTANT:
+
+          Correct backend route is:
+
+          /api/blogs/slug/:slug
+
+          NOT:
+
+          /api/blogs/:slug
+          */
+
+          const endpoint =
+            `${API_BASE}/api/blogs/slug/${encodeURIComponent(
+              currentSlug
+            )}`;
+
+          console.log(
+            "[Apives Blog] Loading:",
+            endpoint
+          );
+
           const response =
             await fetch(
-              `${API_BASE}/api/blogs/${encodeURIComponent(
-                currentSlug
-              )}`,
+              endpoint,
               {
                 method: "GET",
 
@@ -631,9 +906,31 @@ export default function BlogPost({
               }
             );
 
+          /*
+          404 means the backend could not
+          find this published blog.
+          */
+
           if (!response.ok) {
+            let errorMessage =
+              `Blog request failed: ${response.status}`;
+
+            try {
+              const errorData =
+                await response.json();
+
+              if (
+                errorData?.message
+              ) {
+                errorMessage =
+                  errorData.message;
+              }
+            } catch {
+              // Ignore invalid error response
+            }
+
             throw new Error(
-              `Blog request failed: ${response.status}`
+              errorMessage
             );
           }
 
@@ -641,13 +938,13 @@ export default function BlogPost({
             await response.json();
 
           /*
-          Backend may return:
+          Backend currently returns:
 
           {
             blog: {...}
           }
 
-          OR:
+          But this also safely supports:
 
           {
             data: {...}
@@ -674,63 +971,15 @@ export default function BlogPost({
           }
 
           /*
-          Normalize backend article into the same
-          Article shape used by the existing UI.
-
-          We spread rawArticle first so any additional
-          backend fields remain available.
+          Normalize MongoDB document
+          into the existing Article shape.
           */
 
           const normalizedArticle =
-            {
-              ...rawArticle,
-
-              id:
-                rawArticle.id ||
-                rawArticle._id ||
-                currentSlug,
-
-              slug:
-                rawArticle.slug ||
-                currentSlug,
-
-              title:
-                rawArticle.title ||
-                "",
-
-              excerpt:
-                rawArticle.excerpt ||
-                "",
-
-              date:
-                rawArticle.date ||
-                rawArticle.publishedAt ||
-                "",
-
-              keywords:
-                Array.isArray(
-                  rawArticle.keywords
-                )
-                  ? rawArticle.keywords
-                  : Array.isArray(
-                      rawArticle.tags
-                    )
-                  ? rawArticle.tags
-                  : [],
-
-              content:
-                typeof rawArticle.content ===
-                "string"
-                  ? rawArticle.content
-                  : "",
-
-              faq:
-                Array.isArray(
-                  rawArticle.faq
-                )
-                  ? rawArticle.faq
-                  : [],
-            } as Article;
+            normalizeBackendArticle(
+              rawArticle as BackendBlog,
+              currentSlug
+            );
 
           if (!cancelled) {
             setFetchedArticle(
@@ -870,18 +1119,25 @@ export default function BlogPost({
       }
 
       try {
-        await navigator.clipboard.writeText(
-          shareUrl
-        );
+        if (
+          navigator.clipboard &&
+          typeof navigator.clipboard
+            .writeText ===
+            "function"
+        ) {
+          await navigator.clipboard.writeText(
+            shareUrl
+          );
 
-        setSharing(true);
+          setSharing(true);
 
-        window.setTimeout(
-          () => {
-            setSharing(false);
-          },
-          1400
-        );
+          window.setTimeout(
+            () => {
+              setSharing(false);
+            },
+            1400
+          );
+        }
       } catch {
       }
     };
@@ -968,8 +1224,6 @@ export default function BlogPost({
   /*
   =======================================================
     NOT FOUND
-
-    Existing UI kept exactly the same.
   =======================================================
   */
 
@@ -1005,16 +1259,19 @@ export default function BlogPost({
 
   /*
   =======================================================
-    KEEP SAME PAGE STRUCTURE
-
-    During API loading we don't show the old
-    "Article not found" screen prematurely.
+    LOADING
   =======================================================
   */
 
   if (!article) {
     return null;
   }
+
+  /*
+  =======================================================
+    RENDER
+  =======================================================
+  */
 
   return (
     <>
@@ -1030,7 +1287,13 @@ export default function BlogPost({
         <article className="post-page">
           <header className="post-header">
             <div className="post-category">
-              {article.keywords
+              {(
+                Array.isArray(
+                  article.keywords
+                )
+                  ? article.keywords
+                  : []
+              )
                 .slice(0, 2)
                 .join(" · ")}
             </div>
@@ -1151,7 +1414,13 @@ export default function BlogPost({
             )}
           </div>
 
-          {article.faq.length > 0 && (
+          {(
+            Array.isArray(
+              article.faq
+            )
+              ? article.faq
+              : []
+          ).length > 0 && (
             <section className="post-faq">
               <h2>
                 Frequently Asked
@@ -1166,7 +1435,13 @@ export default function BlogPost({
               </p>
 
               <div className="post-faq-list">
-                {article.faq.map(
+                {(
+                  Array.isArray(
+                    article.faq
+                  )
+                    ? article.faq
+                    : []
+                ).map(
                   (
                     item,
                     index
@@ -1268,6 +1543,13 @@ export default function BlogPost({
     </>
   );
 }
+
+/*
+=========================================================
+  STYLES
+  UI KEPT EXACTLY AS PROVIDED
+=========================================================
+*/
 
 function BlogPostStyles() {
   return (
