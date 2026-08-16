@@ -19,10 +19,6 @@ import {
   type Article,
 } from "../components/BlogArticles";
 
-/* =========================================================
-   TYPES
-========================================================= */
-
 interface BlogPost {
   id: number;
   slug: string;
@@ -36,25 +32,10 @@ type BlogItem =
   | (Article & { type: "article" })
   | BlogPost;
 
-/* =========================================================
-   CONSTANTS
-========================================================= */
-
 const GREEN = "#22c55e";
 
 const ADMIN_EMAIL =
   "beatslevelone@gmail.com";
-
-/*
- * IMPORTANT:
- * This MUST match App.tsx.
- *
- * App.tsx currently has:
- *
- * /admin/blogs/publish
- */
-const PUBLISH_ROUTE =
-  "/admin/blogs/publish";
 
 /* =========================================================
    BLOG DATA
@@ -74,51 +55,64 @@ const BLOG_ITEMS: BlogItem[] = [
 ];
 
 /* =========================================================
-   AUTH HELPERS
+   AUTH / ADMIN CHECK
 ========================================================= */
 
-const normalizeEmail = (
-  value: unknown
-): string => {
-  return String(value || "")
-    .trim()
-    .toLowerCase();
-};
+/*
+ * IMPORTANT:
+ *
+ * AuthPages.tsx saves login data as:
+ *
+ * localStorage.setItem(
+ *   "mora_user",
+ *   JSON.stringify({
+ *      ...data.user,
+ *      token: data.token
+ *   })
+ * )
+ *
+ * So we read `mora_user` first.
+ */
 
-/* ---------------------------------------------------------
-   Get JWT token
---------------------------------------------------------- */
-
-function getToken(): string {
-  try {
-    const possibleKeys = [
-      "token",
-      "accessToken",
-      "authToken",
-      "jwt",
-    ];
-
-    for (const key of possibleKeys) {
-      const value =
-        localStorage.getItem(key);
-
-      if (
-        value &&
-        value.trim()
-      ) {
-        return value.trim();
-      }
-    }
-
-    return "";
-  } catch {
-    return "";
-  }
+interface StoredUser {
+  email?: string;
+  token?: string;
+  user?: {
+    email?: string;
+  };
 }
 
-/* ---------------------------------------------------------
-   Decode JWT
---------------------------------------------------------- */
+function getStoredUser(): StoredUser | null {
+  try {
+    const raw =
+      localStorage.getItem(
+        "mora_user"
+      );
+
+    if (!raw) {
+      return null;
+    }
+
+    const parsed =
+      JSON.parse(raw);
+
+    if (
+      parsed &&
+      typeof parsed === "object"
+    ) {
+      return parsed;
+    }
+
+    return null;
+  } catch (error) {
+    console.error(
+      "Failed to read mora_user:",
+      error
+    );
+
+    return null;
+  }
+}
 
 function getEmailFromJWT(
   token: string
@@ -146,112 +140,100 @@ function getEmailFromJWT(
       base64 += "=";
     }
 
-    const payload =
-      window.atob(base64);
-
     const decoded =
-      JSON.parse(payload);
+      JSON.parse(
+        window.atob(base64)
+      );
 
-    const email =
+    return (
       decoded?.email ||
       decoded?.user?.email ||
-      decoded?.data?.email ||
-      decoded?.data?.user?.email;
-
-    return normalizeEmail(
-      email
+      ""
+    )
+      .toString()
+      .trim()
+      .toLowerCase();
+  } catch (error) {
+    console.error(
+      "JWT email decode failed:",
+      error
     );
-  } catch {
+
     return "";
   }
 }
 
-/* ---------------------------------------------------------
-   Get email from stored user
---------------------------------------------------------- */
-
-function getEmailFromStoredUser(): string {
+function getLoggedInEmail(): string {
   try {
-    const userKeys = [
-      "user",
-      "mora_user",
-      "currentUser",
-      "loggedInUser",
-      "authUser",
-    ];
+    const storedUser =
+      getStoredUser();
 
-    for (const key of userKeys) {
-      const raw =
-        localStorage.getItem(key);
+    if (!storedUser) {
+      return "";
+    }
 
-      if (!raw) {
-        continue;
-      }
+    /*
+     * AuthPages.tsx stores:
+     *
+     * {
+     *   ...data.user,
+     *   token: data.token
+     * }
+     */
 
-      try {
-        const parsed =
-          JSON.parse(raw);
+    if (
+      storedUser.email
+    ) {
+      return String(
+        storedUser.email
+      )
+        .trim()
+        .toLowerCase();
+    }
 
-        const email =
-          parsed?.email ||
-          parsed?.user?.email ||
-          parsed?.data?.email ||
-          parsed?.data?.user?.email;
+    /*
+     * Extra fallback in case
+     * user is nested.
+     */
 
-        const normalized =
-          normalizeEmail(email);
+    if (
+      storedUser.user?.email
+    ) {
+      return String(
+        storedUser.user.email
+      )
+        .trim()
+        .toLowerCase();
+    }
 
-        if (normalized) {
-          return normalized;
-        }
-      } catch {
-        continue;
+    /*
+     * Final fallback:
+     * decode token stored INSIDE mora_user.
+     */
+
+    if (
+      storedUser.token
+    ) {
+      const jwtEmail =
+        getEmailFromJWT(
+          storedUser.token
+        );
+
+      if (jwtEmail) {
+        return jwtEmail;
       }
     }
 
     return "";
-  } catch {
+  } catch (error) {
+    console.error(
+      "Logged-in email check failed:",
+      error
+    );
+
     return "";
   }
 }
-
-/* ---------------------------------------------------------
-   Main email resolver
---------------------------------------------------------- */
-
-function getLoggedInEmail(): string {
-  /*
-   * JWT is preferred because this is what
-   * the backend generates.
-   */
-
-  const token =
-    getToken();
-
-  const jwtEmail =
-    getEmailFromJWT(token);
-
-  if (jwtEmail) {
-    return jwtEmail;
-  }
-
-  /*
-   * Fallback to stored user.
-   */
-
-  const storedEmail =
-    getEmailFromStoredUser();
-
-  if (storedEmail) {
-    return storedEmail;
-  }
-
-  return "";
-}
-
-/* ---------------------------------------------------------
-   Admin check
---------------------------------------------------------- */
 
 function isAdminUser(): boolean {
   const email =
@@ -373,10 +355,6 @@ export default function Blogs() {
     setIsAdmin,
   ] = useState(false);
 
-  /* =======================================================
-     ADMIN CHECK
-  ======================================================= */
-
   useEffect(() => {
     updateSEO();
 
@@ -385,67 +363,47 @@ export default function Blogs() {
       behavior: "auto",
     });
 
+    /*
+     * Check admin from the SAME
+     * auth storage used by AuthPages.tsx.
+     */
+
     const checkAdmin =
       () => {
-        const email =
-          getLoggedInEmail();
-
-        const adminEmail =
-          ADMIN_EMAIL
-            .trim()
-            .toLowerCase();
-
-        const admin =
-          email ===
-          adminEmail;
-
-        console.log(
-          "[Apives] Admin check:",
-          {
-            loggedInEmail:
-              email,
-            adminEmail,
-            isAdmin: admin,
-            hasToken:
-              !!getToken(),
-          }
+        setIsAdmin(
+          isAdminUser()
         );
-
-        setIsAdmin(admin);
       };
 
     checkAdmin();
 
     /*
-     * Re-check if auth state changes.
+     * Re-check when authentication
+     * changes elsewhere.
      */
-
-    window.addEventListener(
-      "storage",
-      checkAdmin
-    );
 
     window.addEventListener(
       "auth-change",
       checkAdmin
     );
 
-    return () => {
-      window.removeEventListener(
-        "storage",
-        checkAdmin
-      );
+    window.addEventListener(
+      "storage",
+      checkAdmin
+    );
 
+    return () => {
       window.removeEventListener(
         "auth-change",
         checkAdmin
       );
+
+      window.removeEventListener(
+        "storage",
+        checkAdmin
+      );
     };
   }, []);
-
-  /* =======================================================
-     SEARCH
-  ======================================================= */
 
   const filteredItems =
     useMemo(() => {
@@ -472,10 +430,6 @@ export default function Blogs() {
       );
     }, [searchQuery]);
 
-  /* =======================================================
-     OPEN BLOG
-  ======================================================= */
-
   const openItem = (
     item: BlogItem
   ) => {
@@ -483,76 +437,40 @@ export default function Blogs() {
       item.type ===
       "article"
     ) {
-      navigate(
+      window.location.assign(
         `/blogs/${item.slug}`
       );
 
       return;
     }
 
-    navigate(
+    window.location.assign(
       `/posts/${item.slug}`
     );
   };
 
-  /* =======================================================
-     OPEN PUBLISH
-  ======================================================= */
+  /*
+   * IMPORTANT:
+   *
+   * App.tsx currently has:
+   *
+   * /admin/blogs/publish
+   *
+   * So use that exact route.
+   */
 
   const openPublishPage =
     () => {
-      /*
-       * Double-check admin before
-       * opening the admin editor.
-       */
-
-      const email =
-        getLoggedInEmail();
-
-      if (
-        email !==
-        ADMIN_EMAIL
-          .trim()
-          .toLowerCase()
-      ) {
-        console.error(
-          "Publish access denied:",
-          {
-            loggedInEmail:
-              email,
-            expected:
-              ADMIN_EMAIL,
-          }
-        );
-
-        return;
-      }
-
-      /*
-       * IMPORTANT:
-       * This matches App.tsx:
-       *
-       * /admin/blogs/publish
-       */
-
       navigate(
-        PUBLISH_ROUTE
+        "/admin/blogs/publish"
       );
     };
-
-  /* =======================================================
-     RENDER
-  ======================================================= */
 
   return (
     <>
       <BlogStyles />
 
       <main className="blog-root">
-
-        {/* =================================================
-            HERO
-        ================================================= */}
 
         <section className="blog-hero">
 
@@ -571,10 +489,6 @@ export default function Blogs() {
           </p>
 
         </section>
-
-        {/* =================================================
-            SEARCH
-        ================================================= */}
 
         <section className="search-section">
 
@@ -615,36 +529,36 @@ export default function Blogs() {
           </div>
 
           {/* =================================================
-              ADMIN PUBLISH BUTTON
-
+              ADMIN PUBLISH
               BELOW SEARCH BOX
+              ONLY ADMIN
           ================================================= */}
 
           {isAdmin && (
-            <button
-              type="button"
-              className="admin-publish-button"
-              onClick={
-                openPublishPage
-              }
-              aria-label="Publish a new blog"
-            >
-              <Plus
-                size={15}
-                strokeWidth={2.3}
-              />
+            <div className="admin-publish-wrap">
 
-              <span>
-                Publish
-              </span>
-            </button>
+              <button
+                type="button"
+                className="admin-publish-button"
+                onClick={
+                  openPublishPage
+                }
+                aria-label="Publish a new blog"
+              >
+                <Plus
+                  size={15}
+                  strokeWidth={2.2}
+                />
+
+                <span>
+                  Publish
+                </span>
+              </button>
+
+            </div>
           )}
 
         </section>
-
-        {/* =================================================
-            ARTICLES
-        ================================================= */}
 
         <section className="articles-section">
 
@@ -717,7 +631,6 @@ function BlogStyles() {
       ::selection {
         background:
           rgba(34,197,94,.22);
-
         color: #fff;
       }
 
@@ -738,10 +651,6 @@ function BlogStyles() {
         background: ${GREEN};
       }
 
-      /* =====================================================
-         ROOT
-      ===================================================== */
-
       .blog-root {
         min-height: 100vh;
         width: 100%;
@@ -759,13 +668,8 @@ function BlogStyles() {
           sans-serif;
       }
 
-      /* =====================================================
-         HERO
-      ===================================================== */
-
       .blog-hero {
         max-width: 900px;
-
         margin: 0 auto;
 
         padding:
@@ -797,11 +701,7 @@ function BlogStyles() {
         color: #737373;
 
         font-size:
-          clamp(
-            16px,
-            2.2vw,
-            20px
-          );
+          clamp(16px, 2.2vw, 20px);
 
         line-height: 1.65;
 
@@ -822,9 +722,7 @@ function BlogStyles() {
           34px;
 
         display: flex;
-
         flex-direction: column;
-
         align-items: center;
       }
 
@@ -832,12 +730,9 @@ function BlogStyles() {
         position: relative;
 
         width: 100%;
-
         max-width: 440px;
 
         height: 48px;
-
-        margin: 0 auto;
       }
 
       .search-box input {
@@ -939,25 +834,30 @@ function BlogStyles() {
       }
 
       /* =====================================================
-         ADMIN PUBLISH BUTTON
-         BELOW SEARCH
+         ADMIN PUBLISH
       ===================================================== */
 
-      .admin-publish-button {
+      .admin-publish-wrap {
         width: 100%;
 
-        max-width: 440px;
-
-        height: 42px;
-
-        margin-top: 10px;
-
         display: flex;
+        justify-content: center;
+
+        margin-top: 12px;
+      }
+
+      .admin-publish-button {
+        display: inline-flex;
 
         align-items: center;
         justify-content: center;
 
-        gap: 7px;
+        gap: 6px;
+
+        min-height: 34px;
+
+        padding:
+          0 14px;
 
         border:
           1px solid
@@ -966,7 +866,7 @@ function BlogStyles() {
         border-radius: 999px;
 
         background:
-          rgba(34,197,94,.055);
+          rgba(34,197,94,.06);
 
         color: ${GREEN};
 
@@ -974,11 +874,9 @@ function BlogStyles() {
 
         font-size: 10px;
 
-        font-weight: 800;
+        font-weight: 750;
 
-        letter-spacing: .1em;
-
-        text-transform: uppercase;
+        letter-spacing: .04em;
 
         cursor: pointer;
 
@@ -992,7 +890,7 @@ function BlogStyles() {
 
       .admin-publish-button:hover {
         background:
-          rgba(34,197,94,.11);
+          rgba(34,197,94,.12);
 
         border-color:
           rgba(34,197,94,.48);
@@ -1083,11 +981,7 @@ function BlogStyles() {
         color: #f5f5f5;
 
         font-size:
-          clamp(
-            19.8px,
-            3vw,
-            27.4px
-          );
+          clamp(19.8px, 3vw, 27.4px);
 
         line-height: 1.25;
 
@@ -1112,18 +1006,10 @@ function BlogStyles() {
         color: #626262;
 
         font-size:
-          clamp(
-            12.1px,
-            1.7vw,
-            13.9px
-          );
+          clamp(12.1px, 1.7vw, 13.9px);
 
         line-height: 1.8;
       }
-
-      /* =====================================================
-         EMPTY
-      ===================================================== */
 
       .empty-state {
         padding: 90px 0;
@@ -1179,16 +1065,15 @@ function BlogStyles() {
             28px;
         }
 
-        .search-box {
-          max-width: 100%;
+        .admin-publish-wrap {
+          margin-top: 10px;
         }
 
         .admin-publish-button {
-          max-width: 100%;
+          min-height: 32px;
 
-          height: 40px;
-
-          margin-top: 9px;
+          padding:
+            0 12px;
 
           font-size: 9px;
         }
