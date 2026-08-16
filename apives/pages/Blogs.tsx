@@ -9,6 +9,8 @@ import {
   Search,
   X,
   Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -83,22 +85,13 @@ const ADMIN_EMAIL =
 const PUBLISH_ROUTE =
   "/admin/blogs/publish";
 
+const EDIT_ROUTE_BASE =
+  "/admin/blogs/edit";
+
 /*
  * IMPORTANT
  *
- * The API is hosted separately from the frontend.
- *
- * Do NOT fall back to:
- *
- *     /api/blogs
- *
- * because that would request the frontend domain.
- *
- * Published blogs live here:
- *
- *     https://apives-3xrc.onrender.com/api/blogs
- *
- * VITE_API_URL can still override this if needed later.
+ * Published blogs live on the Render backend.
  */
 
 const DEFAULT_API_BASE_URL =
@@ -115,24 +108,117 @@ const BLOGS_API_URL =
 
 
 /* =========================================================
+   DATE FORMATTER
+========================================================= */
+
+/*
+ * Converts:
+ *
+ * 2026-08-16
+ * 2026-08-16T00:00:00.000Z
+ *
+ * into:
+ *
+ * August 16, 2026
+ *
+ * The UTC construction avoids the date shifting
+ * backward/forward because of the user's timezone.
+ */
+
+function formatBlogDate(
+  value: unknown
+): string {
+
+  if (!value) {
+    return "";
+  }
+
+  const raw =
+    String(value).trim();
+
+  if (!raw) {
+    return "";
+  }
+
+  try {
+
+    /*
+     * YYYY-MM-DD
+     *
+     * Parse manually as UTC so:
+     *
+     * 2026-08-16
+     *
+     * always remains August 16, 2026.
+     */
+
+    const dateOnlyMatch =
+      raw.match(
+        /^(\d{4})-(\d{2})-(\d{2})$/
+      );
+
+    const date =
+      dateOnlyMatch
+        ? new Date(
+            Date.UTC(
+              Number(
+                dateOnlyMatch[1]
+              ),
+              Number(
+                dateOnlyMatch[2]
+              ) - 1,
+              Number(
+                dateOnlyMatch[3]
+              )
+            )
+          )
+        : new Date(raw);
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+      return raw;
+    }
+
+    return new Intl.DateTimeFormat(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }
+    ).format(date);
+
+  } catch {
+    return raw;
+  }
+}
+
+
+/* =========================================================
    STATIC BLOG DATA
 ========================================================= */
 
-const BLOG_ARTICLES: StaticBlogItem[] =
-  ARTICLES.map((article) => ({
-    ...article,
-    type: "article" as const,
-  }));
+const BLOG_ARTICLES:
+  StaticBlogItem[] =
+  ARTICLES.map(
+    (article) => ({
+      ...article,
+      type:
+        "article" as const,
+    })
+  );
 
 
 /*
  * Legacy posts.
- *
- * Keeping this so the existing UI/data structure
- * does not break if you add posts later.
  */
 
-const POSTS: BlogPost[] = [];
+const POSTS:
+  BlogPost[] = [];
 
 
 /* =========================================================
@@ -142,7 +228,10 @@ const POSTS: BlogPost[] = [];
 const normalizeEmail = (
   value: unknown
 ): string => {
-  return String(value || "")
+
+  return String(
+    value || ""
+  )
     .trim()
     .toLowerCase();
 };
@@ -153,6 +242,7 @@ const normalizeEmail = (
 --------------------------------------------------------- */
 
 function getToken(): string {
+
   try {
 
     /*
@@ -186,9 +276,11 @@ function getToken(): string {
             nestedToken
           ).trim()
         ) {
+
           return String(
             nestedToken
           ).trim();
+
         }
 
       } catch {
@@ -223,15 +315,20 @@ function getToken(): string {
         value &&
         value.trim()
       ) {
+
         return value.trim();
+
       }
+
     }
 
 
     return "";
 
   } catch {
+
     return "";
+
   }
 }
 
@@ -258,20 +355,30 @@ function getEmailFromJWT(
     if (
       parts.length !== 3
     ) {
+
       return "";
+
     }
 
 
     let base64 =
       parts[1]
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
+        .replace(
+          /-/g,
+          "+"
+        )
+        .replace(
+          /_/g,
+          "/"
+        );
 
 
     while (
       base64.length % 4 !== 0
     ) {
+
       base64 += "=";
+
     }
 
 
@@ -299,7 +406,9 @@ function getEmailFromJWT(
     );
 
   } catch {
+
     return "";
+
   }
 }
 
@@ -308,7 +417,8 @@ function getEmailFromJWT(
    Get email from stored user
 --------------------------------------------------------- */
 
-function getEmailFromStoredUser(): string {
+function getEmailFromStoredUser():
+  string {
 
   try {
 
@@ -358,19 +468,26 @@ function getEmailFromStoredUser(): string {
 
 
         if (normalized) {
+
           return normalized;
+
         }
 
       } catch {
+
         continue;
+
       }
+
     }
 
 
     return "";
 
   } catch {
+
     return "";
+
   }
 }
 
@@ -379,14 +496,17 @@ function getEmailFromStoredUser(): string {
    Main email resolver
 --------------------------------------------------------- */
 
-function getLoggedInEmail(): string {
+function getLoggedInEmail():
+  string {
 
   const storedEmail =
     getEmailFromStoredUser();
 
 
   if (storedEmail) {
+
     return storedEmail;
+
   }
 
 
@@ -401,11 +521,14 @@ function getLoggedInEmail(): string {
 
 
   if (jwtEmail) {
+
     return jwtEmail;
+
   }
 
 
   return "";
+
 }
 
 
@@ -413,7 +536,8 @@ function getLoggedInEmail(): string {
    Admin check
 --------------------------------------------------------- */
 
-function isAdminUser(): boolean {
+function isAdminUser():
+  boolean {
 
   const email =
     getLoggedInEmail();
@@ -425,6 +549,7 @@ function isAdminUser(): boolean {
       .trim()
       .toLowerCase()
   );
+
 }
 
 
@@ -432,43 +557,19 @@ function isAdminUser(): boolean {
    BLOG API HELPERS
 ========================================================= */
 
-/*
- * Backend response currently expected:
- *
- * {
- *   blogs: [...],
- *   total: 10
- * }
- *
- * This helper also supports:
- *
- * [...]
- *
- * {
- *   data: {
- *     blogs: [...]
- *   }
- * }
- *
- * so a small backend response-shape change
- * does not break the blog page.
- */
-
 async function fetchPublishedBlogs(
   signal?: AbortSignal
 ): Promise<BlogPost[]> {
 
   /*
-   * Cache busting is intentional.
-   *
-   * After publishing a new article, browser/CDN
-   * should not keep returning an older GET response.
+   * Cache busting.
    */
 
   const separator =
     BLOGS_API_URL.includes("?")
       ? "&"
       : "?";
+
 
   const requestUrl =
     `${BLOGS_API_URL}${separator}_=${Date.now()}`;
@@ -488,7 +589,8 @@ async function fetchPublishedBlogs(
             "no-cache",
         },
 
-        cache: "no-store",
+        cache:
+          "no-store",
 
         signal,
       }
@@ -500,6 +602,7 @@ async function fetchPublishedBlogs(
     throw new Error(
       `Failed to fetch blogs (${response.status})`
     );
+
   }
 
 
@@ -508,17 +611,27 @@ async function fetchPublishedBlogs(
 
 
   /*
-   * Support all common backend response shapes.
+   * Support:
+   *
+   * [...]
+   *
+   * { blogs: [...] }
+   *
+   * { data: { blogs: [...] } }
+   *
+   * { data: [...] }
    */
 
-  let blogs: any[] = [];
+  let blogs:
+    any[] = [];
 
 
   if (
     Array.isArray(data)
   ) {
 
-    blogs = data;
+    blogs =
+      data;
 
   } else if (
     Array.isArray(
@@ -557,22 +670,12 @@ async function fetchPublishedBlogs(
         blog.slug &&
         blog.title
     )
-    /*
-     * Only hide explicitly unpublished blogs.
-     *
-     * This means:
-     *
-     * published: true  -> SHOW
-     * published: false -> HIDE
-     * undefined         -> SHOW
-     *
-     * This is safer for compatibility with older
-     * database documents.
-     */
+
     .filter(
       (blog: any) =>
         blog.published !== false
     )
+
     .map(
       (blog: any) => ({
         ...blog,
@@ -586,12 +689,7 @@ async function fetchPublishedBlogs(
           "post" as const,
       })
     )
-    /*
-     * Newest database articles first.
-     *
-     * Prefer createdAt when available.
-     * Otherwise fall back to date.
-     */
+
     .sort(
       (
         a: BlogPost,
@@ -605,6 +703,7 @@ async function fetchPublishedBlogs(
             0
           ).getTime();
 
+
         const bTime =
           new Date(
             b.createdAt ||
@@ -612,12 +711,15 @@ async function fetchPublishedBlogs(
             0
           ).getTime();
 
+
         return (
           bTime -
           aTime
         );
+
       }
     );
+
 }
 
 
@@ -633,13 +735,16 @@ function getBlogId(
     typeof item.id ===
     "string"
   ) {
+
     return item.id;
+
   }
 
 
   return String(
     item.id
   );
+
 }
 
 
@@ -655,7 +760,9 @@ function getSearchText(
     Array.isArray(
       item.keywords
     )
-      ? item.keywords.join(" ")
+      ? item.keywords.join(
+          " "
+        )
       : "";
 
 
@@ -674,6 +781,7 @@ function getSearchText(
   ]
     .join(" ")
     .toLowerCase();
+
 }
 
 
@@ -694,7 +802,9 @@ function updateSEO() {
   let meta =
     document.head.querySelector(
       'meta[name="description"]'
-    ) as HTMLMetaElement | null;
+    ) as
+      | HTMLMetaElement
+      | null;
 
 
   if (!meta) {
@@ -712,6 +822,7 @@ function updateSEO() {
     document.head.appendChild(
       meta
     );
+
   }
 
 
@@ -722,7 +833,9 @@ function updateSEO() {
   let canonical =
     document.head.querySelector(
       'link[rel="canonical"]'
-    ) as HTMLLinkElement | null;
+    ) as
+      | HTMLLinkElement
+      | null;
 
 
   if (!canonical) {
@@ -740,11 +853,13 @@ function updateSEO() {
     document.head.appendChild(
       canonical
     );
+
   }
 
 
   canonical.href =
     `${window.location.origin}/blogs`;
+
 }
 
 
@@ -756,33 +871,116 @@ const BlogListItem = memo(
   function BlogListItem({
     item,
     onClick,
+    isAdmin,
+    onEdit,
+    onDelete,
+    deleting,
   }: {
     item: BlogItem;
     onClick: () => void;
+    isAdmin: boolean;
+    onEdit: () => void;
+    onDelete: () => void;
+    deleting: boolean;
   }) {
 
+    const isDatabasePost =
+      item.type ===
+      "post";
+
+
     return (
-      <button
-        type="button"
-        onClick={onClick}
-        className="blog-list-item"
+      <div
+        className="blog-list-row"
       >
 
-        <div className="list-date">
-          {item.date}
-        </div>
+        <button
+          type="button"
+          onClick={
+            onClick
+          }
+          className="blog-list-item"
+        >
+
+          <div className="list-date">
+            {formatBlogDate(
+              item.date
+            )}
+          </div>
 
 
-        <h2>
-          {item.title}
-        </h2>
+          <h2>
+            {item.title}
+          </h2>
 
 
-        <p>
-          {item.excerpt}
-        </p>
+          <p>
+            {item.excerpt}
+          </p>
 
-      </button>
+        </button>
+
+
+        {isAdmin &&
+          isDatabasePost && (
+
+          <div
+            className="admin-blog-actions"
+          >
+
+            <button
+              type="button"
+              className="blog-action-button edit"
+              onClick={(event) => {
+                event.stopPropagation();
+                onEdit();
+              }}
+              aria-label={`Edit ${item.title}`}
+              title="Edit article"
+            >
+
+              <Pencil
+                size={13}
+              />
+
+              <span>
+                Edit
+              </span>
+
+            </button>
+
+
+            <button
+              type="button"
+              className="blog-action-button delete"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDelete();
+              }}
+              disabled={
+                deleting
+              }
+              aria-label={`Delete ${item.title}`}
+              title="Delete article"
+            >
+
+              <Trash2
+                size={13}
+              />
+
+              <span>
+                {deleting
+                  ? "Deleting..."
+                  : "Delete"}
+              </span>
+
+            </button>
+
+          </div>
+
+        )}
+
+      </div>
     );
   }
 );
@@ -810,25 +1008,13 @@ export default function Blogs() {
   ] = useState(false);
 
 
-  /*
-   * Database blogs.
-   */
-
   const [
     serverBlogs,
     setServerBlogs,
-  ] = useState<BlogPost[]>(
-    []
-  );
+  ] = useState<
+    BlogPost[]
+  >([]);
 
-
-  /*
-   * Loading only affects the small
-   * loading message.
-   *
-   * Existing static articles remain
-   * visible.
-   */
 
   const [
     isLoadingBlogs,
@@ -836,17 +1022,18 @@ export default function Blogs() {
   ] = useState(true);
 
 
-  /*
-   * API error is intentionally not
-   * displayed as a big error page.
-   *
-   * Static articles remain available.
-   */
-
   const [
     blogFetchError,
     setBlogFetchError,
   ] = useState(false);
+
+
+  const [
+    deletingId,
+    setDeletingId,
+  ] = useState<
+    string | null
+  >(null);
 
 
   /* =======================================================
@@ -884,6 +1071,7 @@ export default function Blogs() {
             blogs
           );
 
+
           console.log(
             "[Apives] Published blogs loaded:",
             {
@@ -907,10 +1095,16 @@ export default function Blogs() {
 
                     published:
                       blog.published,
+
+                    date:
+                      formatBlogDate(
+                        blog.date
+                      ),
                   })
                 ),
             }
           );
+
         }
 
       } catch (error: any) {
@@ -919,7 +1113,9 @@ export default function Blogs() {
           error?.name ===
           "AbortError"
         ) {
+
           return;
+
         }
 
 
@@ -950,7 +1146,9 @@ export default function Blogs() {
           );
 
         }
+
       }
+
     };
 
 
@@ -1007,6 +1205,7 @@ export default function Blogs() {
         setIsAdmin(
           admin
         );
+
       };
 
 
@@ -1058,34 +1257,24 @@ export default function Blogs() {
     );
 
 
-    /*
-     * If another part of the app publishes
-     * or updates a blog, the list can refresh
-     * without changing the UI.
-     */
-
     const handleBlogUpdated =
       () => {
 
         if (
           controller.signal.aborted
         ) {
+
           return;
+
         }
 
 
         loadBlogs(
           controller.signal
         );
+
       };
 
-
-    /*
-     * Refresh when returning to the tab.
-     *
-     * This is useful after publishing in
-     * another tab/window.
-     */
 
     const handleVisibility =
       () => {
@@ -1100,6 +1289,7 @@ export default function Blogs() {
           );
 
         }
+
       };
 
 
@@ -1153,16 +1343,10 @@ export default function Blogs() {
   ======================================================= */
 
   const blogItems =
-    useMemo<BlogItem[]>(
+    useMemo<
+      BlogItem[]
+    >(
       () => {
-
-        /*
-         * DB blogs are the source of truth
-         * for dynamically published blogs.
-         *
-         * If a DB blog has the same slug as
-         * a static article, the DB version wins.
-         */
 
         const databaseSlugs =
           new Set(
@@ -1189,11 +1373,6 @@ export default function Blogs() {
               )
           );
 
-
-        /*
-         * Keep newest MongoDB blogs first,
-         * followed by existing static articles.
-         */
 
         return [
           ...serverBlogs,
@@ -1254,20 +1433,6 @@ export default function Blogs() {
     item: BlogItem
   ) => {
 
-    /*
-     * Both MongoDB blogs and
-     * existing articles use the same
-     * detail route.
-     *
-     * This is important for:
-     *
-     * /blogs/rest-vs-graphql-vs-grpc
-     *
-     * and:
-     *
-     * /blogs/new-mongo-blog-slug
-     */
-
     if (
       item.slug
     ) {
@@ -1279,6 +1444,7 @@ export default function Blogs() {
       );
 
       return;
+
     }
 
 
@@ -1288,6 +1454,283 @@ export default function Blogs() {
     );
 
   };
+
+
+  /* =======================================================
+     EDIT BLOG
+  ======================================================= */
+
+  const editItem = (
+    item: BlogPost
+  ) => {
+
+    if (!isAdmin) {
+
+      console.error(
+        "[Apives] Edit access denied."
+      );
+
+      return;
+
+    }
+
+
+    const id =
+      item._id ||
+      item.id ||
+      item.slug;
+
+
+    navigate(
+      `${EDIT_ROUTE_BASE}/${encodeURIComponent(
+        String(id)
+      )}`
+    );
+
+  };
+
+
+  /* =======================================================
+     DELETE BLOG
+  ======================================================= */
+
+  const deleteItem =
+    async (
+      item: BlogPost
+    ) => {
+
+      if (!isAdmin) {
+
+        console.error(
+          "[Apives] Delete access denied."
+        );
+
+        return;
+
+      }
+
+
+      const id =
+        item._id ||
+        item.id ||
+        item.slug;
+
+
+      if (!id) {
+
+        console.error(
+          "[Apives] Cannot delete blog without ID:",
+          item
+        );
+
+        return;
+
+      }
+
+
+      const confirmed =
+        window.confirm(
+          `Delete "${item.title}"?\n\nThis will permanently remove the article from the database.`
+        );
+
+
+      if (!confirmed) {
+
+        return;
+
+      }
+
+
+      const token =
+        getToken();
+
+
+      if (!token) {
+
+        window.alert(
+          "Your authentication session has expired. Please sign in again."
+        );
+
+        navigate(
+          "/access",
+          {
+            replace: true,
+          }
+        );
+
+        return;
+
+      }
+
+
+      setDeletingId(
+        String(id)
+      );
+
+
+      try {
+
+        const response =
+          await fetch(
+            `${BLOGS_API_URL}/${encodeURIComponent(
+              String(id)
+            )}`,
+            {
+              method:
+                "DELETE",
+
+              headers: {
+                Accept:
+                  "application/json",
+
+                Authorization:
+                  `Bearer ${token}`,
+
+                "Cache-Control":
+                  "no-cache",
+              },
+
+              cache:
+                "no-store",
+            }
+          );
+
+
+        let data:
+          any = {};
+
+
+        try {
+
+          data =
+            await response.json();
+
+        } catch {
+
+          data = {};
+
+        }
+
+
+        /*
+         * Session expired.
+         */
+
+        if (
+          response.status ===
+          401
+        ) {
+
+          window.alert(
+            "Your authentication session has expired. Please sign in again."
+          );
+
+
+          navigate(
+            "/access",
+            {
+              replace: true,
+            }
+          );
+
+
+          return;
+
+        }
+
+
+        if (
+          response.status ===
+          403
+        ) {
+
+          throw new Error(
+            "You are not authorized to delete this article."
+          );
+
+        }
+
+
+        if (
+          !response.ok
+        ) {
+
+          throw new Error(
+            data?.message ||
+            data?.error ||
+            `Failed to delete article (${response.status})`
+          );
+
+        }
+
+
+        /*
+         * Remove immediately from local UI.
+         *
+         * This avoids making the admin wait
+         * for another GET request.
+         */
+
+        setServerBlogs(
+          (previous) =>
+            previous.filter(
+              (blog) =>
+                String(
+                  blog._id ||
+                  blog.id
+                ) !==
+                String(id)
+            )
+        );
+
+
+        /*
+         * Tell other pages/components that
+         * the database blog collection changed.
+         */
+
+        window.dispatchEvent(
+          new CustomEvent(
+            "blog-updated"
+          )
+        );
+
+
+        console.log(
+          "[Apives] Blog deleted:",
+          {
+            id,
+            slug:
+              item.slug,
+            title:
+              item.title,
+          }
+        );
+
+      } catch (
+        error: any
+      ) {
+
+        console.error(
+          "[Apives] Delete blog error:",
+          error
+        );
+
+
+        window.alert(
+          error?.message ||
+          "Something went wrong while deleting the article."
+        );
+
+      } finally {
+
+        setDeletingId(
+          null
+        );
+
+      }
+
+    };
 
 
   /* =======================================================
@@ -1328,6 +1771,7 @@ export default function Blogs() {
 
 
         return;
+
       }
 
 
@@ -1514,21 +1958,65 @@ export default function Blogs() {
           0 ? (
 
             filteredItems.map(
-              (item) => (
+              (item) => {
 
-                <BlogListItem
-                  key={`${item.type}-${getBlogId(
-                    item
-                  )}-${item.slug}`}
-                  item={item}
-                  onClick={() =>
-                    openItem(
+                const isDatabasePost =
+                  item.type ===
+                  "post";
+
+
+                return (
+                  <BlogListItem
+                    key={`${item.type}-${getBlogId(
                       item
-                    )
-                  }
-                />
+                    )}-${item.slug}`}
+                    item={item}
+                    isAdmin={
+                      isAdmin
+                    }
+                    deleting={
+                      isDatabasePost &&
+                      deletingId ===
+                        String(
+                          item._id ||
+                          item.id
+                        )
+                    }
+                    onClick={() =>
+                      openItem(
+                        item
+                      )
+                    }
+                    onEdit={() => {
 
-              )
+                      if (
+                        isDatabasePost
+                      ) {
+
+                        editItem(
+                          item
+                        );
+
+                      }
+
+                    }}
+                    onDelete={() => {
+
+                      if (
+                        isDatabasePost
+                      ) {
+
+                        deleteItem(
+                          item
+                        );
+
+                      }
+
+                    }}
+                  />
+                );
+
+              }
             )
 
           ) : (
@@ -2010,6 +2498,18 @@ function BlogStyles() {
       }
 
 
+      /*
+       * Wrapper added only so admin controls
+       * can sit beside the existing article.
+       */
+
+      .blog-list-row {
+        position: relative;
+
+        width: 100%;
+      }
+
+
       .blog-list-item {
         width: 100%;
 
@@ -2018,6 +2518,8 @@ function BlogStyles() {
         padding:
           33.5px 0
           36.3px;
+
+        padding-right: 0;
 
         text-align: left;
 
@@ -2112,6 +2614,113 @@ function BlogStyles() {
           );
 
         line-height: 1.8;
+      }
+
+
+      /* =====================================================
+         ADMIN ARTICLE ACTIONS
+      ===================================================== */
+
+      .admin-blog-actions {
+        position: absolute;
+
+        right: 0;
+        bottom: 12px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        z-index: 3;
+      }
+
+
+      .blog-action-button {
+        min-height: 28px;
+
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        padding:
+          0 9px;
+
+        border:
+          1px solid
+          rgba(255,255,255,.08);
+
+        border-radius: 7px;
+
+        background:
+          rgba(255,255,255,.025);
+
+        color: #4d4d4d;
+
+        font-family: inherit;
+
+        font-size: 9px;
+
+        font-weight: 750;
+
+        letter-spacing: .03em;
+
+        cursor: pointer;
+
+        transition:
+          color .18s ease,
+          background .18s ease,
+          border-color .18s ease,
+          transform .18s ease;
+      }
+
+
+      .blog-action-button:hover {
+        transform:
+          translateY(-1px);
+
+        color: #fff;
+
+        background:
+          rgba(255,255,255,.055);
+
+        border-color:
+          rgba(255,255,255,.14);
+      }
+
+
+      .blog-action-button.edit:hover {
+        color: ${GREEN};
+
+        border-color:
+          rgba(34,197,94,.28);
+
+        background:
+          rgba(34,197,94,.055);
+      }
+
+
+      .blog-action-button.delete:hover {
+        color: #f87171;
+
+        border-color:
+          rgba(248,113,113,.25);
+
+        background:
+          rgba(248,113,113,.05);
+      }
+
+
+      .blog-action-button:disabled {
+        opacity: .45;
+
+        cursor: wait;
+
+        transform: none;
       }
 
 
@@ -2211,6 +2820,9 @@ function BlogStyles() {
           padding:
             27px 0
             29.8px;
+
+          padding-bottom:
+            64px;
         }
 
 
@@ -2236,6 +2848,25 @@ function BlogStyles() {
 
         .blogs-loading {
           min-height: 30px;
+        }
+
+
+        .admin-blog-actions {
+          right: 0;
+
+          bottom: 13px;
+
+          gap: 5px;
+        }
+
+
+        .blog-action-button {
+          min-height: 27px;
+
+          padding:
+            0 8px;
+
+          font-size: 8px;
         }
 
       }
