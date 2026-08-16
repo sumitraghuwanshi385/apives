@@ -308,6 +308,10 @@ function App() {
   element={<PublishBlog />}
 />
 
+<Route
+  path="/admin/blogs/edit/:id"
+  element={<PublishBlog />}
+/>
             {/* =================================================
                 ADMIN
             ================================================= */}
