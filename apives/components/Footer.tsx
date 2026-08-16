@@ -58,17 +58,7 @@ export const Footer: React.FC = () => {
                 <Instagram className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
               </a>
 
-              {/* YouTube */}
-              <a
-                href="https://www.youtube.com/@usestartives"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Apives on YouTube"
-                className="flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition-all duration-300 group"
-              >
-                <Youtube className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
-              </a>
-
+              
               {/* Pulsing /// */}
               <span
                 className="text-mora-500 font-black tracking-[0.3em] text-[10px] select-none
