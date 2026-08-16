@@ -53,6 +53,14 @@ const BlogSchema = new mongoose.Schema(
       trim: true,
     },
 
+    /*
+     * Keep date as STRING.
+     *
+     * Frontend sends:
+     * 2026-08-16
+     *
+     * This prevents timezone/date shifting.
+     */
     date: {
       type: String,
       required: true,
@@ -81,6 +89,21 @@ const BlogSchema = new mongoose.Schema(
     // CONTENT
     // =====================================================
 
+    /*
+     * Markdown content is stored as a single string.
+     *
+     * Example:
+     *
+     * ## What is an API?
+     *
+     * APIs allow...
+     *
+     * **Important**
+     *
+     * ```js
+     * console.log("hello");
+     * ```
+     */
     content: {
       type: String,
       required: true,
